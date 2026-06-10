@@ -1,0 +1,24 @@
+/*
+ * MUI styles are emitted into @layer mui (via enableCssLayer on AppRouterCacheProvider).
+ * Declare the layer order here so any future global/module CSS wins over MUI
+ * without needing extra specificity.
+ */
+@layer mui, base;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    height: 100%;
+  }
+
+  body {
+    min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

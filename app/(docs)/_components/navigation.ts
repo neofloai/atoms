@@ -1,0 +1,63 @@
+/**
+ * Single source of truth for the docs-site left navigation.
+ *
+ * Adding a new component, pattern, or foundation page is a one-line
+ * entry here — the sidebar renders directly from this list. Order in
+ * the array is the order shown in the UI.
+ *
+ * Mark unfinished pages with `disabled: true` to keep them visible in
+ * the navigation (so the team can see what's coming) without producing
+ * dead links.
+ */
+
+export interface NavItem {
+  readonly label: string;
+  readonly href: string;
+  readonly disabled?: boolean;
+}
+
+export interface NavSection {
+  readonly title: string;
+  readonly items: readonly NavItem[];
+}
+
+export const navigation: readonly NavSection[] = [
+  {
+    title: 'Getting started',
+    items: [
+      { label: 'Introduction', href: '/' },
+      { label: 'Installation', href: '/installation', disabled: true },
+      { label: 'MCP endpoint', href: '/mcp-guide', disabled: true },
+    ],
+  },
+  {
+    title: 'Foundations',
+    items: [
+      { label: 'Tokens', href: '/tokens' },
+      { label: 'Typography', href: '/tokens#typography' },
+      { label: 'Spacing', href: '/tokens#spacing' },
+      { label: 'Elevation', href: '/tokens#elevation' },
+      { label: 'Radius', href: '/tokens#radius' },
+      { label: 'Icons', href: '/icons' },
+    ],
+  },
+  {
+    title: 'Components',
+    items: [
+      { label: 'Button', href: '/components/button', disabled: true },
+      { label: 'TextField', href: '/components/text-field', disabled: true },
+      { label: 'Card', href: '/components/card', disabled: true },
+    ],
+  },
+  {
+    title: 'Patterns',
+    items: [
+      { label: 'Dashboard', href: '/patterns/dashboard', disabled: true },
+      { label: 'Settings', href: '/patterns/settings', disabled: true },
+      { label: 'Auth', href: '/patterns/auth', disabled: true },
+    ],
+  },
+];
+
+export const DRAWER_WIDTH = 272;
+export const APP_BAR_HEIGHT = 56;
