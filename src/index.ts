@@ -24,3 +24,11 @@ export type {
   ButtonSize,
   ButtonVariant,
 } from './components/Button';
+
+export { IconButton } from './components/IconButton';
+export type {
+  IconButtonAppearance,
+  IconButtonProps,
+  IconButtonSize,
+  IconButtonVariant,
+} from './components/IconButton';

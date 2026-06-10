@@ -53,7 +53,8 @@ async function collectComponents(): Promise<ComponentExamplesData[]> {
   const components: ComponentExamplesData[] = [];
 
   for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
+    // Underscore-prefixed folders hold shared internals, not components.
+    if (!entry.isDirectory() || entry.name.startsWith('_')) continue;
     const examplesPath = path.join(
       COMPONENTS_DIR,
       entry.name,

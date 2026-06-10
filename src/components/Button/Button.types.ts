@@ -1,16 +1,15 @@
 import type { ButtonProps as MuiButtonProps } from '@mui/material';
+import type {
+  ActionAppearance,
+  ActionVariant,
+} from '../_shared/actionStyles';
 
 /**
  * Colour role of the button, mapped from the Figma `type` axis.
  * `secondary` renders on neutral grey surfaces; all others use their
  * semantic colour scale.
  */
-export type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'error'
-  | 'warning';
+export type ButtonVariant = ActionVariant;
 
 /**
  * Visual emphasis of the button, mapped from the Figma `style` axis.
@@ -19,7 +18,7 @@ export type ButtonVariant =
  *   - `outline`   — 1px border, transparent fill
  *   - `text`      — label only, lowest emphasis
  */
-export type ButtonAppearance = 'contained' | 'outline' | 'text';
+export type ButtonAppearance = ActionAppearance;
 
 /** Control height: `sm` = 32px, `md` = 40px, `lg` = 48px. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
