@@ -16,3 +16,11 @@
 
 export { NeofloThemeProvider } from './theme/ThemeProvider';
 export { neofloTheme } from './theme';
+
+export { Button } from './components/Button';
+export type {
+  ButtonAppearance,
+  ButtonProps,
+  ButtonSize,
+  ButtonVariant,
+} from './components/Button';

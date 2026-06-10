@@ -132,3 +132,15 @@ Currently `surface`, `border`, and `text` tokens are plain TypeScript exports. C
 To enable syntax like `sx={{ bgcolor: 'surface.primary.default' }}` with auto mode switching, the tokens need to be registered as custom CSS variables in the MUI theme. This requires module augmentation and a moderate amount of theme setup.
 
 **Confirm:** Should this be done now (before any components are built), or deferred until the first component that needs it?
+
+---
+
+## Components
+
+### 13. Button — width behaviour across sizes (added 10 June)
+The Button component set (node 983:17180) defines per-size **heights** (48 / 40 / 32px) and **vertical** padding, but the **horizontal** padding is the same 12px (`Scale/250`) for all three sizes. Every symbol in the Figma sheet is drawn at a fixed 165px width with both a start and end icon, so the buttons *look* uniformly wide on the artboard — but as implemented, button width is content-driven: a large button with a short label ("Large") renders narrower than a medium button with a longer label ("Medium").
+
+**Confirm:**
+- Is content-driven width with a uniform 12px horizontal padding the intended behaviour?
+- Or should horizontal padding scale with size (e.g. sm 12px / md 16px / lg 20px)?
+- Or should each size define a `minWidth` (the 165px in the sheet suggests one may exist)?
