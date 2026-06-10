@@ -1,14 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { Checkbox as MuiCheckbox, FormControlLabel } from '@mui/material';
+import { Checkbox as MuiCheckbox } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { fontWeights, icon, surface, text, typography } from '@/src/tokens';
+import { icon, surface } from '@/src/tokens';
 
 import { CheckSquare, MinusSquare, Square } from '@/src/icons';
 
 import { paired } from '../_shared/actionStyles';
+import { SelectorFormControlLabel } from '../_shared/SelectorLabel';
 
 import type { CheckboxProps } from './Checkbox.types';
 
@@ -29,19 +30,6 @@ const StyledCheckbox = styled(MuiCheckbox)(({ theme }) => ({
     color: surface.primary.default,
   }),
   '&.Mui-disabled': paired(theme, { color: icon.disabled.default }),
-}));
-
-const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
-  marginLeft: 0,
-  marginRight: 0,
-  '& .MuiFormControlLabel-label': {
-    fontFamily: theme.typography.fontFamily,
-    fontSize: typography.body.b1.size,
-    fontWeight: fontWeights.medium,
-    lineHeight: `${typography.body.b1.leading}px`,
-    ...paired(theme, { color: text.default.body }),
-    '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
-  },
 }));
 
 /**
@@ -80,7 +68,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
       return control;
     }
 
-    return <StyledFormControlLabel control={control} label={label} />;
+    return <SelectorFormControlLabel control={control} label={label} />;
   }
 );
 

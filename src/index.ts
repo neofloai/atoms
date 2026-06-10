@@ -49,3 +49,6 @@ export type {
 
 export { Checkbox } from './components/Checkbox';
 export type { CheckboxProps } from './components/Checkbox';
+
+export { Radio, RadioGroup } from './components/Radio';
+export type { RadioGroupProps, RadioProps } from './components/Radio';
