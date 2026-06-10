@@ -40,3 +40,9 @@ export type {
   ChipSize,
   ChipVariant,
 } from './components/Chip';
+
+export { TextField } from './components/TextField';
+export type {
+  TextFieldProps,
+  TextFieldStatus,
+} from './components/TextField';

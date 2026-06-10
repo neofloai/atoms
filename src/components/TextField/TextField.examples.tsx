@@ -1,0 +1,151 @@
+import type { ComponentExamplesData } from '@/src/types/docs';
+
+/**
+ * Docs + MCP data for `TextField`. Read by `scripts/generate.ts` and
+ * served through the MCP `get_component` tool and the docs site.
+ */
+export const data: ComponentExamplesData = {
+  name: 'TextField',
+  category: 'Inputs',
+  tagline:
+    'Text input with a static label, validation statuses, helper text, and single or multi-line entry.',
+  figmaUrl:
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=953-1059',
+  props: [
+    {
+      name: 'label',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        'Static label rendered above the field. Inherited from MUI.',
+    },
+    {
+      name: 'placeholder',
+      type: 'string',
+      default: '—',
+      description: 'Placeholder shown when the field is empty.',
+    },
+    {
+      name: 'status',
+      type: "'error' | 'success' | 'warning'",
+      default: '—',
+      description:
+        'Validation status. Colours the border and helper text; `error` also sets `aria-invalid`. Omit for the neutral state.',
+    },
+    {
+      name: 'helperText',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        'Supporting text below the field. Coloured by `status` when one is set.',
+    },
+    {
+      name: 'startAdornment',
+      type: 'ReactNode',
+      default: '—',
+      description: 'Element rendered at the start of the input.',
+    },
+    {
+      name: 'endAdornment',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        'Element rendered at the end of the input, e.g. a clear IconButton.',
+    },
+    {
+      name: 'multiline',
+      type: 'boolean',
+      default: 'false',
+      description: 'Renders a textarea instead of a single-line input.',
+    },
+    {
+      name: 'rows',
+      type: 'number',
+      default: '—',
+      description:
+        'Fixes the textarea height; overflowing content scrolls (Figma inflexible / scroll variants).',
+    },
+    {
+      name: 'minRows / maxRows',
+      type: 'number',
+      default: '—',
+      description:
+        'Lets the textarea grow with content between bounds (Figma flexible variant).',
+    },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      default: 'false',
+      description: 'Disables the field and applies disabled styling.',
+    },
+    {
+      name: 'fullWidth',
+      type: 'boolean',
+      default: 'false',
+      description: 'Stretches the field to the width of its container.',
+    },
+  ],
+  examples: [
+    {
+      title: 'Labelled field with helper text',
+      code: [
+        '<TextField',
+        '  label="Email"',
+        '  placeholder="you@neoflo.ai"',
+        '  helperText="Work email preferred"',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'Validation error',
+      code: [
+        '<TextField',
+        '  label="Amount"',
+        '  status="error"',
+        '  helperText="Amount is required"',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'Clearable field',
+      code: [
+        "import { X } from '@neoflo/atoms/icons';",
+        '',
+        '<TextField',
+        '  label="Search"',
+        '  endAdornment={',
+        '    <IconButton appearance="text" size="sm" aria-label="Clear" onClick={handleClear}>',
+        '      <X />',
+        '    </IconButton>',
+        '  }',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'Multi-line: grows with content',
+      code: '<TextField label="Notes" multiline minRows={3} maxRows={8} />',
+    },
+    {
+      title: 'Multi-line: fixed height, scrolls',
+      code: '<TextField label="Description" multiline rows={6} />',
+    },
+  ],
+  dos: [
+    'Always provide a `label` — use `aria-label` only when a visible label is impossible',
+    'Pair every `status` with a `helperText` explaining what to fix or confirm',
+    'Use `minRows`/`maxRows` for free-form text so the field grows with content',
+    'Keep helper text to one short sentence',
+  ],
+  donts: [
+    "Don't use placeholder text as a substitute for a label",
+    "Don't rely on border colour alone to communicate validation — set `helperText` too",
+    "Don't override the 2px border or 8px radius — they are part of the field identity",
+    "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended",
+  ],
+  relatedComponents: ['Button', 'IconButton'],
+  accessibility: [
+    '`status="error"` sets `aria-invalid` on the input',
+    'Helper text is associated with the input via `aria-describedby`',
+    'The static label stays visible at all times — no information is lost on focus',
+  ],
+};
