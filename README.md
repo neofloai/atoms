@@ -11,8 +11,19 @@ A Next.js-based design system that wraps Material UI v9 with Neoflo's brand, exp
 Atoms is **three things in one repo**:
 
 1. **A React component library** — engineers install `@neoflo/atoms` in their projects
-2. **A documentation website** — `atoms.neoflo.ai` — designers and engineers browse components, tokens, and patterns
-3. **An MCP endpoint** — `atoms.neoflo.ai/mcp` — AI editors query the design system before generating code
+2. **A documentation website** — [atoms.neoflo.ai](https://atoms.neoflo.ai) — designers and engineers browse components, tokens, and patterns
+3. **An MCP endpoint** — [atoms.neoflo.ai/mcp](https://atoms.neoflo.ai/mcp) — AI editors query the design system before generating code
+
+### Quick links
+
+| Resource | URL |
+| -------- | --- |
+| Repository | [github.com/neofloai/atoms](https://github.com/neofloai/atoms) |
+| Docs website | [atoms.neoflo.ai](https://atoms.neoflo.ai) |
+| Installation guide | [atoms.neoflo.ai/installation](https://atoms.neoflo.ai/installation) |
+| MCP endpoint guide | [atoms.neoflo.ai/mcp-guide](https://atoms.neoflo.ai/mcp-guide) |
+| Design tokens | [atoms.neoflo.ai/tokens](https://atoms.neoflo.ai/tokens) |
+| Icons | [atoms.neoflo.ai/icons](https://atoms.neoflo.ai/icons) |
 
 ---
 
@@ -24,7 +35,7 @@ Atoms is **three things in one repo**:
 | Language  | TypeScript 5                    |
 | UI base   | Material UI v9 React            |
 | Styling   | Emotion (via MUI default)       |
-| Icons     | @mui/icons-material             |
+| Icons     | @phosphor-icons/react           |
 | MCP SDK   | @modelcontextprotocol/sdk       |
 | Linting   | ESLint 9 + next/core-web-vitals |
 
@@ -102,7 +113,10 @@ atoms/
 │       ├── 10-mui-usage.mdc    # MUI integration rules
 │       ├── 20-tokens.mdc       # Token usage rules
 │       ├── 30-components.mdc   # Component authoring rules
-│       └── 40-docs.mdc         # Documentation rules
+│       ├── 40-nextjs.mdc       # Next.js App Router conventions
+│       ├── 50-docs.mdc         # Documentation rules
+│       ├── 60-mcp.mdc          # MCP server rules
+│       └── 70-code-style.mdc   # Code style guide
 │
 ├── CLAUDE.md                   # Guidelines for Claude Code users
 ├── package.json
@@ -123,7 +137,7 @@ atoms/
 ### Install
 
 ```bash
-git clone git@github.com:neoflo-ai/atoms.git
+git clone git@github.com:neofloai/atoms.git
 cd atoms
 npm install
 ```
@@ -148,6 +162,8 @@ npm run dev
 ---
 
 ## Connect from Cursor
+
+> Full guide with Claude Code instructions and the tool reference: [atoms.neoflo.ai/mcp-guide](https://atoms.neoflo.ai/mcp-guide)
 
 In **your product project** (not this repo), add `.cursor/mcp.json`:
 
@@ -184,8 +200,29 @@ Restart Cursor. Open the **MCP Servers** panel — "atoms" should appear with a 
 
 ## Installing Atoms in Product Projects
 
+> Full guide with CI/Docker auth and version pinning: [atoms.neoflo.ai/installation](https://atoms.neoflo.ai/installation)
+
+The package is not published to the public npm registry — it installs straight from the private GitHub repo (read access required):
+
 ```bash
-npm install @neoflo/atoms
+# SSH (recommended for local machines)
+npm install git+ssh://git@github.com/neofloai/atoms.git
+
+# Pin to a tag for reproducible builds
+npm install git+ssh://git@github.com/neofloai/atoms.git#v0.1.0
+```
+
+The package ships TypeScript source, so tell Next.js to compile it:
+
+```ts
+// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  transpilePackages: ["@neoflo/atoms"],
+};
+
+export default nextConfig;
 ```
 
 ```tsx
@@ -352,9 +389,9 @@ See `CLAUDE.md` for Claude Code specific guidelines.
 
 ## Need Help?
 
-- **Component not in Atoms?** — Raise an issue with the `component-request` label
+- **Component not in Atoms?** — [Raise an issue](https://github.com/neofloai/atoms/issues) with the `component-request` label
 - **MUI behaves oddly?** — Check [mui.com](https://mui.com) first, then ping #design-system on Slack
-- **MCP not connecting?** — Verify `npm run generate` ran, check `.cursor/mcp.json` URL
+- **MCP not connecting?** — Verify `npm run generate` ran, check `.cursor/mcp.json` URL, see the [MCP guide](https://atoms.neoflo.ai/mcp-guide)
 
 ---
 
