@@ -1,0 +1,141 @@
+---
+description: Rules for using and editing design tokens
+globs: ["src/tokens/**/*.ts", "src/theme/**/*.ts", "src/components/**/*.tsx"]
+---
+
+# Design Token Rules
+
+Tokens live in `src/tokens/` and are the **single source of truth** for every visual value in the design system.
+
+## Token categories
+
+| File | What it contains |
+|------|-----------------|
+| `colors.ts` | Brand, semantic (success/warning/error/info), and gray scales |
+| `typography.ts` | Font families, sizes, weights, line-heights |
+| `spacing.ts` | Spacing scale (multiplied by base 8px) |
+| `radius.ts` | Border-radius values |
+| `shadows.ts` | Box-shadow elevations |
+
+## Adding or updating tokens
+
+1. Update the token in `src/tokens/<category>.ts`
+2. Update `src/theme/index.ts` if the token name changed (rare)
+3. Run `npm run generate` to refresh MCP data
+4. No component changes needed — they reference theme keys, not raw values
+
+## Hardcoded values are NEVER allowed
+
+Anywhere in `src/`, you must use tokens through the theme. The CI lints for this.
+
+### ❌ Forbidden patterns
+
+```tsx
+// Hardcoded hex
+<Box sx={{ color: '#3B82F6' }} />
+
+// Hardcoded pixels
+<Box sx={{ padding: '16px', marginTop: '24px' }} />
+
+// Hardcoded font sizes
+<Typography sx={{ fontSize: '14px' }} />
+
+// Hardcoded shadows
+<Box sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+
+// Hardcoded radius
+<Box sx={{ borderRadius: '8px' }} />
+```
+
+### ✅ Correct patterns
+
+```tsx
+// Color via theme palette key
+<Box sx={{ color: 'primary.main' }} />
+<Box sx={{ color: 'error.main' }} />
+<Box sx={{ color: 'text.secondary' }} />
+
+// Spacing via theme multiplier (p: 2 = theme.spacing(2) = 16px)
+<Box sx={{ p: 2, mt: 3 }} />
+
+// Typography via variant
+<Typography variant="body2" />
+
+// Shadows via elevation
+<Paper elevation={1} />
+
+// Radius via theme.shape (default) or component-specific override
+<Box sx={{ borderRadius: 1 }} />  // theme.shape.borderRadius
+```
+
+## How sx prop spacing works
+
+MUI's spacing is **multiplier-based**, not pixel-based:
+
+```tsx
+// theme.spacing(n) returns `${n * 8}px` by default
+
+p: 0     // 0px
+p: 0.5   // 4px
+p: 1     // 8px
+p: 2     // 16px
+p: 3     // 24px
+p: 4     // 32px
+
+// Shorthand props:
+m, mt, mr, mb, ml, mx, my   // margin
+p, pt, pr, pb, pl, px, py   // padding
+```
+
+## How theme palette references work
+
+MUI's palette has predefined keys you reference as strings in `sx`:
+
+```tsx
+// Brand
+'primary.main', 'primary.light', 'primary.dark', 'primary.contrastText'
+'secondary.main', 'secondary.light', 'secondary.dark'
+
+// Semantic
+'error.main', 'warning.main', 'info.main', 'success.main'
+
+// Text
+'text.primary', 'text.secondary', 'text.disabled'
+
+// Backgrounds
+'background.default', 'background.paper'
+
+// Greys
+'grey.50', 'grey.100', ..., 'grey.900'
+
+// Divider
+'divider'
+```
+
+## Custom token access (when sx isn't enough)
+
+```tsx
+// In a styled component
+import { styled } from '@mui/material/styles';
+const Wrapper = styled('div')(({ theme }) => ({
+  color: theme.palette.primary.main,
+  padding: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+}));
+
+// In a regular component with useTheme
+import { useTheme } from '@mui/material/styles';
+const Component = () => {
+  const theme = useTheme();
+  return <div style={{ color: theme.palette.primary.main }} />;
+};
+```
+
+## Token deprecation
+
+If you need to deprecate a token:
+
+1. Mark it `@deprecated` in the source with JSDoc
+2. Keep it exported for 1 minor version (so consumers can migrate)
+3. Add a console warning in dev mode if it's actively used
+4. Remove in the next major version

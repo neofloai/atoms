@@ -1,0 +1,167 @@
+---
+description: Standards for authoring components in src/components/
+globs: ["src/components/**/*.tsx", "src/components/**/*.ts"]
+---
+
+# Component Authoring Rules
+
+## File structure — strict
+
+Every component lives in its own folder under `src/components/`:
+
+```
+src/components/Button/
+├── Button.tsx           # The component (wraps MUI)
+├── Button.types.ts      # TypeScript interfaces
+├── Button.examples.tsx  # Code examples for docs + MCP
+└── index.ts             # Re-exports for clean imports
+```
+
+The folder name matches the component name (PascalCase). The `index.ts` re-exports everything:
+
+```tsx
+// src/components/Button/index.ts
+export { Button } from './Button';
+export type { ButtonProps } from './Button.types';
+```
+
+## TypeScript rules
+
+- **Always export the props interface.** Consumers need to extend it.
+- **Use `Omit` when extending MUI props** to remove props we're remapping:
+  ```tsx
+  interface ButtonProps extends Omit<MuiButtonProps, 'variant' | 'size' | 'color'> {
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+    size?: 'sm' | 'md' | 'lg';
+  }
+  ```
+- **Use string literal unions** for variant props, not enums.
+- **Use `React.forwardRef`** for components that wrap interactive MUI elements (Button, TextField, etc.) so refs work correctly.
+
+## Component implementation rules
+
+### 1. Wrap, never reimplement
+
+```tsx
+// ❌ Wrong — reimplementing from scratch
+export const Button = (props) => (
+  <button style={{ padding: '8px 16px', background: '#3B82F6' }}>
+    {props.children}
+  </button>
+);
+
+// ✅ Right — wrap MUI
+import { Button as MuiButton } from '@mui/material';
+export const Button = ({ variant = 'primary', ...props }: ButtonProps) => (
+  <MuiButton {...variantMap[variant]} {...props} />
+);
+```
+
+### 2. Sensible defaults
+
+Every variant/size prop must have a default:
+
+```tsx
+export const Button = ({
+  variant = 'primary',   // ✅ has default
+  size = 'md',            // ✅ has default
+  ...props
+}: ButtonProps) => { /* ... */ };
+```
+
+### 3. Always set `displayName`
+
+```tsx
+Button.displayName = 'Button';
+```
+
+This makes React DevTools and error messages readable.
+
+### 4. JSDoc the component
+
+```tsx
+/**
+ * Primary action component. Use for all clickable actions.
+ *
+ * @example
+ * <Button variant="primary" size="md">Submit</Button>
+ *
+ * @example
+ * <Button variant="destructive">Delete</Button>
+ */
+export const Button = (...) => { /* ... */ };
+```
+
+The MCP generator reads JSDoc and includes it in `get_component` responses.
+
+## Examples file — required
+
+Every component must have a `<ComponentName>.examples.tsx` file:
+
+```tsx
+// Button.examples.tsx
+export const examples = [
+  {
+    title: 'Primary button',
+    code: '<Button variant="primary" size="md">Submit</Button>',
+  },
+  {
+    title: 'Destructive action',
+    code: '<Button variant="destructive">Delete account</Button>',
+  },
+  {
+    title: 'Loading state',
+    code: '<Button loading>Processing...</Button>',
+  },
+];
+
+export const dos = [
+  'Use `primary` for the main CTA on a page (one per section)',
+  'Use `destructive` for irreversible actions',
+];
+
+export const donts = [
+  'Don\'t use multiple `primary` buttons in the same section',
+  'Don\'t use `destructive` for cancel actions',
+];
+```
+
+The MCP generator reads these and serves them via `get_component`. They also appear on the docs site.
+
+## Public exports
+
+After creating a component, add it to `src/index.ts`:
+
+```tsx
+// src/index.ts
+export { Button } from './components/Button';
+export type { ButtonProps } from './components/Button';
+
+export { TextField } from './components/TextField';
+export type { TextFieldProps } from './components/TextField';
+
+// ... etc
+```
+
+The MCP server only knows about components exported from `src/index.ts`.
+
+## Naming conventions
+
+- **Components:** PascalCase (`Button`, `TextField`, `MetricCard`)
+- **Files:** Match component name (`Button.tsx`, not `button.tsx`)
+- **Props interfaces:** `<ComponentName>Props` (`ButtonProps`, `TextFieldProps`)
+- **Variant names:** lowercase, semantic (`primary`, `destructive`, not `blue`, `red`)
+- **Size names:** abbreviated (`sm`, `md`, `lg`) — never `small`/`medium`/`large` in our API (MUI uses long form internally; we map)
+
+## Client vs Server components
+
+Atoms components are **always client components**. They use MUI which requires React context:
+
+```tsx
+'use client';
+
+import { Button as MuiButton } from '@mui/material';
+// ...
+```
+
+If you forget `'use client'`, MUI will throw a "Context not found" error at runtime.

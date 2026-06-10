@@ -1,0 +1,125 @@
+---
+description: How to use MUI v9 correctly when building Atoms components
+globs: ["src/components/**/*.tsx", "src/theme/**/*.ts"]
+---
+
+# MUI v9 Usage Rules
+
+## Before building any component
+
+1. **Check MUI first.** Visit https://mui.com/material-ui/all-components/ — if MUI has the component, wrap it.
+2. **Check MUI X.** For complex components (DataGrid, DatePicker, Charts), MUI X has them. We use the free tier.
+3. **Only build custom when MUI has nothing.** Document this in the component's JSDoc.
+
+## Wrapping pattern
+
+Every component follows this exact structure:
+
+```tsx
+// src/components/Button/Button.tsx
+import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
+import { ButtonProps } from './Button.types';
+
+// Map Neoflo API → MUI API
+const variantMap: Record<NonNullable<ButtonProps['variant']>, Pick<MuiButtonProps, 'variant' | 'color'>> = {
+  primary: { variant: 'contained', color: 'primary' },
+  secondary: { variant: 'contained', color: 'secondary' },
+  outline: { variant: 'outlined', color: 'primary' },
+  ghost: { variant: 'text', color: 'primary' },
+  destructive: { variant: 'contained', color: 'error' },
+};
+
+const sizeMap = { sm: 'small', md: 'medium', lg: 'large' } as const;
+
+export const Button = ({ variant = 'primary', size = 'md', ...props }: ButtonProps) => (
+  <MuiButton {...variantMap[variant]} size={sizeMap[size]} {...props} />
+);
+
+Button.displayName = 'Button';
+```
+
+## MUI v9 specifics — IMPORTANT
+
+- **Use the `slots` and `slotProps` API**, not the deprecated `TransitionComponent` / `TransitionProps` patterns (v6 deprecated, v7 standardized).
+- **Use `Grid` (the new one)**, not `GridLegacy`. The deprecated v1 Grid was renamed to `GridLegacy` in v7.
+- **Use `createTheme`**, not `createMuiTheme` (removed in v7).
+- **Use `size="medium"`**, not `size="normal"` for InputLabel (renamed in v7).
+- **Avoid deep imports.** Use named imports from `@mui/material`, not `@mui/material/styles/createTheme`.
+  ```tsx
+  // ❌ Wrong (broken in v7+)
+  import createTheme from '@mui/material/styles/createTheme';
+
+  // ✅ Right
+  import { createTheme } from '@mui/material/styles';
+  ```
+
+## Theme configuration
+
+The theme is defined in `src/theme/index.ts` and built from tokens:
+
+```tsx
+import { createTheme } from '@mui/material/styles';
+import { colors, typography, spacing } from '../tokens';
+
+export const neofloTheme = createTheme({
+  palette: {
+    primary: { main: colors.primary[500], dark: colors.primary[700], light: colors.primary[300] },
+    error: { main: colors.destructive[500] },
+    success: { main: colors.success[500] },
+    // ...
+  },
+  typography: {
+    fontFamily: typography.fontFamily.sans,
+    button: { textTransform: 'none' }, // Override MUI's uppercase default
+    // ...
+  },
+  shape: { borderRadius: 6 },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: { fontWeight: 500 },
+      },
+      defaultProps: { disableElevation: true },
+    },
+    // ... other component overrides
+  },
+});
+```
+
+## When extending MUI props
+
+Always `Omit` the MUI props we're remapping, then add Neoflo's API:
+
+```tsx
+// Button.types.ts
+import { ButtonProps as MuiButtonProps } from '@mui/material';
+
+export interface ButtonProps extends Omit<MuiButtonProps, 'variant' | 'size' | 'color'> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+}
+```
+
+## Custom styling
+
+When you need styles beyond what theme overrides cover, use the `sx` prop or `styled()`:
+
+```tsx
+// ✅ Theme tokens via sx
+<Box sx={{ p: 2, color: 'primary.main', bgcolor: 'background.paper' }} />
+
+// ✅ styled() for reusable variants
+import { styled } from '@mui/material/styles';
+const StyledCard = styled(Card)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius * 2,
+  padding: theme.spacing(3),
+}));
+```
+
+Never write a `.css` file or use inline `style={{}}`. Always go through MUI's styling system.
+
+## Next.js + MUI integration
+
+- The root layout uses `AppRouterCacheProvider` from `@mui/material-nextjs/v15-appRouter` for SSR cache.
+- `'use client'` is required for any component that uses MUI components (they rely on React context).
+- Server components can render layout primitives (`Box` as a div) but cannot render interactive MUI components directly.

@@ -1,0 +1,53 @@
+---
+description: Core architecture rules for the Atoms design system repo
+alwaysApply: true
+---
+
+# Atoms — Core Architecture Rules
+
+You are working in the **Atoms repo** — Neoflo's design system. This repo wraps Material UI v9 to produce locked, branded React components that other Neoflo projects install via npm.
+
+## What this repo does
+
+This single repo produces three outputs:
+1. **An npm package** (`@neoflo/atoms`) — wrapper components built on MUI v9
+2. **A docs website** (atoms.neoflo.ai) — Next.js 16 App Router site
+3. **An MCP endpoint** (atoms.neoflo.ai/mcp) — exposes design system to AI editors
+
+## Tech stack — DO NOT change without approval
+
+- **Next.js 16** with App Router (not Pages Router)
+- **React 19**
+- **TypeScript 5** with strict mode
+- **MUI v9** (`@mui/material@^9.0.1`) as the base UI library
+- **Emotion** as the styling engine (MUI default — do not switch to styled-components or Pigment CSS)
+- **@mui/material-nextjs** for Next.js integration (handles SSR + cache)
+
+## Core principles
+
+1. **Wrap, don't rewrite.** Every Neoflo component wraps an MUI component. We never reimplement what MUI already provides.
+2. **Neoflo API on the outside, MUI API on the inside.** Consumers of `@neoflo/atoms` should never see MUI prop names like `variant="contained"`. They see `variant="primary"`.
+3. **Theme over inline styles.** All visual values come from the MUI theme built from `src/tokens/`. Never hardcode colors, spacing, or typography.
+4. **Generate, don't hand-author MCP data.** The `data/*.json` files are produced by `npm run generate`. Never edit them by hand.
+
+## Directory ownership
+
+| Path | What goes here |
+|------|----------------|
+| `src/components/` | Wrapper components (Neoflo API) |
+| `src/tokens/` | Raw design token values |
+| `src/theme/` | MUI theme built from tokens |
+| `src/patterns/` | Page layout recipes |
+| `src/mcp/` | MCP server logic |
+| `app/` | Next.js docs website routes |
+| `app/mcp/route.ts` | MCP HTTP endpoint handler |
+| `scripts/generate.ts` | Data generator (reads src/, writes data/) |
+| `data/` | Auto-generated — never edit |
+
+## What NOT to do
+
+- ❌ Don't add new top-level dependencies without confirming with the user
+- ❌ Don't write CSS files or use CSS modules — use MUI's `sx` prop or `styled()`
+- ❌ Don't import from `@mui/material` in consumer-facing files — only inside `src/components/` and `src/theme/`
+- ❌ Don't use Pages Router (`pages/` directory) — this is App Router only
+- ❌ Don't downgrade MUI, React, or Next.js

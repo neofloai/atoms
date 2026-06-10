@@ -1,0 +1,395 @@
+---
+description: Code style and quality rules enforced across the entire codebase
+alwaysApply: true
+---
+
+# Code Style Rules
+
+These rules apply to ALL code in this repo — components, MCP server, scripts, docs site. They are non-negotiable.
+
+## No emojis in code
+
+Never use emojis anywhere in:
+- Component source code (`src/components/`, `src/mcp/`, `src/theme/`, etc.)
+- TypeScript types or interfaces
+- Variable names, function names, file names
+- JSDoc comments
+- Code comments (inline `//` or block `/* */`)
+- Console logs (use plain text)
+- Error messages
+- Commit messages
+- Pull request titles/descriptions
+
+Emojis are acceptable ONLY in:
+- README.md (sparingly, for visual section headers)
+- Marketing-facing documentation
+- Example data shown in MCP responses (status indicators in user-facing strings)
+
+```tsx
+// ❌ Wrong
+console.log('✅ Generated data files');
+const isLoading = true; // 🔄 loading state
+
+// ✅ Right
+console.log('Generated data files');
+const isLoading = true; // Loading state
+```
+
+## TypeScript
+
+### Strict mode is mandatory
+
+`tsconfig.json` must have `"strict": true`. Do not disable strict checks.
+
+### No `any` type
+
+```tsx
+// ❌ Wrong
+function process(data: any) { /* ... */ }
+
+// ✅ Right
+function process(data: unknown) { /* ... */ }
+function process<T>(data: T) { /* ... */ }
+```
+
+If you absolutely need `any`, use `unknown` and narrow with type guards. If you truly cannot type something, leave a comment explaining why.
+
+### Prefer interfaces for object shapes, types for unions
+
+```tsx
+// Object shapes → interface
+interface ButtonProps {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+}
+
+// Unions, intersections, primitives → type
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+type ButtonSize = 'sm' | 'md' | 'lg';
+```
+
+### Explicit return types on exported functions
+
+```tsx
+// ❌ Wrong
+export function getComponent(name: string) { /* ... */ }
+
+// ✅ Right
+export function getComponent(name: string): ComponentData | null { /* ... */ }
+```
+
+### No `enum` — use const objects
+
+```tsx
+// ❌ Wrong
+enum Status { Active, Inactive, Pending }
+
+// ✅ Right
+export const Status = {
+  Active: 'active',
+  Inactive: 'inactive',
+  Pending: 'pending',
+} as const;
+export type Status = (typeof Status)[keyof typeof Status];
+```
+
+## Naming conventions
+
+| What | Convention | Example |
+|------|-----------|---------|
+| Components | PascalCase | `Button`, `MetricCard` |
+| Component files | PascalCase | `Button.tsx` |
+| Hooks | camelCase, `use` prefix | `useTheme`, `useTokens` |
+| Utility functions | camelCase | `formatCurrency`, `getComponent` |
+| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES`, `DEFAULT_SIZE` |
+| Types/Interfaces | PascalCase | `ButtonProps`, `TokenData` |
+| Boolean variables | `is`/`has`/`should` prefix | `isLoading`, `hasError`, `shouldRender` |
+| Event handlers | `handle` prefix | `handleClick`, `handleChange` |
+| Event prop names | `on` prefix | `onClick`, `onChange` |
+
+## Imports
+
+### Order matters
+
+```tsx
+// 1. React / Next.js
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+
+// 2. External packages
+import { Button as MuiButton } from '@mui/material';
+import { z } from 'zod';
+
+// 3. Internal absolute imports (@/)
+import { neofloTheme } from '@/src/theme';
+import { tokens } from '@/src/tokens';
+
+// 4. Relative imports
+import { ButtonProps } from './Button.types';
+
+// 5. Type-only imports (last group, marked with `type`)
+import type { ReactNode } from 'react';
+```
+
+### No deep MUI imports
+
+```tsx
+// ❌ Wrong (breaks in MUI v7+)
+import createTheme from '@mui/material/styles/createTheme';
+
+// ✅ Right
+import { createTheme } from '@mui/material/styles';
+```
+
+### Use named imports
+
+```tsx
+// ❌ Avoid default exports for components (except Next.js pages)
+export default function Button() { /* ... */ }
+
+// ✅ Use named exports
+export function Button() { /* ... */ }
+export { Button };
+```
+
+Exception: Next.js `page.tsx`, `layout.tsx`, `route.ts` files require default exports.
+
+## React patterns
+
+### Functional components only
+
+No class components anywhere.
+
+### Always use `React.forwardRef` for wrapper components
+
+If the wrapped MUI component accepts a ref, the wrapper must forward it:
+
+```tsx
+// ✅ Right
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'primary', ...props }, ref) => (
+    <MuiButton ref={ref} {...variantMap[variant]} {...props} />
+  )
+);
+Button.displayName = 'Button';
+```
+
+### Always set `displayName`
+
+For all components (including those using `forwardRef`):
+
+```tsx
+Button.displayName = 'Button';
+```
+
+### Props destructuring
+
+Destructure props in the function signature, not the body:
+
+```tsx
+// ❌ Avoid
+function Button(props: ButtonProps) {
+  const variant = props.variant ?? 'primary';
+  // ...
+}
+
+// ✅ Prefer
+function Button({ variant = 'primary', size = 'md', ...rest }: ButtonProps) {
+  // ...
+}
+```
+
+### `'use client'` directive
+
+Required at the top of any file using:
+- MUI components (most of them)
+- React hooks (`useState`, `useEffect`, etc.)
+- Event handlers
+- Browser APIs
+
+```tsx
+'use client';
+
+import { Button as MuiButton } from '@mui/material';
+// ...
+```
+
+## Comments
+
+### When to comment
+
+- Explain **why**, not what
+- Document non-obvious business rules
+- Explain workarounds for library bugs (link to issue)
+- Mark `TODO` with a tracking ticket: `// TODO(ATOMS-123): fix race condition`
+
+### When NOT to comment
+
+```tsx
+// ❌ Useless — code is self-explanatory
+// Increment counter
+counter++;
+
+// ❌ Stale comments — code says one thing, comment says another
+// Returns user name
+function getUserId() { return user.id; }
+```
+
+### JSDoc on public APIs
+
+Every exported component, function, and type must have JSDoc:
+
+```tsx
+/**
+ * Primary action component for clickable actions.
+ *
+ * @example
+ * <Button variant="primary">Submit</Button>
+ */
+export const Button = (...) => { /* ... */ };
+```
+
+## Error handling
+
+### Throw `Error` objects, not strings
+
+```tsx
+// ❌ Wrong
+throw 'Component not found';
+
+// ✅ Right
+throw new Error('Component not found');
+```
+
+### Use Error subclasses for known error types
+
+```tsx
+class ComponentNotFoundError extends Error {
+  constructor(name: string) {
+    super(`Component "${name}" not found`);
+    this.name = 'ComponentNotFoundError';
+  }
+}
+
+throw new ComponentNotFoundError(componentName);
+```
+
+### Never silently swallow errors
+
+```tsx
+// ❌ Wrong
+try {
+  await doSomething();
+} catch {}
+
+// ✅ Right
+try {
+  await doSomething();
+} catch (error) {
+  console.error('Failed to do something:', error);
+  throw error; // or handle it meaningfully
+}
+```
+
+## Async code
+
+### Always use `async`/`await`, never raw `.then()`
+
+```tsx
+// ❌ Avoid
+function loadData() {
+  return fetch('/api').then(r => r.json()).then(data => process(data));
+}
+
+// ✅ Prefer
+async function loadData() {
+  const response = await fetch('/api');
+  const data = await response.json();
+  return process(data);
+}
+```
+
+### Mark async functions with explicit return types
+
+```tsx
+async function getComponent(name: string): Promise<ComponentData | null> {
+  // ...
+}
+```
+
+## File organization
+
+### One component per file
+
+Each file exports one main component. Helper components used only by that main component can live in the same file but should not be exported.
+
+### File size limit
+
+If a file exceeds **300 lines**, split it. Components, types, examples, and styled-elements should be in separate files.
+
+## Console statements
+
+### Strip console.log before merging
+
+`console.log` is not allowed in committed code. Use during development, then remove.
+
+`console.error` is allowed for genuine error reporting.
+`console.warn` is allowed for deprecation warnings or non-critical issues.
+
+```tsx
+// ❌ Wrong (in committed code)
+console.log('User clicked button');
+
+// ✅ Right
+console.error('Failed to load component data:', error);
+console.warn('Button prop "color" is deprecated. Use "variant" instead.');
+```
+
+## ESLint compliance
+
+The repo uses `eslint-config-next` with strict rules. Run `npm run lint` before pushing. Do not disable ESLint rules with `// eslint-disable-next-line` unless absolutely necessary, and always include a reason:
+
+```tsx
+// ❌ Wrong
+// eslint-disable-next-line
+const x = anyValue;
+
+// ✅ Right (if truly necessary)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Required for third-party API typing
+const x: any = thirdPartyApi.getData();
+```
+
+## Git commit messages
+
+Follow Conventional Commits format:
+
+```
+<type>(<scope>): <subject>
+
+<optional body>
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+Examples:
+```
+feat(button): add destructive variant
+fix(textfield): correct error state border color
+docs(readme): update installation steps
+refactor(theme): extract palette into separate file
+chore(deps): bump @mui/material to 9.0.2
+```
+
+## Pre-merge checklist
+
+Before every PR is ready to merge:
+
+- [ ] No emojis in any code file
+- [ ] No `any` types added
+- [ ] All exported functions have explicit return types
+- [ ] All components have `displayName` set
+- [ ] All `'use client'` directives are in place for interactive components
+- [ ] No `console.log` statements
+- [ ] `npm run lint` passes
+- [ ] `npm run generate` was run if components/tokens changed
+- [ ] JSDoc added to new exported APIs

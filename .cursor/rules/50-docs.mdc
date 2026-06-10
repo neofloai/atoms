@@ -1,0 +1,165 @@
+---
+description: Documentation standards for components, tokens, and patterns
+globs: ["src/components/**/*.examples.tsx", "app/(docs)/**/*.tsx"]
+---
+
+# Documentation Rules
+
+Every component needs three layers of documentation:
+
+1. **JSDoc on the component** — for IDE hover hints and the MCP `get_component` response
+2. **`<ComponentName>.examples.tsx`** — code examples + do's/don'ts
+3. **Docs page** under `app/(docs)/components/[slug]/page.tsx`
+
+## JSDoc standard
+
+```tsx
+/**
+ * Brief one-line description of what the component does.
+ *
+ * More detailed description if needed — when to use it, when not to,
+ * what problem it solves.
+ *
+ * @example Primary action
+ * <Button variant="primary">Submit</Button>
+ *
+ * @example Destructive action
+ * <Button variant="destructive">Delete</Button>
+ *
+ * @see Related: TextField, IconButton
+ */
+export const Button = (...) => { /* ... */ };
+```
+
+## Examples file format
+
+```tsx
+// src/components/Button/Button.examples.tsx
+import { ButtonExamplesData } from '@/src/types/docs';
+
+export const data: ButtonExamplesData = {
+  // Concise one-liner shown on cards / search results
+  tagline: 'Primary action component for all clickable actions.',
+
+  // Code examples — render in docs + serve via MCP
+  examples: [
+    {
+      title: 'Primary button',
+      description: 'The main CTA on a page',
+      code: `<Button variant="primary" size="md">Submit</Button>`,
+    },
+    {
+      title: 'Destructive button',
+      description: 'For delete or destructive actions',
+      code: `<Button variant="destructive">Delete account</Button>`,
+    },
+    {
+      title: 'Loading state',
+      code: `<Button loading>Processing...</Button>`,
+    },
+  ],
+
+  // Do's — what TO do
+  dos: [
+    'Use `primary` for the main CTA on a page (one per section)',
+    'Use `destructive` for irreversible actions (delete, remove)',
+    'Use `outline` or `ghost` for secondary actions',
+  ],
+
+  // Don'ts — what NOT to do
+  donts: [
+    'Don\'t use multiple `primary` buttons in the same section',
+    'Don\'t use `destructive` for cancel/dismiss actions',
+    'Don\'t hardcode button colors — use the variant prop',
+  ],
+
+  // Related components
+  relatedComponents: ['IconButton', 'ButtonGroup'],
+
+  // Optional: accessibility notes
+  accessibility: [
+    'Always provide visible text or aria-label for icon-only buttons',
+    'Disabled buttons announce their state to screen readers',
+  ],
+};
+```
+
+## Writing do's and don'ts
+
+Good do's/don'ts are **specific and actionable**:
+
+```
+✅ Good: "Use `primary` for the main CTA on a page (one per section)"
+❌ Bad: "Use buttons correctly"
+
+✅ Good: "Don't use placeholder as a replacement for label"
+❌ Bad: "Don't misuse the input"
+```
+
+Frame don'ts as **what not to do**, not as warnings:
+
+```
+✅ "Don't create custom button components — extend this one"
+❌ "Warning: custom buttons may cause inconsistency"
+```
+
+## Code examples — style guide
+
+- **Self-contained.** Each example should run on its own (no missing imports or undefined state).
+- **Realistic.** Use real labels like "Submit", "Delete account", "Send invite" — not "Click me" or "Button".
+- **Show props.** Examples should demonstrate the prop being explained.
+- **No unused props.** Don't add `size="md"` if it's the default.
+
+```tsx
+// ✅ Good — shows the variant prop
+<Button variant="destructive">Delete account</Button>
+
+// ❌ Bad — generic text and unnecessary props
+<Button variant="primary" size="md" disabled={false}>Click me</Button>
+```
+
+## Docs pages
+
+Each component has a page at `app/(docs)/components/[slug]/page.tsx` that imports from the examples file:
+
+```tsx
+// app/(docs)/components/button/page.tsx
+import { data } from '@/src/components/Button/Button.examples';
+import { ComponentDocsLayout } from '@/app/_components/ComponentDocsLayout';
+
+export default function ButtonDocsPage() {
+  return <ComponentDocsLayout componentName="Button" {...data} />;
+}
+```
+
+The `ComponentDocsLayout` is shared and handles:
+- Component preview (live rendered)
+- Props table (auto-generated from TypeScript)
+- Code examples with copy button
+- Do's and don'ts
+- Related components
+
+## Pattern documentation
+
+Patterns (in `src/patterns/`) are documented as full code files, not example snippets:
+
+```tsx
+// src/patterns/dashboard/dashboard.tsx
+/**
+ * Dashboard pattern — Standard Neoflo dashboard layout.
+ *
+ * Top action bar + 3-column metric cards + data table below.
+ * Responsive: collapses to 1-column on mobile.
+ *
+ * @pattern dashboard
+ */
+export function DashboardPattern() {
+  return (
+    <Box sx={{ p: 4 }}>
+      {/* ... full layout ... */}
+    </Box>
+  );
+}
+```
+
+The MCP `get_pattern` tool returns this full code.

@@ -1,6 +1,20 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
+import {
+  border,
+  colors,
+  elevation,
+  fontFamilies,
+  fontWeights,
+  icon,
+  radius,
+  spacing,
+  surface,
+  text,
+  typography,
+} from '../src/tokens';
+
 /**
  * Generates the JSON payloads consumed by the MCP server and docs site.
  *
@@ -8,9 +22,9 @@ import path from 'node:path';
  * writes the canonical shape to `data/*.json`. Never edit those files
  * by hand — re-run `npm run generate` instead.
  *
- * This is a minimal scaffold: it writes empty manifests so the rest of
- * the toolchain (loader, route, docs pages) can be wired up against a
- * real on-disk contract before any components exist.
+ * Tokens are emitted from `src/tokens/`. Component and pattern
+ * extraction lands as `*.examples.tsx` files and patterns are added;
+ * until then their manifests are empty but structurally valid.
  */
 
 const ROOT = path.resolve(__dirname, '..');
@@ -42,7 +56,20 @@ async function main(): Promise<void> {
   const generatedAt = new Date().toISOString();
 
   const components: ComponentManifest = { generatedAt, components: [] };
-  const tokens: TokenManifest = { generatedAt, tokens: {} };
+  const tokens: TokenManifest = {
+    generatedAt,
+    tokens: {
+      colors,
+      surface,
+      border,
+      text,
+      icon,
+      spacing,
+      typography: { fontFamilies, fontWeights, scale: typography },
+      elevation,
+      radius,
+    },
+  };
   const patterns: PatternManifest = { generatedAt, patterns: [] };
 
   await Promise.all([

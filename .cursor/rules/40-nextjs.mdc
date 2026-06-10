@@ -1,0 +1,157 @@
+---
+description: Next.js App Router conventions for the docs website and MCP endpoint
+globs: ["app/**/*.tsx", "app/**/*.ts", "next.config.ts"]
+---
+
+# Next.js Conventions
+
+## App Router only
+
+This repo uses **Next.js 16 App Router**. Do not create a `pages/` directory — Pages Router is forbidden.
+
+```
+app/
+├── layout.tsx           # Root layout (server component)
+├── (docs)/              # Route group for docs website
+│   ├── page.tsx
+│   ├── components/
+│   │   ├── page.tsx
+│   │   └── [slug]/page.tsx
+│   ├── tokens/page.tsx
+│   └── patterns/page.tsx
+├── mcp/
+│   └── route.ts         # MCP HTTP endpoint (Route Handler)
+└── globals.css
+```
+
+## Root layout
+
+Must include `AppRouterCacheProvider` from `@mui/material-nextjs/v15-appRouter` and the Neoflo theme:
+
+```tsx
+// app/layout.tsx
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { neofloTheme } from '@/src/theme';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={neofloTheme}>
+            <CssBaseline />
+            {children}
+          </ThemeProvider>
+        </AppRouterCacheProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+## MCP endpoint as Route Handler
+
+The MCP endpoint is a Next.js Route Handler:
+
+```tsx
+// app/mcp/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { handleMcpRequest } from '@/src/mcp/server';
+
+export async function POST(req: NextRequest) {
+  // Optional: auth check
+  const auth = req.headers.get('authorization');
+  if (process.env.NODE_ENV === 'production') {
+    if (auth !== `Bearer ${process.env.MCP_TOKEN}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+
+  const body = await req.json();
+  const result = await handleMcpRequest(body);
+  return NextResponse.json(result);
+}
+
+// Allow GET for health checks
+export async function GET() {
+  return NextResponse.json({ status: 'ok', name: 'neoflo-atoms-mcp' });
+}
+```
+
+## Server vs Client components
+
+- **Default to server components** for docs pages (`app/(docs)/**`). Better performance.
+- **Mark as `'use client'`** when:
+  - Using `useState`, `useEffect`, or other hooks
+  - Using interactive MUI components (most of them)
+  - Using event handlers
+  - Using browser APIs
+
+```tsx
+// ✅ Server component (default)
+export default async function ComponentDocsPage({ params }: { params: { slug: string } }) {
+  const data = await fetch(`/data/components/${params.slug}.json`);
+  return <ComponentDocsView data={data} />;
+}
+
+// ✅ Client component (separate file)
+'use client';
+export function ComponentDocsView({ data }: Props) {
+  const [tab, setTab] = useState(0);
+  return <Tabs value={tab} onChange={(_, v) => setTab(v)}>...</Tabs>;
+}
+```
+
+## Imports
+
+Use the `@/` alias for absolute imports from the project root:
+
+```tsx
+// ✅ Right
+import { Button } from '@/src/components/Button';
+import { neofloTheme } from '@/src/theme';
+
+// ❌ Avoid for deep imports
+import { Button } from '../../../src/components/Button';
+```
+
+## Data fetching
+
+Read `data/*.json` directly in server components — no API route needed:
+
+```tsx
+// app/(docs)/components/page.tsx
+import componentsData from '@/data/components.json';
+
+export default function ComponentsPage() {
+  return (
+    <div>
+      {Object.values(componentsData).map(component => (
+        <ComponentCard key={component.name} {...component} />
+      ))}
+    </div>
+  );
+}
+```
+
+## Environment variables
+
+- Public vars: prefix with `NEXT_PUBLIC_` (exposed to browser)
+- Server-only vars: no prefix (only available in server components and route handlers)
+- Required env vars must be documented in `.env.example`
+
+```
+# .env.local
+MCP_TOKEN=<internal-shared-secret>
+NEXT_PUBLIC_DOCS_URL=https://atoms.neoflo.ai
+```
+
+## Forbidden patterns
+
+- ❌ No `getServerSideProps` or `getStaticProps` (Pages Router only)
+- ❌ No `<Link>` from `next/link` for external URLs — use `<a>` with `target="_blank" rel="noreferrer"`
+- ❌ No `next/image` for icons or SVGs — use `@mui/icons-material` instead
+- ❌ No mixing Pages and App routing
+- ❌ No client-side data fetching for docs content — it's all static
