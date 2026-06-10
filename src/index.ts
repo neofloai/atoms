@@ -46,3 +46,6 @@ export type {
   TextFieldProps,
   TextFieldStatus,
 } from './components/TextField';
+
+export { Checkbox } from './components/Checkbox';
+export type { CheckboxProps } from './components/Checkbox';

@@ -34,6 +34,14 @@ const FIELD_LEADING_PX = 24;
  */
 const FIELD_PADDING_BLOCK_PX = 12;
 
+/**
+ * TODO(DESIGNER_QUESTIONS.md #15): Figma uses Scale/300 (16px) for the
+ * inline slot padding, but the semantic spacing scale has no 16px step
+ * (sm = 12, md = 24). Using `sm` until the designer confirms whether
+ * the scale gains a 16px token or 12px is acceptable.
+ */
+const FIELD_PADDING_INLINE = spacing.component.sm;
+
 const statusBorderTokens: Record<TextFieldStatus, ModeToken> = {
   error: border.error.default,
   success: border.success.default,
@@ -62,12 +70,12 @@ const StyledTextField = styled(MuiTextField, {
 
   const styles: CSSObject = {
     // Static label above the field (the Figma design has no floating
-    // label), aligned with the slot's 16px inner padding.
+    // label), aligned with the slot's inner padding.
     '& .MuiInputLabel-root': {
       position: 'static',
       transform: 'none',
       maxWidth: 'none',
-      padding: `0 ${spacing.component.sm}px`,
+      padding: `0 ${FIELD_PADDING_INLINE}px`,
       marginBottom: spacing.component.xxs,
       ...fieldFont,
       ...paired(theme, { color: text.default.body }),
@@ -99,12 +107,12 @@ const StyledTextField = styled(MuiTextField, {
         }),
       },
       '&.MuiInputBase-multiline': {
-        padding: `${FIELD_PADDING_BLOCK_PX}px ${spacing.component.sm}px`,
+        padding: `${FIELD_PADDING_BLOCK_PX}px ${FIELD_PADDING_INLINE}px`,
       },
     },
     '& .MuiOutlinedInput-input': {
       height: 'auto',
-      padding: `${FIELD_PADDING_BLOCK_PX}px ${spacing.component.sm}px`,
+      padding: `${FIELD_PADDING_BLOCK_PX}px ${FIELD_PADDING_INLINE}px`,
       '&::placeholder': {
         opacity: 1,
         ...paired(theme, { color: text.default.placeholder }),
@@ -117,12 +125,12 @@ const StyledTextField = styled(MuiTextField, {
     // Multiline padding lives on the root, not the textarea.
     '& .MuiInputBase-inputMultiline': { padding: 0 },
     '& .MuiInputAdornment-root': {
-      margin: `0 ${spacing.component.sm}px`,
+      margin: `0 ${FIELD_PADDING_INLINE}px`,
       ...paired(theme, { color: text.default.caption }),
     },
     '& .MuiFormHelperText-root': {
       margin: `${spacing.component.xs}px 0 0`,
-      padding: `0 ${spacing.component.sm}px`,
+      padding: `0 ${FIELD_PADDING_INLINE}px`,
       ...fieldFont,
       ...paired(theme, { color: text.default.caption }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),

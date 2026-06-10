@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T16:57:18.303Z",
+  "generatedAt": "2026-06-10T17:15:56.288Z",
   "components": [
     {
       "name": "Button",
@@ -94,6 +94,89 @@
       "accessibility": [
         "Always provide visible text or aria-label for icon-only usage",
         "Focus-visible state renders a 3px ring that meets contrast requirements"
+      ]
+    },
+    {
+      "name": "Checkbox",
+      "category": "Inputs",
+      "tagline": "Selection control with an optional clickable label, checked, indeterminate, and disabled states.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=2080-23677",
+      "props": [
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "Visible label beside the control. When omitted, provide an `aria-label` instead."
+        },
+        {
+          "name": "checked",
+          "type": "boolean",
+          "default": "—",
+          "description": "Controlled checked state. Inherited from MUI."
+        },
+        {
+          "name": "defaultChecked",
+          "type": "boolean",
+          "default": "false",
+          "description": "Initial state for uncontrolled usage."
+        },
+        {
+          "name": "onChange",
+          "type": "(event, checked) => void",
+          "default": "—",
+          "description": "Fires when the user toggles the control."
+        },
+        {
+          "name": "indeterminate",
+          "type": "boolean",
+          "default": "false",
+          "description": "Mixed state for parent checkboxes over partially-selected groups. Visual only — set `checked` separately."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "Disables the control and applies disabled styling."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Labelled checkbox",
+          "code": "<Checkbox label=\"Remember me\" defaultChecked />"
+        },
+        {
+          "title": "Controlled, no visible label",
+          "code": "<Checkbox\n  aria-label=\"Select row\"\n  checked={isSelected}\n  onChange={handleToggle}\n/>"
+        },
+        {
+          "title": "Parent with partially-selected children",
+          "code": "<Checkbox\n  label=\"Select all\"\n  checked={allSelected}\n  indeterminate={someSelected && !allSelected}\n  onChange={handleSelectAll}\n/>"
+        },
+        {
+          "title": "Disabled states",
+          "code": "<Checkbox label=\"Unavailable\" disabled />\n<Checkbox label=\"Locked on\" disabled defaultChecked />"
+        }
+      ],
+      "dos": [
+        "Use the `label` prop so the text is part of the click target",
+        "Provide an `aria-label` whenever there is no visible label",
+        "Use `indeterminate` on a parent checkbox over a partially-selected group",
+        "Use checkboxes for independent options — any number can be selected"
+      ],
+      "donts": [
+        "Don't use a Checkbox for mutually exclusive options — that's a radio group",
+        "Don't use a Checkbox to trigger an immediate action — use a Switch or Button",
+        "Don't rewrap the control in your own `FormControlLabel` — the `label` prop handles it",
+        "Don't override the checked colour — it is part of the selector identity"
+      ],
+      "relatedComponents": [
+        "TextField",
+        "Button"
+      ],
+      "accessibility": [
+        "The label is wired to the input via `FormControlLabel`, so clicking it toggles the control",
+        "Keyboard accessible: focusable with Tab, toggled with Space",
+        "`aria-label` is required when no visible label is rendered"
       ]
     },
     {

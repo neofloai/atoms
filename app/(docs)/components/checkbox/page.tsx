@@ -12,11 +12,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { data } from '@/src/components/TextField/TextField.examples';
-import { TextFieldShowcase } from './_components/TextFieldShowcase';
+import { data } from '@/src/components/Checkbox/Checkbox.examples';
+import { CheckboxShowcase } from './_components/CheckboxShowcase';
 
 export const metadata = {
-  title: 'TextField — Atoms',
+  title: 'Checkbox — Atoms',
   description: data.tagline,
 };
 
@@ -41,7 +41,7 @@ function CodeBlock({ children }: { children: string }) {
 
 CodeBlock.displayName = 'CodeBlock';
 
-export default function TextFieldDocsPage() {
+export default function CheckboxDocsPage() {
   return (
     <Container maxWidth="lg" disableGutters>
       <Stack spacing={6}>
@@ -50,11 +50,11 @@ export default function TextFieldDocsPage() {
             Components / Inputs
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            TextField
+            Checkbox
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { TextField } from '@neoflo/atoms';`}</code>
+            <code>{`import { Checkbox } from '@neoflo/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link
@@ -68,16 +68,18 @@ export default function TextFieldDocsPage() {
             </Link>
           )}
           <Alert severity="info" sx={{ mt: 1 }}>
-            The Figma sheet uses a 16px slot padding that has no token in
-            the spacing scale (which jumps 12 to 24) — see
-            DESIGNER_QUESTIONS.md #15. The field currently uses the 12px
-            token; the inset may change once the design team responds.
+            The Figma selector set does not yet define hover/focus states
+            or confirm the checked colour and dark-mode values — see
+            DESIGNER_QUESTIONS.md #14. The Phosphor glyphs from the sheet
+            are in; until the rest is confirmed, the checked state uses
+            the primary token and interaction behaviour stays MUI
+            default. Styling may change once the design team responds.
           </Alert>
         </Stack>
 
         <Divider />
 
-        <TextFieldShowcase />
+        <CheckboxShowcase />
 
         <Divider />
 

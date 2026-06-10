@@ -144,3 +144,27 @@ The Button component set (node 983:17180) defines per-size **heights** (48 / 40 
 - Is content-driven width with a uniform 12px horizontal padding the intended behaviour?
 - Or should horizontal padding scale with size (e.g. sm 12px / md 16px / lg 20px)?
 - Or should each size define a `minWidth` (the 165px in the sheet suggests one may exist)?
+
+---
+
+### 14. Selector (checkbox / radio) — states and colours (added 10 June)
+The selector component set (node 2080:23677) only defines `checkbox` / `selected` / `active` axes. Several things are unclear:
+
+- **No interaction states.** Button and TextField define hovered / focused / pressed variants; the selector set has none. What should hover and focus-visible look like? (Currently using MUI's default hover halo and focus ring.)
+- **Checked colour is success green.** The selected checkbox fills with `#2A9F47` (`border/success/default` / `icon.success.heading` light value) rather than the primary blue used elsewhere for active states. Intentional?
+- **Unchecked active vs disabled are identical.** The unchecked icon in the *active* state is `#BCB8B0` — the same grey as every *disabled* icon. An unchecked enabled checkbox and an unchecked disabled checkbox differ only by label colour. Intentional?
+- **Selected radio is grey.** `checkbox=False, selected=True, active=True` renders the RadioButton glyph in `#BCB8B0` grey, while the equivalent checkbox is green. Looks like an export inconsistency — what colour should a selected, enabled radio be?
+- **Dark mode.** The sheet only resolves light values. We assumed the token pairs `icon.default.placeholder` (unchecked), `icon.success.heading` (checked), `icon.disabled.default` (disabled) — confirm.
+
+**Interim implementation (10 June):** the Phosphor `Square` / `CheckSquare` glyphs from the sheet are in. Until the rest is answered, interaction behaviour stays MUI default and colours are token-only — unchecked `icon.default.placeholder`, checked/indeterminate `surface.primary.default` (primary, *not* the sheet's success green), disabled `icon.disabled.default`. Will be revisited per the answers above.
+
+---
+
+### 15. TextField — 16px slot padding missing from the spacing scale (added 10 June)
+The text-field slot (node 953:1059) uses `Scale/300` = **16px** inline padding (and the selector row label inset uses 16px too), but the semantic spacing scale from the DTCG export (#8) jumps from `sm = 12` straight to `md = 24` — there is no 16px step.
+
+`TextField` currently uses `spacing.component.sm` (12px) so it stays on tokens, which renders 4px tighter than the Figma sheet.
+
+**Confirm:**
+- Should the component spacing scale gain a 16px step (and if so, what is its name)?
+- Or is 12px acceptable for the field inset?
