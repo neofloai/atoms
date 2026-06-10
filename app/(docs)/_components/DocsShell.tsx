@@ -84,7 +84,7 @@ export function DocsShell({ children }: DocsShellProps) {
             aria-label="GitHub"
             size="small"
             component="a"
-            href="https://github.com/neoflo-ai/atoms"
+            href="https://github.com/neofloai/atoms"
             target="_blank"
             rel="noopener noreferrer"
           >
