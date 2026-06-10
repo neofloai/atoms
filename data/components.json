@@ -1,10 +1,11 @@
 {
-  "generatedAt": "2026-06-10T16:36:34.000Z",
+  "generatedAt": "2026-06-10T16:50:03.832Z",
   "components": [
     {
       "name": "Button",
       "category": "Inputs",
       "tagline": "Branded action button with five colour roles, three emphasis levels, and three sizes.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=983-17180",
       "props": [
         {
           "name": "variant",
@@ -99,6 +100,7 @@
       "name": "Chip",
       "category": "Data Display",
       "tagline": "Compact pill for tags, filters, and statuses with the same colour roles as Button.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=977-17709",
       "props": [
         {
           "name": "label",
@@ -202,6 +204,7 @@
       "name": "IconButton",
       "category": "Inputs",
       "tagline": "Icon-only action button with the same colour roles, emphasis levels, and sizes as Button.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=983-16220",
       "props": [
         {
           "name": "variant",

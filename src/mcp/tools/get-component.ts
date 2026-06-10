@@ -31,6 +31,7 @@ function formatComponentResponse(comp: ComponentData): string {
     comp.tagline,
     '',
     `**Import:** \`import { ${comp.name} } from '@neoflo/atoms';\``,
+    ...(comp.figmaUrl ? ['', `**Figma:** ${comp.figmaUrl}`] : []),
     '',
     '## Props',
     '',

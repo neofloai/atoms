@@ -23,6 +23,8 @@ export interface ComponentExamplesData {
   name: string;
   category: string;
   tagline: string;
+  /** Source design in the Product Design System Figma file. */
+  figmaUrl?: string;
   props: ComponentPropDoc[];
   examples: ComponentExampleDoc[];
   dos: string[];

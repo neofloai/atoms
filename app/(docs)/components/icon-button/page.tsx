@@ -1,5 +1,6 @@
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -54,6 +55,17 @@ export default function IconButtonDocsPage() {
             {data.tagline} Import with{' '}
             <code>{`import { IconButton } from '@neoflo/atoms';`}</code>
           </Typography>
+          {data.figmaUrl && (
+            <Link
+              href={data.figmaUrl}
+              target="_blank"
+              rel="noreferrer"
+              variant="body2"
+              sx={{ width: 'fit-content', fontWeight: 600 }}
+            >
+              View design in Figma
+            </Link>
+          )}
         </Stack>
 
         <Divider />

@@ -9,6 +9,8 @@ export const data: ComponentExamplesData = {
   category: 'Inputs',
   tagline:
     'Branded action button with five colour roles, three emphasis levels, and three sizes.',
+  figmaUrl:
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=983-17180',
   props: [
     {
       name: 'variant',

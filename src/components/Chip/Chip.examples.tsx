@@ -9,6 +9,8 @@ export const data: ComponentExamplesData = {
   category: 'Data Display',
   tagline:
     'Compact pill for tags, filters, and statuses with the same colour roles as Button.',
+  figmaUrl:
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=977-17709',
   props: [
     {
       name: 'label',

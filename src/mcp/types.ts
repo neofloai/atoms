@@ -20,6 +20,7 @@ export interface ComponentData {
   name: string;
   category: string;
   tagline: string;
+  figmaUrl?: string;
   props: ComponentProp[];
   examples: ComponentExample[];
   dos: string[];

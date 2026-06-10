@@ -9,6 +9,8 @@ export const data: ComponentExamplesData = {
   category: 'Inputs',
   tagline:
     'Icon-only action button with the same colour roles, emphasis levels, and sizes as Button.',
+  figmaUrl:
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=983-16220',
   props: [
     {
       name: 'variant',
