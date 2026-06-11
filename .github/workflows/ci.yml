@@ -4,11 +4,12 @@ on:
   pull_request:
   push:
     branches: [main]
-    tags: ['v*']
+  # Deployment is manual: trigger this workflow from the Actions tab
+  # ("Run workflow") against the branch or tag you want to ship.
   workflow_dispatch:
 
 # Cancel superseded PR runs to save minutes, but never cancel a
-# push/tag run mid-deploy.
+# manual deploy run mid-rollout.
 concurrency:
   group: ci-cd-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -71,12 +72,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # Only runs on push to main, version tags, or manual dispatch — and
-  # only after `verify` succeeds, so a failing check blocks the deploy.
+  # Manual only: runs solely on workflow_dispatch, and only after
+  # `verify` succeeds — so deployment is a deliberate action that is
+  # impossible until all checks pass. Merges to main never auto-deploy.
   deploy:
     name: Build, push to ECR, deploy App Runner
     needs: verify
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: production
     # OIDC: GitHub mints a short-lived token to assume the AWS role.

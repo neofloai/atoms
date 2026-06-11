@@ -98,15 +98,17 @@ docker build --build-arg APP_VERSION=$(git rev-parse --short HEAD) -t neoflo-ato
 
 ## CI/CD workflows
 
-A single GitHub Actions workflow — `.github/workflows/ci.yml` (named **CI/CD**) — handles both validation and deployment. It triggers on every PR, on push to `main`, on `v*` tags, and via manual dispatch.
+A single GitHub Actions workflow — `.github/workflows/ci.yml` (named **CI/CD**) — handles both validation and deployment. Validation runs automatically; **deployment is manual.**
 
 | Job | Runs on | Depends on | Purpose |
 | --- | ------- | ---------- | ------- |
-| `verify` | all events | — | `npm ci` → check `data/*.json` is in sync → `lint` → `typecheck` → `build` |
+| `verify` | every PR + push to `main` + manual dispatch | — | `npm ci` → check `data/*.json` is in sync → `lint` → `typecheck` → `build` |
 | `docker` | PRs only | `verify` | Build the image (no push) to catch Dockerfile breakage |
-| `deploy` | push to `main`, `v*` tags, manual dispatch | `verify` | Build, push to ECR, roll out App Runner |
+| `deploy` | **manual dispatch only** | `verify` | Build, push to ECR, roll out App Runner |
 
-**Deploy is gated on checks.** Because `deploy` declares `needs: verify`, it cannot start unless lint, typecheck, build, and the data-freshness check all pass. A red check blocks the deploy.
+**Merges to `main` never auto-deploy.** They run `verify` for fast feedback, but the `deploy` job only runs when you manually trigger the workflow (`workflow_dispatch`).
+
+**Deploy is gated on checks.** Because `deploy` declares `needs: verify`, it cannot start unless lint, typecheck, build, and the data-freshness check all pass — even on a manual run. A red check blocks the deploy.
 
 The `deploy` job:
 
@@ -115,7 +117,7 @@ The `deploy` job:
 3. Builds and pushes the image, tagged with both the **commit SHA** (immutable) and **`latest`**, baking `APP_VERSION` in.
 4. Runs `aws apprunner update-service` to the SHA-tagged image, then `wait service-updated` for a stable rollout.
 
-Concurrency cancels superseded **PR** runs but never interrupts a push/tag run mid-deploy.
+Concurrency cancels superseded **PR** runs but never interrupts a manual deploy run mid-rollout.
 
 ---
 
@@ -232,22 +234,18 @@ Minimum in the zone is usually one ACM validation `CNAME` plus one routing recor
 
 ## Deploying
 
-### Continuous (default)
+Deployment is always a manual action. Merging to `main` runs the checks but does **not** ship.
 
-Merge to `main` → after `verify` passes, the `deploy` job builds, pushes, and rolls out automatically.
+### Steps
 
-### Release tag
+1. Ensure the checks are green on the ref you want to ship (they run automatically on push/PR).
+2. Go to **Actions → CI/CD → Run workflow**.
+3. Pick the branch or tag to deploy (e.g. `main`, or a release tag like `v0.2.0`).
+4. The run executes `verify` first; only if it passes does `deploy` build, push to ECR, and roll out App Runner.
 
-```bash
-git tag v0.2.0
-git push origin v0.2.0
-```
+The deployed ref's name drives `APP_VERSION` (a tag name when you dispatch from a tag, otherwise the commit SHA), visible at `/api/health`.
 
-The tag name becomes `APP_VERSION` (visible at `/api/health`).
-
-### Manual
-
-Actions → **Deploy** → **Run workflow** (`workflow_dispatch`).
+> Optional extra gate: add **required reviewers** to the `production` GitHub Environment to require a second person's approval click before the `deploy` job runs.
 
 ---
 
