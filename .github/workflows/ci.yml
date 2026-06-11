@@ -1,14 +1,20 @@
-name: CI
+name: CI/CD
 
 on:
   pull_request:
   push:
     branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
 
-# Cancel superseded runs on the same ref to save CI minutes.
+# Cancel superseded PR runs to save minutes, but never cancel a
+# push/tag run mid-deploy.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
 
 jobs:
   verify:
@@ -44,15 +50,18 @@ jobs:
       - name: Build
         run: npm run build
 
+  # PR-only: prove the image builds without pushing. On push/tag the
+  # deploy job builds and pushes instead, so this would be redundant.
   docker:
     name: Validate Docker build
+    needs: verify
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: docker/setup-buildx-action@v3
 
-      # Build the image only (no push) so PRs catch Dockerfile breakage.
       - uses: docker/build-push-action@v6
         with:
           context: .
@@ -61,3 +70,67 @@ jobs:
           tags: neoflo-atoms:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # Only runs on push to main, version tags, or manual dispatch — and
+  # only after `verify` succeeds, so a failing check blocks the deploy.
+  deploy:
+    name: Build, push to ECR, deploy App Runner
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: production
+    # OIDC: GitHub mints a short-lived token to assume the AWS role.
+    # No long-lived AWS keys are stored in the repo.
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Tag with both the immutable commit SHA and a moving "latest" so
+      # rollbacks can pin an exact build while App Runner tracks latest.
+      - name: Compute image tags
+        id: meta
+        run: |
+          registry="${{ steps.ecr.outputs.registry }}"
+          repo="${{ env.ECR_REPOSITORY }}"
+          echo "image_sha=${registry}/${repo}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          echo "image_latest=${registry}/${repo}:latest" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image_sha }}
+            ${{ steps.meta.outputs.image_latest }}
+          build-args: |
+            APP_VERSION=${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Point App Runner at the freshly pushed SHA-tagged image and wait
+      # for the rollout to reach a stable state.
+      - name: Deploy to App Runner
+        run: |
+          aws apprunner update-service \
+            --service-arn "${{ secrets.APPRUNNER_SERVICE_ARN }}" \
+            --source-configuration "ImageRepository={ImageIdentifier=${{ steps.meta.outputs.image_sha }},ImageRepositoryType=ECR}"
+          aws apprunner wait service-updated \
+            --service-arn "${{ secrets.APPRUNNER_SERVICE_ARN }}"

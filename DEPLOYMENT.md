@@ -98,25 +98,24 @@ docker build --build-arg APP_VERSION=$(git rev-parse --short HEAD) -t neoflo-ato
 
 ## CI/CD workflows
 
-Two GitHub Actions workflows live in `.github/workflows/`.
+A single GitHub Actions workflow — `.github/workflows/ci.yml` (named **CI/CD**) — handles both validation and deployment. It triggers on every PR, on push to `main`, on `v*` tags, and via manual dispatch.
 
-### `ci.yml` — on every PR and push to `main`
+| Job | Runs on | Depends on | Purpose |
+| --- | ------- | ---------- | ------- |
+| `verify` | all events | — | `npm ci` → check `data/*.json` is in sync → `lint` → `typecheck` → `build` |
+| `docker` | PRs only | `verify` | Build the image (no push) to catch Dockerfile breakage |
+| `deploy` | push to `main`, `v*` tags, manual dispatch | `verify` | Build, push to ECR, roll out App Runner |
 
-| Job | Steps |
-| --- | ----- |
-| `verify` | `npm ci` → check `data/*.json` is in sync → `lint` → `typecheck` → `build` |
-| `docker` | Build the image (no push) to catch Dockerfile breakage; GHA layer cache |
+**Deploy is gated on checks.** Because `deploy` declares `needs: verify`, it cannot start unless lint, typecheck, build, and the data-freshness check all pass. A red check blocks the deploy.
 
-This job is the merge gate. It uses no AWS credentials.
+The `deploy` job:
 
-### `deploy.yml` — on push to `main`, on `v*` tags, or manual dispatch
+1. Assumes an AWS IAM role via **OIDC** (no static keys stored).
+2. Logs in to ECR.
+3. Builds and pushes the image, tagged with both the **commit SHA** (immutable) and **`latest`**, baking `APP_VERSION` in.
+4. Runs `aws apprunner update-service` to the SHA-tagged image, then `wait service-updated` for a stable rollout.
 
-1. Assume an AWS IAM role via **OIDC** (no static keys stored).
-2. Log in to ECR.
-3. Build and push the image, tagged with both the **commit SHA** (immutable) and **`latest`**, baking `APP_VERSION` in.
-4. `aws apprunner update-service` to the SHA-tagged image, then `wait service-updated` for a stable rollout.
-
-Concurrency is set so two production deploys never overlap.
+Concurrency cancels superseded **PR** runs but never interrupts a push/tag run mid-deploy.
 
 ---
 
@@ -183,8 +182,8 @@ Set these under **Settings → Secrets and variables → Actions** (and a `produ
 
 | Variable | Example | Used by |
 | -------- | ------- | ------- |
-| `AWS_REGION` | `ap-south-1` | `deploy.yml` |
-| `ECR_REPOSITORY` | `neoflo-atoms` | `deploy.yml` |
+| `AWS_REGION` | `ap-south-1` | `deploy` job |
+| `ECR_REPOSITORY` | `neoflo-atoms` | `deploy` job |
 
 ### Secrets
 
@@ -195,7 +194,7 @@ Set these under **Settings → Secrets and variables → Actions** (and a `produ
 
 ### Environment
 
-Create a `production` environment (referenced by `deploy.yml`). Add required reviewers there if you want manual approval before each deploy.
+Create a `production` environment (referenced by the `deploy` job). Add required reviewers there if you want manual approval before each deploy.
 
 ---
 
@@ -235,7 +234,7 @@ Minimum in the zone is usually one ACM validation `CNAME` plus one routing recor
 
 ### Continuous (default)
 
-Merge to `main` → `deploy.yml` builds, pushes, and rolls out automatically.
+Merge to `main` → after `verify` passes, the `deploy` job builds, pushes, and rolls out automatically.
 
 ### Release tag
 

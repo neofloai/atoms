@@ -80,22 +80,49 @@ async function collectComponents(): Promise<ComponentExamplesData[]> {
   return components.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-async function writeJson(filename: string, payload: unknown): Promise<void> {
+/**
+ * Writes a manifest, prepending a `generatedAt` timestamp.
+ *
+ * The write is idempotent: if the existing file's body (everything
+ * except `generatedAt`) is unchanged, the previous timestamp is
+ * preserved so re-running the generator produces no diff. The
+ * timestamp only advances when the generated content actually changes.
+ * This keeps `data/*.json` stable across runs (no timestamp-only diffs,
+ * reproducible builds, and a meaningful CI freshness check).
+ */
+async function writeManifest(
+  filename: string,
+  body: Record<string, unknown>
+): Promise<void> {
   const target = path.join(DATA_DIR, filename);
   await fs.mkdir(DATA_DIR, { recursive: true });
+
+  let generatedAt = new Date().toISOString();
+  try {
+    const existingRaw = await fs.readFile(target, 'utf8');
+    const { generatedAt: previous, ...existingBody } = JSON.parse(
+      existingRaw
+    ) as Record<string, unknown>;
+    if (
+      typeof previous === 'string' &&
+      JSON.stringify(existingBody) === JSON.stringify(body)
+    ) {
+      generatedAt = previous;
+    }
+  } catch {
+    // No existing file (or it is unreadable) — use a fresh timestamp.
+  }
+
+  const payload = { generatedAt, ...body };
   await fs.writeFile(target, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
   console.log(`wrote ${path.relative(ROOT, target)}`);
 }
 
 async function main(): Promise<void> {
-  const generatedAt = new Date().toISOString();
-
-  const components: ComponentManifest = {
-    generatedAt,
+  const components: Omit<ComponentManifest, 'generatedAt'> = {
     components: await collectComponents(),
   };
-  const tokens: TokenManifest = {
-    generatedAt,
+  const tokens: Omit<TokenManifest, 'generatedAt'> = {
     tokens: {
       colors,
       surface,
@@ -108,12 +135,12 @@ async function main(): Promise<void> {
       radius,
     },
   };
-  const patterns: PatternManifest = { generatedAt, patterns: [] };
+  const patterns: Omit<PatternManifest, 'generatedAt'> = { patterns: [] };
 
   await Promise.all([
-    writeJson('components.json', components),
-    writeJson('tokens.json', tokens),
-    writeJson('patterns.json', patterns),
+    writeManifest('components.json', components),
+    writeManifest('tokens.json', tokens),
+    writeManifest('patterns.json', patterns),
   ]);
 }
 
