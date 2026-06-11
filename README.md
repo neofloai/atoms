@@ -24,6 +24,7 @@ Atoms is **three things in one repo**:
 | MCP endpoint guide | [atoms.neoflo.ai/mcp-guide](https://atoms.neoflo.ai/mcp-guide) |
 | Design tokens | [atoms.neoflo.ai/tokens](https://atoms.neoflo.ai/tokens) |
 | Icons | [atoms.neoflo.ai/icons](https://atoms.neoflo.ai/icons) |
+| Deployment & CI/CD | [DEPLOYMENT.md](./DEPLOYMENT.md) |
 
 ---
 

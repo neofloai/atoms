@@ -11,11 +11,15 @@
   },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "npm run generate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "generate": "tsx scripts/generate.ts",
     "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
