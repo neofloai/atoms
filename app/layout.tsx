@@ -1,25 +1,14 @@
 import type { Metadata } from 'next';
-import { Geist_Mono, Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
+import { Geist_Mono } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { NeofloThemeProvider } from '@/src/theme/ThemeProvider';
 import './globals.css';
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: '--font-plus-jakarta-sans',
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  display: 'swap',
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: '--font-instrument-serif',
-  subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  display: 'swap',
-});
-
+// Plus Jakarta Sans and Instrument Serif are self-hosted by the library
+// (`@fontsource`, loaded inside NeofloThemeProvider), so the docs site renders
+// exactly what consumers get -- no separate next/font wiring for the brand
+// fonts. Geist Mono stays here for code blocks only.
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
@@ -40,7 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${instrumentSerif.variable} ${geistMono.variable}`}
+      className={geistMono.variable}
       suppressHydrationWarning
     >
       <body>

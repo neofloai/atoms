@@ -70,6 +70,12 @@ import { NeofloThemeProvider } from '@neoflo/atoms';
   <NeofloThemeProvider>{children}</NeofloThemeProvider>
 </AppRouterCacheProvider>`;
 
+const colorModeSetup = `// Follows the OS color scheme by default.
+// Pin it when your UI is designed for a single scheme:
+<NeofloThemeProvider defaultMode="light">
+  {children}
+</NeofloThemeProvider>`;
+
 const usageExample = `import { neofloTheme } from '@neoflo/atoms';
 import { spacing, colors } from '@neoflo/atoms/tokens';
 import { ShieldCheck } from '@neoflo/atoms/icons';`;
@@ -124,10 +130,11 @@ export default function InstallationPage() {
             <Typography variant="body2" color="text.secondary">
               Atoms works in any React 18 or 19 app — Next.js (App Router),
               Vite, or CRA. <code>react</code> and <code>react-dom</code> are
-              peer dependencies your app already provides; MUI v9 and Emotion
-              ship inside the package, so you do not install them separately.
-              The package ships compiled JavaScript, so no bundler transpile
-              config is needed.
+              peer dependencies your app already provides; MUI v9, Emotion, and
+              the brand fonts (Plus Jakarta Sans + Instrument Serif) ship inside
+              the package, so you do not install or load them separately. The
+              package ships compiled JavaScript, so no bundler transpile config
+              is needed.
             </Typography>
           </Stack>
         </Stack>
@@ -208,6 +215,13 @@ export default function InstallationPage() {
             streaming (avoids a flash of unstyled content):
           </Typography>
           <CodeBlock>{nextSsrCache}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            The theme follows the OS color scheme by default. If your UI is
+            designed for a single scheme, pin it with the{' '}
+            <code>defaultMode</code> prop (<code>&quot;light&quot;</code>,{' '}
+            <code>&quot;dark&quot;</code>, or <code>&quot;system&quot;</code>):
+          </Typography>
+          <CodeBlock>{colorModeSetup}</CodeBlock>
         </Stack>
 
         <Divider />

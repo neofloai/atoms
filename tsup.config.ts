@@ -23,6 +23,11 @@ export default defineConfig({
     '@emotion/cache',
     '@mui/material-nextjs',
     '@phosphor-icons/react',
+    // Self-hosted brand fonts. Kept external so their `.css` side-effect
+    // imports pass through to the consumer's bundler (Vite, Next, CRA all
+    // resolve `@fontsource/*` CSS), instead of esbuild trying to inline them.
+    '@fontsource/plus-jakarta-sans',
+    '@fontsource/instrument-serif',
   ],
   treeshake: true,
   outDir: 'dist',

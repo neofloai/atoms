@@ -32,15 +32,24 @@
  * Clash Grotesk is currently hosted on Fontshare (not Google Fonts);
  * it is intentionally not yet wired into `next/font`, so a system
  * sans-serif will render until the marketing-side font is hosted.
+ *
+ * Each `var()` carries a literal font-name fallback (e.g.
+ * `var(--font-plus-jakarta-sans, "Plus Jakarta Sans")`). The Next.js
+ * docs site defines these CSS variables via `next/font`, but other
+ * hosts (Vite, CRA) may not. Without the inner fallback an undefined
+ * variable makes the whole `font-family` declaration invalid, so the
+ * browser drops to its serif default; the literal name keeps the brand
+ * font working when the consumer loads it by family name, and otherwise
+ * degrades cleanly to the system stack.
  */
 export const fontFamilies = {
   product: {
-    sans: 'var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif',
-    serif: 'var(--font-instrument-serif), Georgia, "Times New Roman", serif',
+    sans: 'var(--font-plus-jakarta-sans, "Plus Jakarta Sans"), system-ui, -apple-system, sans-serif',
+    serif: 'var(--font-instrument-serif, "Instrument Serif"), Georgia, "Times New Roman", serif',
   },
   marketing: {
-    sans: '"Clash Grotesk", var(--font-plus-jakarta-sans), system-ui, sans-serif',
-    serif: 'var(--font-instrument-serif), Georgia, "Times New Roman", serif',
+    sans: '"Clash Grotesk", var(--font-plus-jakarta-sans, "Plus Jakarta Sans"), system-ui, sans-serif',
+    serif: 'var(--font-instrument-serif, "Instrument Serif"), Georgia, "Times New Roman", serif',
   },
 } as const;
 
