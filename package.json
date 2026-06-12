@@ -4,13 +4,37 @@
   "private": true,
   "sideEffects": false,
   "exports": {
-    ".": "./src/index.ts",
-    "./icons": "./src/icons/index.ts",
-    "./tokens": "./src/tokens/index.ts",
-    "./theme": "./src/theme/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./icons": {
+      "types": "./dist/icons.d.ts",
+      "import": "./dist/icons.mjs",
+      "require": "./dist/icons.js"
+    },
+    "./tokens": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.mjs",
+      "require": "./dist/tokens.js"
+    },
+    "./theme": {
+      "types": "./dist/theme.d.ts",
+      "import": "./dist/theme.mjs",
+      "require": "./dist/theme.js"
+    }
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "next dev",
+    "build:lib": "tsup",
+    "prepare": "npm run build:lib",
     "prebuild": "npm run generate",
     "build": "next build",
     "start": "next start",
@@ -40,6 +64,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "tsup": "^8.5.1",
     "tsx": "^4.19.2",
     "typescript": "^5"
   }

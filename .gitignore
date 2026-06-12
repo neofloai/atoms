@@ -15,6 +15,9 @@
 # production
 /build
 
+# library build output (regenerated on install via the `prepare` script)
+/dist
+
 # misc
 .DS_Store
 *.pem

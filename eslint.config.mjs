@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated library build output (tsup).
+    "dist/**",
   ]),
 ]);
 

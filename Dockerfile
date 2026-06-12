@@ -14,9 +14,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Install dependencies in isolation so the layer caches on lockfile
 # changes only, not on every source edit.
+# --ignore-scripts: source is not present in this layer yet, so the
+# `prepare` lifecycle (which runs the tsup library build) must not fire
+# here. The library is not needed to build the docs site anyway.
 FROM base AS deps
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Build the app. `npm run build` runs the `prebuild` hook first, which
 # regenerates data/*.json, so the MCP manifests can never go stale.
