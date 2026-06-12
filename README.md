@@ -46,83 +46,86 @@ Atoms is **three things in one repo**:
 
 ```
 atoms/
-├── app/                        # Next.js App Router
-│   ├── (docs)/                 # Documentation website routes
-│   │   ├── page.tsx            # Home — component gallery
-│   │   ├── components/         # Component documentation pages
-│   │   ├── tokens/             # Design tokens reference
-│   │   └── patterns/           # Page layout patterns
-│   ├── mcp/                    # MCP endpoint (HTTP transport)
-│   │   └── route.ts            # POST /mcp — MCP server handler
-│   ├── layout.tsx              # Root layout with MUI ThemeProvider
-│   └── globals.css             # Global styles (minimal)
+├── app/                          # Next.js App Router
+│   ├── (docs)/                   # Documentation website routes
+│   │   ├── _components/          # Docs shell, sidebar, color-mode toggle
+│   │   ├── components/           # Per-component doc pages (button, chip, ...)
+│   │   ├── tokens/               # Design tokens reference
+│   │   ├── icons/                # Icon browser
+│   │   ├── installation/         # Installation guide
+│   │   ├── mcp-guide/            # MCP endpoint guide
+│   │   ├── layout.tsx            # Docs layout (sidebar + shell)
+│   │   └── page.tsx              # Home — component gallery
+│   ├── api/health/route.ts       # Liveness/readiness probe
+│   ├── mcp/route.ts              # POST /mcp — MCP server handler
+│   ├── _lib/Link.tsx             # MUI <-> Next.js Link integration
+│   ├── layout.tsx                # Root layout (cache provider + NeofloThemeProvider)
+│   └── globals.css               # Global styles (minimal)
 │
 ├── src/
-│   ├── components/             # Neoflo wrapper components (export these)
+│   ├── components/               # Neoflo wrapper components (export these)
 │   │   ├── Button/
-│   │   │   ├── Button.tsx      # Wraps MUI Button with Neoflo API
-│   │   │   ├── Button.types.ts # TypeScript prop interfaces
-│   │   │   ├── Button.examples.tsx  # Code examples for docs + MCP
+│   │   │   ├── Button.tsx         # Wraps MUI Button with Neoflo API
+│   │   │   ├── Button.types.ts    # TypeScript prop interfaces
+│   │   │   ├── Button.examples.tsx # Code examples for docs + MCP
 │   │   │   └── index.ts
-│   │   ├── TextField/
-│   │   ├── Card/
-│   │   └── ...
-│   │
-│   ├── tokens/                 # Design tokens (single source of truth)
-│   │   ├── colors.ts
-│   │   ├── typography.ts
-│   │   ├── spacing.ts
-│   │   ├── shadows.ts
-│   │   ├── radius.ts
+│   │   ├── Checkbox/  Chip/  IconButton/  Radio/  TextField/
+│   │   ├── _shared/              # Internals shared across components
 │   │   └── index.ts
 │   │
-│   ├── theme/                  # MUI theme built from Neoflo tokens
-│   │   ├── index.ts            # createTheme(...) export
-│   │   ├── palette.ts          # Color mapping to MUI palette
-│   │   ├── typography.ts       # Typography variants
-│   │   └── components.ts       # MUI component default overrides
+│   ├── tokens/                   # Design tokens (single source of truth)
+│   │   ├── colors.ts  surface.ts  border.ts  text.ts  icon.ts
+│   │   ├── spacing.ts  typography.ts  elevation.ts  radius.ts
+│   │   └── index.ts
 │   │
-│   ├── patterns/               # Page layout recipes
-│   │   ├── dashboard.tsx
-│   │   ├── settings.tsx
-│   │   └── auth.tsx
+│   ├── theme/                    # MUI theme built from Neoflo tokens
+│   │   ├── index.ts              # createTheme(...) export
+│   │   ├── palette.ts            # Token -> MUI palette mapping
+│   │   ├── typography.ts         # Typography variants
+│   │   ├── shadows.ts            # Elevation -> MUI shadows
+│   │   └── ThemeProvider.tsx     # NeofloThemeProvider (framework-agnostic)
 │   │
-│   ├── mcp/                    # MCP server logic
-│   │   ├── server.ts           # MCP server instance
-│   │   ├── tools/              # Individual tool implementations
+│   ├── patterns/                 # Page layout recipes (index.ts; none published yet)
+│   │
+│   ├── mcp/                      # MCP server logic
+│   │   ├── server.ts             # MCP server instance
+│   │   ├── tools/                # One file per tool
 │   │   │   ├── list-components.ts
 │   │   │   ├── get-component.ts
 │   │   │   ├── get-tokens.ts
 │   │   │   ├── get-pattern.ts
-│   │   │   └── search-docs.ts
-│   │   └── data-loader.ts      # Loads JSON from data/ directory
+│   │   │   ├── search-docs.ts
+│   │   │   └── get-installation.ts
+│   │   ├── data-loader.ts        # Loads JSON from data/ directory
+│   │   └── types.ts              # Generated-manifest shapes
 │   │
-│   └── index.ts                # Public package exports
+│   ├── install/                  # Install/setup instructions (source of truth)
+│   │   └── index.ts              # Framework-aware setup steps (Next.js, React)
+│   │
+│   ├── types/                    # Shared TypeScript types
+│   └── index.ts                  # Public package exports (built to dist/)
 │
 ├── scripts/
-│   └── generate.ts             # Generates data/ JSON from src/components/
+│   └── generate.ts               # Generates data/ JSON from src/
 │
-├── data/                       # Auto-generated (DO NOT EDIT MANUALLY)
+├── data/                         # Auto-generated (DO NOT EDIT MANUALLY)
 │   ├── components.json
 │   ├── tokens.json
-│   └── patterns.json
+│   ├── patterns.json
+│   └── installation.json
 │
 ├── .cursor/
-│   ├── mcp.json                # MCP config for this repo
-│   └── rules/                  # Cursor AI guardrails
-│       ├── 00-core.mdc         # Core architecture rules
-│       ├── 10-mui-usage.mdc    # MUI integration rules
-│       ├── 20-tokens.mdc       # Token usage rules
-│       ├── 30-components.mdc   # Component authoring rules
-│       ├── 40-nextjs.mdc       # Next.js App Router conventions
-│       ├── 50-docs.mdc         # Documentation rules
-│       ├── 60-mcp.mdc          # MCP server rules
-│       └── 70-code-style.mdc   # Code style guide
+│   ├── mcp.json                  # MCP config for this repo
+│   └── rules/                    # Cursor AI guardrails (00-core … 70-code-style)
 │
-├── CLAUDE.md                   # Guidelines for Claude Code users
+├── .github/workflows/ci.yml      # CI: lint, typecheck, build, docker validate
+├── buildspec.yml                 # AWS CodeBuild -> ECR -> ECS (deploy)
+├── Dockerfile                    # Multi-stage standalone image
+├── tsup.config.ts                # Library build (src -> dist)
+├── tsconfig.json  tsconfig.lib.json
+├── next.config.ts  eslint.config.mjs
+├── CLAUDE.md  AGENTS.md  DEPLOYMENT.md
 ├── package.json
-├── tsconfig.json
-├── next.config.ts
 └── README.md
 ```
 
@@ -159,105 +162,6 @@ npm run dev
 
 - Docs website: http://localhost:3000
 - MCP endpoint: http://localhost:3000/mcp
-
----
-
-## Connect from Cursor
-
-> Full guide with Claude Code instructions and the tool reference: [atoms.neoflo.ai/mcp-guide](https://atoms.neoflo.ai/mcp-guide)
-
-In **your product project** (not this repo), add `.cursor/mcp.json`:
-
-**For local development:**
-
-```json
-{
-  "mcpServers": {
-    "atoms": {
-      "url": "http://localhost:3000/mcp"
-    }
-  }
-}
-```
-
-**For production:**
-
-```json
-{
-  "mcpServers": {
-    "atoms": {
-      "url": "https://atoms.neoflo.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer <NEOFLO_INTERNAL_TOKEN>"
-      }
-    }
-  }
-}
-```
-
-Restart Cursor. Open the **MCP Servers** panel — "atoms" should appear with a green dot.
-
----
-
-## Installing Atoms in Product Projects
-
-> Full guide with CI/Docker auth and version pinning: [atoms.neoflo.ai/installation](https://atoms.neoflo.ai/installation)
-
-The package is not published to the public npm registry — it installs straight from the private GitHub repo (read access required):
-
-```bash
-# SSH (recommended for local machines)
-npm install git+ssh://git@github.com/neofloai/atoms.git
-
-# Pin to a tag for reproducible builds
-npm install git+ssh://git@github.com/neofloai/atoms.git#v0.1.0
-```
-
-The package ships TypeScript source, so tell Next.js to compile it:
-
-```ts
-// next.config.ts
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  transpilePackages: ["@neoflo/atoms"],
-};
-
-export default nextConfig;
-```
-
-```tsx
-// app/layout.tsx
-import { NeofloThemeProvider } from "@neoflo/atoms";
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <body>
-        <NeofloThemeProvider>{children}</NeofloThemeProvider>
-      </body>
-    </html>
-  );
-}
-```
-
-```tsx
-// app/page.tsx
-import { Button, TextField, Card } from "@neoflo/atoms";
-
-export default function Page() {
-  return (
-    <Card>
-      <TextField label="Email" placeholder="you@neoflo.ai" />
-      <Button variant="primary">Submit</Button>
-    </Card>
-  );
-}
-```
 
 ---
 

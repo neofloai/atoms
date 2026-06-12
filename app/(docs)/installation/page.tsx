@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 export const metadata = {
   title: 'Installation — Atoms',
   description:
-    'Install @neoflo/atoms from the private GitHub repository and set up the theme provider in your Next.js app.',
+    'Install @neoflo/atoms from the private GitHub repository and set up the theme provider in a Next.js or React app.',
 };
 
 const sshInstall = `npm install git+ssh://git@github.com/neofloai/atoms.git`;
@@ -29,16 +29,7 @@ const ciToken = `git config --global \\
 
 npm install git+https://github.com/neofloai/atoms.git`;
 
-const transpileConfig = `// next.config.ts
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
-  transpilePackages: ['@neoflo/atoms'],
-};
-
-export default nextConfig;`;
-
-const providerSetup = `// app/layout.tsx
+const nextProviderSetup = `// app/layout.tsx
 import { NeofloThemeProvider } from '@neoflo/atoms';
 
 export default function RootLayout({
@@ -54,6 +45,30 @@ export default function RootLayout({
     </html>
   );
 }`;
+
+const reactProviderSetup = `// src/main.tsx
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { NeofloThemeProvider } from '@neoflo/atoms';
+import { App } from './App';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <NeofloThemeProvider>
+      <App />
+    </NeofloThemeProvider>
+  </StrictMode>,
+);`;
+
+const nextSsrCache = `// app/layout.tsx — optional, flicker-free SSR styles
+// npm install @mui/material-nextjs @emotion/cache
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
+import { NeofloThemeProvider } from '@neoflo/atoms';
+
+// ...inside <body>
+<AppRouterCacheProvider options={{ enableCssLayer: true }}>
+  <NeofloThemeProvider>{children}</NeofloThemeProvider>
+</AppRouterCacheProvider>`;
 
 const usageExample = `import { neofloTheme } from '@neoflo/atoms';
 import { spacing, colors } from '@neoflo/atoms/tokens';
@@ -107,10 +122,12 @@ export default function InstallationPage() {
               Requirements
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Your app must be on the same stack the design system targets:
-              Next.js 16 (App Router), React 19, and TypeScript 5. MUI v9 and
-              Emotion are installed automatically as dependencies of the
-              package.
+              Atoms works in any React 18 or 19 app — Next.js (App Router),
+              Vite, or CRA. <code>react</code> and <code>react-dom</code> are
+              peer dependencies your app already provides; MUI v9 and Emotion
+              ship inside the package, so you do not install them separately.
+              The package ships compiled JavaScript, so no bundler transpile
+              config is needed.
             </Typography>
           </Stack>
         </Stack>
@@ -167,14 +184,30 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              3. Transpile the package
+              3. Wrap your app in the theme provider
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              The package ships TypeScript source, not pre-built JavaScript.
-              Tell Next.js to compile it as part of your app build:
+              <code>NeofloThemeProvider</code> applies the Neoflo MUI theme
+              (light and dark), the CSS baseline, and Phosphor icon defaults
+              in one wrapper. It is framework-agnostic — add it once at the
+              root of your app.
             </Typography>
           </Stack>
-          <CodeBlock>{transpileConfig}</CodeBlock>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+            Next.js (App Router)
+          </Typography>
+          <CodeBlock>{nextProviderSetup}</CodeBlock>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+            React (Vite / CRA)
+          </Typography>
+          <CodeBlock>{reactProviderSetup}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            For server-rendered Next.js apps, you can optionally wrap{' '}
+            <code>NeofloThemeProvider</code> with the MUI{' '}
+            <code>AppRouterCacheProvider</code> to insert Emotion styles during
+            streaming (avoids a flash of unstyled content):
+          </Typography>
+          <CodeBlock>{nextSsrCache}</CodeBlock>
         </Stack>
 
         <Divider />
@@ -182,23 +215,7 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              4. Wrap your app in the theme provider
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <code>NeofloThemeProvider</code> sets up the Emotion SSR cache,
-              the Neoflo MUI theme (light and dark), the CSS baseline, and
-              icon defaults in one wrapper. Add it to your root layout:
-            </Typography>
-          </Stack>
-          <CodeBlock>{providerSetup}</CodeBlock>
-        </Stack>
-
-        <Divider />
-
-        <Stack spacing={3} sx={{ maxWidth: 720 }}>
-          <Stack spacing={0.5}>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              5. Import and build
+              4. Import and build
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Everything is exposed through the package root and three

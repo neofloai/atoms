@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { registerGetComponent } from './tools/get-component';
+import { registerGetInstallation } from './tools/get-installation';
 import { registerGetPattern } from './tools/get-pattern';
 import { registerGetTokens } from './tools/get-tokens';
 import { registerListComponents } from './tools/list-components';
@@ -23,6 +24,7 @@ export function createAtomsMcpServer(): McpServer {
   registerGetTokens(server);
   registerGetPattern(server);
   registerSearchDocs(server);
+  registerGetInstallation(server);
 
   return server;
 }

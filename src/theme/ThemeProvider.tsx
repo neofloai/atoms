@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { IconContext } from '@phosphor-icons/react';
@@ -33,26 +32,26 @@ const NEOFLO_ICON_DEFAULTS = {
 /**
  * Root client provider for Atoms.
  *
- * `AppRouterCacheProvider` collects Emotion CSS during SSR/streaming so
- * styles land in `<head>` rather than `<body>`. `enableCssLayer` wraps
- * MUI output in `@layer mui` so any future global CSS can override it
- * without specificity battles.
- *
- * Wraps `IconContext.Provider` so every Phosphor icon imported from
+ * Framework-agnostic: applies the Neoflo MUI theme, `CssBaseline`, and the
+ * Phosphor `IconContext` defaults so every icon imported from
  * `@neoflo/atoms/icons` inherits Neoflo defaults without per-call props.
+ * Works in any React host (Vite, CRA, Next, etc.).
+ *
+ * SSR Emotion cache wiring is intentionally NOT included here so the library
+ * stays decoupled from any framework. Host apps that need it add their own
+ * cache provider around this one -- the Next.js docs site wraps it with
+ * `AppRouterCacheProvider` in `app/layout.tsx`.
  *
  * Re-exported from the package root so consumers can wrap their own apps.
  */
 export function NeofloThemeProvider({ children }: NeofloThemeProviderProps) {
   return (
-    <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-      <MuiThemeProvider theme={neofloTheme} defaultMode="system" disableTransitionOnChange>
-        <CssBaseline />
-        <IconContext.Provider value={NEOFLO_ICON_DEFAULTS}>
-          {children}
-        </IconContext.Provider>
-      </MuiThemeProvider>
-    </AppRouterCacheProvider>
+    <MuiThemeProvider theme={neofloTheme} defaultMode="system" disableTransitionOnChange>
+      <CssBaseline />
+      <IconContext.Provider value={NEOFLO_ICON_DEFAULTS}>
+        {children}
+      </IconContext.Provider>
+    </MuiThemeProvider>
   );
 }
 

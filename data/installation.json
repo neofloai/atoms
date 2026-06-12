@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-06-12T12:43:41.886Z",
+  "packageName": "@neoflo/atoms",
+  "repo": "neofloai/atoms",
+  "shared": [
+    {
+      "title": "Install from the private GitHub repo",
+      "body": "@neoflo/atoms is distributed over git (not the public npm registry). With an SSH key that has read access to neofloai/atoms, run:",
+      "code": "npm install git+ssh://git@github.com/neofloai/atoms.git",
+      "language": "bash"
+    },
+    {
+      "title": "Pin a version for production",
+      "body": "A bare install tracks the default branch. Pin to a tag or commit for reproducible builds:",
+      "code": "npm install git+ssh://git@github.com/neofloai/atoms.git#v0.1.0",
+      "language": "bash"
+    }
+  ],
+  "frameworks": [
+    {
+      "id": "nextjs",
+      "label": "Next.js (App Router)",
+      "summary": "Wrap the root layout once. No transpilePackages or bundler config needed.",
+      "steps": [
+        {
+          "title": "Wrap the root layout in NeofloThemeProvider",
+          "body": "NeofloThemeProvider applies the Neoflo MUI theme, CssBaseline, and Phosphor icon defaults. It is a client component and can be rendered directly inside your server layout.",
+          "code": "// app/layout.tsx\nimport { NeofloThemeProvider } from '@neoflo/atoms';\n\nexport default function RootLayout({\n  children,\n}: {\n  children: React.ReactNode;\n}) {\n  return (\n    <html lang=\"en\" suppressHydrationWarning>\n      <body>\n        <NeofloThemeProvider>{children}</NeofloThemeProvider>\n      </body>\n    </html>\n  );\n}",
+          "language": "tsx"
+        },
+        {
+          "title": "Import and use components",
+          "body": "Import the Neoflo API from the package root:",
+          "code": "import { Button, TextField } from '@neoflo/atoms';",
+          "language": "tsx"
+        },
+        {
+          "title": "Optional: flicker-free SSR styles",
+          "body": "For server-rendered apps, wrap NeofloThemeProvider with the MUI AppRouterCacheProvider so Emotion styles are inserted during streaming. Install @mui/material-nextjs and @emotion/cache, then:",
+          "code": "// app/layout.tsx\nimport { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';\nimport { NeofloThemeProvider } from '@neoflo/atoms';\n\n// ...inside <body>\n<AppRouterCacheProvider options={{ enableCssLayer: true }}>\n  <NeofloThemeProvider>{children}</NeofloThemeProvider>\n</AppRouterCacheProvider>",
+          "language": "tsx"
+        }
+      ]
+    },
+    {
+      "id": "react",
+      "label": "React (Vite / CRA)",
+      "summary": "Wrap your app entry once. No bundler config needed.",
+      "steps": [
+        {
+          "title": "Wrap your app entry in NeofloThemeProvider",
+          "body": "Add the provider once at the root so every component inherits the theme and icon defaults.",
+          "code": "// src/main.tsx\nimport { StrictMode } from 'react';\nimport { createRoot } from 'react-dom/client';\nimport { NeofloThemeProvider } from '@neoflo/atoms';\nimport { App } from './App';\n\ncreateRoot(document.getElementById('root')!).render(\n  <StrictMode>\n    <NeofloThemeProvider>\n      <App />\n    </NeofloThemeProvider>\n  </StrictMode>,\n);",
+          "language": "tsx"
+        },
+        {
+          "title": "Import and use components",
+          "body": "Import the Neoflo API from the package root:",
+          "code": "import { Button, TextField } from '@neoflo/atoms';",
+          "language": "tsx"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Import only from @neoflo/atoms, @neoflo/atoms/icons, @neoflo/atoms/tokens, and @neoflo/atoms/theme.",
+    "Do not import from @mui/material directly -- it bypasses the design system.",
+    "react and react-dom are peer dependencies: your app provides them (React 18 or 19). MUI and Emotion ship inside the package, so you do not install them.",
+    "The package ships compiled JavaScript (dist/), so no transpilePackages or bundler transpile config is required."
+  ]
+}

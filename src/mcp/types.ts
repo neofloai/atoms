@@ -4,6 +4,8 @@
  * generator output changes, update these types in the same commit.
  */
 
+import type { InstallationGuide } from '@/src/install';
+
 export interface ComponentProp {
   name: string;
   type: string;
@@ -48,3 +50,7 @@ export interface PatternManifest {
   generatedAt: string;
   patterns: PatternData[];
 }
+
+export type InstallationManifest = InstallationGuide & {
+  generatedAt: string;
+};
