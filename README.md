@@ -388,6 +388,12 @@ See `CLAUDE.md` for Claude Code specific guidelines.
 
 ---
 
+## Troubleshooting
+
+- **CI `verify` fails at the data-freshness step** — If your change touched components or tokens, run `npm run generate` and commit the updated `data/*.json` first, otherwise the `verify` job fails because the committed data is out of sync with `src/`.
+
+---
+
 ## Need Help?
 
 - **Component not in Atoms?** — [Raise an issue](https://github.com/neofloai/atoms/issues) with the `component-request` label
