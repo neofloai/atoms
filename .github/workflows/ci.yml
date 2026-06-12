@@ -1,14 +1,15 @@
 name: CI
 
+# PR-only: deployment is handled by AWS CodePipeline on push to main, and
+# branch protection runs these checks on the PR (strict mode keeps the PR up
+# to date with main), so a separate push-to-main run would be redundant.
 on:
   pull_request:
-  push:
-    branches: [main]
 
 # Cancel superseded PR runs to save minutes.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -53,13 +54,12 @@ jobs:
       - name: Build
         run: npm run build
 
-  # PR-only: prove the production image builds. Pushing the image and
-  # deploying to ECS is handled by AWS CodeBuild via buildspec.yml, so this
-  # job never pushes -- it only catches Dockerfile breakage before merge.
+  # Prove the production image builds. Pushing the image and deploying to ECS
+  # is handled by AWS CodeBuild via buildspec.yml, so this job never pushes --
+  # it only catches Dockerfile breakage before merge.
   docker:
     name: Validate Docker build
     needs: verify
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
