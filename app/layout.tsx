@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist_Mono, Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { NeofloThemeProvider } from '@/src/theme/ThemeProvider';
 import './globals.css';
@@ -44,7 +45,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body>
         <InitColorSchemeScript attribute="data" defaultMode="system" />
-        <NeofloThemeProvider>{children}</NeofloThemeProvider>
+        {/* AppRouterCacheProvider keeps Emotion SSR caching for the Next docs
+            site. It lives here (not in NeofloThemeProvider) so the shared
+            library provider stays framework-agnostic. */}
+        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+          <NeofloThemeProvider>{children}</NeofloThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

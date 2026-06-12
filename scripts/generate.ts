@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
+import { installation } from '../src/install';
 import {
   border,
   colors,
@@ -141,6 +142,7 @@ async function main(): Promise<void> {
     writeManifest('components.json', components),
     writeManifest('tokens.json', tokens),
     writeManifest('patterns.json', patterns),
+    writeManifest('installation.json', { ...installation }),
   ]);
 }
 

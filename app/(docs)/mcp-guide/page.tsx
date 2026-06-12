@@ -43,6 +43,10 @@ const tools: readonly McpTool[] = [
     name: 'search_docs',
     purpose: 'Keyword search across components, patterns, and tokens',
   },
+  {
+    name: 'get_installation',
+    purpose: 'Framework-specific setup steps (Next.js, React) for installing the package',
+  },
 ];
 
 const cursorConfig = `{
@@ -127,8 +131,8 @@ export default function McpGuidePage() {
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Add the server to <code>.cursor/mcp.json</code> in your project
-              (or to your global Cursor MCP settings) and reload. The five
-              Atoms tools appear in the editor automatically.
+              (or to your global Cursor MCP settings) and reload. The Atoms
+              tools appear in the editor automatically.
             </Typography>
           </Stack>
           <CodeBlock>{cursorConfig}</CodeBlock>
@@ -162,7 +166,7 @@ export default function McpGuidePage() {
               Available tools
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              The server exposes exactly five tools. Responses are markdown,
+              The server exposes exactly six tools. Responses are markdown,
               structured for AI consumption.
             </Typography>
           </Stack>

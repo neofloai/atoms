@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import type {
   ComponentManifest,
+  InstallationManifest,
   PatternManifest,
   TokenManifest,
 } from './types';
@@ -27,6 +28,7 @@ export const dataPaths = {
   components: 'components.json',
   tokens: 'tokens.json',
   patterns: 'patterns.json',
+  installation: 'installation.json',
 } as const;
 
 /** Loads the generated component manifest from `data/components.json`. */
@@ -42,4 +44,9 @@ export async function loadTokens(): Promise<TokenManifest> {
 /** Loads the generated pattern manifest from `data/patterns.json`. */
 export async function loadPatterns(): Promise<PatternManifest> {
   return readJsonFile<PatternManifest>(dataPaths.patterns);
+}
+
+/** Loads the generated installation guide from `data/installation.json`. */
+export async function loadInstallation(): Promise<InstallationManifest> {
+  return readJsonFile<InstallationManifest>(dataPaths.installation);
 }
