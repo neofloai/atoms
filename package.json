@@ -2,7 +2,10 @@
   "name": "@neoflo/atoms",
   "version": "0.1.0",
   "private": true,
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css",
+    "**/fonts.ts"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -48,6 +51,8 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@fontsource/instrument-serif": "^5.2.8",
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
     "@mui/material": "^9.0.1",
     "@phosphor-icons/react": "^2.1.10"
   },

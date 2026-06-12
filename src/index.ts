@@ -15,6 +15,7 @@
  */
 
 export { NeofloThemeProvider } from './theme/ThemeProvider';
+export type { NeofloColorMode } from './theme/ThemeProvider';
 export { neofloTheme } from './theme';
 
 export { Button } from './components/Button';

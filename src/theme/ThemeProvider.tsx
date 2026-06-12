@@ -5,9 +5,24 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { IconContext } from '@phosphor-icons/react';
 import { neofloTheme } from '@/src/theme';
+import './fonts';
+
+/**
+ * Colour scheme the app starts in.
+ *
+ *   - `'system'`  follow the OS `prefers-color-scheme` (default)
+ *   - `'light'`   always render the light palette
+ *   - `'dark'`    always render the dark palette
+ */
+export type NeofloColorMode = 'light' | 'dark' | 'system';
 
 interface NeofloThemeProviderProps {
   children: React.ReactNode;
+  /**
+   * Initial colour scheme. Defaults to `'system'`. Pin to `'light'` or
+   * `'dark'` when the host UI is designed for a single scheme.
+   */
+  defaultMode?: NeofloColorMode;
 }
 
 /**
@@ -44,9 +59,12 @@ const NEOFLO_ICON_DEFAULTS = {
  *
  * Re-exported from the package root so consumers can wrap their own apps.
  */
-export function NeofloThemeProvider({ children }: NeofloThemeProviderProps) {
+export function NeofloThemeProvider({
+  children,
+  defaultMode = 'system',
+}: NeofloThemeProviderProps) {
   return (
-    <MuiThemeProvider theme={neofloTheme} defaultMode="system" disableTransitionOnChange>
+    <MuiThemeProvider theme={neofloTheme} defaultMode={defaultMode} disableTransitionOnChange>
       <CssBaseline />
       <IconContext.Provider value={NEOFLO_ICON_DEFAULTS}>
         {children}
