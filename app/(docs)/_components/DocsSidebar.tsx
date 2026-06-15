@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import NextLink from '@/app/_lib/Link';
+import { NeofloLogo } from '@/src/brand';
 import { navigation, type NavItem } from './navigation';
 
 interface DocsSidebarProps {
@@ -147,15 +148,12 @@ export function DocsSidebar({ onItemClick }: DocsSidebarProps) {
       sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
     >
       <Toolbar sx={{ minHeight: 56, px: 3 }}>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-          <Box
-            sx={{
-              width: 24,
-              height: 24,
-              borderRadius: 1,
-              bgcolor: 'primary.main',
-            }}
-          />
+        <Stack
+          direction="row"
+          spacing={1.5}
+          sx={{ alignItems: 'center', color: 'text.primary' }}
+        >
+          <NeofloLogo size={24} />
           <Stack spacing={-0.25}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
               Neoflo Atoms

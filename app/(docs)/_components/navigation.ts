@@ -33,6 +33,7 @@ export const navigation: readonly NavSection[] = [
   {
     title: 'Foundations',
     items: [
+      { label: 'Brand', href: '/branding' },
       { label: 'Tokens', href: '/tokens' },
       { label: 'Typography', href: '/tokens#typography' },
       { label: 'Spacing', href: '/tokens#spacing' },

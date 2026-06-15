@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 import type {
+  BrandManifest,
   ComponentManifest,
   InstallationManifest,
   PatternManifest,
@@ -29,6 +30,7 @@ export const dataPaths = {
   tokens: 'tokens.json',
   patterns: 'patterns.json',
   installation: 'installation.json',
+  brand: 'brand.json',
 } as const;
 
 /** Loads the generated component manifest from `data/components.json`. */
@@ -49,4 +51,9 @@ export async function loadPatterns(): Promise<PatternManifest> {
 /** Loads the generated installation guide from `data/installation.json`. */
 export async function loadInstallation(): Promise<InstallationManifest> {
   return readJsonFile<InstallationManifest>(dataPaths.installation);
+}
+
+/** Loads the generated brand guide from `data/brand.json`. */
+export async function loadBrand(): Promise<BrandManifest> {
+  return readJsonFile<BrandManifest>(dataPaths.brand);
 }

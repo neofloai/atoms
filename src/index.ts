@@ -18,6 +18,9 @@ export { NeofloThemeProvider } from './theme/ThemeProvider';
 export type { NeofloColorMode } from './theme/ThemeProvider';
 export { neofloTheme } from './theme';
 
+export { NeofloLogo } from './brand';
+export type { NeofloLogoProps, NeofloLogoVariant } from './brand';
+
 export { Avatar } from './components/Avatar';
 export type {
   AvatarBadgeColor,
