@@ -11,6 +11,7 @@ import {
 } from '@phosphor-icons/react';
 
 import type { AlertProps as MuiAlertProps } from '@mui/material';
+import type { IconProps } from '@phosphor-icons/react';
 import type { AlertProps, AlertSeverity, AlertVariant } from './Alert.types';
 
 /**
@@ -36,6 +37,21 @@ const defaultIconMapping: Partial<Record<AlertSeverity, React.ReactNode>> = {
   warning: <Warning weight="fill" />,
   error: <WarningDiamond weight="fill" />,
 };
+
+/**
+ * Close-icon slot. MUI passes its internal `ownerState` into slot
+ * components; Phosphor icons are not MUI-aware and would forward it
+ * straight onto the DOM `<svg>` (a React warning), so we strip it here
+ * and render the Phosphor `X` with the rest.
+ */
+const AlertCloseIcon = React.forwardRef<
+  SVGSVGElement,
+  IconProps & { ownerState?: unknown }
+>(function AlertCloseIcon(props, ref) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- drop MUI's slot-internal ownerState so it never reaches the DOM
+  const { ownerState, ...rest } = props;
+  return <X ref={ref} {...rest} />;
+});
 
 /**
  * Branded alert for inline, non-blocking feedback. Wraps MUI `Alert`
@@ -76,7 +92,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
       severity={severity}
       variant={muiVariantMap[variant]}
       iconMapping={{ ...defaultIconMapping, ...iconMapping }}
-      slots={{ closeIcon: X, ...slots }}
+      slots={{ closeIcon: AlertCloseIcon, ...slots }}
       {...rest}
     >
       {title ? <MuiAlertTitle>{title}</MuiAlertTitle> : null}
