@@ -11,6 +11,28 @@ globs: ["src/components/**/*.tsx", "src/theme/**/*.ts"]
 2. **Check MUI X.** For complex components (DataGrid, DatePicker, Charts), MUI X has them. We use the free tier.
 3. **Only build custom when MUI has nothing.** Document this in the component's JSDoc.
 
+## Mirror MUI — always (non-negotiable)
+
+When building a component, **mirror MUI**. Do not invent an API, prop, or
+composition that MUI does not already model. Before writing the wrapper:
+
+1. **Consult the MUI MCP** (`useMuiDocs` then `fetchDocs`) for the
+   component you are wrapping. Read its documented props, variants,
+   slots, and recommended composition patterns.
+2. **Reuse MUI's patterns verbatim.** If MUI achieves something by
+   composing two components (e.g. Avatar status dot = `Avatar` wrapped in
+   a `Badge` with `variant="dot"`, `overlap="circular"`), mirror that
+   exact composition internally. Do **not** invent a bespoke prop
+   (`status`, `online`, etc.) for behaviour MUI expresses with existing
+   primitives.
+3. **Only rename, never reinvent.** The Neoflo API is MUI's API with
+   our naming/tokens on the outside (`variant="primary"` over
+   `variant="contained"`, `size="md"` over `size="medium"`). The
+   underlying behaviour, prop surface, and DOM structure stay MUI's.
+4. **If Figma asks for something MUI does not have,** prefer the closest
+   MUI primitive and log the gap in `DESIGNER_QUESTIONS.md` rather than
+   inventing a new abstraction.
+
 ## Wrapping pattern
 
 Every component follows this exact structure:
