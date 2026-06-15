@@ -18,6 +18,15 @@ export { NeofloThemeProvider } from './theme/ThemeProvider';
 export type { NeofloColorMode } from './theme/ThemeProvider';
 export { neofloTheme } from './theme';
 
+export { Avatar } from './components/Avatar';
+export type {
+  AvatarBadgeColor,
+  AvatarColor,
+  AvatarProps,
+  AvatarShape,
+  AvatarSize,
+} from './components/Avatar';
+
 export { Button } from './components/Button';
 export type {
   ButtonAppearance,
