@@ -21,6 +21,13 @@ export { neofloTheme } from './theme';
 export { NeofloLogo } from './brand';
 export type { NeofloLogoProps, NeofloLogoVariant } from './brand';
 
+export { Alert } from './components/Alert';
+export type {
+  AlertProps,
+  AlertSeverity,
+  AlertVariant,
+} from './components/Alert';
+
 export { Avatar } from './components/Avatar';
 export type {
   AvatarBadgeColor,
