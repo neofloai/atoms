@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
+import { branding } from '../src/brand/branding';
 import { installation } from '../src/install';
 import {
   border,
@@ -143,6 +144,7 @@ async function main(): Promise<void> {
     writeManifest('tokens.json', tokens),
     writeManifest('patterns.json', patterns),
     writeManifest('installation.json', { ...installation }),
+    writeManifest('brand.json', { brand: branding }),
   ]);
 }
 

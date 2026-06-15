@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { ColorModeToggle } from './ColorModeToggle';
+import { NeofloLogo } from '@/src/brand';
 import { APP_BAR_HEIGHT, DRAWER_WIDTH } from './navigation';
 import { DocsSidebar } from './DocsSidebar';
 
@@ -64,16 +65,13 @@ export function DocsShell({ children }: DocsShellProps) {
           <Stack
             direction="row"
             spacing={1.25}
-            sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center' }}
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              alignItems: 'center',
+              color: 'text.primary',
+            }}
           >
-            <Box
-              sx={{
-                width: 18,
-                height: 18,
-                borderRadius: 0.75,
-                bgcolor: 'primary.main',
-              }}
-            />
+            <NeofloLogo size={20} />
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
               Neoflo Atoms
             </Typography>

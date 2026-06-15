@@ -1,13 +1,23 @@
 import { z } from 'zod';
 
-import { loadComponents, loadPatterns, loadTokens } from '../data-loader';
+import {
+  loadBrand,
+  loadComponents,
+  loadPatterns,
+  loadTokens,
+} from '../data-loader';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 interface SearchHit {
-  kind: 'component' | 'pattern' | 'token category';
+  kind: 'component' | 'pattern' | 'token category' | 'brand';
   name: string;
   summary: string;
+  /**
+   * Full text for self-contained hits (brand guidance). Brand has no
+   * dedicated `get_*` tool, so the answer travels with the hit.
+   */
+  details?: string;
 }
 
 function matches(haystack: string, query: string): boolean {
@@ -24,23 +34,44 @@ export function registerSearchDocs(server: McpServer): void {
     {
       title: 'Search docs',
       description:
-        'Searches across @neoflo/atoms components, patterns, and token categories by keyword. Returns a markdown list of hits with the tool to call next for full details. Use this when you are not sure which component or pattern you need.',
+        'Searches across @neoflo/atoms components, patterns, token categories, and Neoflo brand guidelines (logo, brand colours, fonts, theme) by keyword. Returns a markdown list of hits; brand hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
       inputSchema: {
         query: z
           .string()
           .min(1)
-          .describe('Search keyword, e.g. "button", "spacing", "dashboard".'),
+          .describe(
+            'Search keyword, e.g. "button", "spacing", "dashboard", "logo", "brand fonts".'
+          ),
       },
     },
     async ({ query }) => {
-      const [components, patterns, tokens] = await Promise.all([
+      const [components, patterns, tokens, brand] = await Promise.all([
         loadComponents(),
         loadPatterns(),
         loadTokens(),
+        loadBrand(),
       ]);
 
       const q = query.toLowerCase();
       const hits: SearchHit[] = [];
+
+      for (const section of brand.brand.sections) {
+        const text = [
+          brand.brand.name,
+          section.title,
+          section.summary,
+          section.body,
+          ...section.keywords,
+        ].join(' ');
+        if (matches(text, q)) {
+          hits.push({
+            kind: 'brand',
+            name: `${brand.brand.name} ${section.title}`,
+            summary: section.summary,
+            details: section.body,
+          });
+        }
+      }
 
       for (const component of components.components) {
         const text = [
@@ -89,14 +120,21 @@ export function registerSearchDocs(server: McpServer): void {
         };
       }
 
-      const lines = hits.map(
-        (hit) => `- **${hit.name}** (${hit.kind}) — ${hit.summary}`
-      );
+      const lines = hits.map((hit) => {
+        const heading = `- **${hit.name}** (${hit.kind}) — ${hit.summary}`;
+        if (!hit.details) return heading;
+        // Indent the inline brand guidance so it nests under the bullet.
+        const indented = hit.details
+          .split('\n')
+          .map((line) => (line ? `  ${line}` : ''))
+          .join('\n');
+        return `${heading}\n\n${indented}`;
+      });
       return {
         content: [
           {
             type: 'text',
-            text: `# Search results for "${query}"\n\n${lines.join('\n')}\n\nNext step: call get_component, get_pattern, or get_tokens for full details.`,
+            text: `# Search results for "${query}"\n\n${lines.join('\n\n')}\n\nNext step: brand hits are answered inline; for components/patterns/tokens call get_component, get_pattern, or get_tokens.`,
           },
         ],
       };

@@ -4,6 +4,7 @@
  * generator output changes, update these types in the same commit.
  */
 
+import type { BrandGuide } from '@/src/brand/branding';
 import type { InstallationGuide } from '@/src/install';
 
 export interface ComponentProp {
@@ -54,3 +55,8 @@ export interface PatternManifest {
 export type InstallationManifest = InstallationGuide & {
   generatedAt: string;
 };
+
+export interface BrandManifest {
+  generatedAt: string;
+  brand: BrandGuide;
+}
