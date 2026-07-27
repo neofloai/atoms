@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "mui-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mui/mcp@latest"
+      ]
+    },
+    "next-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "next-devtools-mcp@latest"
+      ]
+    },
+    "vercel": {
+      "url": "https://mcp.vercel.com",
+      "headers": {}
+    },
+    "Axiom Docs": {
+      "name": "Axiom Docs",
+      "url": "https://axiom.co/docs/mcp",
+      "headers": {}
+    },
+    "Figma": {
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "neoflo-atoms": {
+      "url": "https://atoms.neoflo.ai/mcp"
+    }
+  }
+}

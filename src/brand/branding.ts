@@ -81,13 +81,13 @@ export const branding: BrandGuide = {
         'orange',
       ],
       summary:
-        'Neutral greyscale foundation + one primary blue (#014ce1). Semantic green/red/yellow/purple for status; orange is a sparing accent.',
+        'Neutral greyscale foundation + one primary blue (#343eb3). Semantic green/red/yellow/blue for status; orange is a sparing accent.',
       body: [
         'The brand colour story is deliberately small:',
         '',
-        '- Primary blue — #014ce1 (primary/600). The single brand accent, used for primary actions, selection, and focus. One per view.',
+        '- Primary blue — #343eb3 (primary/600). The single brand accent, used for primary actions, selection, and focus. One per view.',
         '- Neutral greyscale — the foundation for surfaces, borders, and text. Most of any screen is greyscale.',
-        '- Semantic status — green (success), red (error/destructive), yellow (warning), purple (informational).',
+        '- Semantic status — green (success), red (error/destructive), yellow (warning), blue (informational).',
         '- Orange (#fe9934) — a sparing accent (e.g. default avatars); not a primary brand colour.',
         '',
         'Always pull colours from the theme/tokens (call get_tokens for the colors and surface categories). Never hardcode hex; the semantic surface/border/text tokens carry the correct light and dark values.',

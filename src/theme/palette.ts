@@ -17,7 +17,7 @@ import { colors } from '@/src/tokens/colors';
  *   grey scale    -> secondary (uses 25 / 100 / 300 — designer's choice)
  *   red scale     -> error
  *   yellow scale  -> warning
- *   purple scale  -> info
+ *   blue scale    -> info
  *   green scale   -> success
  *
  * ## Dark palette
@@ -64,9 +64,9 @@ export const lightPalette: PaletteOptions = {
     dark: colors.yellow[800],
   },
   info: {
-    light: colors.purple[400],
-    main: colors.purple[600],
-    dark: colors.purple[800],
+    light: colors.blue[400],
+    main: colors.blue[600],
+    dark: colors.blue[800],
   },
   success: {
     light: colors.green[400],
@@ -108,9 +108,9 @@ export const darkPalette: PaletteOptions = {
     dark: colors.yellow[800],
   },
   info: {
-    light: colors.purple[400],
-    main: colors.purple[600],
-    dark: colors.purple[800],
+    light: colors.blue[400],
+    main: colors.blue[600],
+    dark: colors.blue[800],
   },
   success: {
     light: colors.green[400],
