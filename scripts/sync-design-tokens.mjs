@@ -1,11 +1,20 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const SRC = '/Users/ankitverma/Downloads/component (1)';
-const OUT = '/Users/ankitverma/Desktop/neoflo/atoms/src/tokens';
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(SCRIPT_DIR, '..');
 
-const light = JSON.parse(readFileSync(`${SRC}/light.tokens.json`, 'utf8'));
-const dark = JSON.parse(readFileSync(`${SRC}/dark.tokens.json`, 'utf8'));
+// Semantic layer (surface/border/icon/text/spacing) — Figma DTCG export.
+const SEMANTIC_SRC = '/Users/ankitverma/Downloads/component';
+// Primitive layer (raw colour scales) — separate Figma variable collection.
+const PRIMITIVE_SRC = '/Users/ankitverma/Downloads/Mode 1.tokens 2.json';
+
+const OUT = resolve(ROOT, 'src/tokens');
+
+const light = JSON.parse(readFileSync(`${SEMANTIC_SRC}/light.tokens.json`, 'utf8'));
+const dark = JSON.parse(readFileSync(`${SEMANTIC_SRC}/dark.tokens.json`, 'utf8'));
+const primitive = JSON.parse(readFileSync(PRIMITIVE_SRC, 'utf8'));
 
 function toCamel(key) {
   // "card 4 on-color" -> "card4OnColor"; "card6on-color" -> "card6OnColor"
@@ -53,6 +62,25 @@ function collect(node, lightNode, darkNode) {
 }
 
 const collected = collect(light, light, dark);
+
+// The new export flattens `text.<role>.*` (primary/information/success/error/
+// warning) to numeric slots (0/1/2/3) instead of named ones. `icon` keeps
+// named slots for the same four positions (heading/body/caption/
+// onColorHover), so normalise `text` to match — the public API stays
+// descriptive instead of index-based.
+const TEXT_ROLE_SLOT_NAMES = ['heading', 'body', 'caption', 'onColorHover'];
+const TEXT_ROLE_KEYS = ['primary', 'information', 'success', 'error', 'warning'];
+for (const role of TEXT_ROLE_KEYS) {
+  const group = collected.text?.[role];
+  if (!group) continue;
+  const remapped = {};
+  for (const [k, v] of Object.entries(group)) {
+    const idx = Number(k);
+    const name = Number.isInteger(idx) ? TEXT_ROLE_SLOT_NAMES[idx] : undefined;
+    remapped[name ?? k] = v;
+  }
+  collected.text[role] = remapped;
+}
 
 // Express a value either as `colors.<scale>[<shade>]` if aliased, or raw literal.
 function colorExpr(alias, hex) {
@@ -141,6 +169,62 @@ export type SpacingTokens = typeof spacing;
   console.log('wrote', target);
 }
 
+// ---- colors.ts, from the primitive variable collection ----
+
+const COLOR_SCALES = ['grey', 'primary', 'blue', 'red', 'yellow', 'orange', 'purple', 'green'];
+
+function extractScale(name) {
+  const node = primitive[name];
+  if (!node) throw new Error(`primitive collection is missing scale "${name}"`);
+  const out = {};
+  for (const [shade, v] of Object.entries(node)) {
+    if (v && v.$type === 'color') out[shade] = v.$value.hex.toLowerCase();
+  }
+  return Object.fromEntries(Object.entries(out).sort(([a], [b]) => Number(a) - Number(b)));
+}
+
+function writeColorsFile() {
+  const scales = Object.fromEntries(COLOR_SCALES.map((s) => [s, extractScale(s)]));
+
+  const fileBody = `/**
+ * Neoflo raw colour scales — the canonical source of truth.
+ *
+ * Each scale is a single mode (the designer's "Mode 1"). Light/dark
+ * variations of *semantic* tokens (surface, border, text, icon) live in
+ * \`./surface.ts\`, \`./border.ts\`, \`./icon.ts\`, and \`./text.ts\` and
+ * reference these raw values — they should never hardcode hex.
+ *
+ * Scale names match the designer's Figma library exactly, including
+ * \`red\` (not \`error\`) and \`blue\` (not \`info\`). \`purple\` is a
+ * standalone raw scale not currently used by any semantic token. The MUI
+ * palette role mapping in \`src/theme/palette.ts\` translates these scales
+ * to the \`error\`, \`info\`, etc. roles.
+ *
+ * Token files are intentionally framework-free: no React, no MUI
+ * imports, no \`'use client'\`. Safe to read from Node scripts
+ * (\`scripts/generate.ts\`).
+ */
+
+export const colors = {
+${COLOR_SCALES.map(
+  (s) =>
+    `  ${s}: {\n${Object.entries(scales[s])
+      .map(([shade, hex]) => `    ${shade}: '${hex}',`)
+      .join('\n')}\n  },`
+).join('\n')}
+} as const;
+
+export type ColorScale = keyof typeof colors;
+export type ColorShade<S extends ColorScale> = keyof (typeof colors)[S];
+export type ColorToken = (typeof colors)[ColorScale][keyof (typeof colors)[ColorScale]];
+`;
+  const target = resolve(OUT, 'colors.ts');
+  writeFileSync(target, fileBody, 'utf8');
+  console.log('wrote', target);
+}
+
+writeColorsFile();
+
 // surface.ts
 const surfaceHeader = `/**
  * Surface semantic tokens.
@@ -160,14 +244,9 @@ const surfaceHeader = `/**
  *   - \`disabled\`      -> single disabled surface
  *
  * \`information\` corresponds to MUI's \`info\` palette role; values are
- * sourced from the \`purple\` raw scale.`;
+ * sourced from the \`blue\` raw scale.`;
 
-writeColorFile(
-  'surface.ts',
-  'surface',
-  surfaceHeader + '\n */',
-  collected.surface
-);
+writeColorFile('surface.ts', 'surface', surfaceHeader + '\n */', collected.surface);
 
 // border.ts
 const borderHeader = `/**
@@ -179,12 +258,7 @@ const borderHeader = `/**
  *
  * Generated from the Figma DTCG export.`;
 
-writeColorFile(
-  'border.ts',
-  'border',
-  borderHeader + '\n */',
-  collected.border
-);
+writeColorFile('border.ts', 'border', borderHeader + '\n */', collected.border);
 
 // text.ts
 const textHeader = `/**
@@ -196,39 +270,29 @@ const textHeader = `/**
  *   text.default.{ heading, body, caption, placeholder,
  *                  headingOnColor, bodyOnColor, captionOnColor,
  *                  placeholderOnColor }
- *   text.primary.{ heading, body, caption, placeholder }
- *   text.information.{ ... } (mirrors primary)
- *   text.success.{ heading, body, caption, onColorHover }
- *   text.error.{ ... }    (mirrors success)
- *   text.warning.{ ... }  (mirrors success)
+ *   text.primary.{ heading, body, caption, onColorHover }
+ *   text.information.{ ... } (mirrors primary; sourced from \`blue\`)
+ *   text.success.{ ... }     (mirrors primary)
+ *   text.error.{ ... }       (mirrors primary)
+ *   text.warning.{ ... }     (mirrors primary)
  *   text.disabled.{ default, onColor }
  *
  * Generated from the Figma DTCG export.`;
 
-writeColorFile(
-  'text.ts',
-  'text',
-  textHeader + '\n */',
-  collected.text
-);
+writeColorFile('text.ts', 'text', textHeader + '\n */', collected.text);
 
-// icon.ts (NEW)
+// icon.ts
 const iconHeader = `/**
  * Icon semantic tokens.
  *
  * Identical shape to \`text\` — designers use the same typography slots
- * (heading/body/caption/placeholder, role-specific on-color-hover) for
+ * (heading/body/caption/placeholder, role-specific onColorHover) for
  * icon colours so an icon next to a body string can pick up the
  * matching token automatically.
  *
  * Generated from the Figma DTCG export.`;
 
-writeColorFile(
-  'icon.ts',
-  'icon',
-  iconHeader + '\n */',
-  collected.icon
-);
+writeColorFile('icon.ts', 'icon', iconHeader + '\n */', collected.icon);
 
 writeSpacingFile(collected.spacing);
 

@@ -30,7 +30,7 @@ const brandSwatches: readonly SwatchSpec[] = [
   { label: 'Success', value: colors.green[500] },
   { label: 'Error', value: colors.red[500] },
   { label: 'Warning', value: colors.yellow[500], ink: true },
-  { label: 'Informational', value: colors.purple[500] },
+  { label: 'Informational', value: colors.blue[500] },
   { label: 'Accent orange', value: colors.orange[500], ink: true },
 ];
 
