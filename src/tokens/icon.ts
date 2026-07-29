@@ -14,6 +14,9 @@ import { colors } from './colors';
  * confirmed; accent-role `heading`/`body` are unchanged). `error`'s
  * `onColorHover` was additionally confirmed (light mode only) via the
  * TextField status-icon spec (node 3179:106156): `icon/error/4` = `red/400`.
+ * `primary`'s `onColorHover` was confirmed the same way against the
+ * Avatar spec (node 981:16471, 2026-07-29): `icon/primary/4` = `primary/400`,
+ * not the prior `primary/500` placeholder.
  */
 
 import type { ModeToken } from './surface';
@@ -35,7 +38,7 @@ export const icon = {
     heading: { light: colors.primary[800], dark: colors.primary[200] },
     body: { light: colors.primary[700], dark: colors.primary[300] },
     caption: { light: colors.primary[600], dark: colors.primary[300] },
-    onColorHover: { light: colors.primary[500], dark: colors.primary[500] },
+    onColorHover: { light: colors.primary[400], dark: colors.primary[500] },
   },
   information: {
     heading: { light: colors.blue[800], dark: colors.blue[200] },

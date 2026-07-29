@@ -10,7 +10,7 @@ export const data: ComponentExamplesData = {
   tagline:
     'Represents a user or entity with initials, an icon, or a photo, plus an optional status badge.',
   figmaUrl:
-    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=978-17187',
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=981-16471',
   props: [
     {
       name: 'children',

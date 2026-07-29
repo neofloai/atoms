@@ -1,4 +1,3 @@
-import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
@@ -67,17 +66,6 @@ export default function AvatarDocsPage() {
               View design in Figma
             </Link>
           )}
-          <Alert severity="info" sx={{ mt: 1 }}>
-            The Figma sheet fills text/icon avatars with orange — a scale
-            with no semantic token (DESIGNER_QUESTIONS.md #4, #16) — and
-            does not expose colour as a variant. We assumed an orange{' '}
-            <code>accent</code> default plus an optional <code>color</code>{' '}
-            role, mapped <code>mid</code> roundness to MUI{' '}
-            <code>rounded</code> (8px, per the design&apos;s Code Connect)
-            over the file&apos;s raw 4px, and used the saturated success
-            token for the badge. Sizing for large/small text, icons, and
-            the badge dot is inferred — see DESIGNER_QUESTIONS.md #16.
-          </Alert>
         </Stack>
 
         <Divider />

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Avatar as MuiAvatar, Badge as MuiBadge } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { colors, fontWeights, surface, text, typography } from '@/src/tokens';
+import { fontWeights, surface, text, typography } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
 
@@ -31,17 +31,25 @@ const muiVariantMap: Record<AvatarShape, 'circular' | 'rounded' | 'square'> = {
 interface SizeSpec {
   /** Avatar diameter in px. */
   box: number;
-  /** Initials font size in px. */
-  font: number;
+  /** Initials typography slot. */
+  type: { size: number; leading: number; letterSpacing: number };
   /** Icon glyph size in px. */
   icon: number;
 }
 
-/** Diameters from the Figma component set; text uses the B1/B2/Caption scale. */
+/**
+ * Diameters, typography slot, and icon glyph size per size — confirmed
+ * against the updated Avatar component set (node 981:16471, 2026-07-29
+ * sync). `large` uses the H6 heading rung, not B1 (B1 shrank to 13px in
+ * the typography resync, see DESIGNER_QUESTIONS.md #7); `medium` uses
+ * B1 (13px); `small` is unchanged (Caption). Icon glyphs are 24px at
+ * `lg` and a flat 16px at both `md` and `sm` — previously assumed
+ * 24/20/16px, see DESIGNER_QUESTIONS.md #16.
+ */
 const sizeStyles: Record<AvatarSize, SizeSpec> = {
-  lg: { box: 40, font: typography.body.b1.size, icon: 24 },
-  md: { box: 32, font: typography.body.b2.size, icon: 20 },
-  sm: { box: 24, font: typography.body.caption.size, icon: 16 },
+  lg: { box: 40, type: typography.headings.h6, icon: 24 },
+  md: { box: 32, type: typography.body.b1, icon: 16 },
+  sm: { box: 24, type: typography.body.caption, icon: 16 },
 };
 
 interface RoleColor {
@@ -50,14 +58,17 @@ interface RoleColor {
 }
 
 /**
- * Background + content colour per role. `accent` is the Figma default
- * (orange/500); the others reuse the shared semantic surface tokens so
- * avatars track the palette in both colour schemes.
+ * Background + content colour per role. `accent` is the Figma default —
+ * confirmed against node 981:16471 (2026-07-29 sync) as
+ * `surface.primary.subtle` + `text.primary.onColorHover`, replacing the
+ * `orange/500` fill assumed from the older sheet (DESIGNER_QUESTIONS.md
+ * #16). The others reuse the shared semantic surface tokens so avatars
+ * track the palette in both colour schemes.
  */
 const colorTokens: Record<AvatarColor, RoleColor> = {
   accent: {
-    bg: { light: colors.orange[500], dark: colors.orange[500] },
-    fg: text.default.headingOnColor,
+    bg: surface.primary.subtle,
+    fg: text.primary.onColorHover,
   },
   primary: { bg: surface.primary.default, fg: text.default.headingOnColor },
   secondary: { bg: surface.default.defaultPressed, fg: text.default.heading },
@@ -73,8 +84,12 @@ const badgeColorTokens: Record<AvatarBadgeColor, ModeToken> = {
   neutral: surface.default.defaultPressed,
 };
 
-/** Status-dot diameter per avatar size. */
-const dotSize: Record<AvatarSize, number> = { lg: 10, md: 8, sm: 6 };
+/**
+ * Status-dot diameter — a flat 8px across all avatar sizes, confirmed
+ * against node 981:16471 (previously assumed to scale 10/8/6px, see
+ * DESIGNER_QUESTIONS.md #16).
+ */
+const BADGE_DOT_SIZE = 8;
 
 interface StyledAvatarProps {
   neofloSize: AvatarSize;
@@ -91,8 +106,10 @@ const StyledAvatar = styled(MuiAvatar, {
     width: size.box,
     height: size.box,
     fontFamily: theme.typography.fontFamily,
-    fontSize: size.font,
-    fontWeight: fontWeights.medium,
+    fontSize: size.type.size,
+    fontWeight: fontWeights.regular,
+    lineHeight: `${size.type.leading}px`,
+    letterSpacing: `${size.type.letterSpacing}em`,
     ...paired(theme, { backgroundColor: role.bg, color: role.fg }),
     '& svg': { width: size.icon, height: size.icon },
     '& .MuiSvgIcon-root': { fontSize: size.icon },
@@ -101,30 +118,25 @@ const StyledAvatar = styled(MuiAvatar, {
 
 interface StyledBadgeProps {
   neofloBadgeColor: AvatarBadgeColor;
-  neofloSize: AvatarSize;
 }
 
 const StyledBadge = styled(MuiBadge, {
-  shouldForwardProp: (prop) =>
-    prop !== 'neofloBadgeColor' && prop !== 'neofloSize',
-})<StyledBadgeProps>(({ theme, neofloBadgeColor, neofloSize }) => {
-  const dot = dotSize[neofloSize];
-  return {
-    '& .MuiBadge-badge': {
-      minWidth: dot,
-      height: dot,
-      padding: 0,
-      borderRadius: '50%',
-      ...paired(theme, { backgroundColor: badgeColorTokens[neofloBadgeColor] }),
-      // White ring so the dot reads against the avatar and the page.
-      boxShadow: `0 0 0 2px ${(theme.vars ?? theme).palette.background.paper}`,
-    },
-  };
-});
+  shouldForwardProp: (prop) => prop !== 'neofloBadgeColor',
+})<StyledBadgeProps>(({ theme, neofloBadgeColor }) => ({
+  '& .MuiBadge-badge': {
+    minWidth: BADGE_DOT_SIZE,
+    height: BADGE_DOT_SIZE,
+    padding: 0,
+    borderRadius: '50%',
+    ...paired(theme, { backgroundColor: badgeColorTokens[neofloBadgeColor] }),
+    // Ring so the dot reads against the avatar and the page.
+    boxShadow: `0 0 0 2px ${(theme.vars ?? theme).palette.background.paper}`,
+  },
+}));
 
 /**
  * Branded avatar for users and entities. Wraps MUI `Avatar` with the
- * Neoflo API from the Product Design System Figma (node 978:17187):
+ * Neoflo API from the Product Design System Figma (node 981:16471):
  * three sizes, three corner treatments, six colour roles, an optional
  * status badge, and text / icon / image content.
  *
@@ -169,7 +181,6 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         variant="dot"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         neofloBadgeColor={badgeColor}
-        neofloSize={size}
       >
         {avatar}
       </StyledBadge>

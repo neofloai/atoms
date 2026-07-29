@@ -1,7 +1,7 @@
 import type { AvatarProps as MuiAvatarProps } from '@mui/material';
 
 /**
- * Avatar diameter, mapped from the Figma `size` axis (node 978:17187):
+ * Avatar diameter, mapped from the Figma `size` axis (node 981:16471):
  * `lg` = 40px, `md` = 32px, `sm` = 24px.
  */
 export type AvatarSize = 'sm' | 'md' | 'lg';
@@ -15,8 +15,10 @@ export type AvatarShape = 'round' | 'mid' | 'sharp';
 
 /**
  * Background colour role for text / icon avatars (ignored when `src`
- * renders an image). `accent` is the Figma default (orange); the rest
- * mirror the semantic palette used across action controls.
+ * renders an image). `accent` is the Figma default (a subtle primary
+ * tint — confirmed against node 981:16471, replacing the orange fill
+ * assumed from the older sheet); the rest mirror the semantic palette
+ * used across action controls.
  */
 export type AvatarColor =
   | 'accent'

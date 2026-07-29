@@ -34,7 +34,10 @@ import { colors } from './colors';
  * resolves to `red/400`, not the prior `red/700` placeholder. `success`
  * needed no change — its `onColorHover` already resolved to `green/400`,
  * matching that same sync. `warning`'s status colour landed on the
- * already-confirmed `caption` slot (`yellow/700`) instead.
+ * already-confirmed `caption` slot (`yellow/700`) instead. `primary`'s
+ * `onColorHover` was confirmed the same way (light mode only) against
+ * the Avatar spec (node 981:16471, 2026-07-29): `text/primary/4`
+ * resolves to `primary/400`, not the prior `primary/500` placeholder.
  */
 
 import type { ModeToken } from './surface';
@@ -56,7 +59,7 @@ export const text = {
     heading: { light: colors.primary[800], dark: colors.primary[200] },
     body: { light: colors.primary[700], dark: colors.primary[300] },
     caption: { light: colors.primary[600], dark: colors.primary[300] },
-    onColorHover: { light: colors.primary[500], dark: colors.primary[500] },
+    onColorHover: { light: colors.primary[400], dark: colors.primary[500] },
   },
   information: {
     heading: { light: colors.blue[800], dark: colors.blue[200] },
