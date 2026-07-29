@@ -20,22 +20,24 @@ export const data: ComponentExamplesData = {
     },
     {
       name: 'variant',
-      type: "'primary' | 'secondary' | 'success' | 'error' | 'warning'",
+      type: "'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'information' | 'orange' | 'purple'",
       default: "'primary'",
       description:
-        'Colour role. `secondary` renders on neutral grey surfaces; all others use their semantic colour scale.',
+        '`information`/`orange`/`purple` are only drawn at `size="sm"`; at `size="md"` they fall back to the `secondary` look.',
     },
     {
       name: 'appearance',
       type: "'contained' | 'outline'",
       default: "'contained'",
-      description: 'Visual emphasis: solid fill or 1px border.',
+      description:
+        'Visual emphasis: subtle fill or 1px border. Only applies at `size="md"` — `size="sm"` always renders a flat swatch.',
     },
     {
       name: 'size',
       type: "'sm' | 'md'",
       default: "'md'",
-      description: 'Pill height: 32px or 40px.',
+      description:
+        '`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (eight roles, no states).',
     },
     {
       name: 'avatar',
@@ -102,8 +104,18 @@ export const data: ComponentExamplesData = {
     {
       title: 'Sizes',
       code: [
-        '<Chip size="sm" label="Small" />',
+        '<Chip size="sm" variant="purple" label="Small" />',
         '<Chip size="md" label="Medium" />',
+      ].join('\n'),
+    },
+    {
+      title: 'Flat tag colours',
+      description:
+        '`size="sm"` adds three colour roles with no pill equivalent.',
+      code: [
+        '<Chip size="sm" variant="information" label="Info" />',
+        '<Chip size="sm" variant="orange" label="Orange" />',
+        '<Chip size="sm" variant="purple" label="Purple" />',
       ].join('\n'),
     },
   ],
@@ -118,10 +130,11 @@ export const data: ComponentExamplesData = {
     "Don't rely on colour alone to communicate status — the label must carry the meaning",
     "Don't mix sizes within one group of chips",
     "Don't hardcode background or border colours — the variant covers both colour schemes",
+    "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
   ],
   relatedComponents: ['Button', 'IconButton'],
   accessibility: [
-    'Clickable chips are focusable and render a 3px focus-visible ring',
+    'Clickable chips at `size="md"` are focusable and render a 3px focus-visible ring; `size="sm"` has no defined focus styling in Figma',
     'The delete affordance is keyboard-accessible via Backspace/Delete when the chip has focus',
   ],
 };

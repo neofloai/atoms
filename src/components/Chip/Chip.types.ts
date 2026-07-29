@@ -5,19 +5,29 @@ import type {
 } from '../_shared/actionStyles';
 
 /**
- * Colour role of the chip, mapped from the Figma `type` axis. Mirrors
- * `ButtonVariant` so action controls compose consistently.
+ * Colour role of the chip. `size="md"` (the 36px pill, node
+ * 986:18006) only defines `primary` / `secondary` / `success` /
+ * `error` / `warning`, mirroring `ButtonVariant`. `size="sm"` (the
+ * 20px flat tag, node 3156:83830) adds `information` / `orange` /
+ * `purple`, which have no pill equivalent yet — passing one of those
+ * three at `size="md"` falls back to the `secondary` look.
  */
-export type ChipVariant = ActionVariant;
+export type ChipVariant = ActionVariant | 'information' | 'orange' | 'purple';
 
 /**
  * Visual emphasis of the chip, mapped from the Figma `filled` axis:
- * `contained` (filled=True) or `outline` (filled=False). Chips have no
- * bare-text style.
+ * `contained` (filled=True) or `outline` (filled=False). Only applies
+ * at `size="md"` — the `size="sm"` tag has no outline equivalent in
+ * Figma and always renders as a flat swatch.
  */
 export type ChipAppearance = Exclude<ActionAppearance, 'text'>;
 
-/** Pill height: `sm` = 32px, `md` = 40px. */
+/**
+ * Chip size: `md` = the 36px pill (node 986:18006) — five colour
+ * roles, contained/outline emphasis, full interaction states. `sm` =
+ * the 20px flat tag (node 3156:83830) — eight colour roles, no
+ * emphasis axis, no interaction states.
+ */
 export type ChipSize = 'sm' | 'md';
 
 /**

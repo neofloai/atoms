@@ -14,6 +14,8 @@ import { colors } from './colors';
  *   text.success.{ ... }     (mirrors primary)
  *   text.error.{ ... }       (mirrors primary)
  *   text.warning.{ ... }     (mirrors primary)
+ *   text.orange.{ caption }  (new — see below)
+ *   text.purple.{ caption }  (new — see below)
  *   text.disabled.{ default, onColor }
  *
  * Generated from the Figma "component" variable collection export
@@ -59,6 +61,14 @@ export const text = {
     heading: { light: colors.primary[800], dark: colors.primary[200] },
     body: { light: colors.primary[700], dark: colors.primary[300] },
     caption: { light: colors.primary[600], dark: colors.primary[300] },
+    /**
+     * Confirmed (light mode only) against the Chip small-tag sheet
+     * (node 3156:83830, 2026-07-29): `text/primary/3` resolves to
+     * `primary/500`, distinct from both `caption` (600) and
+     * `onColorHover` (400). `dark` mirrors `light` as a placeholder
+     * pending confirmation.
+     */
+    accent: { light: colors.primary[500], dark: colors.primary[500] },
     onColorHover: { light: colors.primary[400], dark: colors.primary[500] },
   },
   information: {
@@ -84,6 +94,19 @@ export const text = {
     body: { light: colors.yellow[800], dark: colors.yellow[75] },
     caption: { light: colors.yellow[700], dark: colors.yellow[200] },
     onColorHover: { light: colors.yellow[600], dark: colors.yellow[300] },
+  },
+  orange: {
+    /**
+     * New role — the Chip small-tag sheet (node 3156:83830,
+     * 2026-07-29) is the first consumer and only ever references this
+     * one slot. `dark` mirrors `light` as a placeholder pending
+     * confirmation — see DESIGNER_QUESTIONS.md #4.
+     */
+    caption: { light: colors.orange[600], dark: colors.orange[600] },
+  },
+  purple: {
+    /** Same caveat as `orange` above — only this slot is confirmed. */
+    caption: { light: colors.purple[400], dark: colors.purple[400] },
   },
   disabled: {
     default: { light: colors.grey[500], dark: colors.grey[700] },
