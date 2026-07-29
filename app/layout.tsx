@@ -5,7 +5,7 @@ import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { NeofloThemeProvider } from '@/src/theme/ThemeProvider';
 import './globals.css';
 
-// Plus Jakarta Sans and Instrument Serif are self-hosted by the library
+// DM Sans and Instrument Serif are self-hosted by the library
 // (`@fontsource`, loaded inside NeofloThemeProvider), so the docs site renders
 // exactly what consumers get -- no separate next/font wiring for the brand
 // fonts. Geist Mono stays here for code blocks only.

@@ -8,7 +8,10 @@ import { colors } from './colors';
  * icon colours so an icon next to a body string can pick up the
  * matching token automatically.
  *
- * Generated from the Figma DTCG export.
+ * Generated from the Figma "component" variable collection export
+ * (2026-07-29) — see `./text.ts` for the naming-drift caveats this
+ * sync carried over (only `caption` and `default`'s renamed slots are
+ * confirmed; accent-role `heading`/`body`/`onColorHover` are unchanged).
  */
 
 import type { ModeToken } from './surface';
@@ -17,9 +20,10 @@ export type { ModeToken };
 export const icon = {
   default: {
     heading: { light: colors.grey[1200], dark: colors.grey[25] },
-    body: { light: colors.grey[900], dark: colors.grey[300] },
+    body: { light: colors.grey[800], dark: colors.grey[300] },
     caption: { light: colors.grey[650], dark: colors.grey[600] },
-    placeholder: { light: colors.grey[600], dark: colors.grey[650] },
+    placeholder: { light: colors.grey[625], dark: colors.grey[650] },
+    subtle: { light: colors.grey[500], dark: colors.grey[700] },
     headingOnColor: { light: colors.grey[25], dark: colors.grey[1100] },
     bodyOnColor: { light: colors.grey[100], dark: colors.grey[900] },
     captionOnColor: { light: colors.grey[300], dark: colors.grey[700] },
@@ -28,13 +32,13 @@ export const icon = {
   primary: {
     heading: { light: colors.primary[800], dark: colors.primary[200] },
     body: { light: colors.primary[700], dark: colors.primary[300] },
-    caption: { light: colors.primary[600], dark: colors.primary[400] },
+    caption: { light: colors.primary[600], dark: colors.primary[300] },
     onColorHover: { light: colors.primary[500], dark: colors.primary[500] },
   },
   information: {
     heading: { light: colors.blue[800], dark: colors.blue[200] },
     body: { light: colors.blue[700], dark: colors.blue[300] },
-    caption: { light: colors.blue[600], dark: colors.blue[400] },
+    caption: { light: colors.blue[600], dark: colors.blue[300] },
     onColorHover: { light: colors.blue[500], dark: colors.blue[500] },
   },
   success: {

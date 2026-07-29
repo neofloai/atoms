@@ -163,7 +163,7 @@ export const installation: InstallationGuide = {
     'Do not import from @mui/material directly -- it bypasses the design system.',
     'react and react-dom are peer dependencies: your app provides them (React 18 or 19). MUI and Emotion ship inside the package, so you do not install them.',
     'The package ships compiled JavaScript (dist/), so no transpilePackages or bundler transpile config is required.',
-    'Brand fonts (Plus Jakarta Sans and Instrument Serif) are self-hosted and loaded automatically by NeofloThemeProvider -- you do not need to add Google Fonts links or next/font wiring.',
+    'Brand fonts (DM Sans and Instrument Serif) are self-hosted and loaded automatically by NeofloThemeProvider -- you do not need to add Google Fonts links or next/font wiring.',
     'Color scheme follows the OS by default. Pin it with NeofloThemeProvider\'s defaultMode prop ("light", "dark", or "system") when your UI is designed for a single scheme.',
   ],
 };

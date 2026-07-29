@@ -7,7 +7,8 @@ import { colors } from './colors';
  * per-role, `disabled`) but interaction states are `default` /
  * `defaultHover` / `focus` (no `pressed`).
  *
- * Generated from the Figma DTCG export.
+ * Generated from the Figma "component" variable collection export
+ * (2026-07-29).
  */
 
 import type { ModeToken } from './surface';
@@ -29,14 +30,14 @@ export const border = {
     defaultPressed: { light: colors.grey[500], dark: colors.grey[500] },
   },
   primary: {
-    default: { light: colors.primary[100], dark: colors.primary[700] },
-    defaultHover: { light: colors.primary[200], dark: colors.primary[600] },
-    focus: { light: colors.primary[300], dark: colors.primary[700] },
+    default: { light: colors.primary[100], dark: colors.primary[800] },
+    defaultHover: { light: colors.primary[200], dark: colors.primary[700] },
+    focus: { light: colors.primary[300], dark: colors.primary[600] },
   },
   information: {
-    default: { light: colors.blue[600], dark: colors.blue[700] },
-    defaultHover: { light: colors.blue[700], dark: colors.blue[600] },
-    focus: { light: colors.blue[800], dark: colors.blue[700] },
+    default: { light: colors.blue[100], dark: colors.blue[700] },
+    defaultHover: { light: colors.blue[200], dark: colors.blue[600] },
+    focus: { light: colors.blue[300], dark: colors.blue[700] },
   },
   success: {
     default: { light: colors.green[100], dark: colors.green[700] },

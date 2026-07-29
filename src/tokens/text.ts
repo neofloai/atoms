@@ -6,7 +6,7 @@ import { colors } from './colors';
  * Per the Figma export, each role exposes typography *slots* rather
  * than interaction states:
  *
- *   text.default.{ heading, body, caption, placeholder,
+ *   text.default.{ heading, body, caption, placeholder, subtle,
  *                  headingOnColor, bodyOnColor, captionOnColor,
  *                  placeholderOnColor }
  *   text.primary.{ heading, body, caption, onColorHover }
@@ -16,7 +16,18 @@ import { colors } from './colors';
  *   text.warning.{ ... }     (mirrors primary)
  *   text.disabled.{ default, onColor }
  *
- * Generated from the Figma DTCG export.
+ * Generated from the Figma "component" variable collection export
+ * (2026-07-29). That export renamed `default`'s `body`/`caption`/
+ * `placeholder` slots to `b1`/`b2`/`b3` (matching the `Sans/B1-B3`
+ * type-scale rungs) and added a `subtle` slot; the accent roles
+ * (primary/information/success/error/warning) kept a plain numbered
+ * `1-4` ladder with no named `body`/`onColorHover` equivalent. Slot
+ * *names* below are kept as-is for API stability — only `caption`
+ * (verified against the live Button component in a prior sync) and
+ * `default`'s renamed slots have a confirmed mapping; `heading`,
+ * `body`, and `onColorHover` on the accent roles are unchanged from
+ * before this sync pending an explicit design confirmation, since
+ * nothing in the codebase currently consumes them.
  */
 
 import type { ModeToken } from './surface';
@@ -25,9 +36,10 @@ export type { ModeToken };
 export const text = {
   default: {
     heading: { light: colors.grey[1200], dark: colors.grey[25] },
-    body: { light: colors.grey[900], dark: colors.grey[300] },
+    body: { light: colors.grey[800], dark: colors.grey[300] },
     caption: { light: colors.grey[650], dark: colors.grey[600] },
-    placeholder: { light: colors.grey[600], dark: colors.grey[650] },
+    placeholder: { light: colors.grey[625], dark: colors.grey[650] },
+    subtle: { light: colors.grey[600], dark: colors.grey[600] },
     headingOnColor: { light: colors.grey[25], dark: colors.grey[1100] },
     bodyOnColor: { light: colors.grey[100], dark: colors.grey[900] },
     captionOnColor: { light: colors.grey[300], dark: colors.grey[700] },
@@ -36,13 +48,13 @@ export const text = {
   primary: {
     heading: { light: colors.primary[800], dark: colors.primary[200] },
     body: { light: colors.primary[700], dark: colors.primary[300] },
-    caption: { light: colors.primary[600], dark: colors.primary[400] },
+    caption: { light: colors.primary[600], dark: colors.primary[300] },
     onColorHover: { light: colors.primary[500], dark: colors.primary[500] },
   },
   information: {
     heading: { light: colors.blue[800], dark: colors.blue[200] },
     body: { light: colors.blue[700], dark: colors.blue[300] },
-    caption: { light: colors.blue[600], dark: colors.blue[400] },
+    caption: { light: colors.blue[600], dark: colors.blue[300] },
     onColorHover: { light: colors.blue[500], dark: colors.blue[500] },
   },
   success: {
@@ -65,7 +77,7 @@ export const text = {
   },
   disabled: {
     default: { light: colors.grey[500], dark: colors.grey[700] },
-    onColor: { light: colors.grey[500], dark: colors.grey[800] },
+    onColor: { light: colors.grey[500], dark: colors.grey[600] },
   },
 } as const;
 

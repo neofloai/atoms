@@ -37,7 +37,7 @@ function SlotRow({ name, size, leading, sample }: SlotRowProps) {
         sx={{
           fontSize: `${size}px`,
           lineHeight: `${leading}px`,
-          fontWeight: name.startsWith('h') ? fontWeights.bold : fontWeights.regular,
+          fontWeight: name.startsWith('h') ? fontWeights.medium : fontWeights.regular,
           color: 'text.primary',
         }}
       >
@@ -61,10 +61,8 @@ export function TypographySection() {
           Typography
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Font families, weights, and the H1-H4 / B1-B2 / caption type
-          scale. Sizes shown are placeholder values; the canonical
-          numbers live in Figma&apos;s responsive variable collection
-          and will be synced when the designer confirms.
+          Font families, weights, and the H1-H6 / B1-B2 / caption type
+          scale, synced from the Figma type scale.
         </Typography>
       </Stack>
 
@@ -75,7 +73,7 @@ export function TypographySection() {
         <Stack spacing={1.5}>
           <Stack spacing={0.5}>
             <Typography variant="caption" sx={{ fontFamily: MONO_FONT, color: 'text.secondary' }}>
-              product.sans &mdash; Plus Jakarta Sans
+              product.sans &mdash; DM Sans
             </Typography>
             <Typography sx={{ fontFamily: fontFamilies.product.sans, fontSize: 24 }}>
               The quick brown fox jumps over the lazy dog

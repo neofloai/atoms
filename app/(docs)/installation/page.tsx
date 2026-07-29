@@ -131,7 +131,7 @@ export default function InstallationPage() {
               Atoms works in any React 18 or 19 app — Next.js (App Router),
               Vite, or CRA. <code>react</code> and <code>react-dom</code> are
               peer dependencies your app already provides; MUI v9, Emotion, and
-              the brand fonts (Plus Jakarta Sans + Instrument Serif) ship inside
+              the brand fonts (DM Sans + Instrument Serif) ship inside
               the package, so you do not install or load them separately. The
               package ships compiled JavaScript, so no bundler transpile config
               is needed.

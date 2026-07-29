@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Button as MuiButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { fontWeights, radius, spacing } from '@/src/tokens';
+import { fontFamilies, fontWeights, radius, spacing, typography } from '@/src/tokens';
 
 import { appearanceStyles } from '../_shared/actionStyles';
 
@@ -17,18 +17,12 @@ import type {
 } from './Button.types';
 
 /**
- * Figma label spec is "Sans/B1/Medium": DM Sans, 500 weight, 13px over
- * a 20px leading, -1% tracking — confirmed live against the Figma
- * component (node 983:17179). This is a deliberate one-off deviation
- * from `theme.typography.fontFamily` (Plus Jakarta Sans): DM Sans
- * hasn't been adopted as the system-wide UI font yet, so it's pinned
- * locally here rather than promoted to `typography.ts`/`fontFamilies`.
+ * Figma label spec is "Sans/B1/Medium" (node 983:17179) — now the
+ * system type scale's `typography.body.b1` rung in `fontFamilies.product.sans`
+ * (DM Sans), so the label reads from shared tokens instead of pinning
+ * its own values.
  */
-const LABEL_FONT_FAMILY =
-  'var(--font-dm-sans, "DM Sans"), system-ui, -apple-system, sans-serif';
-const LABEL_FONT_SIZE_PX = 13;
-const LABEL_LEADING_PX = 20;
-const LABEL_LETTER_SPACING_PX = -0.13;
+const LABEL_TYPE = typography.body.b1;
 
 const muiVariantMap: Record<
   ButtonAppearance,
@@ -81,11 +75,11 @@ const StyledButton = styled(MuiButton, {
     prop !== 'neofloSize',
 })<StyledButtonProps>(({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
   borderRadius: radius.full,
-  fontFamily: LABEL_FONT_FAMILY,
-  fontSize: LABEL_FONT_SIZE_PX,
+  fontFamily: fontFamilies.product.sans,
+  fontSize: LABEL_TYPE.size,
   fontWeight: fontWeights.medium,
-  lineHeight: `${LABEL_LEADING_PX}px`,
-  letterSpacing: `${LABEL_LETTER_SPACING_PX}px`,
+  lineHeight: `${LABEL_TYPE.leading}px`,
+  letterSpacing: `${LABEL_TYPE.letterSpacing}em`,
   textTransform: 'none',
   boxShadow: 'none',
   gap: spacing.component.xs,

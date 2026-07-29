@@ -55,9 +55,8 @@ export function ElevationSection() {
           Elevation
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Three semantic shadow levels matching the Figma effect styles.
-          Values shown are placeholders; the canonical shadows will be
-          synced once the designer hands off offset/blur/colour specs.
+          Three semantic shadow levels, synced from the Figma effect
+          styles.
         </Typography>
       </Stack>
 
