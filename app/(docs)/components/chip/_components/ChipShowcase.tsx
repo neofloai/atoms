@@ -18,6 +18,17 @@ const variants: readonly ChipVariant[] = [
   'warning',
 ];
 
+const smallVariants: readonly ChipVariant[] = [
+  'secondary',
+  'primary',
+  'warning',
+  'purple',
+  'success',
+  'orange',
+  'error',
+  'information',
+];
+
 const appearances: readonly ChipAppearance[] = ['contained', 'outline'];
 
 function PreviewCard({
@@ -66,7 +77,6 @@ export function ChipShowcase() {
             appearances.map((appearance) => (
               <Chip
                 key={`${variant}-${appearance}`}
-                size="sm"
                 variant={variant}
                 appearance={appearance}
                 label={`${variant} ${appearance}`}
@@ -78,8 +88,20 @@ export function ChipShowcase() {
 
       <PreviewCard title="Sizes">
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          <Chip size="sm" label="Small" />
+          <Chip size="sm" variant="purple" label="Small" />
           <Chip size="md" label="Medium" />
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard title="Flat tag colours (size=&quot;sm&quot;)">
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+        >
+          {smallVariants.map((variant) => (
+            <Chip key={variant} size="sm" variant={variant} label={variant} />
+          ))}
         </Stack>
       </PreviewCard>
 

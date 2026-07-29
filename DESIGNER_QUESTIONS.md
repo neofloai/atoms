@@ -27,14 +27,13 @@ These are very light neutrals. A secondary button or chip will render almost whi
 
 ---
 
-### 4. `orange` scale — no palette role, no semantic usage
-The Colors PDF includes a full `orange` scale but it is **not referenced by any semantic token in the Figma DTCG export** (`surface`, `border`, `text`, `icon` all skip it) and it is not mapped to any MUI palette role.
-
-Orange is available in the raw token layer (`colors.orange[*]`) but no component will use it automatically. Avatar was briefly the one direct consumer (its `accent` default) but the 29 July resync (node 981:16471, see #16) replaced that with a subtle primary tint, so `orange` is currently unused anywhere in `src/`.
+### 4. `orange` scale — now has a consumer, but only light-mode + one tier is confirmed (updated 29 July, node 3156:83830)
+Superseded by the Chip resync below (#19): the Chip small-tag component set now uses both `orange` and `purple` as first-class colour roles, so they are no longer unused. `surface.orange.default`, `surface.purple.default`, `text.orange.caption`, `text.purple.caption`, and `text.primary.accent` were added to `src/tokens/surface.ts` / `text.ts` with only the single tier the small tag consumes — light mode confirmed against the live node, dark mode set equal to light as a placeholder.
 
 **Confirm:**
-- Is `orange` intended as a standalone token only (used by specific components directly)?
-- Or should it replace one of the existing palette roles? If so, which one?
+- Dark-mode values for all five of the above.
+- Whether `orange`/`purple` need the rest of the ladder (`defaultHover`, `defaultPressed`, `subtle*`) — nothing in `src/` consumes those tiers yet.
+- Whether `orange`/`purple` should ever get a `size="md"` pill treatment (see #19), or stay `size="sm"`-only.
 
 ---
 
@@ -188,3 +187,18 @@ The Alert component set (node 973:3010) was originally read as a 4 x 3 matrix: `
 - **Severity → icon mapping — RESOLVED as no change (29 July).** Re-inspecting the raw SVG fills behind each state's icon showed all four (error/warning/success/info) render the exact same path data (Phosphor's `WarningDiamond` glyph), just recoloured per state — a reused Figma instance, not a real per-severity icon design. Kept the existing Neoflo Phosphor set (error → `WarningDiamond`, warning → `Warning`, success → `CheckCircle`, info → `Info`) at `weight="fill"`, unchanged from 15 June.
 - **Default state.** The sheet implies no default. We default `severity="info"` (neutral) and `floating={false}` (the plain inline look, = the sheet's `float=False`). Confirm.
 - **Close affordance.** The sheet's trailing area shows an optional button plus a Phosphor `X`. We render the close via MUI's `onClose` with the Phosphor `X` as the close icon; a custom `action` (e.g. a Button) replaces the close button, per MUI. Confirm whether a close and an action should be able to coexist.
+
+---
+
+### 19. Chip — colour model, size, and a second component under one `size` axis (added 29 July, nodes 986:18006 + 3156:83830)
+The Chip component set (node 977:17709) turned out to contain two visually distinct components, not one component at two sizes:
+
+- **`contained` colour model was wrong for every role.** The prior implementation reused Button's `actionStyles` role table, so `primary` `contained` rendered a saturated fill with a white label (Button's actual behaviour). The 36px pill sheet (node 986:18006) shows **every** role — including `primary` — using a pale/subtle fill with its own accent colour as the label; `secondary`/`success`/`error`/`warning` already happened to match (they reuse Button's own pale-fill treatment), so only `primary` was visibly broken. Fixed with a Chip-only role table in `Chip.tsx` instead of extending the shared one.
+- **Size was wrong.** The prior sm/md (32px/40px, text-only) didn't match either real Figma size. The pill (node 986:18006) is a single 36px size with a 20px leading icon (`Sans/B1/Medium`, 8px/12px padding, 8px corner radius — not the pill/stadium radius previously used). Confirmed the corner radius is `radius.sm` (8px), not `radius.xl`.
+- **A second, unrelated 20px component exists** (node 3156:83830): a flat, non-interactive tag with eight colour roles (`grey`/`primary`/`yellow`/`purple`/`green`/`orange`/`red`/`blue`, i.e. `secondary`/`primary`/`warning`/`purple`/`success`/`orange`/`error`/`information`), no `contained`/`outline` axis, and no hover/pressed/focus states drawn. Per direct instruction, this was mapped onto Chip's existing `size` prop (`size="sm"`) rather than a new component, extending `ChipVariant` with `information`/`orange`/`purple` (new — see #4) even though those three have no pill (`size="md"`) equivalent yet.
+- **A ninth "info" swatch on the same sheet** (PO-number + amount, fixed `FilePdf` icon, `grey/125` background) was read as a one-off usage example rather than a tenth colour role — its background doesn't fit the sheet's own naming pattern for the other eight, and its two-tone text content is specific to that one example. Not implemented as a variant; consumers can still compose it via `label`.
+
+**Confirm:**
+- Whether `information`/`orange`/`purple` should eventually get their own `size="md"` pill treatment, or stay `size="sm"`-only as implemented.
+- The dark-mode values noted in #4.
+- Whether the "info" PO/amount swatch should become a first-class variant if that composite pattern recurs elsewhere.

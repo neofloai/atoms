@@ -92,6 +92,20 @@ export const surface = {
     subtleHover: { light: colors.yellow[100], dark: colors.yellow[1000] },
     subtlePressed: { light: colors.yellow[200], dark: colors.yellow[900] },
   },
+  orange: {
+    /**
+     * New role — the Chip small-tag sheet (node 3156:83830,
+     * 2026-07-29) is the first consumer and only ever references this
+     * one tier. No hover/pressed/subtle* tier has been drawn in Figma
+     * yet, and `dark` mirrors `light` as a placeholder pending
+     * confirmation — see DESIGNER_QUESTIONS.md #4.
+     */
+    default: { light: colors.orange[100], dark: colors.orange[100] },
+  },
+  purple: {
+    /** Same caveat as `orange` above — only `default` is confirmed. */
+    default: { light: colors.purple[75], dark: colors.purple[75] },
+  },
   disabled: {
     default: { light: colors.grey[200], dark: colors.grey[900] },
   },
