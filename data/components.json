@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-29T12:52:18.882Z",
+  "generatedAt": "2026-07-29T13:33:52.772Z",
   "components": [
     {
       "name": "Alert",
       "category": "Feedback",
-      "tagline": "Inline, non-blocking message for status and feedback across four severities and three emphasis styles.",
+      "tagline": "Inline, non-blocking message for status and feedback across four severities, with an optional floating (toast) treatment.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=973-3010",
       "props": [
         {
@@ -14,10 +14,10 @@
           "description": "Semantic state. Drives the colour and the default icon. Colours resolve from the token-built theme palette."
         },
         {
-          "name": "variant",
-          "type": "'filled' | 'subtle' | 'outline'",
-          "default": "'subtle'",
-          "description": "Visual emphasis: solid severity surface, tinted surface, or 1px border."
+          "name": "floating",
+          "type": "boolean",
+          "default": "false",
+          "description": "Renders as a tinted, bordered, rounded surface with no default icon — for Alert used as a toast (e.g. inside `Snackbar`) rather than inline in the page."
         },
         {
           "name": "title",
@@ -63,11 +63,6 @@
           "code": "<Alert severity=\"error\">Something went wrong.</Alert>\n<Alert severity=\"warning\">Your trial ends soon.</Alert>\n<Alert severity=\"success\">Changes saved.</Alert>\n<Alert severity=\"info\">A new version is available.</Alert>"
         },
         {
-          "title": "Variants",
-          "description": "Emphasis from heaviest to lightest: `filled`, `subtle` (default), `outline`.",
-          "code": "<Alert severity=\"success\" variant=\"filled\">Deployed.</Alert>\n<Alert severity=\"success\" variant=\"subtle\">Deployed.</Alert>\n<Alert severity=\"success\" variant=\"outline\">Deployed.</Alert>"
-        },
-        {
           "title": "With title",
           "code": "<Alert severity=\"error\" title=\"Payment failed\">\n  We could not charge your card. Update your billing details.\n</Alert>"
         },
@@ -79,13 +74,18 @@
         {
           "title": "With an action",
           "code": "<Alert\n  severity=\"warning\"\n  action={<Button variant=\"secondary\" size=\"sm\">Undo</Button>}\n>\n  Item moved to trash.\n</Alert>"
+        },
+        {
+          "title": "Floating (toast)",
+          "description": "Pair `floating` with MUI's `Snackbar` to present Alert as a toast. The tinted, bordered, rounded surface reads well over arbitrary page content, so the default icon is suppressed to keep it compact.",
+          "code": "<Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>\n  <Alert severity=\"success\" floating onClose={handleClose}>\n    Changes saved.\n  </Alert>\n</Snackbar>"
         }
       ],
       "dos": [
         "Match the `severity` to the meaning (success for confirmations, error for failures)",
         "Keep messages short and actionable; add a `title` only when the body needs framing",
         "Use `onClose` for dismissible, low-urgency alerts",
-        "Reserve `variant=\"filled\"` for the highest-priority messages"
+        "Reserve `floating` for Alert used as a toast (e.g. inside `Snackbar`), not inline in the page"
       ],
       "donts": [
         "Don't use an Alert to block the user — use a Dialog for responses you must collect",

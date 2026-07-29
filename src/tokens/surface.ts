@@ -19,6 +19,17 @@ import { colors } from './colors';
  *
  * `information` corresponds to MUI's `info` palette role; values are
  * sourced from the `blue` raw scale.
+ *
+ * `warning`'s `default`/`subtle` (light mode) were corrected one rung
+ * up the `yellow` scale (previously `100`/`50`) after the Alert resync
+ * (node 973:3010, 2026-07-29) showed `surface/warning/default` =
+ * `yellow/200` and `surface/warning/subtle` = `yellow/75` — `error` and
+ * `success` matched their existing tokens exactly in the same check, so
+ * `warning` alone was off. `defaultHover`/`defaultPressed`/
+ * `subtleHover`/`subtlePressed` were shifted the same one rung to keep
+ * the ladder's shape consistent with the confirmed `error`/`success`
+ * pattern (each avoids colliding with its neighbour); those four were
+ * not independently confirmed against a Figma interaction state.
  */
 
 export interface ModeToken {
@@ -74,12 +85,12 @@ export const surface = {
     subtlePressed: { light: colors.red[75], dark: colors.red[900] },
   },
   warning: {
-    default: { light: colors.yellow[100], dark: colors.yellow[900] },
-    defaultHover: { light: colors.yellow[200], dark: colors.yellow[800] },
-    defaultPressed: { light: colors.yellow[300], dark: colors.yellow[700] },
-    subtle: { light: colors.yellow[50], dark: colors.yellow[1100] },
-    subtleHover: { light: colors.yellow[75], dark: colors.yellow[1000] },
-    subtlePressed: { light: colors.yellow[100], dark: colors.yellow[900] },
+    default: { light: colors.yellow[200], dark: colors.yellow[900] },
+    defaultHover: { light: colors.yellow[300], dark: colors.yellow[800] },
+    defaultPressed: { light: colors.yellow[400], dark: colors.yellow[700] },
+    subtle: { light: colors.yellow[75], dark: colors.yellow[1100] },
+    subtleHover: { light: colors.yellow[100], dark: colors.yellow[1000] },
+    subtlePressed: { light: colors.yellow[200], dark: colors.yellow[900] },
   },
   disabled: {
     default: { light: colors.grey[200], dark: colors.grey[900] },

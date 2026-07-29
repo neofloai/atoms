@@ -11,7 +11,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { Alert } from '@/src/components/Alert';
 import { data } from '@/src/components/Alert/Alert.examples';
 import { AlertShowcase } from './_components/AlertShowcase';
 
@@ -67,15 +66,6 @@ export default function AlertDocsPage() {
               View design in Figma
             </Link>
           )}
-          <Alert severity="info" sx={{ mt: 1 }}>
-            The Figma sheet draws the three styles as tint tiers, but colours
-            here come from our foundation tokens via the theme palette:{' '}
-            <code>filled</code> / <code>subtle</code> / <code>outline</code> map
-            to MUI <code>filled</code> / <code>standard</code> /{' '}
-            <code>outlined</code>, so every severity is correct in light and
-            dark mode without hardcoded values. Severity icons use the Neoflo
-            Phosphor set.
-          </Alert>
         </Stack>
 
         <Divider />
