@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T12:09:17.328Z",
+  "generatedAt": "2026-07-29T12:52:18.882Z",
   "components": [
     {
       "name": "Alert",
@@ -107,7 +107,7 @@
       "name": "Avatar",
       "category": "Data Display",
       "tagline": "Represents a user or entity with initials, an icon, or a photo, plus an optional status badge.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=978-17187",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=981-16471",
       "props": [
         {
           "name": "children",
