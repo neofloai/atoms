@@ -4,7 +4,7 @@ import * as React from 'react';
 import { IconButton as MuiIconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { radius, spacing } from '@/src/tokens';
+import { radius } from '@/src/tokens';
 
 import { appearanceStyles } from '../_shared/actionStyles';
 
@@ -18,25 +18,37 @@ import type {
 
 /**
  * Square control dimensions from the Figma component set
- * (node 983:17632): 48 / 40 / 32px with a 24px glyph, so padding is
- * 12 / 8 / 4px respectively.
+ * (node 983:17632): 44 / 36 / 32px, matching `Button`'s control
+ * heights. Padding is 0 — the box size and glyph size are both fixed,
+ * so centering comes from the flex layout, not padding.
  */
 const sizeStyles: Record<IconButtonSize, CSSObject> = {
   lg: {
-    width: 48,
-    height: 48,
-    padding: `${spacing.component.sm}px`,
+    width: 44,
+    height: 44,
+    padding: 0,
   },
   md: {
-    width: 40,
-    height: 40,
-    padding: `${spacing.component.xs}px`,
+    width: 36,
+    height: 36,
+    padding: 0,
   },
   sm: {
     width: 32,
     height: 32,
-    padding: `${spacing.component.xxs}px`,
+    padding: 0,
   },
+};
+
+/**
+ * Icon glyph size per control size (node 983:17632): 24px for
+ * `lg`/`md`, dropping to 16px for `sm` — the same `sm` glyph size as
+ * `Button`'s start/end icons.
+ */
+const iconSizeStyles: Record<IconButtonSize, CSSObject> = {
+  lg: { width: 24, height: 24 },
+  md: { width: 24, height: 24 },
+  sm: { width: 16, height: 16 },
 };
 
 interface StyledIconButtonProps {
@@ -52,10 +64,19 @@ const StyledIconButton = styled(MuiIconButton, {
     prop !== 'neofloSize',
 })<StyledIconButtonProps>(
   ({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
-    // The design uses an 8px corner radius, not MUI's default circle.
-    borderRadius: radius.sm,
+    // Fully round, matching Button's `radius.full` pill shape.
+    borderRadius: radius.full,
     ...sizeStyles[neofloSize],
+    // Direct-child selector only -- the loading spinner's `<svg>` is
+    // nested several levels deep and must keep its own default size.
+    '& > svg': iconSizeStyles[neofloSize],
     ...appearanceStyles(theme, neofloVariant, neofloAppearance),
+    // MUI hides the glyph behind the spinner via `color: transparent`
+    // on this class, but it loses to the `&.Mui-disabled` colour above
+    // (loading also sets `disabled`) since both rules tie on
+    // specificity and this one is declared first. Re-declaring it last
+    // restores the intended precedence.
+    '&.MuiIconButton-loading': { color: 'transparent' },
   })
 );
 
