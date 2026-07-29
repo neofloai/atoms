@@ -28,4 +28,9 @@ export interface TextFieldProps
   startAdornment?: React.ReactNode;
   /** Element rendered at the end of the input, inside the border. */
   endAdornment?: React.ReactNode;
+  /**
+   * Shows a live "length/max" counter next to the label (requires
+   * `label`) and enforces it as the native HTML `maxlength`.
+   */
+  maxLength?: number;
 }

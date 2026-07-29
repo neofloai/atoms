@@ -1,4 +1,3 @@
-import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
@@ -67,12 +66,6 @@ export default function TextFieldDocsPage() {
               View design in Figma
             </Link>
           )}
-          <Alert severity="info" sx={{ mt: 1 }}>
-            The Figma sheet uses a 16px slot padding that has no token in
-            the spacing scale (which jumps 12 to 24) — see
-            DESIGNER_QUESTIONS.md #15. The field currently uses the 12px
-            token; the inset may change once the design team responds.
-          </Alert>
         </Stack>
 
         <Divider />

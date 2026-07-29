@@ -153,14 +153,8 @@ The selector component set (node 2080:23677) only defines `checkbox` / `selected
 
 ---
 
-### 15. TextField — 16px slot padding missing from the spacing scale (added 10 June)
-The text-field slot (node 953:1059) uses `Scale/300` = **16px** inline padding (and the selector row label inset uses 16px too), but the semantic spacing scale from the DTCG export (#8) jumps from `sm = 12` straight to `md = 24` — there is no 16px step.
-
-`TextField` currently uses `spacing.component.sm` (12px) so it stays on tokens, which renders 4px tighter than the Figma sheet.
-
-**Confirm:**
-- Should the component spacing scale gain a 16px step (and if so, what is its name)?
-- Or is 12px acceptable for the field inset?
+### 15. TextField — 16px slot padding missing from the spacing scale — RESOLVED (2026-07-29, node 3179:106156 re-sync)
+The original node 953:1059 measurement (`Scale/300` = 16px inline padding) turned out to be stale. The fresh TextField export (node 3179:106156) uses `Scale/200` = **8px** uniformly for the field inset and the icon/text gap — already named `spacing.component.xs`. `TextField` now uses that token directly; no scale gap remains.
 
 ---
 
