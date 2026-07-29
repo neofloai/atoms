@@ -134,6 +134,18 @@ export function TextFieldShowcase() {
           />
         </Box>
       </PreviewCard>
+
+      <PreviewCard title="Character counter">
+        <Box sx={{ maxWidth: 480 }}>
+          <TextField
+            label="Bio"
+            placeholder="Tell us about yourself"
+            fullWidth
+            maxLength={100}
+            defaultValue="A quick but important distinction first"
+          />
+        </Box>
+      </PreviewCard>
     </Stack>
   );
 }

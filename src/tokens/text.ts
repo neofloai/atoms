@@ -24,10 +24,17 @@ import { colors } from './colors';
  * `1-4` ladder with no named `body`/`onColorHover` equivalent. Slot
  * *names* below are kept as-is for API stability — only `caption`
  * (verified against the live Button component in a prior sync) and
- * `default`'s renamed slots have a confirmed mapping; `heading`,
- * `body`, and `onColorHover` on the accent roles are unchanged from
- * before this sync pending an explicit design confirmation, since
- * nothing in the codebase currently consumes them.
+ * `default`'s renamed slots have a confirmed mapping; `heading` and
+ * `body` on the accent roles are unchanged from before this sync
+ * pending an explicit design confirmation, since nothing in the
+ * codebase currently consumes them.
+ *
+ * `onColorHover` for `error` was confirmed (light mode only) against
+ * the TextField status-text spec (node 3179:106156): `text/error/4`
+ * resolves to `red/400`, not the prior `red/700` placeholder. `success`
+ * needed no change — its `onColorHover` already resolved to `green/400`,
+ * matching that same sync. `warning`'s status colour landed on the
+ * already-confirmed `caption` slot (`yellow/700`) instead.
  */
 
 import type { ModeToken } from './surface';
@@ -67,7 +74,7 @@ export const text = {
     heading: { light: colors.red[1000], dark: colors.red[50] },
     body: { light: colors.red[900], dark: colors.red[75] },
     caption: { light: colors.red[600], dark: colors.red[200] },
-    onColorHover: { light: colors.red[700], dark: colors.red[300] },
+    onColorHover: { light: colors.red[400], dark: colors.red[300] },
   },
   warning: {
     heading: { light: colors.yellow[900], dark: colors.yellow[50] },

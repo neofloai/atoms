@@ -9,6 +9,7 @@ import {
   fontWeights,
   radius,
   spacing,
+  surface,
   text,
   typography,
 } from '@/src/tokens';
@@ -20,38 +21,28 @@ import type { ModeToken } from '@/src/tokens';
 import type { TextFieldProps, TextFieldStatus } from './TextField.types';
 
 /**
- * Figma field spec is Sans/B2/Medium with a 24px leading (Scale/400).
- * The `typography.body.b2` token currently carries a placeholder 20px
- * leading, so the leading is pinned here until the responsive type
- * tokens are resolved.
+ * Field inset + icon/text gap (Scale/200) from the fresh Figma export
+ * (node 3179:106156). Resolves DESIGNER_QUESTIONS.md #15 — the earlier
+ * 16px measurement was against a stale node; this export uses 8px
+ * uniformly, which the spacing scale already names (`spacing.component.xs`).
  */
-const FIELD_LEADING_PX = 24;
-
-/**
- * Vertical slot padding (Scale/250). MUI's notched outline is an
- * absolutely-positioned fieldset, so like Figma's inside stroke the
- * 2px border overlays the padding: 24px line + 2 x 12px = 48px tall.
- */
-const FIELD_PADDING_BLOCK_PX = 12;
-
-/**
- * TODO(DESIGNER_QUESTIONS.md #15): Figma uses Scale/300 (16px) for the
- * inline slot padding, but the semantic spacing scale has no 16px step
- * (sm = 12, md = 24). Using `sm` until the designer confirms whether
- * the scale gains a 16px token or 12px is acceptable.
- */
-const FIELD_PADDING_INLINE = spacing.component.sm;
+const FIELD_PADDING_PX = spacing.component.xs;
 
 const statusBorderTokens: Record<TextFieldStatus, ModeToken> = {
-  error: border.error.default,
-  success: border.success.default,
-  warning: border.warning.default,
+  error: border.error.focus,
+  success: border.success.focus,
+  warning: border.warning.focus,
 };
 
-const statusHelperTokens: Record<TextFieldStatus, ModeToken> = {
-  error: text.error.heading,
-  success: text.success.heading,
-  warning: text.warning.heading,
+/**
+ * Label + helper text colour per status (node 3179:106156). The `focus`
+ * step happens to be the exact saturated shade the status rows use at
+ * rest — see the `border.ts`/`text.ts`/`icon.ts` sync notes.
+ */
+const statusTextTokens: Record<TextFieldStatus, ModeToken> = {
+  error: text.error.onColorHover,
+  success: text.success.onColorHover,
+  warning: text.warning.caption,
 };
 
 interface StyledTextFieldProps {
@@ -61,58 +52,105 @@ interface StyledTextFieldProps {
 const StyledTextField = styled(MuiTextField, {
   shouldForwardProp: (prop) => prop !== 'neofloStatus',
 })<StyledTextFieldProps>(({ theme, neofloStatus }) => {
-  const fieldFont: CSSObject = {
+  const labelFont: CSSObject = {
     fontFamily: theme.typography.fontFamily,
     fontSize: typography.body.b2.size,
-    fontWeight: fontWeights.medium,
-    lineHeight: `${FIELD_LEADING_PX}px`,
+    fontWeight: fontWeights.regular,
+    lineHeight: `${typography.body.b2.leading}px`,
+  };
+
+  const fieldFont: CSSObject = {
+    fontFamily: theme.typography.fontFamily,
+    fontSize: typography.body.b1.size,
+    fontWeight: fontWeights.regular,
+    lineHeight: `${typography.body.b1.leading}px`,
+    letterSpacing: `${typography.body.b1.letterSpacing}em`,
+  };
+
+  const helperFont: CSSObject = {
+    fontFamily: theme.typography.fontFamily,
+    fontSize: typography.body.caption.size,
+    fontWeight: fontWeights.regular,
+    lineHeight: `${typography.body.caption.leading}px`,
+    letterSpacing: `${typography.body.caption.letterSpacing}em`,
   };
 
   const styles: CSSObject = {
-    // Static label above the field (the Figma design has no floating
-    // label), aligned with the slot's inner padding.
+    // Static label above the field, with the character counter
+    // right-aligned on the same row (Figma's "1/100").
     '& .MuiInputLabel-root': {
       position: 'static',
       transform: 'none',
       maxWidth: 'none',
-      padding: `0 ${FIELD_PADDING_INLINE}px`,
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: `0 ${FIELD_PADDING_PX}px`,
       marginBottom: spacing.component.xxs,
-      ...fieldFont,
-      ...paired(theme, { color: text.default.body }),
-      '&.Mui-focused, &.Mui-error': paired(theme, {
-        color: text.default.body,
-      }),
+      ...labelFont,
+      ...paired(theme, { color: text.default.placeholder }),
+      // MUI's InputLabel colours itself with the theme's primary colour
+      // on focus by default; the Figma label stays neutral except when
+      // a status is set (handled separately below).
+      '&.Mui-focused': paired(theme, { color: text.default.placeholder }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
+      '& .Neoflo-TextField-counter': {
+        ...helperFont,
+        ...paired(theme, { color: text.default.placeholder }),
+      },
+      '&.Mui-disabled .Neoflo-TextField-counter': paired(theme, {
+        color: text.disabled.default,
+      }),
     },
     '& .MuiOutlinedInput-root': {
       borderRadius: radius.sm,
-      padding: 0,
+      // Inset from the border on every edge; `gap` only spaces the
+      // icon/input/icon children apart from each other, not from the
+      // box edges, so it can't stand in for this on its own.
+      padding: FIELD_PADDING_PX,
+      gap: FIELD_PADDING_PX,
       ...fieldFont,
-      ...paired(theme, { color: text.default.body }),
+      ...paired(theme, {
+        color: text.default.body,
+        backgroundColor: surface.layers.page,
+      }),
       '& .MuiOutlinedInput-notchedOutline': {
-        borderWidth: 2,
-        ...paired(theme, { borderColor: border.default.default }),
+        borderWidth: 1,
+        ...paired(theme, { borderColor: border.layers.card1 }),
         // The label renders outside the field, so collapse the notch.
         '& legend': { width: 0 },
       },
-      '&:hover:not(.Mui-focused):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline':
-        paired(theme, { borderColor: border.default.defaultHover }),
-      '&.Mui-focused .MuiOutlinedInput-notchedOutline': paired(theme, {
-        borderColor: border.primary.default,
-      }),
-      '&.Mui-disabled': {
-        ...paired(theme, { color: text.disabled.default }),
-        '& .MuiOutlinedInput-notchedOutline': paired(theme, {
-          borderColor: border.disabled.default,
+      // Focus keeps the resting border on three sides and recolours
+      // only the bottom edge (node 3179:106156's focused variant) — an
+      // underline accent rather than a full border colour swap. MUI's
+      // OutlinedInput sets its own `.Mui-focused` border colour (theme
+      // primary) and doubles the width, so both must be cancelled
+      // explicitly before the bottom-edge override is applied.
+      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderWidth: 1,
+        // `borderColor` (all sides) then `borderBottomColor` in one
+        // `paired()` call, in that order, so the bottom override wins
+        // in both colour schemes without either clobbering the other's
+        // dark-mode selector.
+        ...paired(theme, {
+          borderColor: border.layers.card1,
+          borderBottomColor: border.primary.focus,
         }),
       },
-      '&.MuiInputBase-multiline': {
-        padding: `${FIELD_PADDING_BLOCK_PX}px ${FIELD_PADDING_INLINE}px`,
+      '&.Mui-disabled': {
+        ...paired(theme, {
+          color: text.disabled.default,
+          backgroundColor: surface.disabled.default,
+        }),
+        '& .MuiOutlinedInput-notchedOutline': paired(theme, {
+          borderColor: border.layers.card2,
+        }),
       },
     },
     '& .MuiOutlinedInput-input': {
       height: 'auto',
-      padding: `${FIELD_PADDING_BLOCK_PX}px ${FIELD_PADDING_INLINE}px`,
+      padding: 0,
       '&::placeholder': {
         opacity: 1,
         ...paired(theme, { color: text.default.placeholder }),
@@ -125,20 +163,29 @@ const StyledTextField = styled(MuiTextField, {
     // Multiline padding lives on the root, not the textarea.
     '& .MuiInputBase-inputMultiline': { padding: 0 },
     '& .MuiInputAdornment-root': {
-      margin: `0 ${FIELD_PADDING_INLINE}px`,
       ...paired(theme, { color: text.default.caption }),
     },
     '& .MuiFormHelperText-root': {
-      margin: `${spacing.component.xs}px 0 0`,
-      padding: `0 ${FIELD_PADDING_INLINE}px`,
-      ...fieldFont,
-      ...paired(theme, { color: text.default.caption }),
+      margin: `${spacing.component.xxs}px 0 0`,
+      padding: `0 ${FIELD_PADDING_PX}px`,
+      ...helperFont,
+      ...paired(theme, { color: text.default.placeholder }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
     },
   };
 
-  if (neofloStatus) {
-    // Status colour wins over the resting, hover, and focused borders.
+  if (!neofloStatus) {
+    // No status: a subtle tint communicates hover and "has a value"
+    // (node 3179:106156's `hover`/`filled` variants) — skipped entirely
+    // once a status colours the border instead.
+    styles['& .MuiOutlinedInput-root'] = {
+      ...(styles['& .MuiOutlinedInput-root'] as CSSObject),
+      '&:hover:not(.Mui-focused):not(.Mui-disabled), &[data-filled="true"]:not(.Mui-focused):not(.Mui-disabled)':
+        paired(theme, { backgroundColor: surface.layers.card1 }),
+    };
+  } else {
+    // Status colour wins over the resting, hover, and focused borders,
+    // and recolours the label + helper text (the counter stays neutral).
     styles[
       [
         '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline',
@@ -146,9 +193,17 @@ const StyledTextField = styled(MuiTextField, {
         '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline',
       ].join(', ')
     ] = paired(theme, { borderColor: statusBorderTokens[neofloStatus] });
-    styles['& .MuiFormHelperText-root:not(.Mui-disabled)'] = paired(theme, {
-      color: statusHelperTokens[neofloStatus],
-    });
+    // Merged into the existing selector (not a separate `:not(.Mui-disabled)`
+    // rule) so the nested `&.Mui-disabled` override -- one class more
+    // specific -- always wins regardless of declaration order.
+    styles['& .MuiInputLabel-root'] = {
+      ...(styles['& .MuiInputLabel-root'] as CSSObject),
+      ...paired(theme, { color: statusTextTokens[neofloStatus] }),
+    };
+    styles['& .MuiFormHelperText-root'] = {
+      ...(styles['& .MuiFormHelperText-root'] as CSSObject),
+      ...paired(theme, { color: statusTextTokens[neofloStatus] }),
+    };
   }
 
   return styles;
@@ -156,10 +211,11 @@ const StyledTextField = styled(MuiTextField, {
 
 /**
  * Branded text input. Wraps MUI `TextField` with the Neoflo API from
- * the Product Design System Figma (nodes 953:1059 and 973:5904):
- * static label above the field, 2px border with hover / focus /
- * disabled styling, validation statuses that colour the border and
- * helper text, and single or multi-line input in both colour schemes.
+ * the Product Design System Figma (node 3179:106156): static label
+ * above the field with an optional character counter, a 1px border
+ * with hover / focus / disabled styling, validation statuses that
+ * colour the border and label/helper text, and single or multi-line
+ * input in both colour schemes.
  *
  * Multi-line behaviour maps to the Figma variants: `minRows`/`maxRows`
  * grows with content (flexible), `rows` fixes the height and scrolls
@@ -171,23 +227,79 @@ const StyledTextField = styled(MuiTextField, {
  * @example Validation error
  * <TextField label="Amount" status="error" helperText="Amount is required" />
  *
+ * @example Character counter
+ * <TextField label="Bio" maxLength={100} />
+ *
  * @example Fixed-height multi-line
  * <TextField label="Notes" multiline rows={4} />
  */
 export const TextField = React.forwardRef<HTMLDivElement, TextFieldProps>(
-  ({ status, startAdornment, endAdornment, ...rest }, ref) => (
-    <StyledTextField
-      ref={ref}
-      variant="outlined"
-      error={status === 'error'}
-      neofloStatus={status}
-      slotProps={{
-        inputLabel: { shrink: true, disableAnimation: true },
-        input: { notched: false, startAdornment, endAdornment },
-      }}
-      {...rest}
-    />
-  )
+  (
+    {
+      status,
+      startAdornment,
+      endAdornment,
+      maxLength,
+      label,
+      value,
+      defaultValue,
+      onChange,
+      ...rest
+    },
+    ref
+  ) => {
+    const isControlled = value !== undefined;
+    const [uncontrolledLength, setUncontrolledLength] = React.useState(
+      () => String(defaultValue ?? '').length
+    );
+    const length = isControlled ? String(value ?? '').length : uncontrolledLength;
+
+    const handleChange = (
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      if (!isControlled) setUncontrolledLength(event.target.value.length);
+      onChange?.(event);
+    };
+
+    return (
+      <StyledTextField
+        ref={ref}
+        variant="outlined"
+        error={status === 'error'}
+        neofloStatus={status}
+        value={value}
+        defaultValue={defaultValue}
+        onChange={handleChange}
+        label={
+          maxLength === undefined || !label ? (
+            label
+          ) : (
+            <React.Fragment>
+              {label}
+              <span className="Neoflo-TextField-counter">
+                {length}/{maxLength}
+              </span>
+            </React.Fragment>
+          )
+        }
+        slotProps={{
+          inputLabel: { shrink: true, disableAnimation: true },
+          input: {
+            notched: false,
+            startAdornment,
+            endAdornment,
+            // MUI's OutlinedInput spreads unknown props onto its root DOM
+            // node, but its slot type doesn't model arbitrary `data-*`
+            // attributes -- cast needed for the "has a value" bg tint hook.
+            'data-filled': length > 0,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any,
+          htmlInput: maxLength === undefined ? undefined : { maxLength },
+        }}
+        {...rest}
+      />
+    );
+  }
 );
 
 TextField.displayName = 'TextField';

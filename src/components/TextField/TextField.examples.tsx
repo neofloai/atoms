@@ -10,7 +10,7 @@ export const data: ComponentExamplesData = {
   tagline:
     'Text input with a static label, validation statuses, helper text, and single or multi-line entry.',
   figmaUrl:
-    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=953-1059',
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3179-106156',
   props: [
     {
       name: 'label',
@@ -51,6 +51,13 @@ export const data: ComponentExamplesData = {
       default: '—',
       description:
         'Element rendered at the end of the input, e.g. a clear IconButton.',
+    },
+    {
+      name: 'maxLength',
+      type: 'number',
+      default: '—',
+      description:
+        'Shows a live "length/max" counter next to the label and caps native input length. Requires `label`.',
     },
     {
       name: 'multiline',
@@ -129,6 +136,10 @@ export const data: ComponentExamplesData = {
       title: 'Multi-line: fixed height, scrolls',
       code: '<TextField label="Description" multiline rows={6} />',
     },
+    {
+      title: 'Character counter',
+      code: '<TextField label="Bio" placeholder="Tell us about yourself" maxLength={100} />',
+    },
   ],
   dos: [
     'Always provide a `label` — use `aria-label` only when a visible label is impossible',
@@ -139,7 +150,7 @@ export const data: ComponentExamplesData = {
   donts: [
     "Don't use placeholder text as a substitute for a label",
     "Don't rely on border colour alone to communicate validation — set `helperText` too",
-    "Don't override the 2px border or 8px radius — they are part of the field identity",
+    "Don't override the 1px border or 8px radius — they are part of the field identity",
     "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended",
   ],
   relatedComponents: ['Button', 'IconButton'],
