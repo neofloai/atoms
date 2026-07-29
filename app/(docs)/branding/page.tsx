@@ -79,7 +79,7 @@ interface FontSpec {
 
 const fontSpecs: readonly FontSpec[] = [
   {
-    name: 'Plus Jakarta Sans',
+    name: 'DM Sans',
     role: 'Product UI — primary sans',
     family: fontFamilies.product.sans,
   },
@@ -92,7 +92,7 @@ const fontSpecs: readonly FontSpec[] = [
     name: 'Clash Grotesk',
     role: 'Marketing display',
     family: fontFamilies.marketing.sans,
-    note: 'Not yet self-hosted — falls back to Plus Jakarta Sans (see DESIGNER_QUESTIONS.md #7).',
+    note: 'Not yet self-hosted — falls back to DM Sans (see DESIGNER_QUESTIONS.md #7).',
   },
 ];
 

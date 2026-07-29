@@ -60,23 +60,18 @@ Currently using **`'system'` default mode** with a 3-way toggle (System / Light 
 
 ## Missing Tokens
 
-### 7. Typography scale — PARTIALLY RESOLVED
-The Figma file (queried via MCP) confirms the structure:
+### 7. Typography scale — RESOLVED (2026-07-29 token sync)
+Resolved by a full `styles.textStyles` + primitive font export:
 
 | Confirmed in Figma | Status |
 |---|---|
-| Font family — Product: **Plus Jakarta Sans** + **Instrument Serif** | Wired into `next/font` and the MUI theme (replacing Geist Sans). |
-| Font family — Marketing: **Clash Grotesk** | Not yet self-hosted (Fontshare, not on Google Fonts). Falls back to Plus Jakarta Sans. |
-| Font weights: Regular (400), Medium (500), Bold (700) | In `src/tokens/typography.ts`. |
-| Slots: `H1, H2, H3, H4, B1, B2, caption` (each with `size` + `leading`) | Structure in place; mapped to MUI `h1`-`h4`, `body1/body2`, `caption`. |
+| Font family — Product: **DM Sans** (replaces Plus Jakarta Sans) + **Instrument Serif** | Self-hosted via `@fontsource`, wired into `src/theme/fonts.ts` and the MUI theme. |
+| Font family — Marketing: **Clash Grotesk** | Still not self-hosted (Fontshare, not on Google Fonts). Fallback updated to DM Sans (was Plus Jakarta Sans, now retired). |
+| Font family — Mono: **Space Mono** | Declared in Figma; exposed as `fontFamilies.product.mono` but not self-hosted — no component consumes it yet. |
+| Font weights: Regular (400), Medium (500), SemiBold (600) | DM Sans has no Bold cut; `fontWeights.bold` was replaced with `fontWeights.semibold` in `src/tokens/typography.ts`. |
+| Slots: `D1, H1-H6, B1-B3` (each `size` + `leading` + `letterSpacing`, Medium/Regular cuts) | Real values in `src/tokens/typography.ts`, no longer placeholders. `H5`/`H6` were previously computed fallbacks off `H4` — now real Figma values. `caption` maps to `Sans/B3`. |
 
-**Still pending — numerical values.** The size/leading values live in a Figma "responsive" variable collection that the MCP can only resolve when a frame is selected in the desktop app. Current sizes in `src/tokens/typography.ts` are placeholders.
-
-**Provide either:**
-- A) The resolved px values per slot (one set, or per breakpoint if responsive), OR
-- B) Select a frame in Figma using these typography variables so the MCP can pull resolved values.
-
-Also still pending: `subtitle1 / subtitle2 / button / overline` are not defined in Figma — currently using MUI defaults.
+Still pending: `subtitle1 / subtitle2 / button / overline` are not defined in Figma — currently using MUI defaults. `D1` (display) has no MUI variant mapping yet — available as a raw token only.
 
 ---
 
@@ -96,22 +91,18 @@ Heads-up: this is an *engineering* abstraction. If the designer later names sema
 
 ---
 
-### 10. Elevation / shadow scale — PARTIALLY RESOLVED
-The Figma file confirms three semantic shadow levels (effect styles):
+### 10. Elevation / shadow scale — RESOLVED (2026-07-29 token sync)
+The Figma `styles.effectStyles` export confirms all three semantic shadow levels (each two stacked drop shadows):
 
-| Token | Intended usage (per Figma description) |
-|---|---|
-| `elevation.small` | Buttons, input focus, slight elevation. |
-| `elevation.medium` | Dropdowns, tooltips, floating elements. |
-| `elevation.large` | Modals, dialogs, popovers. |
+| Token | Intended usage (per Figma description) | Value |
+|---|---|---|
+| `elevation.small` | Buttons, input focus, slight elevation. | `0px 1px 2px rgba(22,22,20,0.08), 0px 2px 4px rgba(22,22,20,0.04)` |
+| `elevation.medium` | Dropdowns, tooltips, floating elements. | `0px 2px 4px rgba(22,22,20,0.08), 0px 4px 8px rgba(22,22,20,0.04)` |
+| `elevation.large` | Modals, dialogs, popovers. | `0px 2px 8px rgba(22,22,20,0.08), 0px 16px 16px rgba(22,22,20,0.04)` |
+
+Note the `large` value changed from the previous node-953:3035-derived spec (`0px 4px 8px rgba(...,0.16), 0px 8px 16px rgba(...,0.08)`) — the fresh export supersedes it.
 
 The names are wired into `src/tokens/elevation.ts` and mapped across MUI's 25 shadow slots (`elevation=1` → small, `2-8` → medium, `9-24` → large).
-
-| Level | Status |
-|---|---|
-| `elevation.large` | **Confirmed** from Figma node 953:3035 — `0px 4px 8px rgba(22,22,20,0.16), 0px 8px 16px rgba(22,22,20,0.08)`. |
-| `elevation.small` | Placeholder. Designer please share the small shadow effect spec (or select a button/input frame and ping me). |
-| `elevation.medium` | Placeholder. Same — select a dropdown/tooltip/menu and ping me. |
 
 ---
 

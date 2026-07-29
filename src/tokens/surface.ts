@@ -3,10 +3,10 @@ import { colors } from './colors';
 /**
  * Surface semantic tokens.
  *
- * Generated from Figma DTCG export (`light.tokens.json` +
- * `dark.tokens.json`). Every leaf is a `{ light, dark }` pair so
- * components automatically pick up the right value when the MUI
- * colour scheme flips.
+ * Generated from the Figma "component" variable collection export
+ * (2026-07-29). Every leaf is a `{ light, dark }` pair so components
+ * automatically pick up the right value when the MUI colour scheme
+ * flips.
  *
  * Groups:
  *   - `layers`        -> page background + four nested card surfaces
@@ -37,17 +37,17 @@ export const surface = {
     card6OnColor: { light: colors.grey[800], dark: colors.grey[400] },
   },
   default: {
-    default: { light: colors.grey[100], dark: colors.grey[1050] },
-    defaultHover: { light: colors.grey[200], dark: colors.grey[1000] },
+    default: { light: colors.grey[100], dark: colors.grey[1000] },
+    defaultHover: { light: colors.grey[200], dark: colors.grey[950] },
     defaultPressed: { light: colors.grey[300], dark: colors.grey[900] },
   },
   primary: {
     default: { light: colors.primary[500], dark: colors.primary[600] },
     defaultHover: { light: colors.primary[400], dark: colors.primary[700] },
     defaultPressed: { light: colors.primary[200], dark: colors.primary[800] },
-    subtle: { light: colors.primary[75], dark: colors.primary[1100] },
-    subtleHover: { light: colors.primary[75], dark: colors.primary[1000] },
-    subtlePressed: { light: colors.primary[100], dark: colors.primary[900] },
+    subtle: { light: colors.primary[50], dark: colors.primary[1000] },
+    subtleHover: { light: colors.primary[75], dark: colors.primary[900] },
+    subtlePressed: { light: colors.primary[100], dark: colors.primary[800] },
   },
   information: {
     default: { light: colors.blue[75], dark: colors.blue[900] },
@@ -61,9 +61,9 @@ export const surface = {
     default: { light: colors.green[75], dark: colors.green[900] },
     defaultHover: { light: colors.green[100], dark: colors.green[800] },
     defaultPressed: { light: colors.green[200], dark: colors.green[700] },
-    subtle: { light: colors.green[25], dark: colors.green[1100] },
-    subtleHover: { light: colors.green[50], dark: colors.green[1000] },
-    subtlePressed: { light: colors.green[75], dark: colors.green[900] },
+    subtle: { light: colors.green[25], dark: colors.green[1000] },
+    subtleHover: { light: colors.green[50], dark: colors.green[900] },
+    subtlePressed: { light: colors.green[75], dark: colors.green[800] },
   },
   error: {
     default: { light: colors.red[75], dark: colors.red[900] },
