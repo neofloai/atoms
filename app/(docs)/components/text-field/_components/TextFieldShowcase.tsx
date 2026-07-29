@@ -2,12 +2,13 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import InputAdornment from '@mui/material/InputAdornment';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { IconButton } from '@/src/components/IconButton';
 import { TextField } from '@/src/components/TextField';
-import { X } from '@/src/icons';
+import { Envelope, Eye, Lock, MagnifyingGlass, X } from '@/src/icons';
 
 function PreviewCard({
   title,
@@ -91,11 +92,59 @@ export function TextFieldShowcase() {
       </PreviewCard>
 
       <PreviewCard title="Adornments">
-        <Box sx={{ maxWidth: 480 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+            gap: 3,
+          }}
+        >
+          <TextField
+            label="Search"
+            placeholder="Search anything"
+            fullWidth
+            startAdornment={
+              <InputAdornment position="start">
+                <MagnifyingGlass size={16} />
+              </InputAdornment>
+            }
+          />
+          <TextField
+            label="Email"
+            placeholder="you@neoflo.ai"
+            fullWidth
+            startAdornment={
+              <InputAdornment position="start">
+                <Envelope size={16} />
+              </InputAdornment>
+            }
+          />
+          <TextField
+            label="Password"
+            placeholder="Enter password"
+            fullWidth
+            startAdornment={
+              <InputAdornment position="start">
+                <Lock size={16} />
+              </InputAdornment>
+            }
+            endAdornment={
+              <IconButton
+                appearance="text"
+                variant="secondary"
+                size="sm"
+                aria-label="Show password"
+                onClick={handleNoop}
+              >
+                <Eye />
+              </IconButton>
+            }
+          />
           <TextField
             label="Search"
             placeholder="Input body"
             fullWidth
+            defaultValue="Filter results"
             endAdornment={
               <IconButton
                 appearance="text"

@@ -43,14 +43,15 @@ export const data: ComponentExamplesData = {
       name: 'startAdornment',
       type: 'ReactNode',
       default: '—',
-      description: 'Element rendered at the start of the input.',
+      description:
+        'Element rendered at the start of the input, e.g. a search icon. Wrap decorative icons in MUI’s `InputAdornment` for the correct colour/spacing; interactive controls like `IconButton` can be passed directly.',
     },
     {
       name: 'endAdornment',
       type: 'ReactNode',
       default: '—',
       description:
-        'Element rendered at the end of the input, e.g. a clear IconButton.',
+        'Element rendered at the end of the input, e.g. a clear `IconButton` or a password visibility toggle.',
     },
     {
       name: 'maxLength',
@@ -114,7 +115,26 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
-      title: 'Clearable field',
+      title: 'Start icon (decorative)',
+      description:
+        'Wrap non-interactive icons in MUI’s `InputAdornment` so they pick up the correct colour and spacing.',
+      code: [
+        "import InputAdornment from '@mui/material/InputAdornment';",
+        "import { MagnifyingGlass } from '@neoflo/atoms/icons';",
+        '',
+        '<TextField',
+        '  label="Search"',
+        '  placeholder="Search anything"',
+        '  startAdornment={',
+        '    <InputAdornment position="start">',
+        '      <MagnifyingGlass size={16} />',
+        '    </InputAdornment>',
+        '  }',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'Clearable field (end icon button)',
       code: [
         "import { X } from '@neoflo/atoms/icons';",
         '',
@@ -123,6 +143,30 @@ export const data: ComponentExamplesData = {
         '  endAdornment={',
         '    <IconButton appearance="text" size="sm" aria-label="Clear" onClick={handleClear}>',
         '      <X />',
+        '    </IconButton>',
+        '  }',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'Start + end adornments',
+      description:
+        'Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.',
+      code: [
+        "import InputAdornment from '@mui/material/InputAdornment';",
+        "import { Eye, Lock } from '@neoflo/atoms/icons';",
+        '',
+        '<TextField',
+        '  label="Password"',
+        '  placeholder="Enter password"',
+        '  startAdornment={',
+        '    <InputAdornment position="start">',
+        '      <Lock size={16} />',
+        '    </InputAdornment>',
+        '  }',
+        '  endAdornment={',
+        '    <IconButton appearance="text" size="sm" aria-label="Show password" onClick={handleToggleVisibility}>',
+        '      <Eye />',
         '    </IconButton>',
         '  }',
         '/>',
