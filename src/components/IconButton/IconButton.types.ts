@@ -16,7 +16,7 @@ export type IconButtonVariant = ActionVariant;
  */
 export type IconButtonAppearance = ActionAppearance;
 
-/** Square control size: `sm` = 32px, `md` = 40px, `lg` = 48px. */
+/** Square control size: `sm` = 32px, `md` = 36px, `lg` = 44px. */
 export type IconButtonSize = 'sm' | 'md' | 'lg';
 
 /**

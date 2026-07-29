@@ -30,7 +30,7 @@ export const data: ComponentExamplesData = {
       name: 'size',
       type: "'sm' | 'md' | 'lg'",
       default: "'md'",
-      description: 'Square control size: 32px, 40px, or 48px.',
+      description: 'Square control size: 32px, 36px, or 44px.',
     },
     {
       name: 'aria-label',
@@ -98,7 +98,7 @@ export const data: ComponentExamplesData = {
   donts: [
     "Don't put text inside an IconButton — use `Button` with `startIcon` instead",
     "Don't rely on colour alone to communicate the action — the icon must be recognisable",
-    "Don't override the square 8px radius to make it circular",
+    "Don't override the circular shape or fixed sizes",
     "Don't use multiple contained `primary` icon buttons in one toolbar",
   ],
   relatedComponents: ['Button'],
