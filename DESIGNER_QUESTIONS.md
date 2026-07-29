@@ -158,6 +158,15 @@ The original node 953:1059 measurement (`Scale/300` = 16px inline padding) turne
 
 ---
 
+### 18. Select — "filled" state's clear (X) icon not wired up (added 29 July)
+The Select component set (node 3179:107344) defines a `filled` variant that swaps the caret for an `X` icon, implying a hover-to-clear affordance once a value is selected. `TextField`'s own `filled` state (node 3179:106156) only applies a background/border tint automatically and leaves any clear button as an opt-in `endAdornment` the consumer wires up themselves — no automatic clear-on-hover behaviour.
+
+For consistency with that precedent, `Select`'s `filled` state (tracked via a `data-has-value` attribute, mirroring `TextField`'s `data-filled`) only applies the same automatic background/border tint (`surface.layers.card1` + `border.layers.card2`). It does not swap the caret for a clear button. Confirm whether Select should get a `clearable` prop (hover-reveal `X`, replacing the caret) to match the Figma state literally, or whether the TextField precedent (manual, opt-in) is the intended pattern here too.
+
+Also note: the sheet's `skeleton` variant (three placeholder bars) was not implemented — no other component in this library has a loading-skeleton state yet, so this was treated as out of scope pending a shared pattern.
+
+---
+
 ### 16. Avatar — colour, mid-radius, and badge assumptions (added 15 June)
 The Avatar component set (node 978:17187) defines four variant axes — `badge` (true/false), `content` (text/icon/img), `size` (large 40 / medium 32 / small 24), and `roundness` (round/mid/sharp). The design even ships Code Connect snippets mapping `roundness` onto MUI Avatar variants (round → circular, mid → rounded, sharp → square), which we followed. Several things were inconsistent or unspecified and were implemented on assumptions:
 

@@ -67,6 +67,9 @@ export type {
   TextFieldStatus,
 } from './components/TextField';
 
+export { Select } from './components/Select';
+export type { SelectProps, SelectStatus } from './components/Select';
+
 export { Checkbox } from './components/Checkbox';
 export type { CheckboxProps } from './components/Checkbox';
 
