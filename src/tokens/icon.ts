@@ -40,13 +40,13 @@ export const icon = {
   success: {
     heading: { light: colors.green[1000], dark: colors.green[50] },
     body: { light: colors.green[900], dark: colors.green[75] },
-    caption: { light: colors.green[800], dark: colors.green[200] },
+    caption: { light: colors.green[600], dark: colors.green[200] },
     onColorHover: { light: colors.green[700], dark: colors.green[300] },
   },
   error: {
     heading: { light: colors.red[1000], dark: colors.red[50] },
     body: { light: colors.red[900], dark: colors.red[75] },
-    caption: { light: colors.red[800], dark: colors.red[200] },
+    caption: { light: colors.red[600], dark: colors.red[200] },
     onColorHover: { light: colors.red[700], dark: colors.red[300] },
   },
   warning: {

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Button as MuiButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { fontWeights, radius, spacing, typography } from '@/src/tokens';
+import { fontWeights, radius, spacing } from '@/src/tokens';
 
 import { appearanceStyles } from '../_shared/actionStyles';
 
@@ -17,12 +17,18 @@ import type {
 } from './Button.types';
 
 /**
- * Figma label spec is Sans/B2/Bold with a 24px leading (Scale/400).
- * The `typography.body.b2` token currently carries a placeholder 20px
- * leading, so the leading is pinned here until the responsive type
- * tokens are resolved.
+ * Figma label spec is "Sans/B1/Medium": DM Sans, 500 weight, 13px over
+ * a 20px leading, -1% tracking — confirmed live against the Figma
+ * component (node 983:17179). This is a deliberate one-off deviation
+ * from `theme.typography.fontFamily` (Plus Jakarta Sans): DM Sans
+ * hasn't been adopted as the system-wide UI font yet, so it's pinned
+ * locally here rather than promoted to `typography.ts`/`fontFamilies`.
  */
-const LABEL_LEADING_PX = 24;
+const LABEL_FONT_FAMILY =
+  'var(--font-dm-sans, "DM Sans"), system-ui, -apple-system, sans-serif';
+const LABEL_FONT_SIZE_PX = 13;
+const LABEL_LEADING_PX = 20;
+const LABEL_LETTER_SPACING_PX = -0.13;
 
 const muiVariantMap: Record<
   ButtonAppearance,
@@ -42,17 +48,24 @@ const muiSizeMap: Record<ButtonSize, 'small' | 'medium' | 'large'> = {
 /** Control heights from the Figma component set (node 983:17179). */
 const sizeStyles: Record<ButtonSize, CSSObject> = {
   lg: {
-    minHeight: 48,
+    minHeight: 44,
     padding: `${spacing.component.sm}px`,
   },
   md: {
-    minHeight: 40,
+    minHeight: 36,
     padding: `${spacing.component.xs}px ${spacing.component.sm}px`,
   },
   sm: {
     minHeight: 32,
     padding: `${spacing.component.xxs}px ${spacing.component.sm}px`,
   },
+};
+
+/** Icon glyph size per control size, from the Figma component set. */
+const iconSizeStyles: Record<ButtonSize, CSSObject> = {
+  lg: { width: 20, height: 20 },
+  md: { width: 20, height: 20 },
+  sm: { width: 16, height: 16 },
 };
 
 interface StyledButtonProps {
@@ -66,20 +79,26 @@ const StyledButton = styled(MuiButton, {
     prop !== 'neofloVariant' &&
     prop !== 'neofloAppearance' &&
     prop !== 'neofloSize',
-})<StyledButtonProps>(
-  ({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
-    borderRadius: radius.sm,
-    fontFamily: theme.typography.fontFamily,
-    fontSize: typography.body.b2.size,
-    fontWeight: fontWeights.bold,
-    lineHeight: `${LABEL_LEADING_PX}px`,
-    textTransform: 'none',
-    boxShadow: 'none',
-    '&:hover': { boxShadow: 'none' },
-    ...sizeStyles[neofloSize],
-    ...appearanceStyles(theme, neofloVariant, neofloAppearance),
-  })
-);
+})<StyledButtonProps>(({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
+  borderRadius: radius.full,
+  fontFamily: LABEL_FONT_FAMILY,
+  fontSize: LABEL_FONT_SIZE_PX,
+  fontWeight: fontWeights.medium,
+  lineHeight: `${LABEL_LEADING_PX}px`,
+  letterSpacing: `${LABEL_LETTER_SPACING_PX}px`,
+  textTransform: 'none',
+  boxShadow: 'none',
+  gap: spacing.component.xs,
+  '&:hover': { boxShadow: 'none' },
+  '& .MuiButton-startIcon, & .MuiButton-endIcon': {
+    margin: 0,
+  },
+  '& .MuiButton-startIcon > *, & .MuiButton-endIcon > *': {
+    ...iconSizeStyles[neofloSize],
+  },
+  ...sizeStyles[neofloSize],
+  ...appearanceStyles(theme, neofloVariant, neofloAppearance),
+}));
 
 /**
  * Branded action button. Wraps MUI `Button` with the Neoflo API from

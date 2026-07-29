@@ -28,6 +28,7 @@ export default defineConfig({
     // resolve `@fontsource/*` CSS), instead of esbuild trying to inline them.
     '@fontsource/plus-jakarta-sans',
     '@fontsource/instrument-serif',
+    '@fontsource/dm-sans',
   ],
   treeshake: true,
   outDir: 'dist',
