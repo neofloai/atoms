@@ -9,10 +9,7 @@ import Typography from '@mui/material/Typography';
 import { Alert } from '@/src/components/Alert';
 import { Button } from '@/src/components/Button';
 
-import type {
-  AlertSeverity,
-  AlertVariant,
-} from '@/src/components/Alert';
+import type { AlertSeverity } from '@/src/components/Alert';
 
 const severities: readonly AlertSeverity[] = [
   'error',
@@ -20,8 +17,6 @@ const severities: readonly AlertSeverity[] = [
   'success',
   'info',
 ];
-
-const variants: readonly AlertVariant[] = ['filled', 'subtle', 'outline'];
 
 const messageFor: Record<AlertSeverity, string> = {
   error: 'Something went wrong while saving.',
@@ -51,54 +46,67 @@ function PreviewCard({
 
 PreviewCard.displayName = 'PreviewCard';
 
+/**
+ * Two-per-row layout for preview alerts. `alignItems: 'start'` is the
+ * important part: CSS Grid otherwise stretches every item in a row to
+ * match its tallest sibling, and MUI Alert doesn't re-centre its icon
+ * or message within extra height it didn't ask for — the content then
+ * sits high, with dead space below it, inside the taller cells.
+ * `start` keeps every cell at its own natural content height instead.
+ */
+function PreviewGrid({ children }: { children: React.ReactNode }) {
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+        gap: 2,
+        alignItems: 'start',
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+PreviewGrid.displayName = 'PreviewGrid';
+
 function handleNoop(): void {
   // Demo-only handler so the close affordance renders.
 }
 
 /**
- * Live rendering of the Alert from the Figma component set: the
- * severity x variant matrix, the title and dismissible patterns, and a
- * trailing action.
+ * Live rendering of the Alert from the Figma component set: the four
+ * severities, the title and dismissible patterns, a trailing action,
+ * and the `floating` (toast) treatment.
  */
 export function AlertShowcase() {
   return (
     <Stack spacing={4}>
-      <PreviewCard title="Severity and emphasis">
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-            gap: 2,
-          }}
-        >
-          {severities.map((severity) =>
-            variants.map((variant) => (
-              <Alert
-                key={`${severity}-${variant}`}
-                severity={severity}
-                variant={variant}
-              >
-                {messageFor[severity]}
-              </Alert>
-            ))
-          )}
-        </Box>
+      <PreviewCard title="Severities">
+        <PreviewGrid>
+          {severities.map((severity) => (
+            <Alert key={severity} severity={severity}>
+              {messageFor[severity]}
+            </Alert>
+          ))}
+        </PreviewGrid>
       </PreviewCard>
 
       <PreviewCard title="With a title">
-        <Stack spacing={2}>
+        <PreviewGrid>
           <Alert severity="error" title="Payment failed">
             We could not charge your card. Update your billing details to keep
             your subscription active.
           </Alert>
-          <Alert severity="success" variant="filled" title="Deployed">
+          <Alert severity="success" title="Deployed">
             Your project is live at the production URL.
           </Alert>
-        </Stack>
+        </PreviewGrid>
       </PreviewCard>
 
       <PreviewCard title="Dismissible and actions">
-        <Stack spacing={2}>
+        <PreviewGrid>
           <Alert severity="info" onClose={handleNoop}>
             Heads up — maintenance is scheduled for tonight.
           </Alert>
@@ -112,7 +120,17 @@ export function AlertShowcase() {
           >
             Item moved to trash.
           </Alert>
-        </Stack>
+        </PreviewGrid>
+      </PreviewCard>
+
+      <PreviewCard title="Floating (toast)">
+        <PreviewGrid>
+          {severities.map((severity) => (
+            <Alert key={severity} severity={severity} floating onClose={handleNoop}>
+              {messageFor[severity]}
+            </Alert>
+          ))}
+        </PreviewGrid>
       </PreviewCard>
     </Stack>
   );

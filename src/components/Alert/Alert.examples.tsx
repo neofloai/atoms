@@ -9,7 +9,7 @@ export const data: ComponentExamplesData = {
   name: 'Alert',
   category: 'Feedback',
   tagline:
-    'Inline, non-blocking message for status and feedback across four severities and three emphasis styles.',
+    'Inline, non-blocking message for status and feedback across four severities, with an optional floating (toast) treatment.',
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=973-3010',
   props: [
@@ -21,11 +21,11 @@ export const data: ComponentExamplesData = {
         'Semantic state. Drives the colour and the default icon. Colours resolve from the token-built theme palette.',
     },
     {
-      name: 'variant',
-      type: "'filled' | 'subtle' | 'outline'",
-      default: "'subtle'",
+      name: 'floating',
+      type: 'boolean',
+      default: 'false',
       description:
-        'Visual emphasis: solid severity surface, tinted surface, or 1px border.',
+        'Renders as a tinted, bordered, rounded surface with no default icon — for Alert used as a toast (e.g. inside `Snackbar`) rather than inline in the page.',
     },
     {
       name: 'title',
@@ -81,16 +81,6 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
-      title: 'Variants',
-      description:
-        'Emphasis from heaviest to lightest: `filled`, `subtle` (default), `outline`.',
-      code: [
-        '<Alert severity="success" variant="filled">Deployed.</Alert>',
-        '<Alert severity="success" variant="subtle">Deployed.</Alert>',
-        '<Alert severity="success" variant="outline">Deployed.</Alert>',
-      ].join('\n'),
-    },
-    {
       title: 'With title',
       code: [
         '<Alert severity="error" title="Payment failed">',
@@ -115,12 +105,24 @@ export const data: ComponentExamplesData = {
         '</Alert>',
       ].join('\n'),
     },
+    {
+      title: 'Floating (toast)',
+      description:
+        'Pair `floating` with MUI\'s `Snackbar` to present Alert as a toast. The tinted, bordered, rounded surface reads well over arbitrary page content, so the default icon is suppressed to keep it compact.',
+      code: [
+        '<Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>',
+        '  <Alert severity="success" floating onClose={handleClose}>',
+        '    Changes saved.',
+        '  </Alert>',
+        '</Snackbar>',
+      ].join('\n'),
+    },
   ],
   dos: [
     'Match the `severity` to the meaning (success for confirmations, error for failures)',
     'Keep messages short and actionable; add a `title` only when the body needs framing',
     'Use `onClose` for dismissible, low-urgency alerts',
-    'Reserve `variant="filled"` for the highest-priority messages',
+    'Reserve `floating` for Alert used as a toast (e.g. inside `Snackbar`), not inline in the page',
   ],
   donts: [
     "Don't use an Alert to block the user — use a Dialog for responses you must collect",
