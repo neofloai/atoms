@@ -46,8 +46,15 @@ interface RoleTokens {
 
 /**
  * Figma `type` axis -> semantic tokens. `secondary` maps to the
- * neutral `default` token group (grey surfaces, heading text); the
+ * neutral `default` token group (grey surfaces, body text); the
  * remaining roles use their own colour group.
+ *
+ * Per the live Figma component (node 983:17179), only `primary`
+ * `contained` uses a saturated fill + white label — `secondary`,
+ * `success`, `error`, and `warning` `contained` all use a pale/subtle
+ * fill with the role's own dark accent as the label colour (same
+ * value the `outline`/`text` styles use for `accentText`). That
+ * accent colour is the role's `caption` text slot, not `heading`.
  */
 const roleTokens: Record<ActionVariant, RoleTokens> = {
   primary: {
@@ -55,7 +62,7 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBgHover: surface.primary.defaultHover,
     containedBgPressed: surface.primary.defaultPressed,
     containedText: text.default.headingOnColor,
-    accentText: text.primary.heading,
+    accentText: text.primary.caption,
     outlineBorder: border.primary.default,
     outlineBorderHover: border.primary.defaultHover,
     subtleHoverBg: surface.primary.subtleHover,
@@ -66,8 +73,8 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBg: surface.default.default,
     containedBgHover: surface.default.defaultHover,
     containedBgPressed: surface.default.defaultPressed,
-    containedText: text.default.heading,
-    accentText: text.default.heading,
+    containedText: text.default.body,
+    accentText: text.default.body,
     outlineBorder: border.default.default,
     outlineBorderHover: border.default.defaultHover,
     subtleHoverBg: surface.default.default,
@@ -78,8 +85,8 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBg: surface.success.default,
     containedBgHover: surface.success.defaultHover,
     containedBgPressed: surface.success.defaultPressed,
-    containedText: text.default.headingOnColor,
-    accentText: text.success.heading,
+    containedText: text.success.caption,
+    accentText: text.success.caption,
     outlineBorder: border.success.default,
     outlineBorderHover: border.success.defaultHover,
     subtleHoverBg: surface.success.subtleHover,
@@ -90,8 +97,8 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBg: surface.error.default,
     containedBgHover: surface.error.defaultHover,
     containedBgPressed: surface.error.defaultPressed,
-    containedText: text.default.headingOnColor,
-    accentText: text.error.heading,
+    containedText: text.error.caption,
+    accentText: text.error.caption,
     outlineBorder: border.error.default,
     outlineBorderHover: border.error.defaultHover,
     subtleHoverBg: surface.error.subtleHover,
@@ -102,8 +109,8 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBg: surface.warning.default,
     containedBgHover: surface.warning.defaultHover,
     containedBgPressed: surface.warning.defaultPressed,
-    containedText: text.default.headingOnColor,
-    accentText: text.warning.heading,
+    containedText: text.warning.caption,
+    accentText: text.warning.caption,
     outlineBorder: border.warning.default,
     outlineBorderHover: border.warning.defaultHover,
     subtleHoverBg: surface.warning.subtleHover,

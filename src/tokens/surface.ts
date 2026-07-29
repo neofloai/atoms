@@ -46,8 +46,8 @@ export const surface = {
     defaultHover: { light: colors.primary[400], dark: colors.primary[700] },
     defaultPressed: { light: colors.primary[200], dark: colors.primary[800] },
     subtle: { light: colors.primary[75], dark: colors.primary[1100] },
-    subtleHover: { light: colors.primary[100], dark: colors.primary[1000] },
-    subtlePressed: { light: colors.primary[200], dark: colors.primary[900] },
+    subtleHover: { light: colors.primary[75], dark: colors.primary[1000] },
+    subtlePressed: { light: colors.primary[100], dark: colors.primary[900] },
   },
   information: {
     default: { light: colors.blue[75], dark: colors.blue[900] },
