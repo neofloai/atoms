@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -8,6 +9,8 @@ import Typography from '@mui/material/Typography';
 import { NeofloLogo } from '@/src/brand';
 import { branding } from '@/src/brand/branding';
 import { colors, fontFamilies } from '@/src/tokens';
+import { BrandAccentSection } from './_components/BrandAccentSection';
+import { PaletteSection } from './_components/PaletteSection';
 
 export const metadata = {
   title: 'Branding — Atoms',
@@ -17,58 +20,6 @@ export const metadata = {
 function sectionSummary(id: string): string {
   return branding.sections.find((s) => s.id === id)?.summary ?? '';
 }
-
-interface SwatchSpec {
-  label: string;
-  value: string;
-  /** Use a dark label when the swatch is light. */
-  ink?: boolean;
-}
-
-const brandSwatches: readonly SwatchSpec[] = [
-  { label: 'Primary blue', value: colors.primary[600] },
-  { label: 'Success', value: colors.green[500] },
-  { label: 'Error', value: colors.red[500] },
-  { label: 'Warning', value: colors.yellow[500], ink: true },
-  { label: 'Informational', value: colors.blue[500] },
-  { label: 'Accent orange', value: colors.orange[500], ink: true },
-];
-
-const neutralSwatches: readonly SwatchSpec[] = [
-  { label: 'Ink', value: colors.grey[1200] },
-  { label: 'Body', value: colors.grey[800] },
-  { label: 'Border', value: colors.grey[300], ink: true },
-  { label: 'Surface', value: colors.grey[100], ink: true },
-];
-
-function Swatch({ label, value, ink }: SwatchSpec) {
-  return (
-    <Stack spacing={0.75} sx={{ width: 132 }}>
-      <Box
-        sx={{
-          height: 72,
-          borderRadius: 1.5,
-          bgcolor: value,
-          border: '1px solid',
-          borderColor: 'divider',
-          display: 'flex',
-          alignItems: 'flex-end',
-          p: 1,
-          color: ink ? colors.grey[1200] : colors.grey[25],
-        }}
-      >
-        <Typography variant="caption" sx={{ fontWeight: 600 }}>
-          {value}
-        </Typography>
-      </Box>
-      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-        {label}
-      </Typography>
-    </Stack>
-  );
-}
-
-Swatch.displayName = 'Swatch';
 
 interface FontSpec {
   name: string;
@@ -220,23 +171,37 @@ export default function BrandingDocsPage() {
             {sectionSummary('color')}
           </Typography>
           <SectionCard>
-            <Stack spacing={3}>
-              <Box
-                sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}
-              >
-                {brandSwatches.map((swatch) => (
-                  <Swatch key={swatch.label} {...swatch} />
-                ))}
-              </Box>
-              <Box
-                sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}
-              >
-                {neutralSwatches.map((swatch) => (
-                  <Swatch key={swatch.label} {...swatch} />
-                ))}
-              </Box>
-            </Stack>
+            <BrandAccentSection />
           </SectionCard>
+
+          <Stack spacing={0.5} sx={{ pt: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              <code>theme.palette</code>
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Everything the theme exposes to your components, in both colour
+              schemes. This is the layer you write against —{' '}
+              <code>color=&quot;primary&quot;</code>,{' '}
+              <code>sx=&#123;&#123; bgcolor: &apos;background.paper&apos; &#125;&#125;</code>{' '}
+              — so a blank project needs nothing beyond these names. Read live
+              from <code>src/theme/palette.ts</code>, so it cannot drift from
+              what <code>NeofloThemeProvider</code> renders.
+            </Typography>
+          </Stack>
+          <SectionCard>
+            <PaletteSection />
+          </SectionCard>
+
+          <Typography variant="body2" color="text.secondary">
+            Looking for the underlying scales, or the semantic{' '}
+            <code>surface</code> / <code>border</code> / <code>text</code> /{' '}
+            <code>icon</code> tokens the palette is built from? Those live on
+            the{' '}
+            <Box component="a" href="/tokens" sx={{ color: 'primary.main' }}>
+              Tokens
+            </Box>{' '}
+            page.
+          </Typography>
         </Stack>
 
         <Divider />
@@ -249,9 +214,16 @@ export default function BrandingDocsPage() {
             {sectionSummary('typography')}
           </Typography>
           <SectionCard>
-            <Stack spacing={3} divider={<Divider flexItem />}>
-              {fontSpecs.map((spec) => (
-                <FontSample key={spec.name} {...spec} />
+            {/* Dividers interleaved manually rather than via Stack's
+                `divider` prop: that prop resolves to `undefined` when
+                used from a Server Component like this page (open MUI
+                bug mui/material-ui#48214), which crashes the render. */}
+            <Stack spacing={3}>
+              {fontSpecs.map((spec, index) => (
+                <Fragment key={spec.name}>
+                  {index > 0 && <Divider flexItem />}
+                  <FontSample {...spec} />
+                </Fragment>
               ))}
             </Stack>
           </SectionCard>
@@ -279,6 +251,32 @@ export default function BrandingDocsPage() {
             }}
           >
             {`import { NeofloThemeProvider } from '@neoflo/atoms';\n\n<NeofloThemeProvider>{children}</NeofloThemeProvider>\n// pin a scheme: <NeofloThemeProvider defaultMode="light">`}
+          </Paper>
+          <Typography variant="body2" color="text.secondary">
+            That one wrapper is the whole setup. It applies the theme, mounts{' '}
+            <code>CssBaseline</code>, self-hosts DM Sans and Instrument Serif,
+            and sets the Phosphor icon defaults — no font links, no CSS
+            imports, no per-component theming. It defaults to the system
+            colour scheme and both schemes are first-class, so every value in
+            the table above resolves correctly in either.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            From there, reference colour by <em>name</em> rather than value —
+            that is what keeps a product on-brand when the tokens change:
+          </Typography>
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              borderRadius: 1.5,
+              fontFamily: 'var(--font-geist-mono), monospace',
+              fontSize: 13,
+              bgcolor: 'action.hover',
+              whiteSpace: 'pre',
+              overflowX: 'auto',
+            }}
+          >
+            {`<Button color="primary">Save</Button>\n<Box sx={{ bgcolor: 'background.paper', color: 'text.secondary' }} />\n\n// and where you need a raw scale value, import the token —\n// never paste a hex literal\nimport { colors } from '@neoflo/atoms/tokens';`}
           </Paper>
         </Stack>
       </Stack>

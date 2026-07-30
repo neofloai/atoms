@@ -9,6 +9,15 @@ interface SwatchProps {
   label: string;
   value: string;
   variant?: 'fill' | 'border' | 'text';
+  /**
+   * Backdrop for the `text` and `border` variants. Defaults to the
+   * viewer's own surface, which is right when the tile sits next to
+   * comparable content — but a swatch previewing a *specific* colour
+   * scheme should pass that scheme's `background.default`, or a light
+   * value ends up rendered on a dark tile and reads as invisible.
+   * Ignored by `fill`, which is the colour itself.
+   */
+  backdrop?: string;
 }
 
 /**
@@ -21,7 +30,12 @@ interface SwatchProps {
  * Hex value is shown beneath so designers can verify the on-screen
  * pixels against the Figma value directly.
  */
-export function Swatch({ label, value, variant = 'fill' }: SwatchProps) {
+export function Swatch({
+  label,
+  value,
+  variant = 'fill',
+  backdrop,
+}: SwatchProps) {
   return (
     <Stack spacing={0.75} sx={{ minWidth: 96 }}>
       {variant === 'fill' && (
@@ -42,7 +56,7 @@ export function Swatch({ label, value, variant = 'fill' }: SwatchProps) {
             width: '100%',
             height: 64,
             borderRadius: 1,
-            bgcolor: 'transparent',
+            bgcolor: backdrop ?? 'transparent',
             border: '3px solid',
             borderColor: value,
           }}
@@ -59,7 +73,7 @@ export function Swatch({ label, value, variant = 'fill' }: SwatchProps) {
             justifyContent: 'center',
             border: '1px solid',
             borderColor: 'divider',
-            bgcolor: 'action.hover',
+            bgcolor: backdrop ?? 'action.hover',
           }}
         >
           <Typography sx={{ color: value, fontWeight: 600 }}>Aa</Typography>

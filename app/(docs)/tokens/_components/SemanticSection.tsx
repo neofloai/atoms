@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { ModeToken } from '@/src/tokens';
-import { Swatch } from './Swatch';
+import { Swatch } from '../../_components/Swatch';
 
 type NestedTokens = Readonly<Record<string, Readonly<Record<string, ModeToken>>>>;
 

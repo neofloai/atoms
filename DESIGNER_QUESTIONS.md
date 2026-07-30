@@ -8,13 +8,13 @@ Open questions for the design team. Once resolved, update the relevant token/the
 
 ## Colors & Palette
 
-### 1. `primary/600` value conflict — RESOLVED
-The Figma DTCG export confirms `primary/600 = #014ce1`. Tokens are already on this value.
+### 1. `primary/600` value conflict — SUPERSEDED (see #20)
+Historical entry from an early PDF-based hand-off; `primary/600` is now `#343eb3` in `src/tokens/colors.ts` (not the `#014ce1` this entry originally referenced), confirmed against the live Figma variables export. `#20` re-confirms `palette.primary` role assignment against the live "UI to MUI Mapping" board.
 
 ---
 
-### 2. Primary button resting color — RESOLVED
-The Figma DTCG export's `surface.primary.default.light` is `primary/600` (`#014ce1`), which matches the MUI Mapping PDF. The original "Colors PDF" snippet showing `primary/500` is now superseded. Tokens keep `primary.main = primary/600`.
+### 2. Primary button resting color — SUPERSEDED (see #20)
+This entry previously claimed `surface.primary.default.light = primary/600`; the live token export actually has `surface.primary.default.light = primary/500` (`#4961dc`) — already correct in `src/tokens/surface.ts` and what Button/Chip render today. `theme.palette.primary.main` (a separate, MUI-only mapping) had drifted to `primary/600` instead of matching — fixed in `#20`.
 
 ---
 
@@ -202,3 +202,29 @@ The Chip component set (node 977:17709) turned out to contain two visually disti
 - Whether `information`/`orange`/`purple` should eventually get their own `size="md"` pill treatment, or stay `size="sm"`-only as implemented.
 - The dark-mode values noted in #4.
 - Whether the "info" PO/amount swatch should become a first-class variant if that composite pattern recurs elsewhere.
+
+---
+
+### 20. MUI `theme.palette` — `.main`/`.dark` formula was wrong (added 30 July, node 3342:3325)
+The Figma "UI to MUI Mapping" swatch board (node 3342:3325) spells out `palette.<role>.light/main/dark` literally for `primary`/`secondary`/`error`/`warning`/`info`/`success`, each with a token name and hex. Cross-checking it against `src/theme/palette.ts` found the `lightPalette`'s `.main`/`.dark` formula was wrong for every role except `secondary`:
+
+- **Formula was `.light`→400, `.main`→600, `.dark`→800; corrected to `.light`→400, `.main`→500, `.dark`→600.** Confirmed exactly for `primary`, `error`, `warning`, `success` — all four swatch boards reference `scale/400` / `scale/500` / `scale/600` by name. `.light` already matched; only `.main`/`.dark` were two rungs too deep. This is a real, user-visible fix: `palette.primary.main` (what raw/unwrapped MUI components default to) was `#343eb3` and is now `#4961dc` — which also happens to match `surface.primary.default` (what Button/Chip already render), so the fix makes `theme.palette` consistent with the rest of the system instead of one rung darker.
+- **`secondary` swaps from a plain grey ladder to `surface.layers.*`.** The board names `surface/layers/page` / `surface/layers/card-1` / `surface/layers/card-2` (`grey/50` / `grey/75` / `grey/100`), not the previous `grey/25` / `grey/100` / `grey/300` guess.
+- **`info`'s three swatches are raw hex, not wired to a variable** — `#03a9f4` / `#0288d1` / `#01579b`, which is MUI's own stock default info-blue, unlike every other row. Read as a leftover default in the Figma file (every other row explicitly references a named scale variable; this one doesn't) rather than an intentional colour choice, since adopting it verbatim would put `theme.palette.info` on a visibly different hue than `surface.information` / `text.information` / Alert / Chip everywhere else. **Confirmed with direct instruction:** kept on our own `blue` scale, continuing the same light/main/dark formula (`blue/400` / `blue/500` / `blue/600`).
+- **`darkPalette`'s `warning`/`info`/`success` updated to match.** That palette's own header comment states these three roles intentionally "keep the same shade family as light mode" — since light mode's formula changed, these three were updated in lockstep to preserve that stated invariant (dark's `primary`/`error`, which intentionally diverge from light, were left untouched).
+- Also corrected stale brand copy in `src/brand/branding.ts` that called `primary/600` (`#343eb3`) "the single brand accent" — the accent Button/Chip actually render is `primary/500` (`#4961dc`); `600` is one rung darker (the `.dark` shade). Updated the orange callout too: it previously referenced Avatar (superseded by #16) — orange (and now purple) are consumed by Chip's `size="sm"` tag variant instead (#19).
+
+**Confirm:** whether `info`'s raw-hex swatches in the Figma board should be updated to reference the `blue` scale directly, so the board matches what's actually implemented.
+
+---
+
+### 21. `/branding` colour section rebuilt — hand-picked swatches had drifted (added 30 July)
+Follow-on from #20. The `/branding` page carried a hand-curated grid of 11 literal swatches (7 "brand" + 4 "neutral") predating the palette work. Auditing it against the theme found most of it was either wrong or dead:
+
+- **3 of the 4 "neutral" swatches were off by a rung or two.** "Ink" showed `grey/1200` where `palette.text.primary` is `grey/1100`; "Body" showed `grey/800` vs `text.secondary` = `grey/700`; "Border" showed `grey/300` vs `divider` = `grey/200`. Only "Surface" (`grey/100` = `background.default`) matched. Nobody had touched these since they were written, which is exactly the failure mode of hand-maintained hex in docs.
+- **The 5 "brand"/status swatches duplicated the palette's `.main` column** now that the `theme.palette` table exists, so they were a second, hand-maintained copy of derived data.
+- **"Accent orange" `#fe9934` (orange/500) and "Accent purple" `#815eff` (purple/500) referenced shades used nowhere in the codebase.** The only consumers of either scale are `surface.orange.default` (`orange/100`) + `text.orange.caption` (`orange/600`) and `surface.purple.default` (`purple/75`) + `text.purple.caption` (`purple/400`), all via Chip's `size="sm"` tag variant (#19, #4). Avatar's old `orange/500` fill was already superseded by #16. So the page was advertising two colours the system does not use, and `branding.ts` repeated both hexes in prose.
+
+**Resolved by construction, not by patching values:** the curated grid is gone. `/branding` now shows (a) the one genuine brand decision — `primary/500` as the accent, plus the full `grey` ramp rendered from `colors.grey`, and (b) a `theme.palette` table covering all six roles × `.light`/`.main`/`.dark` **plus** `background.default/paper`, `text.primary/secondary/disabled`, and `divider`, each in both colour schemes — every value read live from `src/theme/palette.ts`. Orange and purple were dropped from `/branding` entirely (they are component tag tints, not brand colours) and remain documented on `/tokens` under Surface/Text and on the Chip page. Division of labour is now: `/tokens` = exhaustive derived reference; `/branding` = brand narrative + the palette contract a blank project writes against. No hand-maintained hex remains on either page.
+
+**Confirm:** orange and purple currently have exactly one confirmed tier each and `dark` mirrors `light` as a placeholder (#4). If they are meant to be reusable accents rather than Chip-only tints, they need a full tier set and real dark values — otherwise they stay scoped to Chip.
