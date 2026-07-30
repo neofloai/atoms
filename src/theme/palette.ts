@@ -6,19 +6,39 @@ import { colors } from '@/src/tokens/colors';
  *
  * ## Light palette
  *
- * Per the designer's "UI to MUI Mapping" spec:
+ * Resynced against the Figma "UI to MUI Mapping" swatch board (node
+ * 3342:3325, 2026-07-30), which spells out each role's three shades
+ * literally (`palette.<role>.light/main/dark` + hex):
  *
  *   MUI .light  -> scale/400
- *   MUI .main   -> scale/600
- *   MUI .dark   -> scale/800
+ *   MUI .main   -> scale/500
+ *   MUI .dark   -> scale/600
+ *
+ * This corrects a prior version of this file, which used `.main` ->
+ * scale/600 and `.dark` -> scale/800 — every role's `.light` already
+ * matched scale/400, so only `.main`/`.dark` were off by two rungs.
+ * `secondary`'s three swatches point at the `surface.layers.*` group
+ * rather than a plain grey ladder (`page` / `card-1` / `card-2` =
+ * grey/50 / grey/75 / grey/100), replacing the previous grey/25 /
+ * grey/100 / grey/300 guess.
  *
  * Role assignments (Figma scale -> MUI palette role):
  *   primary scale -> primary
- *   grey scale    -> secondary (uses 25 / 100 / 300 — designer's choice)
+ *   grey scale    -> secondary (`surface.layers.page/card1/card2`)
  *   red scale     -> error
  *   yellow scale  -> warning
  *   blue scale    -> info
  *   green scale   -> success
+ *
+ * The board's "Info" row is the one exception: its three swatches are
+ * raw hardcoded hex (`#03a9f4` / `#0288d1` / `#01579b`, MUI's own stock
+ * info-blue) with no variable reference, unlike every other row which
+ * points at a named scale variable — read as a leftover default in the
+ * Figma file rather than an intentional colour, since it would
+ * otherwise put `theme.palette.info` on a different blue than
+ * `surface.information` / `text.information` / Alert / Chip everywhere
+ * else in the system. Kept on our own `blue` scale, continuing the
+ * same corrected light/main/dark formula, per explicit confirmation.
  *
  * ## Dark palette
  *
@@ -30,7 +50,9 @@ import { colors } from '@/src/tokens/colors';
  *     contrast against a near-black page), so their .main lands on a
  *     low-numbered shade.
  *   - `warning`, `info`, and `success` keep the same shade family as
- *     light mode (those mid-tones already read well in both schemes).
+ *     light mode (those mid-tones already read well in both schemes)
+ *     — updated alongside the light-palette fix above so that stated
+ *     invariant still holds (previously 400/600/800, now 400/500/600).
  *   - `secondary` mirrors the light-mode "neutral surface" pattern but
  *     uses the dark end of the grey scale.
  *
@@ -45,33 +67,33 @@ export const lightPalette: PaletteOptions = {
   mode: 'light',
   primary: {
     light: colors.primary[400],
-    main: colors.primary[600],
-    dark: colors.primary[800],
+    main: colors.primary[500],
+    dark: colors.primary[600],
   },
   secondary: {
-    light: colors.grey[25],
-    main: colors.grey[100],
-    dark: colors.grey[300],
+    light: colors.grey[50],
+    main: colors.grey[75],
+    dark: colors.grey[100],
   },
   error: {
     light: colors.red[400],
-    main: colors.red[600],
-    dark: colors.red[800],
+    main: colors.red[500],
+    dark: colors.red[600],
   },
   warning: {
     light: colors.yellow[400],
-    main: colors.yellow[600],
-    dark: colors.yellow[800],
+    main: colors.yellow[500],
+    dark: colors.yellow[600],
   },
   info: {
     light: colors.blue[400],
-    main: colors.blue[600],
-    dark: colors.blue[800],
+    main: colors.blue[500],
+    dark: colors.blue[600],
   },
   success: {
     light: colors.green[400],
-    main: colors.green[600],
-    dark: colors.green[800],
+    main: colors.green[500],
+    dark: colors.green[600],
   },
   background: {
     default: colors.grey[100],
@@ -104,18 +126,18 @@ export const darkPalette: PaletteOptions = {
   },
   warning: {
     light: colors.yellow[400],
-    main: colors.yellow[600],
-    dark: colors.yellow[800],
+    main: colors.yellow[500],
+    dark: colors.yellow[600],
   },
   info: {
     light: colors.blue[400],
-    main: colors.blue[600],
-    dark: colors.blue[800],
+    main: colors.blue[500],
+    dark: colors.blue[600],
   },
   success: {
     light: colors.green[400],
-    main: colors.green[600],
-    dark: colors.green[800],
+    main: colors.green[500],
+    dark: colors.green[600],
   },
   background: {
     default: colors.grey[1200],

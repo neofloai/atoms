@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Swatch } from './Swatch';
+import { Swatch } from '../../_components/Swatch';
 
 interface ScaleSectionProps {
   name: string;
