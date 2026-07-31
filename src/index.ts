@@ -17,12 +17,16 @@
  * renders no colour, type, border, or state of its own has no MUI
  * vocabulary to rename and no brand decision to encode, so wrapping it
  * would add a layer that changes nothing while costing capability
- * (see `src/components/Box/Box.tsx` for the concrete loss). `Box` and
- * `Stack` are currently the only such components — a primitive keeps the
- * carve-out even when it has props of its own, provided those props name
- * CSS concepts or token-scale indices rather than design decisions
- * (see `src/components/Stack/Stack.tsx`). Anything with a visual
- * identity — anything a designer could redline — gets wrapped.
+ * (see `src/components/Box/Box.tsx` for the concrete loss). `Box`,
+ * `Stack`, and `Grid` are currently the only such components — a
+ * primitive keeps the carve-out even when it has props of its own,
+ * provided those props name CSS concepts, token-scale indices, or
+ * arithmetic against a count the layout declares itself, rather than
+ * design decisions (see `src/components/Stack/Stack.tsx` and
+ * `src/components/Grid/Grid.tsx`, each of which records the one
+ * system-level default it deliberately leaves to the design system).
+ * Anything with a visual identity — anything a designer could redline —
+ * gets wrapped.
  */
 
 export { NeofloThemeProvider } from './theme/ThemeProvider';
@@ -49,6 +53,9 @@ export type { BoxProps } from './components/Box';
 
 export { Stack } from './components/Stack';
 export type { StackProps } from './components/Stack';
+
+export { Grid } from './components/Grid';
+export type { GridProps } from './components/Grid';
 
 export { Button } from './components/Button';
 export type {

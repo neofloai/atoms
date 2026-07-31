@@ -10,13 +10,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { data } from '@/src/components/Stack/Stack.examples';
+import { data } from '@/src/components/Grid/Grid.examples';
 import { CodeBlock } from '../../_components/CodeBlock';
 import { Demo } from '../../_components/Demo';
-import { demos, truncationDemo } from './_components/demos';
+import { demos, verticalDemo } from './_components/demos';
 
 export const metadata = {
-  title: 'Stack — Atoms',
+  title: 'Grid — Atoms',
   description: data.tagline,
 };
 
@@ -39,7 +39,17 @@ function SectionHeading({
 
 SectionHeading.displayName = 'SectionHeading';
 
-export default function StackDocsPage() {
+/** The mechanics worth knowing before the first demo. */
+const HOW_IT_WORKS: readonly string[] = [
+  'Every Grid is a flex item. The `container` prop is what adds the flex container, so a grid is a container with items inside it — and one element can be both, which is how nesting works.',
+  'Item widths are percentages, so they are fluid and always relative to the container rather than to the viewport.',
+  'Gaps use the CSS `gap` property. The negative-margin implementation from MUI v5 and v6 is gone, along with the overflow workarounds it needed.',
+  'Sizes are declared against five breakpoints from the theme — `xs` 0, `sm` 600, `md` 900, `lg` 1200, `xl` 1536. Neoflo does not override MUI\'s defaults.',
+  'Items are placed in order and wrap when they run out of room. Grid does not span rows and does not back-fill gaps — see Limitations.',
+  'It is a layout grid, not a data grid. Tabular data wants a table.',
+];
+
+export default function GridDocsPage() {
   return (
     <Container maxWidth="lg" disableGutters>
       <Stack spacing={6}>
@@ -48,7 +58,7 @@ export default function StackDocsPage() {
             Components / {data.category}
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Stack
+            Grid
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline}
@@ -60,46 +70,71 @@ export default function StackDocsPage() {
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="introduction">Introduction</SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Stack manages the layout of its immediate children along one
-            axis — vertical or horizontal — with optional spacing and
-            dividers between each child. It is the component to reach for
-            whenever a group of siblings needs an even gap, which is most of
-            them.
+            Grid divides a row into columns and lets each child declare how
+            many of them it occupies, per breakpoint. It is the component for
+            page and section scaffolding — the two-thirds/one-third split, the
+            card grid that becomes one column on a phone — where the widths
+            need to relate to each other rather than to their content.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Like <code>Box</code>, it is{' '}
-            <strong>MUI&apos;s Stack unchanged</strong>, rather than wrapped.
-            Stack does have props of its own — <code>direction</code>,{' '}
-            <code>spacing</code>, <code>divider</code>,{' '}
-            <code>useFlexGap</code> — but none of them names a design
-            decision: <code>direction=&quot;row&quot;</code> is CSS
-            vocabulary, not MUI vocabulary, and <code>spacing={'{2}'}</code>{' '}
-            is an index into the Neoflo spacing scale, so the numbers you
-            write are already ours. Wrapping it would put a second name on a
-            CSS property and cost the polymorphic <code>component</code>{' '}
-            typing. So the whole MUI prop surface applies here verbatim.
+            Like <code>Box</code> and <code>Stack</code>, it is{' '}
+            <strong>MUI&apos;s Grid unchanged</strong>, rather than wrapped.
+            Grid has the largest prop surface of the three primitives, but
+            every prop names a CSS concept (<code>direction</code>,{' '}
+            <code>wrap</code>), a token-scale index (<code>spacing={'{2}'}</code>{' '}
+            resolves to 16px), or column arithmetic against a count the layout
+            declares itself (<code>size</code>, <code>offset</code>,{' '}
+            <code>columns</code>). None of them names a colour, a type style,
+            or a state, so there is no MUI vocabulary to correct — and wrapping
+            it would cost the polymorphic <code>component</code> typing. The
+            whole MUI prop surface applies here verbatim.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            If you are porting code written against MUI v5 or v6: this is what
+            used to be <code>Grid2</code>. There is no <code>item</code> prop
+            and there are no <code>xs</code> / <code>md</code> props —{' '}
+            <code>size={'{{ xs: 12, md: 6 }}'}</code> replaces them. The old
+            props are ignored rather than flagged, so a stale layout looks
+            broken instead of failing.
           </Typography>
         </Stack>
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
-          <SectionHeading id="stack-vs-grid-vs-box">
-            Stack vs. Grid vs. Box
+          <SectionHeading id="how-it-works">How it works</SectionHeading>
+          <Stack component="ul" spacing={1} sx={{ pl: 2.5, m: 0 }}>
+            {HOW_IT_WORKS.map((item) => (
+              <Typography
+                key={item}
+                component="li"
+                variant="body2"
+                color="text.secondary"
+              >
+                {item.split('`').map((part, i) =>
+                  i % 2 === 1 ? <code key={i}>{part}</code> : part
+                )}
+              </Typography>
+            ))}
+          </Stack>
+        </Stack>
+
+        <Stack spacing={2} sx={{ maxWidth: PROSE }}>
+          <SectionHeading id="grid-vs-stack-vs-box">
+            Grid vs. Stack vs. Box
           </SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Stack is concerned with one dimension: a row or a column whose
-            children are spaced evenly. Reach for <code>Grid</code> when the
-            widths need to be proportional to one another and to change at
-            breakpoints, and for a flex or grid <code>Box</code> when the
-            layout needs per-child placement or gives different children
-            different treatment. A row of three tiles is a Stack; a page split
-            into a sidebar and a main column is a Grid; a mosaic whose tiles
-            span rows is a Box.
+            All three are unwrapped layout primitives, and they divide up
+            cleanly. Reach for <code>Stack</code> when siblings just need an
+            even gap along one axis — that is most layouts, and it needs no
+            container and no column arithmetic. Reach for <strong>Grid</strong>{' '}
+            when the widths are proportional to each other and have to change
+            at breakpoints. Reach for <code>Box</code> when you need real CSS
+            Grid — row spanning, named areas, auto-placement — or a surface
+            rather than an arrangement.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            The default <code>direction</code> is <code>column</code>, and the
-            default <code>spacing</code> is <code>0</code> — so a bare{' '}
-            <code>&lt;Stack&gt;</code> is a plain vertical flex container until
-            you space it.
+            A row of three buttons is a Stack. A page split into a sidebar and
+            a main column is a Grid. A photo mosaic where tiles span two rows
+            is a Box.
           </Typography>
         </Stack>
 
@@ -107,9 +142,9 @@ export default function StackDocsPage() {
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="import">Import</SectionHeading>
-          <CodeBlock>{`import { Stack } from '@neoflo/atoms';`}</CodeBlock>
+          <CodeBlock>{`import { Grid } from '@neoflo/atoms';`}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
-            Stack carries MUI&apos;s own <code>&apos;use client&apos;</code>{' '}
+            Grid carries MUI&apos;s own <code>&apos;use client&apos;</code>{' '}
             boundary, so it renders straight from a React Server Component —
             no <code>&apos;use client&apos;</code> needed in your page. Every
             demo below is server-rendered.
@@ -130,40 +165,55 @@ export default function StackDocsPage() {
           <Stack spacing={2}>
             <SectionHeading id="limitations">Limitations</SectionHeading>
             <Typography variant="body2" color="text.secondary">
-              Two behaviours are worth knowing before you hit them. Both come
-              from how flexbox and the default spacing implementation work,
-              not from anything Neoflo adds.
+              Grid is built on flexbox, not CSS Grid, which buys it fluid
+              percentage widths and costs it two things. Both are deliberate on
+              MUI&apos;s part, and both have a better answer than working
+              around them.
             </Typography>
           </Stack>
 
           <Stack spacing={2}>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Margin on the children is ignored
+              Column direction is not supported
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              By default Stack spaces children by setting margins on them, so
-              a margin you set yourself is overwritten rather than added.
-              There is no warning — the margin simply does nothing.{' '}
-              <code>useFlexGap</code> switches to CSS <code>gap</code>, which
-              leaves child margins alone.
+              <code>direction</code> accepts <code>row</code> and{' '}
+              <code>row-reverse</code> only. Grid exists to subdivide a layout
+              into columns, so stacking its items vertically is not something
+              it does — put a <code>Stack</code> inside the Grid item instead,
+              which also keeps the vertical gap on the token scale.
+            </Typography>
+            <Demo demo={verticalDemo} />
+          </Stack>
+
+          <Stack spacing={2}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              No row spanning or auto-placement
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Items are laid out one after another and wrap when they run out
+              of room. An item cannot span two rows, and a short item will not
+              be pulled up to fill a gap left by its neighbours. When a layout
+              genuinely needs either, it needs CSS Grid — which is a{' '}
+              <code>Box</code>:
             </Typography>
             <CodeBlock>
               {[
-                '// The top margin is ignored: Stack sets its own margins',
-                '// on its immediate children.',
-                '<Stack spacing={2}>',
-                '  <Box sx={{ mt: 4 }}>Not pushed down</Box>',
-                '</Stack>',
-                '',
-                '// Honoured: CSS gap does not touch the children.',
-                '<Stack spacing={2} useFlexGap>',
-                '  <Box sx={{ mt: 4 }}>Pushed down</Box>',
-                '</Stack>',
+                '// Grid places items in order and wraps. For row spanning or',
+                '// gap back-filling, use CSS Grid on a Box instead.',
+                '<Box',
+                '  sx={{',
+                "    display: 'grid',",
+                '    gap: 2,',
+                "    gridTemplateColumns: 'repeat(3, 1fr)',",
+                "    gridAutoFlow: 'dense',",
+                '  }}',
+                '>',
+                "  <Box sx={{ gridRow: 'span 2' }}>Spans two rows</Box>",
+                '</Box>',
               ].join('\n')}
             </CodeBlock>
           </Stack>
-
-          <Demo demo={truncationDemo} />
         </Stack>
 
         <Divider />
@@ -171,10 +221,11 @@ export default function StackDocsPage() {
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="anatomy">Anatomy</SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Stack is composed of a single root element — the children are not
-            wrapped, which is why spacing has to be applied to them directly:
+            Every Grid is one root element. A container adds a second class
+            rather than a second node, so the item is always a direct child of
+            the container — which is what lets nesting inherit:
           </Typography>
-          <CodeBlock>{`<div class="MuiStack-root">\n  <!-- children of the Stack, spaced in place -->\n</div>`}</CodeBlock>
+          <CodeBlock>{`<div class="MuiGrid-root MuiGrid-container">\n  <div class="MuiGrid-root">\n    <!-- contents of the item -->\n  </div>\n</div>`}</CodeBlock>
         </Stack>
 
         <Divider />
