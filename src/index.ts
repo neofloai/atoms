@@ -12,6 +12,14 @@
  * Do not re-export from `@mui/material` or `@phosphor-icons/react`
  * here — consumers must see the Neoflo API, never the underlying
  * libraries.
+ *
+ * The one carve-out is an unstyled layout primitive: a component that
+ * renders no colour, type, border, or state of its own has no MUI
+ * vocabulary to rename and no brand decision to encode, so wrapping it
+ * would add a layer that changes nothing while costing capability
+ * (see `src/components/Box/Box.tsx` for the concrete loss). `Box` is
+ * currently the only such component. Anything with a visual identity —
+ * anything a designer could redline — gets wrapped.
  */
 
 export { NeofloThemeProvider } from './theme/ThemeProvider';
@@ -32,6 +40,9 @@ export type {
   AvatarShape,
   AvatarSize,
 } from './components/Avatar';
+
+export { Box } from './components/Box';
+export type { BoxProps } from './components/Box';
 
 export { Button } from './components/Button';
 export type {
