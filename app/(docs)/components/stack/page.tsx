@@ -10,13 +10,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { data } from '@/src/components/Box/Box.examples';
+import { data } from '@/src/components/Stack/Stack.examples';
 import { CodeBlock } from '../../_components/CodeBlock';
 import { Demo } from '../../_components/Demo';
-import { demos } from './_components/demos';
+import { demos, truncationDemo } from './_components/demos';
 
 export const metadata = {
-  title: 'Box — Atoms',
+  title: 'Stack — Atoms',
   description: data.tagline,
 };
 
@@ -39,7 +39,7 @@ function SectionHeading({
 
 SectionHeading.displayName = 'SectionHeading';
 
-export default function BoxDocsPage() {
+export default function StackDocsPage() {
   return (
     <Container maxWidth="lg" disableGutters>
       <Stack spacing={6}>
@@ -48,7 +48,7 @@ export default function BoxDocsPage() {
             Components / {data.category}
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Box
+            Stack
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline}
@@ -60,51 +60,41 @@ export default function BoxDocsPage() {
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="introduction">Introduction</SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Box is a generic container for grouping other components. Think of
-            it as a <code>&lt;div&gt;</code> with two extra features: access to
-            the Neoflo theme, and the <code>sx</code> prop. It is the
-            lowest-level building block in Atoms — everything visual is
-            something you pass in.
+            Stack manages the layout of its immediate children along one
+            axis — vertical or horizontal — with optional spacing and
+            dividers between each child. It is the component to reach for
+            whenever a group of siblings needs an even gap, which is most of
+            them.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            It is also the only component in Atoms that is{' '}
-            <strong>MUI&apos;s Box unchanged</strong>, rather than wrapped.
-            Every other component puts a Neoflo API on the outside —{' '}
-            <code>variant=&quot;primary&quot;</code> instead of{' '}
-            <code>variant=&quot;contained&quot;</code>. Box renders no colour,
-            type, border, or state of its own, so there is no MUI naming to
-            correct and no brand decision to encode: it is on-brand by
-            construction, because <code>sx</code> resolves against the
-            token-built theme. Wrapping it would also cost the polymorphic{' '}
-            <code>component</code> typing shown below. So the whole MUI prop
-            surface applies here verbatim.
+            Like <code>Box</code>, it is{' '}
+            <strong>MUI&apos;s Stack unchanged</strong>, rather than wrapped.
+            Stack does have props of its own — <code>direction</code>,{' '}
+            <code>spacing</code>, <code>divider</code>,{' '}
+            <code>useFlexGap</code> — but none of them names a design
+            decision: <code>direction=&quot;row&quot;</code> is CSS
+            vocabulary, not MUI vocabulary, and <code>spacing={'{2}'}</code>{' '}
+            is an index into the Neoflo spacing scale, so the numbers you
+            write are already ours. Wrapping it would put a second name on a
+            CSS property and cost the polymorphic <code>component</code>{' '}
+            typing. So the whole MUI prop surface applies here verbatim.
           </Typography>
         </Stack>
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
-          <SectionHeading id="usage">Usage</SectionHeading>
+          <SectionHeading id="stack-vs-box">Stack vs. Box</SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Box is intentionally multipurpose and open-ended, just like a{' '}
-            <code>&lt;div&gt;</code>. That is what makes it the wrong default:
-            reach for the component that already models what you are building,
-            and use Box for the layout between them.
+            Stack is concerned with one dimension: a row or a column whose
+            children are spaced evenly. Reach for a flex or grid{' '}
+            <code>Box</code> as soon as the layout has two axes, needs
+            per-child placement, or gives different children different
+            treatment. A row of three tiles is a Stack; a card grid is a Box.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            A bordered Box is not a Card. A tinted Box is not an{' '}
-            <code>Alert</code>. A padded Box with a label is not a{' '}
-            <code>Chip</code>. When a purpose-built component exists, it
-            carries states, accessibility, and both colour schemes that a Box
-            does not — reproducing its look by hand is how a product drifts
-            off-system.
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            For a row or a column of evenly spaced siblings, reach for{' '}
-            <code>Stack</code> instead — it is the same kind of unwrapped
-            primitive, and it puts the gap in one place rather than on every
-            child. Box is for the layouts Stack cannot express: two axes,
-            per-child placement, or a surface rather than an arrangement.
-            MUI&apos;s remaining containers — Container for page width, Paper
-            for elevated surfaces — are not re-exported yet.
+            The default <code>direction</code> is <code>column</code>, and the
+            default <code>spacing</code> is <code>0</code> — so a bare{' '}
+            <code>&lt;Stack&gt;</code> is a plain vertical flex container until
+            you space it.
           </Typography>
         </Stack>
 
@@ -112,15 +102,12 @@ export default function BoxDocsPage() {
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="import">Import</SectionHeading>
-          <CodeBlock>{`import { Box } from '@neoflo/atoms';`}</CodeBlock>
+          <CodeBlock>{`import { Stack } from '@neoflo/atoms';`}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
-            Box carries MUI&apos;s own <code>&apos;use client&apos;</code>{' '}
+            Stack carries MUI&apos;s own <code>&apos;use client&apos;</code>{' '}
             boundary, so it renders straight from a React Server Component —
             no <code>&apos;use client&apos;</code> needed in your page. Every
-            demo below is server-rendered, with one exception: an{' '}
-            <code>sx</code> <em>callback</em> is a function and cannot be
-            serialized across that boundary, so the last one lives in a client
-            component.
+            demo below is server-rendered.
           </Typography>
         </Stack>
 
@@ -134,14 +121,55 @@ export default function BoxDocsPage() {
 
         <Divider />
 
+        <Stack spacing={4} sx={{ maxWidth: PROSE }}>
+          <Stack spacing={2}>
+            <SectionHeading id="limitations">Limitations</SectionHeading>
+            <Typography variant="body2" color="text.secondary">
+              Two behaviours are worth knowing before you hit them. Both come
+              from how flexbox and the default spacing implementation work,
+              not from anything Neoflo adds.
+            </Typography>
+          </Stack>
+
+          <Stack spacing={2}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Margin on the children is ignored
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              By default Stack spaces children by setting margins on them, so
+              a margin you set yourself is overwritten rather than added.
+              There is no warning — the margin simply does nothing.{' '}
+              <code>useFlexGap</code> switches to CSS <code>gap</code>, which
+              leaves child margins alone.
+            </Typography>
+            <CodeBlock>
+              {[
+                '// The top margin is ignored: Stack sets its own margins',
+                '// on its immediate children.',
+                '<Stack spacing={2}>',
+                '  <Box sx={{ mt: 4 }}>Not pushed down</Box>',
+                '</Stack>',
+                '',
+                '// Honoured: CSS gap does not touch the children.',
+                '<Stack spacing={2} useFlexGap>',
+                '  <Box sx={{ mt: 4 }}>Pushed down</Box>',
+                '</Stack>',
+              ].join('\n')}
+            </CodeBlock>
+          </Stack>
+
+          <Demo demo={truncationDemo} />
+        </Stack>
+
+        <Divider />
+
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="anatomy">Anatomy</SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Box is composed of a single root element — no wrapper, no extra
-            nodes — so it is safe to use as a direct child in a flex or grid
-            container:
+            Stack is composed of a single root element — the children are not
+            wrapped, which is why spacing has to be applied to them directly:
           </Typography>
-          <CodeBlock>{`<div class="MuiBox-root">\n  <!-- contents of the Box -->\n</div>`}</CodeBlock>
+          <CodeBlock>{`<div class="MuiStack-root">\n  <!-- children of the Stack, spaced in place -->\n</div>`}</CodeBlock>
         </Stack>
 
         <Divider />
