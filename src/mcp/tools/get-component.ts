@@ -5,6 +5,19 @@ import { loadComponents } from '../data-loader';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ComponentData } from '../types';
 
+/**
+ * Escapes a value for a markdown table cell.
+ *
+ * Union types are the norm across this API surface — `Grid`'s `size` is
+ * `number | 'auto' | 'grow' | false | responsive` — and an unescaped
+ * pipe ends the cell, so the type an agent reads would be truncated at
+ * the first union member and the row would gain phantom columns. A
+ * literal pipe has to be escaped even inside a code span.
+ */
+function cell(value: string): string {
+  return value.replace(/\|/g, '\\|');
+}
+
 function formatComponentResponse(comp: ComponentData): string {
   const propsTable =
     comp.props.length > 0
@@ -13,7 +26,7 @@ function formatComponentResponse(comp: ComponentData): string {
           '|------|------|---------|-------------|',
           ...comp.props.map(
             (p) =>
-              `| \`${p.name}\` | \`${p.type}\` | \`${p.default}\` | ${p.description} |`
+              `| \`${cell(p.name)}\` | \`${cell(p.type)}\` | \`${cell(p.default)}\` | ${cell(p.description)} |`
           ),
         ].join('\n')
       : '_No props documented._';

@@ -99,12 +99,14 @@ export default function BoxDocsPage() {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             For a row or a column of evenly spaced siblings, reach for{' '}
-            <code>Stack</code> instead — it is the same kind of unwrapped
-            primitive, and it puts the gap in one place rather than on every
-            child. Box is for the layouts Stack cannot express: two axes,
-            per-child placement, or a surface rather than an arrangement.
-            MUI&apos;s remaining containers — Container for page width, Paper
-            for elevated surfaces — are not re-exported yet.
+            <code>Stack</code>; for proportional column widths that change at
+            breakpoints, reach for <code>Grid</code>. Both are the same kind of
+            unwrapped primitive, and both put the gap in one place rather than
+            on every child. Box is for what neither expresses: real CSS Grid —
+            row spanning, named areas, auto-placement — per-child placement, or
+            a surface rather than an arrangement. MUI&apos;s remaining
+            containers — Container for page width, Paper for elevated
+            surfaces — are not re-exported yet.
           </Typography>
         </Stack>
 
