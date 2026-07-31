@@ -2,16 +2,25 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { CodeBlock } from '../../../_components/CodeBlock';
-
-import type { BoxDemo } from './demos';
+import { CodeBlock } from './CodeBlock';
 
 /**
  * One documented behaviour: heading, prose, the live result, and the
  * snippet that produced it directly beneath — so a reader never has to
  * scroll between a demo and its code to know how it was made.
+ *
+ * Shared across component pages. Build the list with `demoFactory` from
+ * `./demoPairing`, which fills `description` and `code` from the
+ * component's `examples.tsx` rather than letting a page retype them.
  */
-export function Demo({ demo }: { demo: BoxDemo }) {
+export interface ComponentDemo {
+  title: string;
+  description?: string;
+  code: string;
+  preview: React.ReactNode;
+}
+
+export function Demo({ demo }: { demo: ComponentDemo }) {
   return (
     <Stack spacing={2} id={slug(demo.title)}>
       <Stack spacing={0.5}>

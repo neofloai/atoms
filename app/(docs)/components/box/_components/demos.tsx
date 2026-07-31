@@ -1,17 +1,18 @@
 import Box from '@mui/material/Box';
 
 import { data } from '@/src/components/Box/Box.examples';
+import type { ComponentDemo } from '../../../_components/Demo';
+import { demoFactory } from '../../../_components/demoPairing';
 import { ThemeCallbackPreview } from './ThemeCallbackPreview';
 
 /**
  * Live previews for the Box page, each paired with the exact snippet
  * that produces it.
  *
- * The snippet is not written here — it is looked up from
- * `Box.examples.tsx` by title, so the code a reader copies is the same
- * string the MCP `get_component` tool serves. `example()` throws on a
- * missing title, which fails `npm run build` rather than quietly
- * shipping a demo whose caption has drifted from its code.
+ * The snippets are not written here — `demoFactory` looks them up from
+ * `Box.examples.tsx` by title and throws on a miss, so a renamed
+ * example fails the build instead of quietly shipping a demo whose
+ * caption has drifted from its code.
  *
  * The previews below must therefore stay a faithful rendering of that
  * snippet. Where a snippet declares `tile`, the same object is used
@@ -21,29 +22,9 @@ import { ThemeCallbackPreview } from './ThemeCallbackPreview';
 /** Shared filler styling, declared in the snippets as `tile`. */
 const tile = { p: 2, borderRadius: 1, bgcolor: 'action.hover' } as const;
 
-export interface BoxDemo {
-  title: string;
-  description?: string;
-  code: string;
-  preview: React.ReactNode;
-}
+const demo = demoFactory(data);
 
-function example(title: string): { description?: string; code: string } {
-  const found = data.examples.find((entry) => entry.title === title);
-  if (!found) {
-    throw new Error(
-      `Box demo "${title}" has no example of that title in Box.examples.tsx. ` +
-        'The docs previews and the MCP examples are paired by title — add or rename the example.'
-    );
-  }
-  return { description: found.description, code: found.code };
-}
-
-function demo(title: string, preview: React.ReactNode): BoxDemo {
-  return { title, ...example(title), preview };
-}
-
-export const demos: readonly BoxDemo[] = [
+export const demos: readonly ComponentDemo[] = [
   demo(
     'Basics',
     <Box
