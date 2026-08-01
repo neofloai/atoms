@@ -317,7 +317,7 @@ export const data: ComponentExamplesData = {
     "Don't nest a container inside a plain wrapper and expect it to inherit — `columns` and `spacing` only pass to a container that is a direct child",
     "Don't reach for Grid to lay out a simple row or column of siblings — that is a `Stack`, with no container and no column arithmetic",
   ],
-  relatedComponents: ['Stack', 'Box'],
+  relatedComponents: ['Stack', 'Box', 'Container'],
   accessibility: [
     'Renders a `<div>` by default and adds no ARIA — set `component` to the element the region actually is (`ul`, `section`, `nav`)',
     'Reading and tab order follow the DOM, which is the order you write the items in — a `size` that reorders the visual layout at a breakpoint does not reorder the content',

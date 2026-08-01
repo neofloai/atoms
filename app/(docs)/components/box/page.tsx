@@ -100,13 +100,16 @@ export default function BoxDocsPage() {
           <Typography variant="body2" color="text.secondary">
             For a row or a column of evenly spaced siblings, reach for{' '}
             <code>Stack</code>; for proportional column widths that change at
-            breakpoints, reach for <code>Grid</code>. Both are the same kind of
-            unwrapped primitive, and both put the gap in one place rather than
-            on every child. Box is for what neither expresses: real CSS Grid —
-            row spanning, named areas, auto-placement — per-child placement, or
-            a surface rather than an arrangement. MUI&apos;s remaining
-            containers — Container for page width, Paper for elevated
-            surfaces — are not re-exported yet.
+            breakpoints, reach for <code>Grid</code>; to bound and centre the
+            page they sit on, reach for <code>Container</code>. All three are
+            the same kind of unwrapped primitive. Box is for what none of them
+            expresses: real CSS Grid — row spanning, named areas,
+            auto-placement — per-child placement, or a surface rather than an
+            arrangement. That last one is worth stating plainly, because it is
+            the division of labour between Box and Container: a Container is a
+            width and paints nothing, so the background behind a bounded page
+            is a Box around it. <code>Paper</code>, for elevated surfaces, is
+            not re-exported yet.
           </Typography>
         </Stack>
 
