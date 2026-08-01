@@ -1,4 +1,3 @@
-import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -10,13 +9,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { data } from '@/src/components/Grid/Grid.examples';
+import { Container } from '@/src/components/Container';
+import { data } from '@/src/components/Container/Container.examples';
 import { CodeBlock } from '../../_components/CodeBlock';
 import { Demo } from '../../_components/Demo';
-import { demos, verticalDemo } from './_components/demos';
+import { demos, nestedDemo } from './_components/demos';
 
 export const metadata = {
-  title: 'Grid — Atoms',
+  title: 'Container — Atoms',
   description: data.tagline,
 };
 
@@ -41,15 +41,15 @@ SectionHeading.displayName = 'SectionHeading';
 
 /** The mechanics worth knowing before the first demo. */
 const HOW_IT_WORKS: readonly string[] = [
-  'Every Grid is a flex item. The `container` prop is what adds the flex container, so a grid is a container with items inside it — and one element can be both, which is how nesting works.',
-  'Item widths are percentages, so they are fluid and always relative to the container rather than to the viewport.',
-  'Gaps use the CSS `gap` property. The negative-margin implementation from MUI v5 and v6 is gone, along with the overflow workarounds it needed.',
-  'Sizes are declared against five breakpoints from the theme — `xs` 0, `sm` 600, `md` 900, `lg` 1200, `xl` 1536. Neoflo does not override MUI\'s defaults.',
-  'Items are placed in order and wrap when they run out of room. Grid does not span rows and does not back-fill gaps — see Limitations.',
-  'It is a layout grid, not a data grid. Tabular data wants a table.',
+  'A Container is `width: 100%` with `margin-left` and `margin-right` set to `auto` and a `max-width` on top. That is the entire mechanism — fluid below the bound, centred above it.',
+  '`maxWidth` names a breakpoint from the theme: `sm` 600, `md` 900, `lg` 1200, `xl` 1536. Neoflo does not override MUI\'s values. The default is `lg`.',
+  '`xs` is the exception. That breakpoint is `0`, so MUI clamps it to `Math.max(0, 444)` and an `xs` container is 444px, not zero.',
+  'Gutters are horizontal padding — `theme.spacing(2)` below `sm`, `theme.spacing(3)` from `sm` up, so 16px and 24px against the Neoflo scale.',
+  'It is `box-sizing: border-box`, so the gutters come out of the max-width rather than adding to it: a `sm` container is 600px wide in total, with 552px of content.',
+  '`fixed` replaces the fluid bound with a stepped one — max-width becomes the min-width of the current breakpoint, so the page width jumps rather than grows.',
 ];
 
-export default function GridDocsPage() {
+export default function ContainerDocsPage() {
   return (
     <Container maxWidth="lg" disableGutters>
       <Stack spacing={6}>
@@ -58,7 +58,7 @@ export default function GridDocsPage() {
             Components / {data.category}
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Grid
+            Container
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline}
@@ -70,32 +70,32 @@ export default function GridDocsPage() {
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="introduction">Introduction</SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Grid divides a row into columns and lets each child declare how
-            many of them it occupies, per breakpoint. It is the component for
-            page and section scaffolding — the two-thirds/one-third split, the
-            card grid that becomes one column on a phone — where the widths
-            need to relate to each other rather than to their content.
+            Container is the outermost layout element on a page: it stops
+            content from running the full width of a wide monitor, and it
+            centres what is left. It is the only primitive in Atoms whose job
+            is a single CSS property — everything else it does is in service of
+            that <code>max-width</code>.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Like <code>Box</code> and <code>Stack</code>, it is{' '}
-            <strong>MUI&apos;s Grid unchanged</strong>, rather than wrapped.
-            Grid has the largest prop surface of the three primitives, but
-            every prop names a CSS concept (<code>direction</code>,{' '}
-            <code>wrap</code>), a token-scale index (<code>spacing={'{2}'}</code>{' '}
-            resolves to 16px), or column arithmetic against a count the layout
-            declares itself (<code>size</code>, <code>offset</code>,{' '}
-            <code>columns</code>). None of them names a colour, a type style,
-            or a state, so there is no MUI vocabulary to correct — and wrapping
-            it would cost the polymorphic <code>component</code> typing. The
-            whole MUI prop surface applies here verbatim.
+            Like <code>Box</code>, <code>Stack</code>, and <code>Grid</code>,
+            it is <strong>MUI&apos;s Container unchanged</strong>, rather than
+            wrapped. Its whole API is <code>maxWidth</code>,{' '}
+            <code>fixed</code>, and <code>disableGutters</code>:{' '}
+            <code>maxWidth=&quot;sm&quot;</code> is an index into the theme
+            breakpoint scale in the same way <code>spacing={'{2}'}</code> is an
+            index into the spacing scale, and the other two switch between CSS
+            behaviours. None of them names a colour, a type style, or a state,
+            so there is no MUI vocabulary to correct — and wrapping it would
+            cost the polymorphic <code>component</code> typing, which matters
+            more here than elsewhere because a Container is nearly always a
+            landmark. The whole MUI prop surface applies here verbatim.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            If you are porting code written against MUI v5 or v6: this is what
-            used to be <code>Grid2</code>. There is no <code>item</code> prop
-            and there are no <code>xs</code> / <code>md</code> props —{' '}
-            <code>size={'{{ xs: 12, md: 6 }}'}</code> replaces them. The old
-            props are ignored rather than flagged, so a stale layout looks
-            broken instead of failing.
+            The one thing to hold onto:{' '}
+            <strong>a Container is a width, not a surface</strong>. It renders
+            nothing you can see. A background, a border, or a shadow belongs on
+            a <code>Box</code> or a <code>Paper</code> around it — see the
+            full-bleed demo below, which is the pattern most page layouts want.
           </Typography>
         </Stack>
 
@@ -118,25 +118,26 @@ export default function GridDocsPage() {
         </Stack>
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
-          <SectionHeading id="grid-vs-stack-vs-box">
-            Grid vs. Stack vs. Box
+          <SectionHeading id="container-vs-box">
+            Container vs. Box
           </SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            All three are unwrapped layout primitives, and they divide up
-            cleanly. Reach for <code>Stack</code> when siblings just need an
-            even gap along one axis — that is most layouts, and it needs no
-            container and no column arithmetic. Reach for <strong>Grid</strong>{' '}
-            when the widths are proportional to each other and have to change
-            at breakpoints. Reach for <code>Box</code> when you need real CSS
-            Grid — row spanning, named areas, auto-placement — or a surface
-            rather than an arrangement.
+            A <code>Box</code> can do this —{' '}
+            <code>sx={'{{ maxWidth: 600, mx: \'auto\', px: 3 }}'}</code> is
+            close to the same rule set. Two things make the Container worth
+            reaching for anyway: the width comes from the breakpoint scale
+            rather than a number typed into a page, so it moves when the theme
+            moves; and the name says what the element is for, which a Box with
+            three layout properties does not.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            A row of three buttons is a Stack. A page split into a sidebar and
-            a main column is a Grid. A photo mosaic where tiles span two rows
-            is a Box. <code>Container</code> sits above all three: it decides
-            how wide the page is, and Grid divides whatever width it hands
-            down.
+            The four primitives stack in one direction and do not overlap.
+            Container bounds the page, <code>Grid</code> divides the width it
+            establishes, <code>Stack</code> handles the vertical rhythm inside
+            a column, and <code>Box</code> is the surface at the bottom. Use a
+            Box instead when you are centring one element and nothing else —{' '}
+            <code>mx: &apos;auto&apos;</code> is the whole of it, with no
+            gutters and no bound to explain.
           </Typography>
         </Stack>
 
@@ -144,16 +145,29 @@ export default function GridDocsPage() {
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="import">Import</SectionHeading>
-          <CodeBlock>{`import { Grid } from '@neoflo/atoms';`}</CodeBlock>
+          <CodeBlock>{`import { Container } from '@neoflo/atoms';`}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
-            Grid carries MUI&apos;s own <code>&apos;use client&apos;</code>{' '}
-            boundary, so it renders straight from a React Server Component —
-            no <code>&apos;use client&apos;</code> needed in your page. Every
-            demo below is server-rendered.
+            Container carries MUI&apos;s own{' '}
+            <code>&apos;use client&apos;</code> boundary, so it renders straight
+            from a React Server Component — no{' '}
+            <code>&apos;use client&apos;</code> needed in your page. Every demo
+            below is server-rendered. This page is itself wrapped in one.
           </Typography>
         </Stack>
 
         <Divider />
+
+        <Stack spacing={2} sx={{ maxWidth: PROSE }}>
+          <Typography variant="body2" color="text.secondary">
+            One caveat about the previews below: they render in a column about
+            712px wide, which is narrower than the <code>md</code>,{' '}
+            <code>lg</code>, and <code>xl</code> bounds. Only the{' '}
+            <code>sm</code> and unbounded demos can show a bound actually
+            taking hold — the rest is described rather than drawn. The dashed
+            outline marks the space each Container was given, so the gutters
+            and the centring are legible against it.
+          </Typography>
+        </Stack>
 
         <Stack spacing={5} sx={{ maxWidth: PROSE }}>
           {demos.map((demo) => (
@@ -167,52 +181,44 @@ export default function GridDocsPage() {
           <Stack spacing={2}>
             <SectionHeading id="limitations">Limitations</SectionHeading>
             <Typography variant="body2" color="text.secondary">
-              Grid is built on flexbox, not CSS Grid, which buys it fluid
-              percentage widths and costs it two things. Both are deliberate on
-              MUI&apos;s part, and both have a better answer than working
-              around them.
+              Container is small enough to have few surprises. Two are worth
+              knowing, and neither is a bug.
             </Typography>
           </Stack>
 
           <Stack spacing={2}>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Column direction is not supported
+              Nesting compounds the gutters
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              <code>direction</code> accepts <code>row</code> and{' '}
-              <code>row-reverse</code> only. Grid exists to subdivide a layout
-              into columns, so stacking its items vertically is not something
-              it does — put a <code>Stack</code> inside the Grid item instead,
-              which also keeps the vertical gap on the token scale.
+              Containers nest without complaint and their padding adds up, so
+              two defaults put 48px between the content and the edge instead of
+              24px. The inner bound usually does nothing at all, because its{' '}
+              <code>maxWidth</code> is wider than the space it was handed. Most
+              nested Containers are accidents; when one is deliberate, disable
+              its gutters.
             </Typography>
-            <Demo demo={verticalDemo} />
+            <Demo demo={nestedDemo} />
           </Stack>
 
           <Stack spacing={2}>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              No row spanning or auto-placement
+              <code>maxWidth=&quot;xs&quot;</code> is not the xs breakpoint
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Items are laid out one after another and wrap when they run out
-              of room. An item cannot span two rows, and a short item will not
-              be pulled up to fill a gap left by its neighbours. When a layout
-              genuinely needs either, it needs CSS Grid — which is a{' '}
-              <code>Box</code>:
+              Every other value resolves to its breakpoint. <code>xs</code>{' '}
+              cannot, because that breakpoint is <code>0</code> and a
+              zero-width container would be useless, so MUI clamps it to a
+              literal 444px:
             </Typography>
             <CodeBlock>
               {[
-                '// Grid places items in order and wraps. For row spanning or',
-                '// gap back-filling, use CSS Grid on a Box instead.',
-                '<Box',
-                '  sx={{',
-                "    display: 'grid',",
-                '    gap: 2,',
-                "    gridTemplateColumns: 'repeat(3, 1fr)',",
-                "    gridAutoFlow: 'dense',",
-                '  }}',
-                '>',
-                "  <Box sx={{ gridRow: 'span 2' }}>Spans two rows</Box>",
-                '</Box>',
+                '// From MUI\'s Container styles — the only value that is not',
+                '// simply theme.breakpoints.values[maxWidth].',
+                'maxWidth: Math.max(theme.breakpoints.values.xs, 444)',
+                '',
+                '<Container maxWidth="xs" />   // 444px, not 0',
+                '<Container maxWidth="sm" />   // 600px',
               ].join('\n')}
             </CodeBlock>
           </Stack>
@@ -223,11 +229,12 @@ export default function GridDocsPage() {
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="anatomy">Anatomy</SectionHeading>
           <Typography variant="body2" color="text.secondary">
-            Every Grid is one root element. A container adds a second class
-            rather than a second node, so the item is always a direct child of
-            the container — which is what lets nesting inherit:
+            Container is a single root element — no wrapper, no inner track.
+            The bound and the gutters are both on that one node, which is why{' '}
+            <code>box-sizing</code> matters and why nesting doubles the
+            padding:
           </Typography>
-          <CodeBlock>{`<div class="MuiGrid-root MuiGrid-container">\n  <div class="MuiGrid-root">\n    <!-- contents of the item -->\n  </div>\n</div>`}</CodeBlock>
+          <CodeBlock>{`<div class="MuiContainer-root MuiContainer-maxWidthLg">\n  <!-- contents of the Container -->\n</div>`}</CodeBlock>
         </Stack>
 
         <Divider />

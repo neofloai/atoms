@@ -17,7 +17,7 @@ export const data: ComponentExamplesData = {
   name: 'Stack',
   category: 'Layout',
   tagline:
-    'Container for arranging elements in a row or a column, with even spacing from the token scale.',
+    'Arranges elements in a row or a column, with even spacing from the token scale.',
   props: [
     {
       name: 'direction',
@@ -207,7 +207,7 @@ export const data: ComponentExamplesData = {
     "Don't nest a Stack around each child to space it — one Stack spaces all of its immediate children",
     "Don't use a `divider` between the items of a `component=\"ul\"` Stack — the extra element breaks the list semantics",
   ],
-  relatedComponents: ['Box', 'Grid'],
+  relatedComponents: ['Box', 'Grid', 'Container'],
   accessibility: [
     'Renders a `<div>` by default, which carries no semantics — set `component` to the element the group actually is (`ul`, `nav`, `fieldset`)',
     'With `component="ul"`, each child needs `component="li"` for the group to be announced as a list',
