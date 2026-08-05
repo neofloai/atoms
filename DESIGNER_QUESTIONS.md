@@ -228,3 +228,38 @@ Follow-on from #20. The `/branding` page carried a hand-curated grid of 11 liter
 **Resolved by construction, not by patching values:** the curated grid is gone. `/branding` now shows (a) the one genuine brand decision — `primary/500` as the accent, plus the full `grey` ramp rendered from `colors.grey`, and (b) a `theme.palette` table covering all six roles × `.light`/`.main`/`.dark` **plus** `background.default/paper`, `text.primary/secondary/disabled`, and `divider`, each in both colour schemes — every value read live from `src/theme/palette.ts`. Orange and purple were dropped from `/branding` entirely (they are component tag tints, not brand colours) and remain documented on `/tokens` under Surface/Text and on the Chip page. Division of labour is now: `/tokens` = exhaustive derived reference; `/branding` = brand narrative + the palette contract a blank project writes against. No hand-maintained hex remains on either page.
 
 **Confirm:** orange and purple currently have exactly one confirmed tier each and `dark` mirrors `light` as a placeholder (#4). If they are meant to be reusable accents rather than Chip-only tints, they need a full tier set and real dark values — otherwise they stay scoped to Chip.
+
+---
+
+### 22. `primary/500` — the brand accent has drifted by one value in Figma (added 5 August, node 3342:3325)
+Re-reading the same "UI to MUI Mapping" swatch board that resolved #20 now returns **`primary/500` = `#4949dc`**, where `src/tokens/colors.ts` has **`#4961dc`**. Nothing else moved: `primary/400` (`#5f6aea`) and `primary/600` (`#343eb3`) still match, and so do every 400/500/600 rung of `grey`, `blue`, `red`, `yellow`, `green`, `orange`, and `purple`. The same value also arrives independently through `text/primary/3` and `icon/primary/3` on the new `menu-item` sheet (node 3204:121756), so it is not a one-off misread of the board.
+
+This is a single raw value, but it is **the** brand accent, so it is the widest-reach change in the file:
+
+- `surface.primary.default` (light) — the `Button variant="primary" appearance="contained"` fill, and Chip's
+- `text.primary.accent` / `icon` equivalents — Chip's `size="sm"` tag label, and now `MenuItem variant="action"`
+- `theme.palette.primary.main` — what every unwrapped MUI component defaults to
+- `/branding`, which presents `primary/500` as "the one genuine brand decision"
+
+**Not changed here.** Repointing the raw scale on one node reading would move the accent everywhere at once, which is a brand decision rather than a component fix. `MenuItem variant="action"` references `text.primary.accent` so it inherits whichever value the scale settles on.
+
+**Confirm:** whether `#4949dc` is the intended new value for `primary/500` (in which case `src/tokens/colors.ts` is a one-line change and the accent shifts system-wide), or whether the Figma variable drifted by accident and `#4961dc` stands.
+
+---
+
+### 23. `menu-item` hover is invisible on the `menu` surface it ships inside (added 5 August, nodes 3204:121756 + 3228:62331)
+The `menu-item` component set tints its `hover` variant with `surface/layers/card 2` (`#f5f5f3`). The `menu` panel that contains those items (node 3228:62331, `float=True`) is filled with **the same token**. So inside a menu, hover has exactly zero contrast against its own background.
+
+The two sheets are each internally consistent — the item sheet is drawn against the page surface, where a `card 2` tint reads fine. It looks like the item was composed into the panel without re-checking the state colours against the new backdrop, and the composed panel is what ships.
+
+**Implemented as `surface/layers/card 3`** — one rung up the same ladder, which preserves the rule the design is following (hover is one layer above whatever surface the row sits on) with the smallest possible deviation. It reads in both schemes: light `#eeeeec` on `#f5f5f3`, dark `grey/900` on `grey/950`. Light mode is a genuinely subtle step (7 greyscale levels), which is defensible for a transient state but is worth a look.
+
+Two more states are absent from the sheet and were decided in code:
+
+- **Keyboard focus is not drawn at all.** Arrow-key navigation is how a menu is meant to be operated, so the focused row cannot be left unstyled; it borrows hover's tint. The 3px focus ring the action controls use would be clipped by the panel's 4px inset.
+- **Disabled is not drawn.** Uses `text.disabled.default` rather than MUI's 38% opacity fade, matching every other disabled control in the system.
+
+**Confirm:**
+- The hover tint for a row *inside a menu* — `card 3` as implemented, something stronger, or a re-spec of the panel surface so the sheet's `card 2` hover works as drawn.
+- Whether the focused row should have its own treatment rather than sharing hover's, given both can be true at once.
+- A disabled row's colour.
