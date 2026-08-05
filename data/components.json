@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-01T08:21:34.760Z",
+  "generatedAt": "2026-08-05T12:56:50.842Z",
   "components": [
     {
       "name": "Alert",
@@ -944,6 +944,305 @@
       "accessibility": [
         "`aria-label` is required — there is no visible text fallback",
         "Focus-visible state renders a 3px ring that meets contrast requirements"
+      ]
+    },
+    {
+      "name": "Menu",
+      "category": "Navigation",
+      "tagline": "Floating panel of choices anchored to a control — the branded surface around MUI Menu, with the full MUI prop surface intact.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3228-62331",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "default": "—",
+          "description": "Required. Whether the panel is shown. A menu is always controlled — there is no uncontrolled mode."
+        },
+        {
+          "name": "anchorEl",
+          "type": "HTMLElement | (() => HTMLElement) | null",
+          "default": "—",
+          "description": "The element the panel positions itself against, normally the trigger. Capture it from the click event with `event.currentTarget`."
+        },
+        {
+          "name": "onClose",
+          "type": "(event, reason) => void",
+          "default": "—",
+          "description": "Fired when the menu asks to close. `reason` is `\"escapeKeyDown\"`, `\"backdropClick\"`, or `\"tabKeyDown\"` — note that selecting an item is *not* one of them, so each item closes the menu itself."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The choices, as `MenuItem` elements. MUI's menu compositions also work: a `Divider` between groups, a `ListSubheader` above one."
+        },
+        {
+          "name": "variant",
+          "type": "'menu' | 'selectedMenu'",
+          "default": "'selectedMenu'",
+          "description": "MUI's focus behaviour, unrelated to `MenuItem`'s tone `variant`. `selectedMenu` opens with focus on the selected item; `menu` opens with focus on the list, leaving the selection alone."
+        },
+        {
+          "name": "anchorOrigin",
+          "type": "{ vertical, horizontal }",
+          "default": "{ vertical: 'top', horizontal: 'left' }",
+          "description": "Which point of the anchor the panel attaches to. Inherited from `Popover`, along with `transformOrigin`, `anchorPosition`, and `anchorReference`."
+        },
+        {
+          "name": "transformOrigin",
+          "type": "{ vertical, horizontal }",
+          "default": "{ vertical: 'top', horizontal: 'left' }",
+          "description": "Which point of the panel meets `anchorOrigin`. Pair the two to open a menu above, or right-aligned to, its trigger."
+        },
+        {
+          "name": "autoFocus",
+          "type": "boolean",
+          "default": "true",
+          "description": "Focuses the list when no focusable child is found. Turning it off moves focus to the modal container instead, which breaks keyboard operation unless you manage focus yourself."
+        },
+        {
+          "name": "disableAutoFocusItem",
+          "type": "boolean",
+          "default": "false",
+          "description": "Opens with focus on the list rather than the active item. Departs from the WAI-ARIA menu-button pattern, so prefer `variant=\"menu\"` if the goal is only to leave the selection unfocused."
+        },
+        {
+          "name": "transitionDuration",
+          "type": "'auto' | number | { appear, enter, exit }",
+          "default": "'auto'",
+          "description": "Length of the open/close transition. `auto` scales it to the panel size. Use `slots.transition` to swap `Grow` for another transition entirely."
+        },
+        {
+          "name": "slots / slotProps",
+          "type": "{ root, paper, list, transition, backdrop }",
+          "default": "{}",
+          "description": "Replaces or configures the parts. `slotProps.list` reaches the `MenuList` (for `dense`), `slotProps.paper` the panel (for `sx`, though see the note below on specificity)."
+        },
+        {
+          "name": "sx",
+          "type": "SxProps<Theme> | ((theme) => SxProps) | Array<…>",
+          "default": "—",
+          "description": "Styles resolved against the Neoflo theme. Reach the panel through a descendant selector — `sx={{ \"& .MuiMenu-paper\": { minWidth: 240 } }}` — since the wrapper's panel styles outrank a bare `slotProps.paper.sx`."
+        },
+        {
+          "name": "classes",
+          "type": "Partial<MenuClasses>",
+          "default": "—",
+          "description": "Overrides for the generated class names (`root`, `paper`, `list`). `sx` is the shorter route for one-off styling."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "default": "—",
+          "description": "Forwarded to the root element."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Basic menu",
+          "description": "A menu is always controlled: hold the anchor element in state, derive `open` from it, and clear it to close. Selecting an item does not close the menu on its own — `onClose` never fires for a selection — so each item closes it in its own handler. That is deliberate on MUI's part, and it is what lets an item do work before the panel goes away.",
+          "code": "const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);\nconst close = () => setAnchorEl(null);\n\n<Button onClick={(event) => setAnchorEl(event.currentTarget)}>\n  Actions\n</Button>\n<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <MenuItem onClick={close}>Rename</MenuItem>\n  <MenuItem onClick={close}>Duplicate</MenuItem>\n  <MenuItem onClick={close}>Move to folder</MenuItem>\n</Menu>"
+        },
+        {
+          "title": "Icons and tones",
+          "description": "Glyphs are 16px in the design, and they take the item's own colour — Phosphor icons paint with `currentColor`, so a `variant=\"action\"` row tints its glyph and its label together. Keep icons on either all rows or none: a menu where only some rows have one reads as a mistake rather than a hierarchy.",
+          "code": "<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <MenuItem onClick={close}>\n    <PencilSimple size={16} />\n    Rename\n  </MenuItem>\n  <MenuItem onClick={close}>\n    <Copy size={16} />\n    Duplicate\n  </MenuItem>\n  <MenuItem variant=\"action\" onClick={close}>\n    <Plus size={16} />\n    New folder\n  </MenuItem>\n</Menu>"
+        },
+        {
+          "title": "Selected item",
+          "description": "When a menu reports a current choice, mark it with `selected` on the item — it takes the `surface/primary/subtle` tint, and `Menu`'s default `variant=\"selectedMenu\"` opens with focus already on it. Use `variant=\"menu\"` on the Menu to keep the tint without moving initial focus.",
+          "code": "const [sort, setSort] = React.useState(\"name\");\n\n<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  {[\"name\", \"date\", \"size\"].map((option) => (\n    <MenuItem\n      key={option}\n      selected={option === sort}\n      onClick={() => {\n        setSort(option);\n        close();\n      }}\n    >\n      {option}\n    </MenuItem>\n  ))}\n</Menu>"
+        },
+        {
+          "title": "Sections and secondary rows",
+          "description": "A `Divider` between groups picks up the panel's own border token, and `variant=\"secondary\"` de-emphasises a row that informs rather than acts. MUI gives a `MenuItem`-adjacent `Divider` its own vertical margin, so no spacing is needed around it.",
+          "code": "<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <MenuItem onClick={close}>Share</MenuItem>\n  <MenuItem onClick={close}>Copy link</MenuItem>\n  <Divider />\n  <MenuItem variant=\"secondary\" disabled>\n    Edited 2 days ago\n  </MenuItem>\n</Menu>"
+        },
+        {
+          "title": "Positioning",
+          "description": "The panel is a `Popover`, so it takes the same positioning props. Pair `anchorOrigin` and `transformOrigin` to right-align a menu under an icon button — the usual fix for a trigger near the right edge of a toolbar, where the default left alignment would push the panel off-screen.",
+          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  anchorOrigin={{ vertical: \"bottom\", horizontal: \"right\" }}\n  transformOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n>\n  <MenuItem onClick={close}>Profile</MenuItem>\n  <MenuItem onClick={close}>Settings</MenuItem>\n</Menu>"
+        },
+        {
+          "title": "Dense list",
+          "description": "The design specifies a single density, so `dense` is MUI's knob rather than a Neoflo variant, and it changes the type only: the label drops to `B2` and the row to 32px, while the 8px inset is held at both densities. Worth it for a long list of short strings; unnecessary otherwise. Set it once on the list rather than on every item — MUI 9.2.0 gives an item that *inherits* `dense` the dense styles without the `MuiMenuItem-dense` class, so target the list if you need to hang your own styles off it.",
+          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  slotProps={{ list: { dense: true } }}\n>\n  {lineHeights.map((value) => (\n    <MenuItem key={value} onClick={close}>\n      {value}\n    </MenuItem>\n  ))}\n</Menu>"
+        },
+        {
+          "title": "Scrolling and width",
+          "description": "A panel taller than the viewport scrolls internally; MUI caps it at `calc(100% - 96px)` by default. Both the cap and a width belong on the panel, which needs a descendant selector because the wrapper's own panel styles outrank a bare `slotProps.paper.sx`.",
+          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  sx={{\n    '& .MuiMenu-paper': { maxHeight: 240, minWidth: 220 },\n  }}\n>\n  {timezones.map((zone) => (\n    <MenuItem key={zone} onClick={close}>\n      {zone}\n    </MenuItem>\n  ))}\n</Menu>"
+        }
+      ],
+      "dos": [
+        "Close the menu from each item's `onClick` — a selection does not fire `onClose`, so nothing else will",
+        "Capture the anchor with `event.currentTarget` and derive `open` from it, so one piece of state drives both",
+        "Give the trigger `aria-haspopup=\"true\"` plus `aria-expanded` and `aria-controls`, so a screen reader announces that it opens a menu",
+        "Mark the current choice with `selected` rather than a checkmark glyph — the tint and the initial focus both follow from it",
+        "Reach the panel through `sx={{ \"& .MuiMenu-paper\": { … } }}` when it needs a width or a height cap"
+      ],
+      "donts": [
+        "Don't use a Menu for form input — a bound list of values with a label and validation is a `Select`, which is a field rather than a floating panel",
+        "Don't put a text field, or anything else focusable and non-menu, inside a Menu — the list owns arrow-key focus, and the WAI-ARIA menu pattern has no place for an input",
+        "Don't nest a Menu inside a Menu; MUI has no submenu, and a second popover anchored inside the first is a trap on both keyboard and touch",
+        "Don't reach for `autoFocus={false}` to stop the panel stealing focus — it leaves the menu unoperable by keyboard; `variant=\"menu\"` is almost always what was meant",
+        "Don't paint the panel yourself — the surface, border, corners, and shadow all come from the design, and `sx` on the Menu root styles the modal wrapper, not the panel"
+      ],
+      "relatedComponents": [
+        "MenuItem",
+        "Select",
+        "IconButton"
+      ],
+      "accessibility": [
+        "Renders MUI's modal + `role=\"menu\"` list, and moves focus into it on open — arrow keys move between items, Escape closes, and focus returns to the trigger",
+        "The trigger is not part of this component: pair it with `aria-haspopup=\"true\"`, `aria-expanded={open}`, and `aria-controls` pointing at the menu's `id`",
+        "Disabled items are skipped by arrow-key navigation but stay in the reading order, so a disabled row still needs a label that makes sense out of context",
+        "A `Divider` between groups is decorative and announces nothing — if a group has a meaning, give it a `ListSubheader` as well",
+        "Hover and keyboard focus share one tint, so an item highlighted by either route looks the same; that tint is the only thing distinguishing the focused row, so do not remove it"
+      ]
+    },
+    {
+      "name": "MenuItem",
+      "category": "Navigation",
+      "tagline": "One choice inside a Menu, in three label tones — the default, a de-emphasised row, and an accent row for the action that creates something.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3204-121756",
+      "props": [
+        {
+          "name": "variant",
+          "type": "'primary' | 'secondary' | 'action'",
+          "default": "'primary'",
+          "description": "Label tone. `primary` is body strength; `secondary` de-emphasises a row that informs rather than acts; `action` tints the row that creates something. Nothing to do with `Menu`'s `variant`, which controls focus."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "default": "false",
+          "description": "Marks the current choice with the `surface/primary/subtle` tint. Inside a `Menu` with the default `variant=\"selectedMenu\"`, the selected item also takes initial focus."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "Inert row. Takes the disabled text token rather than MUI's 38% fade, and is skipped by arrow-key navigation while staying in the reading order."
+        },
+        {
+          "name": "dense",
+          "type": "boolean",
+          "default": "false",
+          "description": "Drops the label to `B2` and the row to 32px; the 8px inset is held at both densities, since the design specifies only one. Inherited from the parent list, so `slotProps={{ list: { dense: true } }}` on the Menu is usually the better place to set it."
+        },
+        {
+          "name": "divider",
+          "type": "boolean",
+          "default": "false",
+          "description": "Draws a hairline under this item, in the panel's own border token. A standalone `Divider` between items is the more usual way to separate groups, and gets its own margin."
+        },
+        {
+          "name": "disableGutters",
+          "type": "boolean",
+          "default": "false",
+          "description": "Removes the 8px horizontal inset, leaving the vertical one. For an item whose child supplies its own edge padding."
+        },
+        {
+          "name": "autoFocus",
+          "type": "boolean",
+          "default": "false",
+          "description": "Focuses this item on first mount. Rarely needed — `Menu` already focuses the selected item, or the list."
+        },
+        {
+          "name": "onClick",
+          "type": "(event) => void",
+          "default": "—",
+          "description": "Fired on click and on Enter/Space. This is where the menu gets closed: selecting an item does not fire the Menu's `onClose`."
+        },
+        {
+          "name": "component",
+          "type": "ElementType",
+          "default": "'li'",
+          "description": "Element rendered at the root — `component=\"a\"` for a row that navigates. Typed loosely by MUI, so it will not type-check the element's own props (an `href` is accepted at runtime but unchecked)."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The row's content. A plain string, or a 16px glyph followed by a label — the 4px gap between them comes from the item. `ListItemIcon` / `ListItemText` also work."
+        },
+        {
+          "name": "sx",
+          "type": "SxProps<Theme> | ((theme) => SxProps) | Array<…>",
+          "default": "—",
+          "description": "Styles resolved against the Neoflo theme. Also the way back to MUI's single-line behaviour: `sx={{ whiteSpace: \"nowrap\" }}`, since the design lets a long label wrap."
+        },
+        {
+          "name": "classes",
+          "type": "Partial<MenuItemClasses>",
+          "default": "—",
+          "description": "Overrides for the generated class names (`root`, `selected`, `dense`, `divider`, `gutters`). `sx` is the shorter route for one-off styling."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLLIElement>",
+          "default": "—",
+          "description": "Forwarded to the root element."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Tones",
+          "description": "The three tones from the Figma variant axis. `primary` is the default and carries the body text colour; `secondary` steps the label down to `B2` grey for a row that reports rather than acts; `action` takes the primary accent, for the one row that creates something. One `action` per menu, the way there is one primary button per section.",
+          "code": "<MenuItem onClick={close}>Rename</MenuItem>\n<MenuItem variant=\"secondary\" onClick={close}>\n  Move to archive\n</MenuItem>\n<MenuItem variant=\"action\" onClick={close}>\n  New folder\n</MenuItem>"
+        },
+        {
+          "title": "States",
+          "description": "Hover and keyboard focus share one tint, so a row reached by either route looks the same. `selected` marks the current choice with the primary tint and keeps it when hovered. `disabled` uses the disabled text token instead of MUI's opacity fade, which keeps the label readable rather than washing the whole row out.",
+          "code": "<MenuItem selected onClick={close}>Name</MenuItem>\n<MenuItem onClick={close}>Date modified</MenuItem>\n<MenuItem disabled>Size (unavailable)</MenuItem>"
+        },
+        {
+          "title": "With a glyph",
+          "description": "Icons are 16px in the design and inherit the row's colour, since Phosphor glyphs paint with `currentColor`. No size is forced on children — an icon is consumer content, and forcing a size would stretch anything that is not a glyph — so pass `size={16}`.",
+          "code": "<MenuItem onClick={close}>\n  <PencilSimple size={16} />\n  Rename\n</MenuItem>\n<MenuItem variant=\"action\" onClick={close}>\n  <Plus size={16} />\n  New folder\n</MenuItem>"
+        },
+        {
+          "title": "MUI list composition",
+          "description": "MUI's own icon-menu composition works unchanged. `ListItemIcon`'s 36px reserved column is collapsed to the design's 4px gap and its colour set to inherit, so both routes look identical — use this one when a row needs a trailing shortcut or a two-line label.",
+          "code": "<MenuItem onClick={close}>\n  <ListItemIcon>\n    <Copy size={16} />\n  </ListItemIcon>\n  <ListItemText>Duplicate</ListItemText>\n  <Typography variant=\"body2\" color=\"text.secondary\">\n    ⌘D\n  </Typography>\n</MenuItem>"
+        },
+        {
+          "title": "A row that navigates",
+          "description": "Set `component=\"a\"` for a choice that is really a link, so it opens in a new tab, shows a URL on hover, and is reachable from the browser's own context menu. Accepted at runtime but not type-checked, because MUI types `component` loosely on `MenuItem`.",
+          "code": "<MenuItem\n  component=\"a\"\n  href=\"https://atoms.neoflo.ai/components/menu\"\n  target=\"_blank\"\n  rel=\"noreferrer\"\n>\n  <ArrowSquareOut size={16} />\n  Open documentation\n</MenuItem>"
+        },
+        {
+          "title": "Long labels wrap",
+          "description": "The design gives the label `word-break: break-word` over a zero min-width, so a long label wraps inside the panel rather than widening it. MUI defaults to `nowrap`, which grows the panel instead and cannot be rescued with an ellipsis — a flexbox bug MUI documents as a Menu limitation. Give the panel a width and let the label wrap.",
+          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  sx={{ '& .MuiMenu-paper': { maxWidth: 220 } }}\n>\n  <MenuItem onClick={close}>Share</MenuItem>\n  <MenuItem onClick={close}>\n    Move to a different workspace folder\n  </MenuItem>\n</Menu>"
+        }
+      ],
+      "dos": [
+        "Close the menu from `onClick` — a selection never reaches the Menu's `onClose`",
+        "Keep `variant=\"action\"` to one row per menu, and put it last, where a \"new…\" row is expected",
+        "Give every row a glyph or none, so the labels stay aligned with each other",
+        "Use `selected` for the current choice instead of a checkmark glyph, so the tint and the initial focus both follow from one prop",
+        "Write labels as verbs for rows that act (\"Rename\", \"Duplicate\") and leave `variant=\"secondary\"` for the rows that do not"
+      ],
+      "donts": [
+        "Don't put an interactive control inside an item — a checkbox or a switch in a menu row leaves two focus targets in a list that only expects one",
+        "Don't disable a row without saying why in the label or a nearby row; a dead choice with no explanation reads as a bug",
+        "Don't hardcode the glyph size with `sx` on the item — pass `size={16}` on the icon, so the rule applies to the icon and not to every child",
+        "Don't set `dense` on each item when the whole list is dense — `slotProps={{ list: { dense: true } }}` on the Menu does it once and is inherited",
+        "Don't use `variant=\"secondary\"` as a substitute for `disabled` — one is a quieter label, the other is an inert row, and only the second is announced"
+      ],
+      "relatedComponents": [
+        "Menu",
+        "Select",
+        "Checkbox"
+      ],
+      "accessibility": [
+        "Renders an `<li role=\"menuitem\">` inside the Menu's list, so arrow keys move to it and Enter or Space activates it",
+        "Disabled items keep their place in the reading order but are skipped by arrow-key navigation, so the label still has to make sense on its own",
+        "Tone is colour only — `secondary` and `action` carry no semantics, so never let the colour of a row be the only thing that distinguishes what it does",
+        "The `action` tone on the panel surface, and the hover/focus tint behind it, were both checked for contrast in light and dark; a custom tint through `sx` needs the same check",
+        "With `component=\"a\"`, the row stays a menu item to assistive technology and gains the link's own affordances — do not add `role=\"link\"` on top"
       ]
     },
     {

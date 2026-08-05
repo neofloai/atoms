@@ -58,6 +58,7 @@ export const navigation: readonly NavSection[] = [
       { label: 'Select', href: '/components/select' },
       { label: 'Checkbox', href: '/components/checkbox' },
       { label: 'Radio', href: '/components/radio' },
+      { label: 'Menu', href: '/components/menu' },
       { label: 'Card', href: '/components/card', disabled: true },
     ],
   },

@@ -99,3 +99,9 @@ export type { CheckboxProps } from './components/Checkbox';
 
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioGroupProps, RadioProps } from './components/Radio';
+
+export { Menu } from './components/Menu';
+export type { MenuProps } from './components/Menu';
+
+export { MenuItem } from './components/MenuItem';
+export type { MenuItemProps, MenuItemVariant } from './components/MenuItem';
