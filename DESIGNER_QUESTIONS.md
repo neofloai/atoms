@@ -263,3 +263,25 @@ Two more states are absent from the sheet and were decided in code:
 - The hover tint for a row *inside a menu* — `card 3` as implemented, something stronger, or a re-spec of the panel surface so the sheet's `card 2` hover works as drawn.
 - Whether the focused row should have its own treatment rather than sharing hover's, given both can be true at once.
 - A disabled row's colour.
+
+---
+
+### 24. Skeleton — there is no loading placeholder anywhere in the design library (added 6 August)
+`Skeleton` shipped without a Figma source. Searching the Product Design System for *skeleton*, *placeholder*, *shimmer*, *loading state*, and *empty content* returns only the Phosphor `Spinner` / `SpinnerGap` icons — there is no component, and no variable group for one. It is the only component in the library with no Figma link on its docs page, and the page says so.
+
+So the following were decided in code, against this system's palette rather than against a spec. They are all cheap to change:
+
+- **The fill is translucent, not a token.** MUI tints the placeholder with 11% of `palette.text.primary` in light and 13% in dark, which resolves through our own `grey/1100` and `grey/25`. Kept deliberately, because a skeleton appears on the page surface, inside a card, and inside a card nested in a card, and no single solid grey covers all three. `surface.disabled.default` — the obvious candidate — is `grey/900` in dark, which is *exactly* `surface.layers.card3`, so a placeholder inside a `card 3` panel would be invisible; the same collision class as #23. Compositing holds a roughly constant step instead (~25 greyscale levels in light, ~30 in dark) on every layer. If the system wants a named skeleton colour, it needs to be specified per layer, or as an alpha over an ink token rather than a flat swatch.
+- **`rounded` is 8px.** MUI's `rounded` variant uses `theme.shape.borderRadius`, which is already `radius.sm`, the design system's control default — nothing to override. A skeleton standing in for a **card** wants the 24px card radius and has to say so (`sx={{ borderRadius: 3 }}`). Worth knowing whether a card-shaped placeholder is common enough to deserve a shorter route.
+- **Animation.** Two are offered because MUI offers two: `pulse` (the default, an opacity fade) and `wave` (a highlight sweeping across). A design system would normally pick one. No preference has been expressed, so both stand.
+- **No ARIA on the placeholder.** Matches MUI, whose documented ARIA for this component is "None". The loading state goes on the region (`aria-busy`), not on each grey block.
+
+**Two system-level gaps this surfaced, neither specific to Skeleton:**
+
+- **`palette.action.*` is still MUI stock.** `action.hover` is `rgba(0,0,0,0.04)` light / `rgba(255,255,255,0.08)` dark — the only part of the palette not mapped to tokens. It is what MUI draws the `wave` sweep from: measured on the docs page, the sweep moves the placeholder **9 greyscale levels in light against 16 in dark**, so the light-mode wave is a little over half as strong. `action.*` also backs hover overlays and ripples on any unwrapped MUI component. Left alone here rather than patched with an invented highlight value.
+- **`prefers-reduced-motion` is not honoured anywhere.** MUI 9 gates its own reduced-motion styles behind `theme.motion.reducedMotion`, which `src/theme/index.ts` does not set, so every transition in the library currently ignores the OS setting. Skeleton is the first component with an *infinite* animation, so it handles this itself — but `motion: { reducedMotion: 'system' }` on the theme is a one-line fix covering everything, and should be its own change rather than a side effect of adding a component.
+
+**Confirm:**
+- Whether a skeleton should be drawn in Figma at all, or whether this stays engineering-owned.
+- If it is drawn: the fill (and whether it is specified per surface layer, since one flat grey cannot work on all four), and whether `pulse` or `wave` is the house animation.
+- Whether to set `motion: { reducedMotion: 'system' }` on the theme, which would make every transition in the library respect the OS preference.
