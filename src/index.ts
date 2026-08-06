@@ -105,3 +105,10 @@ export type { MenuProps } from './components/Menu';
 
 export { MenuItem } from './components/MenuItem';
 export type { MenuItemProps, MenuItemVariant } from './components/MenuItem';
+
+export { Skeleton } from './components/Skeleton';
+export type {
+  SkeletonAnimation,
+  SkeletonProps,
+  SkeletonVariant,
+} from './components/Skeleton';
