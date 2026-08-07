@@ -16,7 +16,7 @@ const pinnedInstall = `# Pin to a branch
 npm install git+ssh://git@github.com/neofloai/atoms.git#main
 
 # Pin to a tag (recommended for production)
-npm install git+ssh://git@github.com/neofloai/atoms.git#v0.1.0
+npm install git+ssh://git@github.com/neofloai/atoms.git#v1.0.0
 
 # Pin to an exact commit
 npm install git+ssh://git@github.com/neofloai/atoms.git#1a2b3c4`;
