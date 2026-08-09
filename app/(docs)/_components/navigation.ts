@@ -28,12 +28,14 @@ export const navigation: readonly NavSection[] = [
       { label: 'Introduction', href: '/' },
       { label: 'Installation', href: '/installation' },
       { label: 'MCP endpoint', href: '/mcp-guide' },
+      { label: 'Help', href: '/help' },
     ],
   },
   {
     title: 'Foundations',
     items: [
       { label: 'Brand', href: '/branding' },
+      { label: 'Favicon', href: '/branding#favicon' },
       { label: 'Tokens', href: '/tokens' },
       { label: 'Typography', href: '/tokens#typography' },
       { label: 'Spacing', href: '/tokens#spacing' },

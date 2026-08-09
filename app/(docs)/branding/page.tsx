@@ -10,6 +10,7 @@ import { NeofloLogo } from '@/src/brand';
 import { branding } from '@/src/brand/branding';
 import { colors, fontFamilies } from '@/src/tokens';
 import { BrandAccentSection } from './_components/BrandAccentSection';
+import { FaviconSection } from './_components/FaviconSection';
 import { PaletteSection } from './_components/PaletteSection';
 
 export const metadata = {
@@ -159,6 +160,18 @@ export default function BrandingDocsPage() {
             it adapts to light and dark surfaces from one source. Set its
             colour by setting <code>color</code> on an ancestor.
           </Typography>
+        </Stack>
+
+        <Divider />
+
+        <Stack spacing={2} id="favicon">
+          <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            Favicon
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {sectionSummary('favicon')}
+          </Typography>
+          <FaviconSection />
         </Stack>
 
         <Divider />

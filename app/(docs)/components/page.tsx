@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -204,6 +205,14 @@ export default function ComponentsIndexPage() {
             at once; the layout and motion primitives are re-exported
             unchanged, because they render nothing a designer could redline.
             Import them all from <code>@neoflo/atoms</code>.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Need one that isn&apos;t here?{' '}
+            <Link component={NextLink} href="/help" sx={{ fontWeight: 600 }}>
+              Request it
+            </Link>{' '}
+            — the list is short on purpose, and it grows on what people
+            actually ask for.
           </Typography>
         </Stack>
 

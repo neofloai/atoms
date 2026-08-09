@@ -5,13 +5,18 @@
  */
 @layer mui, base;
 
-@layer base {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
+/*
+ * No box-sizing reset here on purpose. CssBaseline (mounted by
+ * NeofloThemeProvider) already sets `border-box` on html and `inherit`
+ * on everything else. Restating it as `*, *::before, *::after` from the
+ * `base` layer looks harmless but wins over the whole `mui` layer, and
+ * MUI deliberately opts inputs OUT: `.MuiInputBase-input` is sized as
+ * `height: 1.4375em` PLUS padding and needs `content-box` to add up.
+ * Forcing border-box on it collapsed every un-restyled MUI text field
+ * to 19px with the text crushed against the frame.
+ */
 
+@layer base {
   html {
     height: 100%;
   }
