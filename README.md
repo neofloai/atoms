@@ -23,6 +23,8 @@ Atoms is **three things in one repo**:
 | Installation guide | [atoms.neoflo.ai/installation](https://atoms.neoflo.ai/installation) |
 | MCP endpoint guide | [atoms.neoflo.ai/mcp-guide](https://atoms.neoflo.ai/mcp-guide) |
 | Design tokens | [atoms.neoflo.ai/tokens](https://atoms.neoflo.ai/tokens) |
+| Help & support | [atoms.neoflo.ai/help](https://atoms.neoflo.ai/help) |
+| Issues & requests | [github.com/neofloai/atoms/issues](https://github.com/neofloai/atoms/issues) |
 | Icons | [atoms.neoflo.ai/icons](https://atoms.neoflo.ai/icons) |
 | Deployment & CI/CD | [DEPLOYMENT.md](./DEPLOYMENT.md) |
 
@@ -300,12 +302,20 @@ See `CLAUDE.md` for Claude Code specific guidelines.
 
 ## Need Help?
 
-- **Component not in Atoms?** — [Raise an issue](https://github.com/neofloai/atoms/issues) with the `component-request` label
-- **MUI behaves oddly?** — Check [mui.com](https://mui.com) first, then ping #design-system on Slack
+Full version, with what to put in an issue: [atoms.neoflo.ai/help](https://atoms.neoflo.ai/help).
+
+- **Component not in Atoms?** — [Raise an issue](https://github.com/neofloai/atoms/issues/new?labels=component-request) with the `component-request` label
+- **Found a bug?** — [Raise an issue](https://github.com/neofloai/atoms/issues/new?labels=bug) with the `bug` label. Say which colour mode and which surface, and paste the snippet
+- **MUI behaves oddly?** — Check [mui.com](https://mui.com) first, then ping #frontend-design-system on Slack
 - **MCP not connecting?** — Verify `npm run generate` ran, check `.cursor/mcp.json` URL, see the [MCP guide](https://atoms.neoflo.ai/mcp-guide)
 
 ---
 
-**Maintained by:** Frontend platform team
-**Tech lead:** @ankit
-**Design lead:** @dhruva
+**Maintained by:**
+
+| Name                  | Area        | Contact                                             |
+| --------------------- | ----------- | --------------------------------------------------- |
+| Ankit Verma           | Engineering | [ankit.v@neoflo.ai](mailto:ankit.v@neoflo.ai)       |
+| Dhruva Vijayaraghavan | Design      | [dhruva.v@neoflo.ai](mailto:dhruva.v@neoflo.ai)     |
+
+Day to day, **#frontend-design-system** on Slack is faster than email.

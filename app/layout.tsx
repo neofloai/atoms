@@ -19,6 +19,21 @@ export const metadata: Metadata = {
   title: 'Atoms — Neoflo Design System',
   description:
     'Neoflo Atoms: branded React components, design tokens, and an MCP endpoint for AI editors.',
+  // One icon, not a `media` pair. The off-white disc is the only mark
+  // that survives both backgrounds: its black N stays legible on light
+  // browser chrome, and the disc itself carries it on dark. The dark
+  // disc is the opposite — crisp on light chrome, invisible on dark —
+  // so scoping it to `(prefers-color-scheme: light)` buys a slightly
+  // better light tab at the cost of losing the icon entirely in any
+  // browser that ignores `media` on an icon link. Both files still ship
+  // under /brand for anyone who wants the inverting pair; see /branding.
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '16x16 32x32 48x48' },
+      { url: '/brand/favicon-dark.png', type: 'image/png', sizes: '379x381' },
+    ],
+    apple: { url: '/brand/apple-touch-icon.png', type: 'image/png' },
+  },
 };
 
 interface RootLayoutProps {

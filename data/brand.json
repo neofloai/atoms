@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T09:02:33.374Z",
+  "generatedAt": "2026-08-09T16:43:02.426Z",
   "brand": {
     "name": "Neoflo",
     "tagline": "The Neoflo brand: one monochrome mark, a single blue accent, and a two-typeface system, all expressed through the Atoms theme.",
@@ -30,6 +30,23 @@
         ],
         "summary": "The Neoflo mark is a single monochrome \"N\" Union shape; use NeofloLogo (mark or full lockup), which inherits currentColor.",
         "body": "The Neoflo logo is a single geometric \"N\" mark. It comes in two forms: the mark (icon only) and the full lockup (mark + the lowercase \"neoflo\" wordmark).\n\nShip it with the NeofloLogo component, never a re-drawn copy:\n\n  import { NeofloLogo } from '@neoflo/atoms';\n\n  <NeofloLogo />                          // icon mark, 24px\n  <NeofloLogo variant=\"full\" size={28} /> // mark + wordmark\n\nThe logo is monochrome and renders from currentColor, so it is dark on light surfaces and light on dark surfaces from one source — there are no separate colour assets. Set the colour by setting `color` on an ancestor. Keep clear space around it, do not recolour it into the brand blue, and do not stretch or rotate it."
+      },
+      {
+        "id": "favicon",
+        "title": "Favicon",
+        "keywords": [
+          "favicon",
+          "favicon.ico",
+          "tab icon",
+          "browser icon",
+          "app icon",
+          "apple touch icon",
+          "touch icon",
+          "home screen icon",
+          "metadata icons"
+        ],
+        "summary": "The off-white disc is the default favicon — one file that reads on both light and dark browser chrome. Download the set from the Branding page and serve it from your own origin; never hotlink it.",
+        "body": "A favicon cannot inherit currentColor the way NeofloLogo does — it is a file, rendered by browser chrome the theme has no reach into. So the mark ships pre-rendered, and which one you use is a real choice rather than an automatic one.\n\n  favicon-dark.png      off-white disc, dark mark — THE DEFAULT, used on both chromes\n  favicon-light.png     dark disc, off-white mark — optional, light chrome only\n  apple-touch-icon.png  full-bleed off-white square, dark mark — iOS home screen\n  favicon.ico           16/32/48px copy of the default, for the /favicon.ico path\n\nThe PNGs are named for the scheme they are shown IN, not the colour they are made of. Default to the off-white disc: it is the only one that survives both backgrounds, because its dark mark stays legible on light chrome while the disc itself carries it on dark. The dark disc is crisp on light chrome and invisible on dark, so it is worth adding only behind a (prefers-color-scheme: light) query — and only if you accept losing the icon entirely in a browser that ignores `media` on an icon link.\n\nThe Apple touch icon is a square rather than a disc on purpose: iOS ignores transparency, composites onto black, and applies its own rounding.\n\nDownload the files from the Branding page of the docs site and commit them to your own repository. Do not hotlink the Atoms site, or any other origin — an icon served from somewhere you do not control disappears the day that origin does.\n\nNext.js App Router — put the files in `public/` and declare them in the root layout:\n\n  export const metadata = {\n    icons: {\n      icon: [\n        { url: '/favicon.ico', sizes: '16x16 32x32 48x48' },\n        { url: '/brand/favicon-dark.png', type: 'image/png' },\n      ],\n      apple: { url: '/brand/apple-touch-icon.png', type: 'image/png' },\n    },\n  };\n\nPlain HTML — the same thing, with paths relative to your own site:\n\n  <link rel=\"icon\" href=\"/favicon.ico\" sizes=\"16x16 32x32 48x48\">\n  <link rel=\"icon\" type=\"image/png\" href=\"/brand/favicon-dark.png\">\n  <link rel=\"apple-touch-icon\" href=\"/brand/apple-touch-icon.png\">\n\nTo make the mark invert with the OS scheme instead, swap the single PNG entry for the pair. The app/icon.png file convention cannot express `media`, so either way the icons need explicit metadata:\n\n  { url: '/brand/favicon-light.png', type: 'image/png', media: '(prefers-color-scheme: light)' },\n  { url: '/brand/favicon-dark.png', type: 'image/png', media: '(prefers-color-scheme: dark)' },"
       },
       {
         "id": "color",
