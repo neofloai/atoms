@@ -284,4 +284,25 @@ So the following were decided in code, against this system's palette rather than
 **Confirm:**
 - Whether a skeleton should be drawn in Figma at all, or whether this stays engineering-owned.
 - If it is drawn: the fill (and whether it is specified per surface layer, since one flat grey cannot work on all four), and whether `pulse` or `wave` is the house animation.
-- Whether to set `motion: { reducedMotion: 'system' }` on the theme, which would make every transition in the library respect the OS preference.
+- Whether to set `motion: { reducedMotion: 'system' }` on the theme, which would make every transition in the library respect the OS preference. **Now done — see #25.**
+
+---
+
+### 25. Motion — the design library specifies none, so all five transitions ship with MUI's timings (added 9 August)
+`Fade`, `Grow`, `Zoom`, `Slide`, and `Collapse` shipped without a Figma source. Searching the Product Design System for *duration*, *easing*, *transition*, *motion*, and *animation* returns no variable group and no component sheet that draws one — no component in the library documents how it enters or leaves. This is a wider gap than #24: `Skeleton` was one missing component, this is a missing dimension of the system.
+
+The five are **re-exports rather than wrappers**, taking the same carve-out as `Box`, `Stack`, `Grid`, and `Container` (recorded in `src/index.ts`). A transition renders no DOM of its own — it clones its child and animates the child's `style` — so there is no colour, type, border, or state to brand, and the whole API is a boolean, a duration, and a CSS timing function. Wrapping would also make them *less* themed: timing defaults resolve from `theme.transitions` at render time, so baking numbers into a wrapper would replace a themeable default with a fixed one.
+
+Consequently everything below is MUI's Material scale, left in place rather than mapped to anything:
+
+- **Durations.** `enteringScreen` 225ms and `leavingScreen` 195ms drive `Fade`, `Zoom`, and `Slide`; `standard` 300ms is `Collapse`'s default; `Grow` and `Collapse` also accept `timeout="auto"`, which derives the duration from the child's measured size.
+- **Easings.** The four Material curves — `easeInOut`, `easeOut`, `easeIn`, `sharp`. `Slide` is the only one with asymmetric defaults (`easeOut` in, `sharp` out).
+
+**No motion tokens were invented.** Adding `src/tokens/motion.ts` with plausible durations was deliberately not done: every other token in this system traces back to the designer's Figma export, and one invented in code would be indistinguishable from the ones that are not. The docs page reads the numbers live from `theme.transitions` and says on the page that they are MUI's, rather than laundering them into looking like Neoflo values.
+
+**`motion: { reducedMotion: 'system' }` is now set** in `src/theme/index.ts`, resolving the open item at the end of #24. MUI 9 defaults this to `'never'`, so until now every transition in the library ignored the OS preference. This change reaches past the new components: `Menu`'s open animation and any MUI internal built on these transitions now complete instantly for a user who has asked for less motion. The state change is unaffected; only the tween is dropped. Individual transitions can opt out with `disablePrefersReducedMotion`. `Skeleton` keeps its own hand-written reduced-motion rules on top of this so it stays correct for consumers who bring their own theme.
+
+**Confirm:**
+- Whether motion should be specified in Figma at all, or stays engineering-owned like `Skeleton`. If it is specified, `theme.transitions` is the single place it lands and nothing else changes.
+- If it is specified: the house durations and curves, and in particular whether entering and leaving should be asymmetric across the board (only `Slide` is today, because Material says so).
+- Whether the system wants an opinion on *which* transition a given kind of surface uses — a menu grows, a sheet slides, a disclosure collapses — or whether that stays a per-usage decision. Today `Menu` is the only component that picks one on the consumer's behalf.

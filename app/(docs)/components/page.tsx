@@ -14,15 +14,20 @@ import { data as box } from '@/src/components/Box/Box.examples';
 import { data as button } from '@/src/components/Button/Button.examples';
 import { data as checkbox } from '@/src/components/Checkbox/Checkbox.examples';
 import { data as chip } from '@/src/components/Chip/Chip.examples';
+import { data as collapse } from '@/src/components/Collapse/Collapse.examples';
 import { data as container } from '@/src/components/Container/Container.examples';
+import { data as fade } from '@/src/components/Fade/Fade.examples';
 import { data as grid } from '@/src/components/Grid/Grid.examples';
+import { data as grow } from '@/src/components/Grow/Grow.examples';
 import { data as iconButton } from '@/src/components/IconButton/IconButton.examples';
 import { data as menu } from '@/src/components/Menu/Menu.examples';
 import { data as radio } from '@/src/components/Radio/Radio.examples';
 import { data as select } from '@/src/components/Select/Select.examples';
 import { data as skeleton } from '@/src/components/Skeleton/Skeleton.examples';
+import { data as slide } from '@/src/components/Slide/Slide.examples';
 import { data as stack } from '@/src/components/Stack/Stack.examples';
 import { data as textField } from '@/src/components/TextField/TextField.examples';
+import { data as zoom } from '@/src/components/Zoom/Zoom.examples';
 
 export const metadata = {
   title: 'Components — Atoms',
@@ -60,6 +65,15 @@ const built: readonly (readonly [ComponentExamplesData, string])[] = [
   [alert, '/components/alert'],
   [skeleton, '/components/skeleton'],
   [menu, '/components/menu'],
+  // The five motion primitives share one page, mirroring MUI's own
+  // single Transitions page — five near-identical pages would say the
+  // same thing five times. Each still gets its own card and its own
+  // MCP manifest entry, so `get_component("Fade")` resolves.
+  [fade, '/components/animations#fade'],
+  [grow, '/components/animations#grow'],
+  [zoom, '/components/animations#zoom'],
+  [slide, '/components/animations#slide'],
+  [collapse, '/components/animations#collapse'],
 ];
 
 /** Not yet built — kept visible so the roadmap is legible. */
@@ -89,6 +103,7 @@ const CATEGORY_ORDER: readonly string[] = [
   'Data Display',
   'Feedback',
   'Navigation',
+  'Motion',
 ];
 
 function categoryRank(category: string): number {
@@ -181,10 +196,12 @@ export default function ComponentsIndexPage() {
             Components
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            {readyCount} Neoflo-branded wrappers around Material UI. Every one
-            reads its colours, spacing, and radii from the design tokens, so a
-            token change lands everywhere at once. Import them all from{' '}
-            <code>@neoflo/atoms</code>.
+            {readyCount} components built on Material UI. Anything with a
+            visual identity is wrapped and reads its colours, spacing, and
+            radii from the design tokens, so a token change lands everywhere
+            at once; the layout and motion primitives are re-exported
+            unchanged, because they render nothing a designer could redline.
+            Import them all from <code>@neoflo/atoms</code>.
           </Typography>
         </Stack>
 
