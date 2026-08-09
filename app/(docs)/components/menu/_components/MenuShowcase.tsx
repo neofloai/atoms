@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
@@ -9,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Button } from '@/src/components/Button';
+import { Divider } from '@/src/components/Divider';
 import { Menu } from '@/src/components/Menu';
 import { MenuItem } from '@/src/components/MenuItem';
 import {

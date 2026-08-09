@@ -70,6 +70,15 @@ export type { GridProps } from './components/Grid';
 export { Container } from './components/Container';
 export type { ContainerProps } from './components/Container';
 
+export { Divider } from './components/Divider';
+export type {
+  DividerOrientation,
+  DividerProps,
+  DividerTextAlign,
+  DividerTypeMap,
+  DividerVariant,
+} from './components/Divider';
+
 export { Button } from './components/Button';
 export type {
   ButtonAppearance,

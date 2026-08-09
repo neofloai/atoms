@@ -38,7 +38,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'Element rendered between each child. Decorative — it receives the same spacing as the children.',
+        'Element rendered between each child — usually `<Divider />`, or `<Divider orientation="vertical" flexItem />` in a row. It receives the same spacing as the children.',
     },
     {
       name: 'useFlexGap',
@@ -105,12 +105,12 @@ export const data: ComponentExamplesData = {
     {
       title: 'Dividers',
       description:
-        'Use `divider` to insert an element between each child. Atoms does not export a Divider component yet, so a one-pixel Box tinted with `divider` from the palette is the token-driven way to draw one — the prop accepts any node.',
+        'Use `divider` to insert an element between each child — one between every pair, none at the ends, so the count follows the number of children. Pass the `Divider` component itself; a vertical one needs `flexItem` to take the height of the row.',
       code: [
         '<Stack',
         '  direction="row"',
         '  spacing={2}',
-        "  divider={<Box sx={{ width: '1px', bgcolor: 'divider' }} />}",
+        '  divider={<Divider orientation="vertical" flexItem />}',
         '>',
         '  <Box sx={tile}>Item 1</Box>',
         '  <Box sx={tile}>Item 2</Box>',
@@ -205,13 +205,13 @@ export const data: ComponentExamplesData = {
     "Don't reach for Stack when the layout has two axes or needs per-child placement — that is a flex or grid `Box`",
     "Don't hardcode a gap in `sx` (`gap: '12px'`) — `spacing` already resolves from the theme spacing scale",
     "Don't nest a Stack around each child to space it — one Stack spaces all of its immediate children",
-    "Don't use a `divider` between the items of a `component=\"ul\"` Stack — the extra element breaks the list semantics",
+    "Don't pass a bare `<hr>` or a plain `Box` as the `divider` of a `component=\"ul\"` Stack — neither is valid between `<li>` elements; use `<Divider component=\"li\" />`, which stays legal and still announces as a separator",
   ],
-  relatedComponents: ['Box', 'Grid', 'Container'],
+  relatedComponents: ['Box', 'Grid', 'Container', 'Divider'],
   accessibility: [
     'Renders a `<div>` by default, which carries no semantics — set `component` to the element the group actually is (`ul`, `nav`, `fieldset`)',
     'With `component="ul"`, each child needs `component="li"` for the group to be announced as a list',
-    'The `divider` element is decorative and carries no role, so keep meaning in the children rather than in the separator',
+    'A `Divider` passed as the `divider` prop announces as a separator, but it never names what it separates — keep the meaning in the children rather than in the rule',
     'Stack changes visual order only through `direction` — `row-reverse` and `column-reverse` leave the DOM and tab order unchanged, so avoid them where reading order matters',
   ],
 };

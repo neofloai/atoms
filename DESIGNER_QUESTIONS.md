@@ -306,3 +306,38 @@ Consequently everything below is MUI's Material scale, left in place rather than
 - Whether motion should be specified in Figma at all, or stays engineering-owned like `Skeleton`. If it is specified, `theme.transitions` is the single place it lands and nothing else changes.
 - If it is specified: the house durations and curves, and in particular whether entering and leaving should be asymmetric across the board (only `Slide` is today, because Material says so).
 - Whether the system wants an opinion on *which* transition a given kind of surface uses — a menu grows, a sheet slides, a disclosure collapses — or whether that stays a per-usage decision. Today `Menu` is the only component that picks one on the consumer's behalf.
+
+---
+
+### 26. Divider — no separator exists in the design library, and `palette.divider` is broken in dark mode (added 9 August)
+`Divider` shipped without a Figma source. Searching the Product Design System for *divider*, *separator*, *rule*, and *line* returns component sets for arithmetic (`MathOperations`, `Calculator`, `Minus`) and nothing else — there is no component and no variable named for one. Same situation as #24 and #25, and the docs page says so on its face.
+
+Unlike the motion primitives in #25, this one is a **wrapper, not a re-export**. A divider renders a real border with a colour a designer could redline, which is exactly the line the carve-out in `src/index.ts` draws.
+
+**The one visual decision — and it fixes a live defect.**
+
+MUI paints the rule from `palette.divider`. In dark mode `src/theme/palette.ts` sets that to `grey/1000`, which is *the same value* as `surface.layers.card1`. Measured contrast, hairline against surface:
+
+| surface | `palette.divider` (light / dark) | `border.default.default` (light / dark) |
+|---|---|---|
+| `layers.page` | 1.25 / 1.07 | 1.61 / 1.86 |
+| `layers.card1` | 1.22 / **1.00** | 1.57 / 1.74 |
+| `layers.card2` | 1.16 / 1.05 | 1.50 / 1.66 |
+| `layers.card3` | 1.09 / 1.15 | 1.41 / 1.51 |
+| `background.paper` | 1.26 / 1.04 | 1.62 / 1.82 |
+
+**1.00:1 on dark `card 1` means the rule does not render at all.** On `card 2` and `background.paper` it is *darker* than what it sits on, so it reads as a smudge rather than a line. This is not new — `Menu` already hand-patches it for dividers inside a menu panel (see #23's neighbourhood), and the menu docs page carries a note explaining why.
+
+So the component draws from **`border.default.default`** instead — the system's own neutral border token, the same one a `secondary` `outline` Button uses. It is lighter than every dark layer and darker than every light one, so one token holds everywhere. The cost: a light-mode rule moves `grey/200` → `grey/300`, one rung stronger than MUI's default. That was chosen over keeping two values that each work in one colour scheme.
+
+None of these reach the 3:1 of WCAG 1.4.11, and none needs to — that threshold covers controls and graphics required to understand content, and a separator is neither. The bar is "visible on every layer", which `palette.divider` was failing outright.
+
+**The fix is deliberately local.** Correcting `palette.divider` in `src/theme/palette.ts` would fix `<MenuItem divider />`, MUI's own components, and this docs site in one move — but it would restyle every existing surface, so it belongs in its own change rather than riding along with a new component.
+
+**`variant` keeps Material's indents.** `inset` is a hardcoded `margin-left: 72px` — the width of a Material list avatar plus its gutter — and `middle` is `theme.spacing(2)`, 16px, a number that is **not on the Neoflo spacing scale at all** (4, 8, 12, 24, 48, 64, 96). Both were left on MUI's numbers rather than quietly re-pointed, for the same reason no motion tokens were invented in #25: a value chosen in code would be indistinguishable from one that came from Figma. The docs tell consumers to prefer `fullWidth` and control the inset from the parent's padding.
+
+**Confirm:**
+- The dark-mode `palette.divider` value. `grey/1000` is invisible on `card 1` and wrong-direction on `card 2` — this is a token bug independent of this component, and fixing it centrally would let the wrapper drop its override entirely.
+- Whether `grey/300` is the right light-mode hairline, or whether it now reads too heavy against `grey/200`.
+- The inset scale, if `inset` / `middle` are worth keeping: what a divider indents *to* in this system, given 72px and 16px are both off the scale.
+- Whether a divider should be drawn in Figma at all, or stays engineering-owned like `Skeleton` and motion.
