@@ -1,5 +1,6 @@
 import { Avatar } from '@/src/components/Avatar';
 import { Box } from '@/src/components/Box';
+import { Divider } from '@/src/components/Divider';
 import { Stack } from '@/src/components/Stack';
 import { data } from '@/src/components/Stack/Stack.examples';
 import type { ComponentDemo } from '../../../_components/Demo';
@@ -47,7 +48,7 @@ export const demos: readonly ComponentDemo[] = [
     <Stack
       direction="row"
       spacing={2}
-      divider={<Box sx={{ width: '1px', bgcolor: 'divider' }} />}
+      divider={<Divider orientation="vertical" flexItem />}
     >
       <Box sx={tile}>Item 1</Box>
       <Box sx={tile}>Item 2</Box>

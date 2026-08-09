@@ -16,6 +16,7 @@ import { data as checkbox } from '@/src/components/Checkbox/Checkbox.examples';
 import { data as chip } from '@/src/components/Chip/Chip.examples';
 import { data as collapse } from '@/src/components/Collapse/Collapse.examples';
 import { data as container } from '@/src/components/Container/Container.examples';
+import { data as divider } from '@/src/components/Divider/Divider.examples';
 import { data as fade } from '@/src/components/Fade/Fade.examples';
 import { data as grid } from '@/src/components/Grid/Grid.examples';
 import { data as grow } from '@/src/components/Grow/Grow.examples';
@@ -54,6 +55,7 @@ const built: readonly (readonly [ComponentExamplesData, string])[] = [
   [stack, '/components/stack'],
   [grid, '/components/grid'],
   [container, '/components/container'],
+  [divider, '/components/divider'],
   [button, '/components/button'],
   [iconButton, '/components/icon-button'],
   [textField, '/components/text-field'],
