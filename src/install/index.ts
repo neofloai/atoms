@@ -53,7 +53,7 @@ const SHARED_STEPS: InstallStep[] = [
   {
     title: 'Pin a version for production',
     body: 'A bare install tracks the default branch. Pin to a tag or commit for reproducible builds:',
-    code: 'npm install git+ssh://git@github.com/neofloai/atoms.git#v0.1.0',
+    code: 'npm install git+ssh://git@github.com/neofloai/atoms.git#v1.0.0',
     language: 'bash',
   },
 ];

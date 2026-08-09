@@ -26,9 +26,9 @@ const cards: readonly LandingCard[] = [
   {
     title: 'Components',
     description:
-      'Neoflo-branded wrappers around Material UI. Buttons, inputs, cards, and more.',
+      'Neoflo-branded wrappers around Material UI — layout, buttons, inputs, feedback, and overlays.',
     href: '/components',
-    status: 'soon',
+    status: 'ready',
   },
   {
     title: 'Patterns',
@@ -45,7 +45,7 @@ export default function HomePage() {
       <Stack spacing={6}>
         <Stack spacing={2} sx={{ maxWidth: 720 }}>
           <Chip
-            label="v0.1.0 · early access"
+            label="v1.0.0"
             size="small"
             sx={{
               alignSelf: 'flex-start',
@@ -143,7 +143,7 @@ export default function HomePage() {
                       href={card.href}
                       sx={{ fontWeight: 600, fontSize: 14 }}
                     >
-                      Open {card.title.toLowerCase()} →
+                      Browse {card.title.toLowerCase()} →
                     </Link>
                   ) : (
                     <Typography

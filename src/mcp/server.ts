@@ -16,7 +16,7 @@ import { registerSearchDocs } from './tools/search-docs';
 export function createAtomsMcpServer(): McpServer {
   const server = new McpServer({
     name: 'atoms',
-    version: '0.1.0',
+    version: '1.0.0',
   });
 
   registerListComponents(server);

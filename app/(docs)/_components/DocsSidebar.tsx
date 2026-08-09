@@ -162,7 +162,7 @@ export function DocsSidebar({ onItemClick }: DocsSidebarProps) {
               variant="caption"
               sx={{ color: 'text.secondary', fontSize: 11 }}
             >
-              v0.1.0 · design system
+              v1.0.0 · design system
             </Typography>
           </Stack>
         </Stack>
