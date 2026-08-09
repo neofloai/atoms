@@ -60,6 +60,7 @@ export const navigation: readonly NavSection[] = [
       { label: 'Radio', href: '/components/radio' },
       { label: 'Menu', href: '/components/menu' },
       { label: 'Skeleton', href: '/components/skeleton' },
+      { label: 'Animations', href: '/components/animations' },
       { label: 'Card', href: '/components/card', disabled: true },
     ],
   },

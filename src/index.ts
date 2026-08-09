@@ -13,21 +13,30 @@
  * here — consumers must see the Neoflo API, never the underlying
  * libraries.
  *
- * The one carve-out is an unstyled layout primitive: a component that
- * renders no colour, type, border, or state of its own has no MUI
- * vocabulary to rename and no brand decision to encode, so wrapping it
- * would add a layer that changes nothing while costing capability
- * (see `src/components/Box/Box.tsx` for the concrete loss). `Box`,
- * `Stack`, `Grid`, and `Container` are currently the only such
- * components — a primitive keeps the carve-out even when it has props
- * of its own, provided those props name CSS concepts, token-scale
- * indices, or arithmetic against a count the layout declares itself,
- * rather than design decisions (see `src/components/Stack/Stack.tsx`,
- * `src/components/Grid/Grid.tsx`, and
- * `src/components/Container/Container.tsx`, each of which records the
- * system-level defaults it deliberately leaves to the design system).
- * Anything with a visual identity — anything a designer could redline —
- * gets wrapped.
+ * The one carve-out is an unstyled primitive: a component that renders
+ * no colour, type, border, or state of its own has no MUI vocabulary
+ * to rename and no brand decision to encode, so wrapping it would add
+ * a layer that changes nothing while costing capability (see
+ * `src/components/Box/Box.tsx` for the concrete loss). A primitive
+ * keeps the carve-out even when it has props of its own, provided
+ * those props name CSS concepts, token-scale indices, or arithmetic
+ * against a count the layout declares itself, rather than design
+ * decisions. Anything with a visual identity — anything a designer
+ * could redline — gets wrapped.
+ *
+ * Two families qualify today:
+ *
+ *   - **Layout primitives** — `Box`, `Stack`, `Grid`, `Container`. Each
+ *     records the system-level defaults it deliberately leaves to the
+ *     design system in its own file.
+ *   - **Motion primitives** — `Fade`, `Grow`, `Slide`, `Zoom`,
+ *     `Collapse`. A transition renders no DOM of its own at all: it
+ *     clones a child and animates the child's `style`. Its entire API
+ *     is a boolean, a duration, and a CSS timing function, none of
+ *     which is a Material word, and its timing defaults resolve from
+ *     `theme.transitions` at render time — so a re-export is already
+ *     themed, while a wrapper with baked-in timings would be *less*
+ *     themed. See `src/components/Fade/Fade.tsx`.
  */
 
 export { NeofloThemeProvider } from './theme/ThemeProvider';
@@ -112,3 +121,35 @@ export type {
   SkeletonProps,
   SkeletonVariant,
 } from './components/Skeleton';
+
+/**
+ * Motion primitives — MUI's five transitions, re-exported under the
+ * Neoflo API so consumers never reach into `@mui/material` for them.
+ *
+ * `Fade` for appearing in place, `Grow` for a surface emerging from
+ * its trigger, `Zoom` for a small control, `Slide` for anything that
+ * belongs to an edge, `Collapse` for disclosure that reflows the page.
+ * All five honour `prefers-reduced-motion` because
+ * `src/theme/index.ts` sets `motion: { reducedMotion: 'system' }`.
+ *
+ * `TransitionProps` is the surface the first four share, exported once
+ * for consumers writing a component that accepts "any Atoms
+ * transition" and forwards whatever it is given.
+ */
+export { Fade } from './components/Fade';
+export type { FadeProps, TransitionProps } from './components/Fade';
+
+export { Grow } from './components/Grow';
+export type { GrowProps } from './components/Grow';
+
+export { Zoom } from './components/Zoom';
+export type { ZoomProps } from './components/Zoom';
+
+export { Slide } from './components/Slide';
+export type { SlideDirection, SlideProps } from './components/Slide';
+
+export { Collapse } from './components/Collapse';
+export type {
+  CollapseOrientation,
+  CollapseProps,
+} from './components/Collapse';

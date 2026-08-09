@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T08:02:33.633Z",
+  "generatedAt": "2026-08-09T08:35:48.607Z",
   "components": [
     {
       "name": "Alert",
@@ -585,6 +585,127 @@
       ]
     },
     {
+      "name": "Collapse",
+      "category": "Motion",
+      "tagline": "Animates a child between zero and its natural size, reflowing the page as it opens — the only transition in the set that changes layout, and therefore the one for disclosure.",
+      "props": [
+        {
+          "name": "in",
+          "type": "boolean",
+          "default": "false",
+          "description": "Whether the content is expanded. Flipping it animates the height (or width) between `collapsedSize` and the child's natural size."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The content to collapse. Unlike the other four transitions this is a plain node, not a single ref-holding element — `Collapse` wraps its content rather than cloning it, so text, fragments, and lists are all valid."
+        },
+        {
+          "name": "orientation",
+          "type": "'vertical' | 'horizontal'",
+          "default": "'vertical'",
+          "description": "Axis to animate along. `horizontal` collapses width instead of height — the mechanism behind a sidebar that shrinks to an icon rail."
+        },
+        {
+          "name": "collapsedSize",
+          "type": "string | number",
+          "default": "'0px'",
+          "description": "Size when closed. Set it to leave a preview visible instead of collapsing to nothing — a \"read more\" that shows the first line is `collapsedSize={24}`, not a separate component."
+        },
+        {
+          "name": "timeout",
+          "type": "number | 'auto' | { appear?, enter?, exit? }",
+          "default": "theme.transitions.duration.standard",
+          "description": "Duration in milliseconds, or `\"auto\"` to derive it from the content's size. The default is a flat 300ms; `\"auto\"` is usually the better choice, because a two-line disclosure and a twenty-line one should not take the same time."
+        },
+        {
+          "name": "easing",
+          "type": "string | { enter?, exit? }",
+          "default": "theme.transitions.easing.easeInOut",
+          "description": "CSS timing function, optionally split per direction."
+        },
+        {
+          "name": "mountOnEnter / unmountOnExit",
+          "type": "boolean",
+          "default": "false",
+          "description": "Defer mounting until the first expand, and remove the content once collapsed. `unmountOnExit` is what keeps hidden content out of the accessibility tree rather than present at zero height."
+        },
+        {
+          "name": "disablePrefersReducedMotion",
+          "type": "boolean",
+          "default": "false",
+          "description": "Keep animating even when the OS asks for reduced motion. The theme opts everything in via `motion: { reducedMotion: \"system\" }`."
+        },
+        {
+          "name": "component",
+          "type": "ElementType",
+          "default": "'div'",
+          "description": "Element rendered at the root. Use it when a `div` would be invalid HTML in the position the disclosure sits in — inside a list or a table, for instance."
+        },
+        {
+          "name": "sx",
+          "type": "SxProps<Theme>",
+          "default": "—",
+          "description": "Styles resolved against the Neoflo theme, applied to the outer wrapper."
+        }
+      ],
+      "examples": [
+        {
+          "title": "A disclosure, wired up",
+          "description": "`Collapse` manages size, not semantics. The trigger needs `aria-expanded` and `aria-controls` pointing at the region, or a screen reader user gets a button with no stated effect and content that appears without announcement.",
+          "code": "const [open, setOpen] = React.useState(false);\n\n<Button\n  appearance=\"text\"\n  onClick={() => setOpen(!open)}\n  aria-expanded={open}\n  aria-controls=\"billing-details\"\n>\n  {open ? \"Hide details\" : \"Show details\"}\n</Button>\n<Collapse in={open} timeout=\"auto\" unmountOnExit>\n  <Box id=\"billing-details\" sx={{ pt: 2 }}>\n    <Typography variant=\"body2\">{details}</Typography>\n  </Box>\n</Collapse>"
+        },
+        {
+          "title": "Keeping a preview visible",
+          "description": "`collapsedSize` is the height when closed, so the content can be truncated rather than hidden. This is the whole of a \"read more\" — no measuring, no second render, no separate component.",
+          "code": "<Collapse in={expanded} collapsedSize={44}>\n  <Typography variant=\"body2\" color=\"text.secondary\">\n    {article.body}\n  </Typography>\n</Collapse>"
+        },
+        {
+          "title": "Dismissing an alert without a jump",
+          "description": "Removing a message outright makes everything below it snap upward. Collapsing it hands that height back over the same duration, so the page settles instead of jumping.",
+          "code": "<Collapse in={visible} unmountOnExit>\n  <Alert\n    severity=\"info\"\n    onClose={() => setVisible(false)}\n  >\n    Two teammates are waiting for an invite.\n  </Alert>\n</Collapse>"
+        },
+        {
+          "title": "A rail that collapses sideways",
+          "description": "`orientation=\"horizontal\"` animates width instead of height. Pair it with a `collapsedSize` wide enough for the icons so the navigation stays usable while narrow.",
+          "code": "<Collapse\n  in={expanded}\n  orientation=\"horizontal\"\n  collapsedSize={56}\n  timeout=\"auto\"\n>\n  <Stack sx={{ width: 240 }}>{navigation}</Stack>\n</Collapse>"
+        },
+        {
+          "title": "A list of expanding rows",
+          "description": "One `Collapse` per row, each driven by its own boolean. Keep the trigger and the region adjacent in the DOM so the announcement order matches the reading order.",
+          "code": "{sections.map((section) => (\n  <Box key={section.id}>\n    <Button\n      appearance=\"text\"\n      onClick={() => toggle(section.id)}\n      aria-expanded={openIds.includes(section.id)}\n      aria-controls={`section-${section.id}`}\n    >\n      {section.title}\n    </Button>\n    <Collapse in={openIds.includes(section.id)} timeout=\"auto\" unmountOnExit>\n      <Box id={`section-${section.id}`} sx={{ px: 2, pb: 2 }}>\n        {section.body}\n      </Box>\n    </Collapse>\n  </Box>\n))}"
+        }
+      ],
+      "dos": [
+        "Use `Collapse` whenever the surrounding content should move out of the way rather than be covered",
+        "Pass `timeout=\"auto\"` so the duration suits how much is being revealed",
+        "Wire the trigger with `aria-expanded` and `aria-controls` — the component supplies none of that",
+        "Add `unmountOnExit` so collapsed content leaves the accessibility tree and the tab order",
+        "Reach for `collapsedSize` before writing a truncation of your own"
+      ],
+      "donts": [
+        "Don't use it for floating content — a popover or menu should not push the page around; that is `Grow` or `Fade`",
+        "Don't leave the default flat 300ms on content of wildly varying length; a long section crawls and a short one is over before it registers",
+        "Don't animate a collapse inside another collapse — the outer one measures a target that is still moving and lands at the wrong height",
+        "Don't rely on the animation to communicate the state change; the trigger's label and `aria-expanded` are what a screen reader user actually gets",
+        "Don't collapse content that contains focus — move focus out first, or the browser scrolls to chase a shrinking element"
+      ],
+      "relatedComponents": [
+        "Fade",
+        "Grow",
+        "Alert",
+        "Skeleton"
+      ],
+      "accessibility": [
+        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }` — the content appears at full size instantly",
+        "Supplies no ARIA of its own: the trigger needs `aria-expanded` and `aria-controls`, and the region needs the matching `id`",
+        "Without `unmountOnExit`, collapsed content is present at zero height — with `overflow: hidden` it is visually gone but a screen reader may still reach it, and focusable children stay in the tab order",
+        "Do not collapse a region that currently holds focus; move focus to the trigger first, or the browser follows the shrinking element and scrolls the page",
+        "The height change reflows everything below, so anything the user was reading moves — keep durations short and avoid collapsing on scroll or hover"
+      ]
+    },
+    {
       "name": "Container",
       "category": "Layout",
       "tagline": "Centres page content and bounds its width — the outermost layout element, and the only thing it renders is a max-width.",
@@ -700,6 +821,121 @@
         "A width bound is a readability control: WCAG 1.4.8 asks for no more than 80 characters per line of body text, which a `lg` container of unbroken prose exceeds even though nothing is technically broken",
         "Gutters are what keep text off the screen edge — if you disable them on a full-width section, reintroduce the padding somewhere inside it",
         "Both the fluid and the `fixed` bound are maximums, not fixed widths, so content still reflows down to 320px as WCAG 1.4.10 requires"
+      ]
+    },
+    {
+      "name": "Fade",
+      "category": "Motion",
+      "tagline": "Animates a child between transparent and opaque when a boolean flips — the quietest of the five transitions, and the right default for anything that appears in place.",
+      "props": [
+        {
+          "name": "in",
+          "type": "boolean",
+          "default": "false",
+          "description": "Whether the child is shown. Flipping it runs the enter or exit transition. This is the only prop most usages need."
+        },
+        {
+          "name": "children",
+          "type": "ReactElement",
+          "default": "—",
+          "description": "A single element that accepts a `ref` and a `style` prop — a DOM element, any Atoms component, or any `forwardRef` component. The transition writes `opacity` onto it, so a component that drops `style` will silently not animate."
+        },
+        {
+          "name": "timeout",
+          "type": "number | { appear?, enter?, exit? }",
+          "default": "{ enter: 225, exit: 195 }",
+          "description": "Duration in milliseconds. The default reads `theme.transitions.duration.enteringScreen` and `leavingScreen`, so leaving it alone keeps the whole library in step."
+        },
+        {
+          "name": "easing",
+          "type": "string | { enter?, exit? }",
+          "default": "theme.transitions.easing.easeInOut",
+          "description": "CSS timing function. Set it per direction when entering and exiting should not feel symmetric — `easeOut` in, `sharp` out is the Material pairing."
+        },
+        {
+          "name": "appear",
+          "type": "boolean",
+          "default": "true",
+          "description": "Whether to animate on first mount when `in` is already true. Set it to `false` for something that should simply be there when the page loads rather than fading in on arrival."
+        },
+        {
+          "name": "mountOnEnter",
+          "type": "boolean",
+          "default": "false",
+          "description": "Delay mounting the child until the first enter. Useful when the child is expensive and may never be shown."
+        },
+        {
+          "name": "unmountOnExit",
+          "type": "boolean",
+          "default": "false",
+          "description": "Remove the child from the DOM once it has faded out. Without it the node stays at `opacity: 0` — still focusable and still read by screen readers, which is usually wrong for content that is meant to be gone."
+        },
+        {
+          "name": "disablePrefersReducedMotion",
+          "type": "boolean",
+          "default": "false",
+          "description": "Keep animating even when the OS asks for reduced motion. The theme sets `motion: { reducedMotion: \"system\" }`, so this is an opt-out — reach for it only when the movement carries meaning that its absence would lose."
+        },
+        {
+          "name": "onEntered / onExited",
+          "type": "(node, isAppearing) => void",
+          "default": "—",
+          "description": "Lifecycle callbacks, with `onEnter`, `onEntering`, `onExit`, and `onExiting` alongside them. Use `onExited` to run cleanup after the animation rather than at the moment state changed."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Revealing a result",
+          "description": "The default case: a boolean drives the transition and nothing else is configured. `unmountOnExit` matters here — a success message left in the DOM at zero opacity is still announced by a screen reader.",
+          "code": "<Fade in={submitted} unmountOnExit>\n  <Alert severity=\"success\">Invite sent to {email}.</Alert>\n</Fade>"
+        },
+        {
+          "title": "Crossfading two states",
+          "description": "Two fades over one grid cell swap content without the layout moving. Both children occupy the same cell, so the container keeps the height of the taller one and nothing below it jumps.",
+          "code": "<Box sx={{ display: \"grid\" }}>\n  <Fade in={!loading}>\n    <Box sx={{ gridArea: \"1 / 1\" }}>{chart}</Box>\n  </Fade>\n  <Fade in={loading}>\n    <Box sx={{ gridArea: \"1 / 1\" }}>\n      <Skeleton variant=\"rounded\" height={180} />\n    </Box>\n  </Fade>\n</Box>"
+        },
+        {
+          "title": "Asymmetric timing",
+          "description": "Appearing slowly and leaving quickly reads as responsive; the reverse reads as sluggish. Pass an object when the two directions should differ.",
+          "code": "<Fade in={open} timeout={{ enter: 300, exit: 120 }}>\n  <Paper variant=\"outlined\" sx={{ p: 2 }}>Details</Paper>\n</Fade>"
+        },
+        {
+          "title": "Not animating on first paint",
+          "description": "A panel that is open when the page loads should already be open, not fade in as the user arrives. `appear={false}` keeps the transition for later state changes and skips the one on mount.",
+          "code": "<Fade in={open} appear={false}>\n  <Box sx={{ p: 2 }}>{content}</Box>\n</Fade>"
+        },
+        {
+          "title": "Cleaning up after the animation, not before",
+          "description": "Clearing state the instant `in` goes false empties the element mid-fade. `onExited` fires once the transition has finished, so the content stays intact until it is genuinely invisible.",
+          "code": "<Fade in={Boolean(error)} onExited={() => setError(null)} unmountOnExit>\n  <Alert severity=\"error\">{error?.message}</Alert>\n</Fade>"
+        }
+      ],
+      "dos": [
+        "Reach for `Fade` first — it is the least movement that still communicates a change, and it never causes layout shift",
+        "Pass `unmountOnExit` for anything that should be gone when hidden, so it leaves the accessibility tree and the tab order with it",
+        "Leave `timeout` alone unless you have a reason; the default reads `theme.transitions` and keeps every transition in the library in step",
+        "Use `appear={false}` for content that is already open on page load",
+        "Do cleanup in `onExited` rather than in the handler that flipped the boolean"
+      ],
+      "donts": [
+        "Don't pass a component that drops `ref` or `style` — the transition writes the animation onto the child, so it will render but never animate",
+        "Don't give it more than one child; wrap several elements in a `Box` and fade that",
+        "Don't use it for content that changes the page height — that is `Collapse`, and fading a node in and out of the flow makes everything below it jump",
+        "Don't set `disablePrefersReducedMotion` to make a design look right; if the motion is load-bearing, the still frame needs fixing instead",
+        "Don't stack a fade on a parent and a fade on its child — the opacities multiply and the inner one appears to lag"
+      ],
+      "relatedComponents": [
+        "Grow",
+        "Zoom",
+        "Slide",
+        "Collapse"
+      ],
+      "accessibility": [
+        "Respects `prefers-reduced-motion: reduce` automatically — the theme sets `motion: { reducedMotion: \"system\" }`, so the state change lands instantly rather than tweening",
+        "Carries no ARIA and adds no DOM; the semantics belong to the child and to whatever control toggles it",
+        "Without `unmountOnExit` the hidden child stays focusable and announced at `opacity: 0` — pass it, or manage `inert` yourself",
+        "A fade is not an announcement: content that appears in response to a user action still needs a live region, or focus moved to it, for a screen reader to notice",
+        "Keep durations short enough that a keyboard user tabbing quickly is never waiting on an animation to finish before the target is interactive"
       ]
     },
     {
@@ -863,6 +1099,110 @@
         "`direction=\"row-reverse\"` reverses the visual order while leaving DOM order untouched, so avoid it wherever sequence carries meaning",
         "With `component=\"ul\"`, each item needs `component=\"li\"` for the group to be announced as a list",
         "Grid controls arrangement only — it applies no focus handling, roles, or labels of its own"
+      ]
+    },
+    {
+      "name": "Grow",
+      "category": "Motion",
+      "tagline": "Scales and fades a child in from a small transparent state, timing itself to the size of what it is revealing — the transition for surfaces that emerge from something else.",
+      "props": [
+        {
+          "name": "in",
+          "type": "boolean",
+          "default": "false",
+          "description": "Whether the child is shown. Flipping it runs the enter or exit transition."
+        },
+        {
+          "name": "children",
+          "type": "ReactElement",
+          "default": "—",
+          "description": "A single element that accepts a `ref` and a `style` prop. The ref is not optional here the way it is elsewhere: `timeout=\"auto\"` measures the node, so a child that drops it transitions in zero milliseconds."
+        },
+        {
+          "name": "timeout",
+          "type": "number | 'auto' | { appear?, enter?, exit? }",
+          "default": "'auto'",
+          "description": "Duration in milliseconds, or `\"auto\"` to derive it from the child's height — so a four-item menu opens faster than a twenty-item one. This is the only transition in the set that defaults to `\"auto\"`."
+        },
+        {
+          "name": "easing",
+          "type": "string | { enter?, exit? }",
+          "default": "theme.transitions.easing.easeInOut",
+          "description": "CSS timing function, optionally split per direction."
+        },
+        {
+          "name": "appear",
+          "type": "boolean",
+          "default": "true",
+          "description": "Whether to animate on first mount when `in` is already true."
+        },
+        {
+          "name": "mountOnEnter / unmountOnExit",
+          "type": "boolean",
+          "default": "false",
+          "description": "Defer mounting until the first enter, and remove the child once it has left. For a popover-like surface both are usually right — the content is neither needed nor meaningful while closed."
+        },
+        {
+          "name": "disablePrefersReducedMotion",
+          "type": "boolean",
+          "default": "false",
+          "description": "Keep animating even when the OS asks for reduced motion. The theme opts everything in via `motion: { reducedMotion: \"system\" }`, so this is an escape hatch."
+        },
+        {
+          "name": "onEntered / onExited",
+          "type": "(node, isAppearing) => void",
+          "default": "—",
+          "description": "Lifecycle callbacks, with `onEnter`, `onEntering`, `onExit`, and `onExiting` alongside them."
+        }
+      ],
+      "examples": [
+        {
+          "title": "A surface that emerges from its trigger",
+          "description": "The default `timeout=\"auto\"` measures the panel, so the animation is proportionate to how much is being revealed. Set `transformOrigin` to the corner the panel belongs to and the scale reads as coming out of the button rather than out of nowhere.",
+          "code": "<Grow in={open} style={{ transformOrigin: \"top left\" }}>\n  <Paper variant=\"outlined\" sx={{ p: 2 }}>\n    <Stack spacing={1}>{filters}</Stack>\n  </Paper>\n</Grow>"
+        },
+        {
+          "title": "Staggering a group",
+          "description": "Offsetting each child by a fixed step turns a set of simultaneous appearances into one movement across the group. Keep the exit uniform — staggering the way out reads as hesitation.",
+          "code": "<Stack direction=\"row\" spacing={1}>\n  {tags.map((tag, index) => (\n    <Grow\n      key={tag.id}\n      in={show}\n      timeout={{ enter: 200 + index * 60, exit: 150 }}\n    >\n      <Chip label={tag.label} />\n    </Grow>\n  ))}\n</Stack>"
+        },
+        {
+          "title": "A fixed duration instead",
+          "description": "`\"auto\"` is right when the size is unpredictable and wrong when it is not: a small control of known size gets a duration measured from almost nothing, which reads as a snap. State a number for those.",
+          "code": "<Grow in={active} timeout={200}>\n  <Chip label=\"Live\" variant=\"success\" />\n</Grow>"
+        },
+        {
+          "title": "Already used by Menu",
+          "description": "Atoms' `Menu` opens with this transition internally, because MUI's `Popover` does. You do not need to add it — reach for `Grow` directly only when building a surface that `Menu` does not already cover.",
+          "code": "<Menu anchorEl={anchorEl} open={open} onClose={close}>\n  <MenuItem onClick={close}>Rename</MenuItem>\n  <MenuItem onClick={close}>Duplicate</MenuItem>\n</Menu>"
+        }
+      ],
+      "dos": [
+        "Use `Grow` for surfaces whose size you do not know in advance — the default `timeout=\"auto\"` measures them so the duration always suits the content",
+        "Set `style={{ transformOrigin }}` to the point the surface belongs to, so the scale reads as emerging from its trigger",
+        "Pair it with `mountOnEnter` and `unmountOnExit` for popover-like content",
+        "Give a stagger a uniform exit; only the entrance benefits from being offset",
+        "Reach for a fixed `timeout` when the child is small and its size is already known"
+      ],
+      "donts": [
+        "Don't use it for a full-width panel — a large scale distorts the content on the way in, where `Fade` or `Slide` would not",
+        "Don't rely on `timeout=\"auto\"` with a child that cannot be measured (`display: none`, zero height, or a component that drops `ref`) — it silently produces a zero-length transition",
+        "Don't add a `Grow` around `Menu`; it already grows, and nesting the two compounds the scale",
+        "Don't stagger more than a handful of items — beyond that the last one arrives long after the user has stopped waiting",
+        "Don't use it for content that pushes the page around; a scaling element that also reflows the layout reads as a glitch"
+      ],
+      "relatedComponents": [
+        "Fade",
+        "Zoom",
+        "Slide",
+        "Menu"
+      ],
+      "accessibility": [
+        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }`",
+        "Adds no DOM and no ARIA — a surface revealed this way still needs its own role, and its trigger still needs `aria-expanded`",
+        "With `timeout=\"auto\"` a tall panel can animate for close to half a second; move focus into it on `onEntered` rather than immediately, or the focus lands on a moving target",
+        "Use `unmountOnExit` so a closed surface is out of the tab order rather than scaled to nothing and still focusable",
+        "A stagger multiplies the wait for the last item — keep the step small enough that keyboard users are not held up by it"
       ]
     },
     {
@@ -1537,6 +1877,116 @@
       ]
     },
     {
+      "name": "Slide",
+      "category": "Motion",
+      "tagline": "Moves a child in from an edge of the screen and back out to it — the transition for anything that belongs to an edge, such as a sheet, a drawer, or a bar that arrives from the bottom.",
+      "props": [
+        {
+          "name": "direction",
+          "type": "'left' | 'right' | 'up' | 'down'",
+          "default": "'down'",
+          "description": "Where the child enters **from**, not where it travels to. `direction=\"up\"` starts below the viewport and moves upward. This is the single most common mistake with the component."
+        },
+        {
+          "name": "in",
+          "type": "boolean",
+          "default": "false",
+          "description": "Whether the child is shown. Flipping it runs the enter or exit transition."
+        },
+        {
+          "name": "children",
+          "type": "ReactElement",
+          "default": "—",
+          "description": "A single element that accepts a `ref` and a `style` prop. The transition writes a `transform` onto it and measures the node to work out how far it has to travel."
+        },
+        {
+          "name": "container",
+          "type": "Element | ((element) => Element) | null",
+          "default": "—",
+          "description": "Element whose edges the offset is measured against, instead of the window's. Without it a `Slide` inside a small card still travels the width of the screen — see the \"clipped to its container\" example."
+        },
+        {
+          "name": "timeout",
+          "type": "number | { appear?, enter?, exit? }",
+          "default": "{ enter: 225, exit: 195 }",
+          "description": "Duration in milliseconds, reading `theme.transitions.duration.enteringScreen` and `leavingScreen` by default."
+        },
+        {
+          "name": "easing",
+          "type": "string | { enter?, exit? }",
+          "default": "{ enter: easeOut, exit: sharp }",
+          "description": "CSS timing function. This transition is the one that ships asymmetric defaults: it decelerates on the way in and leaves at a constant rate, matching how Material treats objects that may return at any time."
+        },
+        {
+          "name": "appear",
+          "type": "boolean",
+          "default": "true",
+          "description": "Whether to animate on first mount when `in` is already true. Pass `false` for a panel that should already be open when the page loads, or the user watches it fly in on arrival."
+        },
+        {
+          "name": "mountOnEnter / unmountOnExit",
+          "type": "boolean",
+          "default": "false",
+          "description": "Defer mounting until the first enter, and remove the child once it has left. Both are usually right for an edge panel — an off-screen node that is still focusable is a keyboard trap waiting to happen."
+        },
+        {
+          "name": "disablePrefersReducedMotion",
+          "type": "boolean",
+          "default": "false",
+          "description": "Keep animating even when the OS asks for reduced motion. Least appropriate here of anywhere: a large translate is exactly what the setting exists to suppress."
+        }
+      ],
+      "examples": [
+        {
+          "title": "A panel clipped to its container",
+          "description": "The offset is measured from the window, so an unclipped `Slide` inside a card travels the full width of the screen and is visible crossing everything in between. `overflow: hidden` on the parent is the fix — the child is then clipped to the container it belongs to.",
+          "code": "<Box sx={{ overflow: \"hidden\" }}>\n  <Slide direction=\"left\" in={open} mountOnEnter unmountOnExit>\n    <Paper variant=\"outlined\" sx={{ p: 2 }}>Details</Paper>\n  </Slide>\n</Box>"
+        },
+        {
+          "title": "A save bar rising from the bottom",
+          "description": "`direction=\"up\"` starts the child below the fold and brings it up. A fixed bar is the case this transition suits best: it belongs to the bottom edge, so arriving from there is what the user expects.",
+          "code": "<Slide direction=\"up\" in={isDirty} mountOnEnter unmountOnExit>\n  <Paper\n    sx={{ position: \"fixed\", bottom: 0, left: 0, right: 0, p: 2 }}\n  >\n    <Stack direction=\"row\" spacing={1} justifyContent=\"flex-end\">\n      <Button appearance=\"text\" onClick={reset}>Discard</Button>\n      <Button variant=\"primary\" onClick={save}>Save changes</Button>\n    </Stack>\n  </Paper>\n</Slide>"
+        },
+        {
+          "title": "Measuring against a container instead of the window",
+          "description": "When the panel should travel only as far as its own parent is wide, hand `container` a ref to that parent. The offset is then computed from its edges, which is cheaper than clipping and keeps the movement proportionate.",
+          "code": "const containerRef = React.useRef<HTMLDivElement>(null);\n\n<Box ref={containerRef} sx={{ position: \"relative\", overflow: \"hidden\" }}>\n  <Slide direction=\"right\" in={open} container={containerRef.current}>\n    <Paper variant=\"outlined\" sx={{ p: 2 }}>Filters</Paper>\n  </Slide>\n</Box>"
+        },
+        {
+          "title": "Leaving the way it came",
+          "description": "A panel that enters from the left and exits to the right reads as being pushed past the user rather than dismissed. Keep one direction unless the movement is deliberately conveying a sequence, such as steps in a wizard.",
+          "code": "<Slide direction={step > previousStep ? \"left\" : \"right\"} in={active}>\n  <Box sx={{ p: 3 }}>{stepContent}</Box>\n</Slide>"
+        }
+      ],
+      "dos": [
+        "Read `direction` as where the child comes **from** — `up` enters from below",
+        "Clip the parent with `overflow: hidden`, or pass `container`, whenever the panel is not meant to travel the full width of the window",
+        "Pair it with `mountOnEnter` and `unmountOnExit` so an off-screen panel is not in the tab order",
+        "Match the direction to the edge the thing belongs to — a bottom bar comes up, a right drawer comes from the right",
+        "Pass `appear={false}` for a panel that is already open on first paint"
+      ],
+      "donts": [
+        "Don't use it for content in the normal flow — a sliding element that also reflows the page fights itself; that is `Collapse`",
+        "Don't slide something in from one edge and out through another unless the movement genuinely represents a sequence",
+        "Don't leave a large panel sliding across the whole viewport when it belongs to a card — clip it or set `container`",
+        "Don't set `disablePrefersReducedMotion` here; of the five transitions this is the one most likely to make a motion-sensitive user unwell",
+        "Don't rely on the slide to announce anything — a screen reader user gets no movement at all, so the content still needs focus moved to it or a live region"
+      ],
+      "relatedComponents": [
+        "Fade",
+        "Grow",
+        "Zoom",
+        "Collapse"
+      ],
+      "accessibility": [
+        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }` — the panel appears in place instead of travelling",
+        "Without `unmountOnExit` the hidden panel sits off-screen, still focusable: tabbing walks into content the user cannot see, which is a genuine keyboard trap",
+        "Adds no ARIA — a sheet or drawer still needs its own role, an accessible name, and focus management on open and close",
+        "Move focus into the panel on `onEntered` rather than when `in` flips, so focus does not land on a moving element",
+        "Large translations are the motion class most associated with vestibular discomfort; keep the distance and duration modest even for users who have not set a preference"
+      ]
+    },
+    {
       "name": "Stack",
       "category": "Layout",
       "tagline": "Arranges elements in a row or a column, with even spacing from the token scale.",
@@ -1788,6 +2238,110 @@
         "`status=\"error\"` sets `aria-invalid` on the input",
         "Helper text is associated with the input via `aria-describedby`",
         "The static label stays visible at all times — no information is lost on focus"
+      ]
+    },
+    {
+      "name": "Zoom",
+      "category": "Motion",
+      "tagline": "Scales a child from nothing to full size about its own centre, on a fixed duration — the transition for a small control whose size is already known.",
+      "props": [
+        {
+          "name": "in",
+          "type": "boolean",
+          "default": "false",
+          "description": "Whether the child is shown. Flipping it runs the enter or exit transition."
+        },
+        {
+          "name": "children",
+          "type": "ReactElement",
+          "default": "—",
+          "description": "A single element that accepts a `ref` and a `style` prop. The transition writes a `transform: scale(…)` onto it."
+        },
+        {
+          "name": "timeout",
+          "type": "number | { appear?, enter?, exit? }",
+          "default": "{ enter: 225, exit: 195 }",
+          "description": "Duration in milliseconds. Unlike `Grow`, this does not accept `\"auto\"` — the child is not measured, which is exactly why it suits controls of known size."
+        },
+        {
+          "name": "easing",
+          "type": "string | { enter?, exit? }",
+          "default": "theme.transitions.easing.easeInOut",
+          "description": "CSS timing function, optionally split per direction."
+        },
+        {
+          "name": "appear",
+          "type": "boolean",
+          "default": "true",
+          "description": "Whether to animate on first mount when `in` is already true. Set it to `false` for a control that should simply be present when the page loads."
+        },
+        {
+          "name": "mountOnEnter / unmountOnExit",
+          "type": "boolean",
+          "default": "false",
+          "description": "Defer mounting until the first enter, and remove the child once it has left. `unmountOnExit` matters for a control: one scaled to nothing is still focusable and still clickable at its centre point."
+        },
+        {
+          "name": "disablePrefersReducedMotion",
+          "type": "boolean",
+          "default": "false",
+          "description": "Keep animating even when the OS asks for reduced motion. The theme opts everything in via `motion: { reducedMotion: \"system\" }`."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "default": "—",
+          "description": "Merged into the child's inline style, which is how `transitionDelay` is applied when staggering a swap — the transition owns `transform` and `transition`, so anything else you need goes here."
+        }
+      ],
+      "examples": [
+        {
+          "title": "A control that appears with a selection",
+          "description": "The clearest use: an action that only exists while something is selected. `unmountOnExit` keeps the button out of the tab order the rest of the time.",
+          "code": "<Zoom in={selected.length > 0} unmountOnExit>\n  <IconButton aria-label=\"Delete selected\" onClick={remove}>\n    <Trash />\n  </IconButton>\n</Zoom>"
+        },
+        {
+          "title": "Swapping two controls in one slot",
+          "description": "Two zooms in the same place will collide unless the entering one waits for the exiting one. Delaying by the exit duration makes the pair read as one slot changing occupant rather than two unrelated appearances.",
+          "code": "const EXIT = 195;\n\n{actions.map((action, index) => (\n  <Zoom\n    key={action.id}\n    in={tab === index}\n    timeout={{ enter: 225, exit: EXIT }}\n    style={{ transitionDelay: tab === index ? `${EXIT}ms` : \"0ms\" }}\n    unmountOnExit\n  >\n    <IconButton aria-label={action.label}>{action.icon}</IconButton>\n  </Zoom>\n))}"
+        },
+        {
+          "title": "Holding the slot open",
+          "description": "Unmounting a control removes its space, so everything beside it shifts. Give the pair a fixed-size container when the surrounding layout should stay still through the swap.",
+          "code": "<Box sx={{ width: 40, height: 40, display: \"grid\" }}>\n  <Zoom in={!saving}>\n    <IconButton sx={{ gridArea: \"1 / 1\" }} aria-label=\"Save\">\n      <FloppyDisk />\n    </IconButton>\n  </Zoom>\n  <Zoom in={saving}>\n    <Box sx={{ gridArea: \"1 / 1\", display: \"grid\", placeItems: \"center\" }}>\n      <Skeleton variant=\"circular\" width={24} height={24} />\n    </Box>\n  </Zoom>\n</Box>"
+        },
+        {
+          "title": "Skipping the entrance on load",
+          "description": "A control that is present from the start should not scale in as the page arrives — that reads as the interface still assembling itself.",
+          "code": "<Zoom in={enabled} appear={false}>\n  <Chip label=\"Live\" variant=\"success\" />\n</Zoom>"
+        }
+      ],
+      "dos": [
+        "Use `Zoom` for small controls of known size — icon buttons, chips, badges",
+        "Pass `unmountOnExit` so a control scaled to nothing is not still focusable and clickable",
+        "Delay the entering element by the exiting one's duration when two zooms share a slot",
+        "Give a swap a fixed-size container if the surrounding layout should not move",
+        "Use `appear={false}` for anything already on screen at first paint"
+      ],
+      "donts": [
+        "Don't zoom a panel or a card — scaling a large surface distorts its text on the way in; `Grow` measures its child and `Fade` avoids the problem entirely",
+        "Don't run two zooms in the same slot without a delay; they overlap and read as a flicker",
+        "Don't reach for `Zoom` when the size is unpredictable — it has no `timeout=\"auto\"`, which is `Grow`'s whole reason to exist",
+        "Don't scale something that also moves the page around it; combine it with a fixed-size slot instead",
+        "Don't use it as the only signal that an action became available — a screen reader user gets no scale, so the control's appearance needs announcing another way"
+      ],
+      "relatedComponents": [
+        "Grow",
+        "Fade",
+        "Slide",
+        "IconButton"
+      ],
+      "accessibility": [
+        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }`",
+        "A control at `scale(0)` still occupies the tab order and still responds to clicks at its centre — always pass `unmountOnExit` for interactive children",
+        "Adds no ARIA; a control that appears in response to a selection still needs an accessible name and, ideally, a live region announcing that it became available",
+        "When two controls share a slot, make sure the label changes with the control, or a screen reader announces the old one until the swap completes",
+        "Keep the duration short: the control is not usefully clickable until it has reached full size"
       ]
     }
   ]
