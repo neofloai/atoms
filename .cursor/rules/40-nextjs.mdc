@@ -152,6 +152,6 @@ NEXT_PUBLIC_DOCS_URL=https://atoms.neoflo.ai
 
 - ❌ No `getServerSideProps` or `getStaticProps` (Pages Router only)
 - ❌ No `<Link>` from `next/link` for external URLs — use `<a>` with `target="_blank" rel="noreferrer"`
-- ❌ No `next/image` for icons or SVGs — use `@mui/icons-material` instead
+- ❌ No `next/image` for icons or SVGs — use the Phosphor set from `@/src/icons`, with the `Icon` suffix (`MagnifyingGlassIcon`)
 - ❌ No mixing Pages and App routing
 - ❌ No client-side data fetching for docs content — it's all static

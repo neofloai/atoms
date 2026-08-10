@@ -78,7 +78,7 @@ const colorModeSetup = `// Follows the OS color scheme by default.
 
 const usageExample = `import { neofloTheme } from '@neoflo/atoms';
 import { spacing, colors } from '@neoflo/atoms/tokens';
-import { ShieldCheck } from '@neoflo/atoms/icons';`;
+import { ShieldCheckIcon } from '@neoflo/atoms/icons';`;
 
 function CodeBlock({ children }: { children: string }) {
   return (

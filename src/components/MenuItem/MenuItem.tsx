@@ -194,14 +194,14 @@ const StyledMenuItem = styled(MuiMenuItem, {
  * @example A menu with all three tones
  * <Menu anchorEl={anchorEl} open={open} onClose={close}>
  *   <MenuItem selected onClick={close}>
- *     <PencilSimple size={16} />
+ *     <PencilSimpleIcon size={16} />
  *     Rename
  *   </MenuItem>
  *   <MenuItem variant="secondary" disabled>
  *     Last edited 2 days ago
  *   </MenuItem>
  *   <MenuItem variant="action" onClick={close}>
- *     <Plus size={16} />
+ *     <PlusIcon size={16} />
  *     New folder
  *   </MenuItem>
  * </Menu>

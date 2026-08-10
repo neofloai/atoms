@@ -4,11 +4,11 @@ import * as React from 'react';
 import { Alert as MuiAlert, AlertTitle as MuiAlertTitle } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
-  CheckCircle,
-  Info,
-  Warning,
-  WarningDiamond,
-  X,
+  CheckCircleIcon,
+  InfoIcon,
+  WarningIcon,
+  WarningDiamondIcon,
+  XIcon,
 } from '@phosphor-icons/react';
 
 import { border, surface } from '@/src/tokens';
@@ -22,24 +22,24 @@ import type { AlertProps, AlertSeverity } from './Alert.types';
 /**
  * Phosphor severity icons, replacing MUI's Material defaults so alerts
  * draw from the same icon family as the rest of the system. `error`
- * uses WarningDiamond to mirror the Figma alert sheet (node 973:3010).
- * Icons inherit `currentColor`, so they track the severity text colour
- * in both `floating` states and both colour schemes.
+ * uses WarningDiamondIcon to mirror the Figma alert sheet (node
+ * 973:3010). Icons inherit `currentColor`, so they track the severity
+ * text colour in both `floating` states and both colour schemes.
  */
 const defaultIconMapping: Partial<Record<AlertSeverity, React.ReactNode>> = {
-  success: <CheckCircle weight="fill" />,
-  info: <Info weight="fill" />,
-  warning: <Warning weight="fill" />,
-  error: <WarningDiamond weight="fill" />,
+  success: <CheckCircleIcon weight="fill" />,
+  info: <InfoIcon weight="fill" />,
+  warning: <WarningIcon weight="fill" />,
+  error: <WarningDiamondIcon weight="fill" />,
 };
 
 /**
  * Close-icon slot. MUI passes its internal `ownerState` into slot
  * components; Phosphor icons are not MUI-aware and would forward it
  * straight onto the DOM `<svg>` (a React warning), so we strip it here
- * and render the Phosphor `X` with the rest. Sized at 16px to match
- * the sheet's `X` (node 973:3010: `size-[16px]`) — Phosphor's own
- * default (24px) rendered noticeably larger than the design.
+ * and render the Phosphor `XIcon` with the rest. Sized at 16px to
+ * match the sheet's `X` (node 973:3010: `size-[16px]`) — Phosphor's
+ * own default (24px) rendered noticeably larger than the design.
  */
 const AlertCloseIcon = React.forwardRef<
   SVGSVGElement,
@@ -47,7 +47,7 @@ const AlertCloseIcon = React.forwardRef<
 >(function AlertCloseIcon(props, ref) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- drop MUI's slot-internal ownerState so it never reaches the DOM
   const { ownerState, ...rest } = props;
-  return <X ref={ref} size={16} {...rest} />;
+  return <XIcon ref={ref} size={16} {...rest} />;
 });
 
 interface RoleColor {

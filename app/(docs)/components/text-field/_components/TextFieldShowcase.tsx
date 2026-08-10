@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { IconButton } from '@/src/components/IconButton';
 import { TextField } from '@/src/components/TextField';
-import { Envelope, Eye, Lock, MagnifyingGlass, X } from '@/src/icons';
+import { EnvelopeIcon, EyeIcon, LockIcon, MagnifyingGlassIcon, XIcon } from '@/src/icons';
 
 function PreviewCard({
   title,
@@ -105,7 +105,7 @@ export function TextFieldShowcase() {
             fullWidth
             startAdornment={
               <InputAdornment position="start">
-                <MagnifyingGlass size={16} />
+                <MagnifyingGlassIcon size={16} />
               </InputAdornment>
             }
           />
@@ -115,7 +115,7 @@ export function TextFieldShowcase() {
             fullWidth
             startAdornment={
               <InputAdornment position="start">
-                <Envelope size={16} />
+                <EnvelopeIcon size={16} />
               </InputAdornment>
             }
           />
@@ -125,7 +125,7 @@ export function TextFieldShowcase() {
             fullWidth
             startAdornment={
               <InputAdornment position="start">
-                <Lock size={16} />
+                <LockIcon size={16} />
               </InputAdornment>
             }
             endAdornment={
@@ -136,7 +136,7 @@ export function TextFieldShowcase() {
                 aria-label="Show password"
                 onClick={handleNoop}
               >
-                <Eye />
+                <EyeIcon />
               </IconButton>
             }
           />
@@ -153,7 +153,7 @@ export function TextFieldShowcase() {
                 aria-label="Clear"
                 onClick={handleNoop}
               >
-                <X />
+                <XIcon />
               </IconButton>
             }
           />

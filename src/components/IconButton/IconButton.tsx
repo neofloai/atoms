@@ -90,10 +90,10 @@ const StyledIconButton = styled(MuiIconButton, {
  * Always provide an `aria-label` — the control has no visible text.
  *
  * @example Primary action
- * <IconButton aria-label="Save to favourites"><Heart /></IconButton>
+ * <IconButton aria-label="Save to favourites"><HeartIcon /></IconButton>
  *
  * @example Low-emphasis destructive action
- * <IconButton variant="error" appearance="text" aria-label="Delete"><Trash /></IconButton>
+ * <IconButton variant="error" appearance="text" aria-label="Delete"><TrashIcon /></IconButton>
  *
  * @see Related: Button
  */

@@ -57,10 +57,10 @@ export const data: ComponentExamplesData = {
     {
       title: 'Primary action',
       code: [
-        "import { Heart } from '@neoflo/atoms/icons';",
+        "import { HeartIcon } from '@neoflo/atoms/icons';",
         '',
         '<IconButton aria-label="Save to favourites">',
-        '  <Heart />',
+        '  <HeartIcon />',
         '</IconButton>',
       ].join('\n'),
     },
@@ -68,7 +68,7 @@ export const data: ComponentExamplesData = {
       title: 'Outline emphasis',
       code: [
         '<IconButton appearance="outline" aria-label="Edit">',
-        '  <PencilSimple />',
+        '  <PencilSimpleIcon />',
         '</IconButton>',
       ].join('\n'),
     },
@@ -76,16 +76,16 @@ export const data: ComponentExamplesData = {
       title: 'Low-emphasis destructive action',
       code: [
         '<IconButton variant="error" appearance="text" aria-label="Delete">',
-        '  <Trash />',
+        '  <TrashIcon />',
         '</IconButton>',
       ].join('\n'),
     },
     {
       title: 'Sizes',
       code: [
-        '<IconButton size="sm" aria-label="Close"><X /></IconButton>',
-        '<IconButton size="md" aria-label="Close"><X /></IconButton>',
-        '<IconButton size="lg" aria-label="Close"><X /></IconButton>',
+        '<IconButton size="sm" aria-label="Close"><XIcon /></IconButton>',
+        '<IconButton size="md" aria-label="Close"><XIcon /></IconButton>',
+        '<IconButton size="lg" aria-label="Close"><XIcon /></IconButton>',
       ].join('\n'),
     },
   ],

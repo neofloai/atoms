@@ -77,7 +77,7 @@ export const data: ComponentExamplesData = {
     },
     {
       title: 'Icon content',
-      code: ['<Avatar color="primary">', '  <User />', '</Avatar>'].join('\n'),
+      code: ['<Avatar color="primary">', '  <UserIcon />', '</Avatar>'].join('\n'),
     },
     {
       title: 'Shapes',

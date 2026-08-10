@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { IconButton } from '@/src/components/IconButton';
-import { Heart } from '@/src/icons';
+import { HeartIcon } from '@/src/icons';
 
 import type {
   IconButtonAppearance,
@@ -73,7 +73,7 @@ export function IconButtonShowcase() {
                 appearance={appearance}
                 aria-label={`${variant} ${appearance} example`}
               >
-                <Heart />
+                <HeartIcon />
               </IconButton>
             ))
           )}
@@ -83,13 +83,13 @@ export function IconButtonShowcase() {
       <PreviewCard title="Sizes">
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <IconButton size="sm" aria-label="Small example">
-            <Heart />
+            <HeartIcon />
           </IconButton>
           <IconButton size="md" aria-label="Medium example">
-            <Heart />
+            <HeartIcon />
           </IconButton>
           <IconButton size="lg" aria-label="Large example">
-            <Heart />
+            <HeartIcon />
           </IconButton>
         </Stack>
       </PreviewCard>
@@ -97,17 +97,17 @@ export function IconButtonShowcase() {
       <PreviewCard title="States">
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <IconButton disabled aria-label="Disabled example">
-            <Heart />
+            <HeartIcon />
           </IconButton>
           <IconButton
             appearance="outline"
             disabled
             aria-label="Disabled outline example"
           >
-            <Heart />
+            <HeartIcon />
           </IconButton>
           <IconButton loading aria-label="Loading example">
-            <Heart />
+            <HeartIcon />
           </IconButton>
         </Stack>
       </PreviewCard>

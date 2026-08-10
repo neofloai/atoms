@@ -18,6 +18,20 @@ import { CATALOG_ICONS } from './iconCatalog';
 const MONO_FONT = 'var(--font-geist-mono), ui-monospace, monospace';
 const WEIGHTS: readonly IconWeight[] = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'];
 
+/**
+ * Phosphor 2.1 suffixed every export with `Icon` and deprecated the
+ * bare names, so `MagnifyingGlass` is now `MagnifyingGlassIcon`.
+ *
+ * The catalog keeps the base names — that is what phosphoricons.com
+ * shows, so adding to it stays a copy-paste — and the suffix is
+ * appended here, in the one place that resolves, labels, and copies
+ * them. The label and the copied import are the suffixed name, since
+ * that is what consumers should be writing.
+ */
+function exportName(base: string): string {
+  return `${base}Icon`;
+}
+
 type PhosphorIconComponent = React.ComponentType<{
   size?: number | string;
   weight?: IconWeight;
@@ -43,7 +57,11 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
   const [copied, setCopied] = React.useState<string | null>(null);
 
   const filtered = React.useMemo(() => {
-    const q = query.trim().toLowerCase();
+    // Match on the base name, and drop a trailing "icon" from the query
+    // so pasting the full export name (`MagnifyingGlassIcon`) finds the
+    // icon too. Every entry shares that suffix, so matching against it
+    // would make "icon" a query that returns everything.
+    const q = query.trim().toLowerCase().replace(/icon$/, '');
     if (!q) return CATALOG_ICONS;
     return CATALOG_ICONS.filter((name) => name.toLowerCase().includes(q));
   }, [query]);
@@ -80,7 +98,7 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <PhosphorIcons.MagnifyingGlass size={16} />
+                  <PhosphorIcons.MagnifyingGlassIcon size={16} />
                 </InputAdornment>
               ),
             },
@@ -118,7 +136,9 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
           phosphoricons.com
         </Box>
         {' '}— every icon shown there is importable from{' '}
-        <code>@neoflo/atoms/icons</code>.
+        <code>@neoflo/atoms/icons</code>. Names there are unsuffixed, so add{' '}
+        <code>Icon</code>: <code>magnifying-glass</code> imports as{' '}
+        <code>MagnifyingGlassIcon</code>.
       </Typography>
 
       <Box
@@ -133,7 +153,8 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
           gap: 1.5,
         }}
       >
-        {filtered.map((name) => {
+        {filtered.map((base) => {
+          const name = exportName(base);
           const Component = resolveIcon(name);
           if (!Component) return null;
           return (
