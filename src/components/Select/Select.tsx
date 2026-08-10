@@ -14,7 +14,7 @@ import {
   text,
   typography,
 } from '@/src/tokens';
-import { CaretDown } from '@/src/icons';
+import { CaretDownIcon } from '@/src/icons';
 
 import { paired } from '../_shared/actionStyles';
 
@@ -279,7 +279,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
             'data-has-value': hasValue(currentValue),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any,
-          select: { IconComponent: CaretDown, multiple, renderValue },
+          select: { IconComponent: CaretDownIcon, multiple, renderValue },
         }}
         {...rest}
       >

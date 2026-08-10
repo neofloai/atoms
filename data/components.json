@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-09T13:49:37.526Z",
+  "generatedAt": "2026-08-10T05:39:36.824Z",
   "components": [
     {
       "name": "Alert",
@@ -169,7 +169,7 @@
         },
         {
           "title": "Icon content",
-          "code": "<Avatar color=\"primary\">\n  <User />\n</Avatar>"
+          "code": "<Avatar color=\"primary\">\n  <UserIcon />\n</Avatar>"
         },
         {
           "title": "Shapes",
@@ -364,7 +364,7 @@
         },
         {
           "title": "With icons",
-          "code": "import { Heart, ArrowRight } from '@neoflo/atoms/icons';\n\n<Button startIcon={<Heart />} endIcon={<ArrowRight />}>\n  Save to favourites\n</Button>"
+          "code": "import { HeartIcon, ArrowRightIcon } from '@neoflo/atoms/icons';\n\n<Button startIcon={<HeartIcon />} endIcon={<ArrowRightIcon />}>\n  Save to favourites\n</Button>"
         },
         {
           "title": "Loading state",
@@ -1373,19 +1373,19 @@
       "examples": [
         {
           "title": "Primary action",
-          "code": "import { Heart } from '@neoflo/atoms/icons';\n\n<IconButton aria-label=\"Save to favourites\">\n  <Heart />\n</IconButton>"
+          "code": "import { HeartIcon } from '@neoflo/atoms/icons';\n\n<IconButton aria-label=\"Save to favourites\">\n  <HeartIcon />\n</IconButton>"
         },
         {
           "title": "Outline emphasis",
-          "code": "<IconButton appearance=\"outline\" aria-label=\"Edit\">\n  <PencilSimple />\n</IconButton>"
+          "code": "<IconButton appearance=\"outline\" aria-label=\"Edit\">\n  <PencilSimpleIcon />\n</IconButton>"
         },
         {
           "title": "Low-emphasis destructive action",
-          "code": "<IconButton variant=\"error\" appearance=\"text\" aria-label=\"Delete\">\n  <Trash />\n</IconButton>"
+          "code": "<IconButton variant=\"error\" appearance=\"text\" aria-label=\"Delete\">\n  <TrashIcon />\n</IconButton>"
         },
         {
           "title": "Sizes",
-          "code": "<IconButton size=\"sm\" aria-label=\"Close\"><X /></IconButton>\n<IconButton size=\"md\" aria-label=\"Close\"><X /></IconButton>\n<IconButton size=\"lg\" aria-label=\"Close\"><X /></IconButton>"
+          "code": "<IconButton size=\"sm\" aria-label=\"Close\"><XIcon /></IconButton>\n<IconButton size=\"md\" aria-label=\"Close\"><XIcon /></IconButton>\n<IconButton size=\"lg\" aria-label=\"Close\"><XIcon /></IconButton>"
         }
       ],
       "dos": [
@@ -1508,7 +1508,7 @@
         {
           "title": "Icons and tones",
           "description": "Glyphs are 16px in the design, and they take the item's own colour — Phosphor icons paint with `currentColor`, so a `variant=\"action\"` row tints its glyph and its label together. Keep icons on either all rows or none: a menu where only some rows have one reads as a mistake rather than a hierarchy.",
-          "code": "<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <MenuItem onClick={close}>\n    <PencilSimple size={16} />\n    Rename\n  </MenuItem>\n  <MenuItem onClick={close}>\n    <Copy size={16} />\n    Duplicate\n  </MenuItem>\n  <MenuItem variant=\"action\" onClick={close}>\n    <Plus size={16} />\n    New folder\n  </MenuItem>\n</Menu>"
+          "code": "<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <MenuItem onClick={close}>\n    <PencilSimpleIcon size={16} />\n    Rename\n  </MenuItem>\n  <MenuItem onClick={close}>\n    <CopyIcon size={16} />\n    Duplicate\n  </MenuItem>\n  <MenuItem variant=\"action\" onClick={close}>\n    <PlusIcon size={16} />\n    New folder\n  </MenuItem>\n</Menu>"
         },
         {
           "title": "Selected item",
@@ -1662,17 +1662,17 @@
         {
           "title": "With a glyph",
           "description": "Icons are 16px in the design and inherit the row's colour, since Phosphor glyphs paint with `currentColor`. No size is forced on children — an icon is consumer content, and forcing a size would stretch anything that is not a glyph — so pass `size={16}`.",
-          "code": "<MenuItem onClick={close}>\n  <PencilSimple size={16} />\n  Rename\n</MenuItem>\n<MenuItem variant=\"action\" onClick={close}>\n  <Plus size={16} />\n  New folder\n</MenuItem>"
+          "code": "<MenuItem onClick={close}>\n  <PencilSimpleIcon size={16} />\n  Rename\n</MenuItem>\n<MenuItem variant=\"action\" onClick={close}>\n  <PlusIcon size={16} />\n  New folder\n</MenuItem>"
         },
         {
           "title": "MUI list composition",
           "description": "MUI's own icon-menu composition works unchanged. `ListItemIcon`'s 36px reserved column is collapsed to the design's 4px gap and its colour set to inherit, so both routes look identical — use this one when a row needs a trailing shortcut or a two-line label.",
-          "code": "<MenuItem onClick={close}>\n  <ListItemIcon>\n    <Copy size={16} />\n  </ListItemIcon>\n  <ListItemText>Duplicate</ListItemText>\n  <Typography variant=\"body2\" color=\"text.secondary\">\n    ⌘D\n  </Typography>\n</MenuItem>"
+          "code": "<MenuItem onClick={close}>\n  <ListItemIcon>\n    <CopyIcon size={16} />\n  </ListItemIcon>\n  <ListItemText>Duplicate</ListItemText>\n  <Typography variant=\"body2\" color=\"text.secondary\">\n    ⌘D\n  </Typography>\n</MenuItem>"
         },
         {
           "title": "A row that navigates",
           "description": "Set `component=\"a\"` for a choice that is really a link, so it opens in a new tab, shows a URL on hover, and is reachable from the browser's own context menu. Accepted at runtime but not type-checked, because MUI types `component` loosely on `MenuItem`.",
-          "code": "<MenuItem\n  component=\"a\"\n  href=\"https://atoms.neoflo.ai/components/menu\"\n  target=\"_blank\"\n  rel=\"noreferrer\"\n>\n  <ArrowSquareOut size={16} />\n  Open documentation\n</MenuItem>"
+          "code": "<MenuItem\n  component=\"a\"\n  href=\"https://atoms.neoflo.ai/components/menu\"\n  target=\"_blank\"\n  rel=\"noreferrer\"\n>\n  <ArrowSquareOutIcon size={16} />\n  Open documentation\n</MenuItem>"
         },
         {
           "title": "Long labels wrap",
@@ -2317,16 +2317,16 @@
         {
           "title": "Start icon (decorative)",
           "description": "Wrap non-interactive icons in MUI’s `InputAdornment` so they pick up the correct colour and spacing.",
-          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { MagnifyingGlass } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  placeholder=\"Search anything\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <MagnifyingGlass size={16} />\n    </InputAdornment>\n  }\n/>"
+          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { MagnifyingGlassIcon } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  placeholder=\"Search anything\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <MagnifyingGlassIcon size={16} />\n    </InputAdornment>\n  }\n/>"
         },
         {
           "title": "Clearable field (end icon button)",
-          "code": "import { X } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Clear\" onClick={handleClear}>\n      <X />\n    </IconButton>\n  }\n/>"
+          "code": "import { XIcon } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Clear\" onClick={handleClear}>\n      <XIcon />\n    </IconButton>\n  }\n/>"
         },
         {
           "title": "Start + end adornments",
           "description": "Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.",
-          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { Eye, Lock } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Password\"\n  placeholder=\"Enter password\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <Lock size={16} />\n    </InputAdornment>\n  }\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Show password\" onClick={handleToggleVisibility}>\n      <Eye />\n    </IconButton>\n  }\n/>"
+          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { EyeIcon, LockIcon } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Password\"\n  placeholder=\"Enter password\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <LockIcon size={16} />\n    </InputAdornment>\n  }\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Show password\" onClick={handleToggleVisibility}>\n      <EyeIcon />\n    </IconButton>\n  }\n/>"
         },
         {
           "title": "Multi-line: grows with content",
@@ -2421,7 +2421,7 @@
         {
           "title": "A control that appears with a selection",
           "description": "The clearest use: an action that only exists while something is selected. `unmountOnExit` keeps the button out of the tab order the rest of the time.",
-          "code": "<Zoom in={selected.length > 0} unmountOnExit>\n  <IconButton aria-label=\"Delete selected\" onClick={remove}>\n    <Trash />\n  </IconButton>\n</Zoom>"
+          "code": "<Zoom in={selected.length > 0} unmountOnExit>\n  <IconButton aria-label=\"Delete selected\" onClick={remove}>\n    <TrashIcon />\n  </IconButton>\n</Zoom>"
         },
         {
           "title": "Swapping two controls in one slot",
@@ -2431,7 +2431,7 @@
         {
           "title": "Holding the slot open",
           "description": "Unmounting a control removes its space, so everything beside it shifts. Give the pair a fixed-size container when the surrounding layout should stay still through the swap.",
-          "code": "<Box sx={{ width: 40, height: 40, display: \"grid\" }}>\n  <Zoom in={!saving}>\n    <IconButton sx={{ gridArea: \"1 / 1\" }} aria-label=\"Save\">\n      <FloppyDisk />\n    </IconButton>\n  </Zoom>\n  <Zoom in={saving}>\n    <Box sx={{ gridArea: \"1 / 1\", display: \"grid\", placeItems: \"center\" }}>\n      <Skeleton variant=\"circular\" width={24} height={24} />\n    </Box>\n  </Zoom>\n</Box>"
+          "code": "<Box sx={{ width: 40, height: 40, display: \"grid\" }}>\n  <Zoom in={!saving}>\n    <IconButton sx={{ gridArea: \"1 / 1\" }} aria-label=\"Save\">\n      <FloppyDiskIcon />\n    </IconButton>\n  </Zoom>\n  <Zoom in={saving}>\n    <Box sx={{ gridArea: \"1 / 1\", display: \"grid\", placeItems: \"center\" }}>\n      <Skeleton variant=\"circular\" width={24} height={24} />\n    </Box>\n  </Zoom>\n</Box>"
         },
         {
           "title": "Skipping the entrance on load",

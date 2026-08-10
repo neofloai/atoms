@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 
 import { icon, surface } from '@/src/tokens';
 
-import { Circle, RadioButton } from '@/src/icons';
+import { CircleIcon, RadioButtonIcon } from '@/src/icons';
 
 import { paired } from '../_shared/actionStyles';
 import { SelectorFormControlLabel } from '../_shared/SelectorLabel';
@@ -17,7 +17,7 @@ import type { RadioProps } from './Radio.types';
 const GLYPH_SIZE_PX = 24;
 
 /**
- * Matches the inner-circle extent of the sheet's RadioButton glyph
+ * Matches the inner-circle extent of the sheet's RadioButtonIcon glyph
  * (12px inside the 24px frame).
  */
 const DOT_SIZE_PX = 12;
@@ -25,12 +25,12 @@ const DOT_SIZE_PX = 12;
 /*
  * The selected state is two-tone — dark outer ring, primary filled
  * dot — which no single Phosphor glyph provides, so it is composed
- * from two Circle glyphs coloured independently below.
+ * from two CircleIcon glyphs coloured independently below.
  */
 const checkedGlyph = (
   <span className="NeofloRadio-checkedGlyph">
-    <Circle size={GLYPH_SIZE_PX} />
-    <Circle size={DOT_SIZE_PX} weight="fill" className="NeofloRadio-dot" />
+    <CircleIcon size={GLYPH_SIZE_PX} />
+    <CircleIcon size={DOT_SIZE_PX} weight="fill" className="NeofloRadio-dot" />
   </span>
 );
 
@@ -65,8 +65,8 @@ const StyledRadio = styled(MuiRadio)(({ theme }) => ({
 /**
  * Branded radio button. Wraps MUI `Radio` with the Phosphor glyphs
  * from the Product Design System Figma selector set (node 2080:23677)
- * — concentric-ring RadioButton outline unselected, dark ring with a
- * primary filled dot selected — with token colours and disabled
+ * — concentric-ring RadioButtonIcon outline unselected, dark ring with
+ * a primary filled dot selected — with token colours and disabled
  * styling in both colour schemes. Interaction behaviour stays MUI
  * default.
  *
@@ -88,7 +88,7 @@ export const Radio = React.forwardRef<HTMLButtonElement, RadioProps>(
     const control = (
       <StyledRadio
         ref={ref}
-        icon={<RadioButton size={GLYPH_SIZE_PX} />}
+        icon={<RadioButtonIcon size={GLYPH_SIZE_PX} />}
         checkedIcon={checkedGlyph}
         // The accessible name must land on the native input, not the
         // wrapping button, for assistive tech to announce it.

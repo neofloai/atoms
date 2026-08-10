@@ -7,10 +7,16 @@
  * `@phosphor-icons/react` themselves.
  *
  * @example
- * import { ShieldCheck, ArrowRight } from '@neoflo/atoms/icons';
+ * import { ShieldCheckIcon, ArrowRightIcon } from '@neoflo/atoms/icons';
  *
- * <ShieldCheck />          // 24px regular, currentColor (Neoflo defaults)
- * <ArrowRight size={16} /> // per-instance overrides still work
+ * <ShieldCheckIcon />          // 24px regular, currentColor (Neoflo defaults)
+ * <ArrowRightIcon size={16} /> // per-instance overrides still work
+ *
+ * Every export ends in `Icon`. Phosphor 2.1 added the suffix and
+ * deprecated the bare names — `ShieldCheck` still resolves, but it is
+ * flagged in editors and will go away, so write the suffixed name.
+ * phosphoricons.com lists icons unsuffixed: add `Icon` to what you find
+ * there.
  *
  * The 6 Phosphor weights — `thin`, `light`, `regular`, `bold`, `fill`,
  * `duotone` — match the weight variants shipped in Figma.

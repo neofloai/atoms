@@ -83,9 +83,9 @@ export const data: ComponentExamplesData = {
     {
       title: 'With icons',
       code: [
-        "import { Heart, ArrowRight } from '@neoflo/atoms/icons';",
+        "import { HeartIcon, ArrowRightIcon } from '@neoflo/atoms/icons';",
         '',
-        '<Button startIcon={<Heart />} endIcon={<ArrowRight />}>',
+        '<Button startIcon={<HeartIcon />} endIcon={<ArrowRightIcon />}>',
         '  Save to favourites',
         '</Button>',
       ].join('\n'),

@@ -78,7 +78,7 @@ export const data: ComponentExamplesData = {
       code: [
         '<Zoom in={selected.length > 0} unmountOnExit>',
         '  <IconButton aria-label="Delete selected" onClick={remove}>',
-        '    <Trash />',
+        '    <TrashIcon />',
         '  </IconButton>',
         '</Zoom>',
       ].join('\n'),
@@ -111,7 +111,7 @@ export const data: ComponentExamplesData = {
         '<Box sx={{ width: 40, height: 40, display: "grid" }}>',
         '  <Zoom in={!saving}>',
         '    <IconButton sx={{ gridArea: "1 / 1" }} aria-label="Save">',
-        '      <FloppyDisk />',
+        '      <FloppyDiskIcon />',
         '    </IconButton>',
         '  </Zoom>',
         '  <Zoom in={saving}>',

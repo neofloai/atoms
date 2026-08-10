@@ -152,6 +152,7 @@ The MCP server only knows about components exported from `src/index.ts`.
 - **Props interfaces:** `<ComponentName>Props` (`ButtonProps`, `TextFieldProps`)
 - **Variant names:** lowercase, semantic (`primary`, `destructive`, not `blue`, `red`)
 - **Size names:** abbreviated (`sm`, `md`, `lg`) — never `small`/`medium`/`large` in our API (MUI uses long form internally; we map)
+- **Icons:** import from `@/src/icons` (`@neoflo/atoms/icons` for consumers), never `@phosphor-icons/react` directly outside `src/icons`, and always use the `Icon`-suffixed export — `CaretDownIcon`, not `CaretDown`. Phosphor 2.1 deprecated every bare name; both still resolve, so the compiler will not stop you, only the editor's strikethrough. phosphoricons.com lists names unsuffixed: add `Icon` to what you find there.
 
 ## Client vs Server components
 

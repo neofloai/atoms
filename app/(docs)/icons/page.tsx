@@ -57,17 +57,19 @@ export default function IconsPage() {
               overflowX: 'auto',
             }}
           >
-{`import { ShieldCheck, ArrowRight } from '@neoflo/atoms/icons';
+{`import { ShieldCheckIcon, ArrowRightIcon } from '@neoflo/atoms/icons';
 
-<ShieldCheck />                       // 24px, regular, currentColor
-<ArrowRight size={16} weight="bold" /> // per-instance overrides
+<ShieldCheckIcon />                       // 24px, regular, currentColor
+<ArrowRightIcon size={16} weight="bold" /> // per-instance overrides
 
 // Six weights mirror Figma: thin, light, regular, bold, fill, duotone`}
           </Stack>
           <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5, display: 'block' }}>
             Defaults (size 24, weight regular, colour <code>currentColor</code>)
             come from <code>IconContext.Provider</code> in{' '}
-            <code>NeofloThemeProvider</code>.
+            <code>NeofloThemeProvider</code>. Every name ends in{' '}
+            <code>Icon</code> — the unsuffixed <code>ShieldCheck</code> still
+            resolves, but Phosphor deprecated it and your editor will say so.
           </Typography>
         </Box>
 

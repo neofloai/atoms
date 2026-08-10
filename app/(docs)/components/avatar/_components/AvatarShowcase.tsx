@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Avatar } from '@/src/components/Avatar';
-import { User } from '@/src/icons';
+import { UserIcon } from '@/src/icons';
 
 import type {
   AvatarColor,
@@ -72,7 +72,7 @@ export function AvatarShowcase() {
           ))}
           {shapes.map((shape) => (
             <Avatar key={`icon-${shape}`} shape={shape} color="primary">
-              <User />
+              <UserIcon />
             </Avatar>
           ))}
           {shapes.map((shape) => (

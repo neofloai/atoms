@@ -6,8 +6,10 @@
  * common UI needs (actions, navigation, status, content, social,
  * commerce, etc.). The full catalog is linked from the page header.
  *
- * Add to this list freely — keep names PascalCase matching the
- * Phosphor module exports.
+ * Add to this list freely — keep names PascalCase and unsuffixed, i.e.
+ * exactly as phosphoricons.com spells them. `IconBrowser` appends the
+ * `Icon` suffix that Phosphor 2.1 added to every export, so `Folder`
+ * here resolves, labels, and copies as `FolderIcon`.
  */
 export const CATALOG_ICONS = [
   // Navigation

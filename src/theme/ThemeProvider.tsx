@@ -34,7 +34,7 @@ interface NeofloThemeProviderProps {
  *   - `color: currentColor`  lets icons inherit the parent text colour,
  *                    which is already driven by MUI palette/text tokens.
  *
- * Consumers can override per-instance (`<ShieldCheck size={16} />`) or
+ * Consumers can override per-instance (`<ShieldCheckIcon size={16} />`) or
  * scope a different default by nesting another `IconContext.Provider`.
  */
 const NEOFLO_ICON_DEFAULTS = {

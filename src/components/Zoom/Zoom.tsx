@@ -33,7 +33,7 @@
  *
  * @example A control that scales in
  * <Zoom in={hasSelection}>
- *   <IconButton aria-label="Delete selected"><Trash /></IconButton>
+ *   <IconButton aria-label="Delete selected"><TrashIcon /></IconButton>
  * </Zoom>
  *
  * @example Only animating on state change, not on first paint

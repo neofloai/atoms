@@ -12,12 +12,12 @@ import { Divider } from '@/src/components/Divider';
 import { Menu } from '@/src/components/Menu';
 import { MenuItem } from '@/src/components/MenuItem';
 import {
-  ArrowSquareOut,
-  Copy,
-  FolderPlus,
-  PencilSimple,
-  ShareNetwork,
-  Trash,
+  ArrowSquareOutIcon,
+  CopyIcon,
+  FolderPlusIcon,
+  PencilSimpleIcon,
+  ShareNetworkIcon,
+  TrashIcon,
 } from '@/src/icons';
 
 import type { MenuProps } from '@/src/components/Menu';
@@ -163,19 +163,19 @@ export function MenuShowcase() {
         <MenuDemo trigger="Document">
           {(close) => [
             <MenuItem key="rename" onClick={close}>
-              <PencilSimple size={16} />
+              <PencilSimpleIcon size={16} />
               Rename
             </MenuItem>,
             <MenuItem key="duplicate" onClick={close}>
-              <Copy size={16} />
+              <CopyIcon size={16} />
               Duplicate
             </MenuItem>,
             <MenuItem key="share" onClick={close}>
-              <ShareNetwork size={16} />
+              <ShareNetworkIcon size={16} />
               Share
             </MenuItem>,
             <MenuItem key="new" variant="action" onClick={close}>
-              <FolderPlus size={16} />
+              <FolderPlusIcon size={16} />
               New folder
             </MenuItem>,
           ]}
@@ -212,7 +212,7 @@ export function MenuShowcase() {
           {(close) => [
             <MenuItem key="duplicate" onClick={close}>
               <ListItemIcon>
-                <Copy size={16} />
+                <CopyIcon size={16} />
               </ListItemIcon>
               <ListItemText>Duplicate</ListItemText>
               <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
@@ -221,7 +221,7 @@ export function MenuShowcase() {
             </MenuItem>,
             <MenuItem key="open" component="a" href="/tokens">
               <ListItemIcon>
-                <ArrowSquareOut size={16} />
+                <ArrowSquareOutIcon size={16} />
               </ListItemIcon>
               <ListItemText>Open tokens page</ListItemText>
             </MenuItem>,
@@ -231,7 +231,7 @@ export function MenuShowcase() {
             </MenuItem>,
             <MenuItem key="delete" onClick={close}>
               <ListItemIcon>
-                <Trash size={16} />
+                <TrashIcon size={16} />
               </ListItemIcon>
               <ListItemText>Move to trash</ListItemText>
             </MenuItem>,
