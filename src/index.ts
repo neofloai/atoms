@@ -137,6 +137,9 @@ export type { MenuProps } from './components/Menu';
 export { MenuItem } from './components/MenuItem';
 export type { MenuItemProps, MenuItemVariant } from './components/MenuItem';
 
+export { Tooltip } from './components/Tooltip';
+export type { TooltipProps } from './components/Tooltip';
+
 export { Skeleton } from './components/Skeleton';
 export type {
   SkeletonAnimation,
