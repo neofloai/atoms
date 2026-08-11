@@ -11,11 +11,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { data } from '@/src/components/Checkbox/Checkbox.examples';
-import { CheckboxShowcase } from './_components/CheckboxShowcase';
+import { data } from '@/src/components/Switch/Switch.examples';
+import { SwitchShowcase } from './_components/SwitchShowcase';
 
 export const metadata = {
-  title: 'Checkbox — Atoms',
+  title: 'Switch — Atoms',
   description: data.tagline,
 };
 
@@ -40,7 +40,7 @@ function CodeBlock({ children }: { children: string }) {
 
 CodeBlock.displayName = 'CodeBlock';
 
-export default function CheckboxDocsPage() {
+export default function SwitchDocsPage() {
   return (
     <Container maxWidth="lg" disableGutters>
       <Stack spacing={6}>
@@ -49,11 +49,11 @@ export default function CheckboxDocsPage() {
             Components / Inputs
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Checkbox
+            Switch
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Checkbox } from '@neoflo/atoms';`}</code>
+            <code>{`import { Switch } from '@neoflo/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link
@@ -70,7 +70,7 @@ export default function CheckboxDocsPage() {
 
         <Divider />
 
-        <CheckboxShowcase />
+        <SwitchShowcase />
 
         <Divider />
 

@@ -125,6 +125,9 @@ export type { CheckboxProps } from './components/Checkbox';
 export { Radio, RadioGroup } from './components/Radio';
 export type { RadioGroupProps, RadioProps } from './components/Radio';
 
+export { Switch } from './components/Switch';
+export type { SwitchProps } from './components/Switch';
+
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';
 

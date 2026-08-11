@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-11T11:14:58.301Z",
+  "generatedAt": "2026-08-11T15:47:54.714Z",
   "components": [
     {
       "name": "Alert",
@@ -2398,6 +2398,85 @@
         "With `component=\"ul\"`, each child needs `component=\"li\"` for the group to be announced as a list",
         "A `Divider` passed as the `divider` prop announces as a separator, but it never names what it separates — keep the meaning in the children rather than in the rule",
         "Stack changes visual order only through `direction` — `row-reverse` and `column-reverse` leave the DOM and tab order unchanged, so avoid them where reading order matters"
+      ]
+    },
+    {
+      "name": "Switch",
+      "category": "Inputs",
+      "tagline": "On/off control with an optional clickable label and a disabled state, for settings that take effect immediately.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3650-26506",
+      "props": [
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "Visible label beside the control. When omitted, provide an `aria-label` instead."
+        },
+        {
+          "name": "checked",
+          "type": "boolean",
+          "default": "—",
+          "description": "Controlled checked state. Inherited from MUI."
+        },
+        {
+          "name": "defaultChecked",
+          "type": "boolean",
+          "default": "false",
+          "description": "Initial state for uncontrolled usage."
+        },
+        {
+          "name": "onChange",
+          "type": "(event, checked) => void",
+          "default": "—",
+          "description": "Fires when the user toggles the control."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "default": "false",
+          "description": "Disables the control and applies disabled styling."
+        },
+        {
+          "name": "size",
+          "type": "'medium' | 'small'",
+          "default": "'medium'",
+          "description": "Control size. Inherited from MUI as-is — the design system maps colour, not geometry."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Labelled switch",
+          "code": "<Switch label=\"Enable notifications\" defaultChecked />"
+        },
+        {
+          "title": "Controlled, no visible label",
+          "code": "<Switch\n  aria-label=\"Enable notifications\"\n  checked={enabled}\n  onChange={handleToggle}\n/>"
+        },
+        {
+          "title": "Disabled states",
+          "code": "<Switch label=\"Unavailable\" disabled />\n<Switch label=\"Locked on\" disabled defaultChecked />"
+        }
+      ],
+      "dos": [
+        "Use the `label` prop so the text is part of the click target",
+        "Provide an `aria-label` whenever there is no visible label",
+        "Use a Switch for settings that take effect immediately, with no separate save step",
+        "Use checkboxes instead for a form field the user submits later"
+      ],
+      "donts": [
+        "Don't use a Switch inside a form that requires an explicit submit — use a Checkbox",
+        "Don't rewrap the control in your own `FormControlLabel` — the `label` prop handles it",
+        "Don't override the track or thumb colour — they are part of the selector identity"
+      ],
+      "relatedComponents": [
+        "Checkbox",
+        "Radio"
+      ],
+      "accessibility": [
+        "The label is wired to the input via `FormControlLabel`, so clicking it toggles the control",
+        "Keyboard accessible: focusable with Tab, toggled with Space",
+        "Exposed to assistive tech with `role=\"switch\"`, so its state reads as \"on\"/\"off\" rather than \"checked\"/\"unchecked\"",
+        "`aria-label` is required when no visible label is rendered"
       ]
     },
     {
