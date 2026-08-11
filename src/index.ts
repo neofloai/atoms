@@ -128,6 +128,9 @@ export type { RadioGroupProps, RadioProps } from './components/Radio';
 export { Switch } from './components/Switch';
 export type { SwitchProps } from './components/Switch';
 
+export { Slider } from './components/Slider';
+export type { SliderProps, SliderSize } from './components/Slider';
+
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';
 
