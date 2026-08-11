@@ -24,13 +24,13 @@ export const data: ComponentExamplesData = {
       type: "'contained' | 'outline' | 'text'",
       default: "'contained'",
       description:
-        'Visual emphasis: solid fill, 1px border, or label-only.',
+        'Visual emphasis: solid fill, 1px border, or label-only. `text` sits flush (no horizontal padding) and underlines on hover rather than taking a background.',
     },
     {
       name: 'size',
       type: "'sm' | 'md' | 'lg'",
       default: "'md'",
-      description: 'Control height: 32px, 40px, or 48px.',
+      description: 'Control height: 32px, 36px, or 44px.',
     },
     {
       name: 'loading',

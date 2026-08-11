@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { FunnelSimpleIcon } from '@/src/icons';
 import { Chip } from '@/src/components/Chip';
 
 import type { ChipAppearance, ChipVariant } from '@/src/components/Chip';
@@ -56,6 +57,41 @@ function handleNoop(): void {
   // Demo-only handler so clickable / deletable affordances render.
 }
 
+const filters = ['Design', 'Engineering', 'Research'] as const;
+
+/**
+ * `selected` is a toggle, which a static swatch can't show — the point
+ * is that the state survives the pointer leaving the chip.
+ */
+function FilterGroup() {
+  const [active, setActive] = React.useState<readonly string[]>(['Design']);
+
+  return (
+    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+      {filters.map((filter) => {
+        const isActive = active.includes(filter);
+        return (
+          <Chip
+            key={filter}
+            label={filter}
+            appearance="outline"
+            selected={isActive}
+            onClick={() =>
+              setActive((current) =>
+                isActive
+                  ? current.filter((f) => f !== filter)
+                  : [...current, filter]
+              )
+            }
+          />
+        );
+      })}
+    </Stack>
+  );
+}
+
+FilterGroup.displayName = 'FilterGroup';
+
 /**
  * Live rendering of every Chip variant from the Figma component set:
  * the variant x appearance matrix, the two sizes, slot usage (avatar,
@@ -86,10 +122,40 @@ export function ChipShowcase() {
         </Box>
       </PreviewCard>
 
+      <PreviewCard title="Selected — try it">
+        <FilterGroup />
+      </PreviewCard>
+
+      <PreviewCard title="Selected, every role">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, max-content)',
+            gap: 2,
+            alignItems: 'center',
+          }}
+        >
+          {variants.map((variant) =>
+            appearances.map((appearance) => (
+              <Chip
+                key={`${variant}-${appearance}-selected`}
+                variant={variant}
+                appearance={appearance}
+                selected
+                onClick={handleNoop}
+                label={`${variant} ${appearance}`}
+              />
+            ))
+          )}
+        </Box>
+      </PreviewCard>
+
       <PreviewCard title="Sizes">
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <Chip size="sm" variant="purple" label="Small" />
-          <Chip size="md" label="Medium" />
+          <Chip dense label="Dense" />
+          <Chip label="Medium" />
+          <Chip dense appearance="outline" label="Dense outline" />
         </Stack>
       </PreviewCard>
 
@@ -107,6 +173,13 @@ export function ChipShowcase() {
 
       <PreviewCard title="Slots">
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+          <Chip icon={<FunnelSimpleIcon />} label="Filter" />
+          <Chip
+            size="sm"
+            variant="primary"
+            icon={<FunnelSimpleIcon />}
+            label="Tag"
+          />
           <Chip
             variant="secondary"
             avatar={<Avatar>OP</Avatar>}

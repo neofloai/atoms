@@ -8,6 +8,23 @@ import type { ModeToken } from '@/src/tokens';
  * `IconButton`). Both Figma component sets (nodes 983:17180 and
  * 983:16220) use identical type / style / state axes, so the token
  * mapping lives here once.
+ *
+ * They no longer agree on every *value*, though. The 11 August update
+ * moved `Button`'s low-emphasis treatment and left `IconButton`'s
+ * alone, so four things now depend on which control is asking:
+ * `primary`'s soft fills, `primary`'s resting `outline` label, whether
+ * `text` underlines or fills on hover, and whether `text` repeats that
+ * fill on focus. Call sites pass their `ActionControl` so those stay in
+ * this one table rather than leaking into the components. Each was read
+ * off `IconButton`'s own component set, not assumed from `Button`'s.
+ * See DESIGNER_QUESTIONS.md #29.
+ *
+ * Figma draws `IconButton`'s glyph from the `icon/*` variable group and
+ * `Button`'s label from `text/*`. Every slot these two controls touch
+ * holds the same value in both groups as of the 2026-08-11 export, so
+ * the table reads from `text` throughout; only `icon.default.subtle`
+ * and `icon.disabled.onColor` differ, and neither control uses them.
+ * If a later export splits the accent roles apart, this is the seam.
  */
 
 /**
@@ -24,12 +41,44 @@ export type ActionVariant =
 
 /**
  * Visual emphasis of an action control, mapped from the Figma `style`
- * axis: solid fill, 1px border, or bare label/glyph.
+ * axis: solid fill, 1px border, or bare label/glyph. Figma calls
+ * `contained` "filled" on the Button set and "contained" on the
+ * IconButton set; they are the same style.
  */
 export type ActionAppearance = 'contained' | 'outline' | 'text';
 
+/**
+ * Which control is being styled. Only consulted where the two Figma
+ * sets disagree — see the header comment and `SoftSpec`.
+ */
+export type ActionControl = 'button' | 'iconButton';
+
 /** Width of the focus-visible ring around action controls. */
 export const FOCUS_RING_WIDTH_PX = 3;
+
+/**
+ * Width of the `outline` appearance's border. Exported because callers
+ * have to subtract it from their padding: Figma strokes its outlined
+ * variants *inside* the frame, so they measure the same height as the
+ * filled ones, while a CSS border sits outside the content box.
+ */
+export const OUTLINE_BORDER_WIDTH_PX = 1;
+
+/**
+ * The low-emphasis half of a colour role: the fills `outline` and
+ * `text` take on hover and press, plus the label `outline` rests on
+ * before interaction.
+ */
+interface SoftSpec {
+  readonly hover: ModeToken;
+  readonly pressed: ModeToken;
+  /**
+   * Resting `outline` label. Interactive states always move to
+   * `accentText`, so this only reads differently where Figma draws the
+   * resting label darker than the hovered one.
+   */
+  readonly outlineText: ModeToken;
+}
 
 interface RoleTokens {
   containedBg: ModeToken;
@@ -37,11 +86,25 @@ interface RoleTokens {
   containedBgPressed: ModeToken;
   containedText: ModeToken;
   accentText: ModeToken;
+  /**
+   * Resting, hover and focus border for `outline` — constant across all
+   * three, on the role's own tier-1 border.
+   */
   outlineBorder: ModeToken;
-  outlineBorderHover: ModeToken;
-  subtleHoverBg: ModeToken;
-  subtlePressedBg: ModeToken;
+  /**
+   * Pressed border for `outline`. Every role but `primary` drops to the
+   * neutral border while held. That reads oddly on `error`, but both
+   * component sets draw it independently on the same roles, so it is a
+   * spec rather than a stray copy-paste. See DESIGNER_QUESTIONS.md #29.
+   */
+  outlineBorderPressed: ModeToken;
   focusRing: ModeToken;
+  soft: Record<ActionControl, SoftSpec>;
+}
+
+/** Roles whose soft half is specced identically for both controls. */
+function bothControls(spec: SoftSpec): Record<ActionControl, SoftSpec> {
+  return { button: spec, iconButton: spec };
 }
 
 /**
@@ -64,10 +127,25 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedText: text.default.headingOnColor,
     accentText: text.primary.caption,
     outlineBorder: border.primary.default,
-    outlineBorderHover: border.primary.defaultHover,
-    subtleHoverBg: surface.primary.subtleHover,
-    subtlePressedBg: surface.primary.subtlePressed,
+    // The one role that keeps its own border while held.
+    outlineBorderPressed: border.primary.default,
     focusRing: border.primary.focus,
+    // The only role where the two sets disagree. Button's soft fills
+    // sit one rung lighter than IconButton's, and its `outline` rests
+    // on the darker `body` label before lightening to `caption` on
+    // interaction (nodes 983:17174 resting, 983:17166 hovered).
+    soft: {
+      button: {
+        hover: surface.primary.subtle,
+        pressed: surface.primary.subtleHover,
+        outlineText: text.primary.body,
+      },
+      iconButton: {
+        hover: surface.primary.subtleHover,
+        pressed: surface.primary.subtlePressed,
+        outlineText: text.primary.caption,
+      },
+    },
   },
   secondary: {
     containedBg: surface.default.default,
@@ -76,10 +154,17 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedText: text.default.body,
     accentText: text.default.body,
     outlineBorder: border.default.default,
-    outlineBorderHover: border.default.defaultHover,
-    subtleHoverBg: surface.default.default,
-    subtlePressedBg: surface.default.defaultHover,
+    // Already the neutral border, so the pressed swap is a no-op here.
+    outlineBorderPressed: border.default.default,
     focusRing: border.default.defaultPressed,
+    // The neutral group has no separate `subtle` ladder, and its first
+    // rung is already the *filled* resting fill — so the soft states
+    // start one rung further in to stay distinguishable from it.
+    soft: bothControls({
+      hover: surface.default.defaultHover,
+      pressed: surface.default.defaultPressed,
+      outlineText: text.default.body,
+    }),
   },
   success: {
     containedBg: surface.success.default,
@@ -88,10 +173,13 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedText: text.success.caption,
     accentText: text.success.caption,
     outlineBorder: border.success.default,
-    outlineBorderHover: border.success.defaultHover,
-    subtleHoverBg: surface.success.subtleHover,
-    subtlePressedBg: surface.success.subtlePressed,
+    outlineBorderPressed: border.default.default,
     focusRing: border.success.focus,
+    soft: bothControls({
+      hover: surface.success.subtleHover,
+      pressed: surface.success.subtlePressed,
+      outlineText: text.success.caption,
+    }),
   },
   error: {
     containedBg: surface.error.default,
@@ -100,10 +188,13 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedText: text.error.caption,
     accentText: text.error.caption,
     outlineBorder: border.error.default,
-    outlineBorderHover: border.error.defaultHover,
-    subtleHoverBg: surface.error.subtleHover,
-    subtlePressedBg: surface.error.subtlePressed,
+    outlineBorderPressed: border.default.default,
     focusRing: border.error.focus,
+    soft: bothControls({
+      hover: surface.error.subtleHover,
+      pressed: surface.error.subtlePressed,
+      outlineText: text.error.caption,
+    }),
   },
   warning: {
     containedBg: surface.warning.default,
@@ -112,27 +203,41 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedText: text.warning.caption,
     accentText: text.warning.caption,
     outlineBorder: border.warning.default,
-    outlineBorderHover: border.warning.defaultHover,
-    subtleHoverBg: surface.warning.subtleHover,
-    subtlePressedBg: surface.warning.subtlePressed,
+    outlineBorderPressed: border.default.default,
     focusRing: border.warning.focus,
+    soft: bothControls({
+      hover: surface.warning.subtleHover,
+      pressed: surface.warning.subtlePressed,
+      outlineText: text.warning.caption,
+    }),
   },
 };
 
-/**
- * Expands `{ light, dark }` token pairs into a CSS object: light
- * values inline, dark values behind `theme.applyStyles('dark', ...)`.
- */
-export function paired(
-  theme: Theme,
-  styles: Record<string, ModeToken>
-): CSSObject {
+/** Splits `{ light, dark }` token pairs into two flat CSS objects. */
+function splitModes(styles: Record<string, ModeToken>): [CSSObject, CSSObject] {
   const light: CSSObject = {};
   const dark: CSSObject = {};
   for (const [property, token] of Object.entries(styles)) {
     light[property] = token.light;
     dark[property] = token.dark;
   }
+  return [light, dark];
+}
+
+/**
+ * Expands `{ light, dark }` token pairs into a CSS object: light
+ * values inline, dark values behind `theme.applyStyles('dark', ...)`.
+ *
+ * Pass every mode-aware property for one selector in a single call.
+ * `applyStyles` returns one keyed object, so spreading two of these into
+ * the same rule drops the first one's dark block and lets dark mode fall
+ * back to light values — see `pairedFocusRing`.
+ */
+export function paired(
+  theme: Theme,
+  styles: Record<string, ModeToken>
+): CSSObject {
+  const [light, dark] = splitModes(styles);
   return { ...light, ...theme.applyStyles('dark', dark) };
 }
 
@@ -146,6 +251,28 @@ export function focusRing(theme: Theme, token: ModeToken): CSSObject {
 }
 
 /**
+ * The focus ring plus mode-aware properties on the same selector, in one
+ * dark block.
+ *
+ * `paired` and `focusRing` each emit a single
+ * `theme.applyStyles('dark', ...)` key, so `{ ...paired(...),
+ * ...focusRing(...) }` silently discards whichever came first: the light
+ * values stay, and dark mode renders them. That shipped a light-mode
+ * hover fill under the focus ring on dark pages. Any rule needing both
+ * has to go through here.
+ */
+export function pairedFocusRing(
+  theme: Theme,
+  styles: Record<string, ModeToken>,
+  ring: ModeToken
+): CSSObject {
+  const [light, dark] = splitModes(styles);
+  light.boxShadow = `0 0 0 ${FOCUS_RING_WIDTH_PX}px ${ring.light}`;
+  dark.boxShadow = `0 0 0 ${FOCUS_RING_WIDTH_PX}px ${ring.dark}`;
+  return { ...light, ...theme.applyStyles('dark', dark) };
+}
+
+/**
  * Full state styling (resting / hover / pressed / focus-visible /
  * disabled) for one variant + appearance combination, in both colour
  * schemes.
@@ -153,9 +280,11 @@ export function focusRing(theme: Theme, token: ModeToken): CSSObject {
 export function appearanceStyles(
   theme: Theme,
   variant: ActionVariant,
-  appearance: ActionAppearance
+  appearance: ActionAppearance,
+  control: ActionControl
 ): CSSObject {
   const role = roleTokens[variant];
+  const soft = role.soft[control];
 
   if (appearance === 'contained') {
     return {
@@ -165,10 +294,11 @@ export function appearanceStyles(
       }),
       '&:hover': paired(theme, { backgroundColor: role.containedBgHover }),
       '&:active': paired(theme, { backgroundColor: role.containedBgPressed }),
-      '&.Mui-focusVisible': {
-        ...paired(theme, { backgroundColor: role.containedBgHover }),
-        ...focusRing(theme, role.focusRing),
-      },
+      '&.Mui-focusVisible': pairedFocusRing(
+        theme,
+        { backgroundColor: role.containedBgHover },
+        role.focusRing
+      ),
       '&.Mui-disabled': paired(theme, {
         backgroundColor: surface.disabled.default,
         color: text.disabled.default,
@@ -179,18 +309,28 @@ export function appearanceStyles(
   if (appearance === 'outline') {
     return {
       backgroundColor: 'transparent',
-      borderWidth: 1,
+      borderWidth: OUTLINE_BORDER_WIDTH_PX,
       borderStyle: 'solid',
       ...paired(theme, {
-        color: role.accentText,
+        color: soft.outlineText,
         borderColor: role.outlineBorder,
       }),
       '&:hover': paired(theme, {
-        backgroundColor: role.subtleHoverBg,
-        borderColor: role.outlineBorderHover,
+        backgroundColor: soft.hover,
+        color: role.accentText,
       }),
-      '&:active': paired(theme, { backgroundColor: role.subtlePressedBg }),
-      '&.Mui-focusVisible': focusRing(theme, role.focusRing),
+      // Press is the only state that moves the border off the role —
+      // see `RoleTokens.outlineBorderPressed`.
+      '&:active': paired(theme, {
+        backgroundColor: soft.pressed,
+        color: role.accentText,
+        borderColor: role.outlineBorderPressed,
+      }),
+      '&.Mui-focusVisible': pairedFocusRing(
+        theme,
+        { backgroundColor: soft.hover, color: role.accentText },
+        role.focusRing
+      ),
       '&.Mui-disabled': paired(theme, {
         color: text.disabled.default,
         borderColor: border.disabled.default,
@@ -198,12 +338,41 @@ export function appearanceStyles(
     };
   }
 
+  if (control === 'button') {
+    return {
+      backgroundColor: 'transparent',
+      ...paired(theme, { color: role.accentText }),
+      // Button's `text` variants take no fill in any state — hover
+      // marks itself with an underline instead (node 983:17088), and
+      // press and focus are drawn identically to rest (983:17170,
+      // 983:17079). The focus ring is the only affordance there, so it
+      // stays.
+      '&:hover': {
+        backgroundColor: 'transparent',
+        textDecorationLine: 'underline',
+        textDecorationThickness: 'from-font',
+        textUnderlinePosition: 'from-font',
+      },
+      '&:active': { backgroundColor: 'transparent' },
+      '&.Mui-focusVisible': focusRing(theme, role.focusRing),
+      '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
+    };
+  }
+
+  // `IconButton`'s `text` glyph keeps the fills `Button`'s label gave
+  // up: hover, press *and* focus each take one (nodes 983:17497,
+  // 983:17464, 983:17479). A glyph has no underline to mark itself
+  // with, which is the likeliest reason the two sets parted here.
   return {
     backgroundColor: 'transparent',
     ...paired(theme, { color: role.accentText }),
-    '&:hover': paired(theme, { backgroundColor: role.subtleHoverBg }),
-    '&:active': paired(theme, { backgroundColor: role.subtlePressedBg }),
-    '&.Mui-focusVisible': focusRing(theme, role.focusRing),
+    '&:hover': paired(theme, { backgroundColor: soft.hover }),
+    '&:active': paired(theme, { backgroundColor: soft.pressed }),
+    '&.Mui-focusVisible': pairedFocusRing(
+      theme,
+      { backgroundColor: soft.hover },
+      role.focusRing
+    ),
     '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
   };
 }
