@@ -64,13 +64,15 @@ const StyledIconButton = styled(MuiIconButton, {
     prop !== 'neofloSize',
 })<StyledIconButtonProps>(
   ({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
-    // Fully round, matching Button's `radius.full` pill shape.
-    borderRadius: radius.full,
+    // 8px (`Scale/200`), matching Button. Its own component set moved
+    // off the circle in the same 11 August update (node 983:17629),
+    // so this is not just inherited from Button's shape.
+    borderRadius: radius.sm,
     ...sizeStyles[neofloSize],
     // Direct-child selector only -- the loading spinner's `<svg>` is
     // nested several levels deep and must keep its own default size.
     '& > svg': iconSizeStyles[neofloSize],
-    ...appearanceStyles(theme, neofloVariant, neofloAppearance),
+    ...appearanceStyles(theme, neofloVariant, neofloAppearance, 'iconButton'),
     // MUI hides the glyph behind the spinner via `color: transparent`
     // on this class, but it loses to the `&.Mui-disabled` colour above
     // (loading also sets `disabled`) since both rules tie on

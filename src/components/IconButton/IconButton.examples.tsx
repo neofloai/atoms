@@ -24,7 +24,7 @@ export const data: ComponentExamplesData = {
       type: "'contained' | 'outline' | 'text'",
       default: "'contained'",
       description:
-        'Visual emphasis: solid fill, 1px border, or bare glyph.',
+        'Visual emphasis: solid fill, 1px border, or bare glyph. `text` takes a background on hover, focus, and press — unlike `Button`, where it underlines instead.',
     },
     {
       name: 'size',

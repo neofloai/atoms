@@ -6,7 +6,10 @@ import { styled } from '@mui/material/styles';
 
 import { fontFamilies, fontWeights, radius, spacing, typography } from '@/src/tokens';
 
-import { appearanceStyles } from '../_shared/actionStyles';
+import {
+  appearanceStyles,
+  OUTLINE_BORDER_WIDTH_PX,
+} from '../_shared/actionStyles';
 
 import type { CSSObject } from '@mui/material/styles';
 import type {
@@ -39,21 +42,43 @@ const muiSizeMap: Record<ButtonSize, 'small' | 'medium' | 'large'> = {
   lg: 'large',
 };
 
-/** Control heights from the Figma component set (node 983:17179). */
-const sizeStyles: Record<ButtonSize, CSSObject> = {
-  lg: {
-    minHeight: 44,
-    padding: `${spacing.component.sm}px`,
-  },
-  md: {
-    minHeight: 36,
-    padding: `${spacing.component.xs}px ${spacing.component.sm}px`,
-  },
-  sm: {
-    minHeight: 32,
-    padding: `${spacing.component.xxs}px ${spacing.component.sm}px`,
-  },
+/**
+ * Control heights and padding from the Figma component set
+ * (node 983:17179): 44 / 36 / 32px, each built from the shared
+ * `Scale/*` ladder that also backs `spacing.component`.
+ */
+const sizeMetrics: Record<
+  ButtonSize,
+  { readonly height: number; readonly block: number; readonly inline: number }
+> = {
+  lg: { height: 44, block: spacing.component.sm, inline: spacing.component.sm },
+  md: { height: 36, block: spacing.component.xs, inline: spacing.component.sm },
+  sm: { height: 32, block: spacing.component.xxs, inline: spacing.component.sm },
 };
+
+/**
+ * Padding for one size + appearance, in pixels.
+ *
+ * Two adjustments to the raw Figma numbers, both so the three
+ * appearances line up at the same height and left edge the way the
+ * component set draws them:
+ *
+ *   - `outline` gives back its two border widths. Figma strokes sit
+ *     *inside* the frame, so its outlined and filled buttons are both
+ *     44px at `lg`; a CSS border sits outside the content box, which
+ *     would otherwise make ours 46.
+ *   - `text` sits flush — Figma gives it `Scale/0` on the inline axis
+ *     at every size (node 983:16993), so a text link lines up with the
+ *     copy it sits under rather than being inset by the control.
+ */
+function paddingFor(size: ButtonSize, appearance: ButtonAppearance): CSSObject {
+  const { block, inline } = sizeMetrics[size];
+  return {
+    paddingBlock:
+      appearance === 'outline' ? block - OUTLINE_BORDER_WIDTH_PX : block,
+    paddingInline: appearance === 'text' ? 0 : inline,
+  };
+}
 
 /** Icon glyph size per control size, from the Figma component set. */
 const iconSizeStyles: Record<ButtonSize, CSSObject> = {
@@ -74,7 +99,10 @@ const StyledButton = styled(MuiButton, {
     prop !== 'neofloAppearance' &&
     prop !== 'neofloSize',
 })<StyledButtonProps>(({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
-  borderRadius: radius.full,
+  // 8px (`Scale/200`), not the stadium radius this shipped with — the
+  // 11 August update took both action controls off the pill, matching
+  // the move Chip already made (DESIGNER_QUESTIONS.md #19).
+  borderRadius: radius.sm,
   fontFamily: fontFamilies.product.sans,
   fontSize: LABEL_TYPE.size,
   fontWeight: fontWeights.medium,
@@ -90,8 +118,9 @@ const StyledButton = styled(MuiButton, {
   '& .MuiButton-startIcon > *, & .MuiButton-endIcon > *': {
     ...iconSizeStyles[neofloSize],
   },
-  ...sizeStyles[neofloSize],
-  ...appearanceStyles(theme, neofloVariant, neofloAppearance),
+  minHeight: sizeMetrics[neofloSize].height,
+  ...paddingFor(neofloSize, neofloAppearance),
+  ...appearanceStyles(theme, neofloVariant, neofloAppearance, 'button'),
 }));
 
 /**

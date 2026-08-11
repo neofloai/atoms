@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T05:39:36.824Z",
+  "generatedAt": "2026-08-11T09:58:54.884Z",
   "components": [
     {
       "name": "Alert",
@@ -312,13 +312,13 @@
           "name": "appearance",
           "type": "'contained' | 'outline' | 'text'",
           "default": "'contained'",
-          "description": "Visual emphasis: solid fill, 1px border, or label-only."
+          "description": "Visual emphasis: solid fill, 1px border, or label-only. `text` sits flush (no horizontal padding) and underlines on hover rather than taking a background."
         },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Control height: 32px, 40px, or 48px."
+          "description": "Control height: 32px, 36px, or 44px."
         },
         {
           "name": "loading",
@@ -505,6 +505,18 @@
           "description": "`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (eight roles, no states)."
         },
         {
+          "name": "dense",
+          "type": "boolean",
+          "default": "false",
+          "description": "Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size=\"sm\"`."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "default": "—",
+          "description": "Persistent selected state for filter chips: draws the role border plus the selected fill, and sets `aria-pressed` on clickable chips. No effect at `size=\"sm\"`."
+        },
+        {
           "name": "avatar",
           "type": "ReactElement",
           "default": "—",
@@ -553,8 +565,14 @@
           "code": "<Chip label=\"View report\" onClick={handleOpen} />"
         },
         {
+          "title": "Selectable filter",
+          "description": "The selected state persists after the pointer leaves, so it draws a border rather than relying on the hover fill.",
+          "code": "<Chip\n  label=\"Design\"\n  appearance=\"outline\"\n  selected={isSelected}\n  onClick={toggle}\n/>"
+        },
+        {
           "title": "Sizes",
-          "code": "<Chip size=\"sm\" variant=\"purple\" label=\"Small\" />\n<Chip size=\"md\" label=\"Medium\" />"
+          "description": "`dense` is the 32px pill; the 36px pill is the default. `size=\"sm\"` is the separate 20px flat tag.",
+          "code": "<Chip size=\"sm\" variant=\"purple\" label=\"Small\" />\n<Chip dense label=\"Dense\" />\n<Chip label=\"Medium\" />"
         },
         {
           "title": "Flat tag colours",
@@ -566,6 +584,7 @@
         "Match the `variant` to the meaning (e.g. `success` for healthy states, `error` for failures)",
         "Use `appearance=\"outline\"` for filter chips and lower-emphasis tags",
         "Use `onDelete` for removable selections so the affordance is consistent",
+        "Pair `selected` with `onClick` so the state is reachable by keyboard and announced",
         "Keep labels short — one or two words"
       ],
       "donts": [
@@ -573,14 +592,17 @@
         "Don't rely on colour alone to communicate status — the label must carry the meaning",
         "Don't mix sizes within one group of chips",
         "Don't hardcode background or border colours — the variant covers both colour schemes",
-        "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`"
+        "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
+        "Don't use `selected` to mean \"active nav item\" — it announces a toggle, not a location",
+        "Don't mix `dense` and default pills in the same row — the 4px difference reads as misalignment"
       ],
       "relatedComponents": [
         "Button",
         "IconButton"
       ],
       "accessibility": [
-        "Clickable chips at `size=\"md\"` are focusable and render a 3px focus-visible ring; `size=\"sm\"` has no defined focus styling in Figma",
+        "Clickable chips at `size=\"md\"` are focusable and render a 3px focus-visible ring. Figma defines no focused state for either size, so the ring is a library addition",
+        "`selected` sets `aria-pressed` on clickable chips, and is drawn with a border rather than a fill shift alone so it survives the pointer leaving",
         "The delete affordance is keyboard-accessible via Backspace/Delete when the chip has focus"
       ]
     },
@@ -1343,7 +1365,7 @@
           "name": "appearance",
           "type": "'contained' | 'outline' | 'text'",
           "default": "'contained'",
-          "description": "Visual emphasis: solid fill, 1px border, or bare glyph."
+          "description": "Visual emphasis: solid fill, 1px border, or bare glyph. `text` takes a background on hover, focus, and press — unlike `Button`, where it underlines instead."
         },
         {
           "name": "size",

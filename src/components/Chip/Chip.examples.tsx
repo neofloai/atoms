@@ -40,6 +40,20 @@ export const data: ComponentExamplesData = {
         '`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (eight roles, no states).',
     },
     {
+      name: 'dense',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size="sm"`.',
+    },
+    {
+      name: 'selected',
+      type: 'boolean',
+      default: '—',
+      description:
+        'Persistent selected state for filter chips: draws the role border plus the selected fill, and sets `aria-pressed` on clickable chips. No effect at `size="sm"`.',
+    },
+    {
       name: 'avatar',
       type: 'ReactElement',
       default: '—',
@@ -102,10 +116,26 @@ export const data: ComponentExamplesData = {
       code: '<Chip label="View report" onClick={handleOpen} />',
     },
     {
+      title: 'Selectable filter',
+      description:
+        'The selected state persists after the pointer leaves, so it draws a border rather than relying on the hover fill.',
+      code: [
+        '<Chip',
+        '  label="Design"',
+        '  appearance="outline"',
+        '  selected={isSelected}',
+        '  onClick={toggle}',
+        '/>',
+      ].join('\n'),
+    },
+    {
       title: 'Sizes',
+      description:
+        '`dense` is the 32px pill; the 36px pill is the default. `size="sm"` is the separate 20px flat tag.',
       code: [
         '<Chip size="sm" variant="purple" label="Small" />',
-        '<Chip size="md" label="Medium" />',
+        '<Chip dense label="Dense" />',
+        '<Chip label="Medium" />',
       ].join('\n'),
     },
     {
@@ -123,6 +153,7 @@ export const data: ComponentExamplesData = {
     'Match the `variant` to the meaning (e.g. `success` for healthy states, `error` for failures)',
     'Use `appearance="outline"` for filter chips and lower-emphasis tags',
     'Use `onDelete` for removable selections so the affordance is consistent',
+    'Pair `selected` with `onClick` so the state is reachable by keyboard and announced',
     'Keep labels short — one or two words',
   ],
   donts: [
@@ -131,10 +162,13 @@ export const data: ComponentExamplesData = {
     "Don't mix sizes within one group of chips",
     "Don't hardcode background or border colours — the variant covers both colour schemes",
     "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
+    "Don't use `selected` to mean \"active nav item\" — it announces a toggle, not a location",
+    "Don't mix `dense` and default pills in the same row — the 4px difference reads as misalignment",
   ],
   relatedComponents: ['Button', 'IconButton'],
   accessibility: [
-    'Clickable chips at `size="md"` are focusable and render a 3px focus-visible ring; `size="sm"` has no defined focus styling in Figma',
+    'Clickable chips at `size="md"` are focusable and render a 3px focus-visible ring. Figma defines no focused state for either size, so the ring is a library addition',
+    '`selected` sets `aria-pressed` on clickable chips, and is drawn with a border rather than a fill shift alone so it survives the pointer leaving',
     'The delete affordance is keyboard-accessible via Backspace/Delete when the chip has focus',
   ],
 };

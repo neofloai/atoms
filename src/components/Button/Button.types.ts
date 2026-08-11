@@ -20,7 +20,7 @@ export type ButtonVariant = ActionVariant;
  */
 export type ButtonAppearance = ActionAppearance;
 
-/** Control height: `sm` = 32px, `md` = 40px, `lg` = 48px. */
+/** Control height: `sm` = 32px, `md` = 36px, `lg` = 44px. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /**

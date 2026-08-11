@@ -23,10 +23,16 @@ export type ChipVariant = ActionVariant | 'information' | 'orange' | 'purple';
 export type ChipAppearance = Exclude<ActionAppearance, 'text'>;
 
 /**
- * Chip size: `md` = the 36px pill (node 986:18006) — five colour
- * roles, contained/outline emphasis, full interaction states. `sm` =
- * the 20px flat tag (node 3156:83830) — eight colour roles, no
- * emphasis axis, no interaction states.
+ * Chip size: `md` = the pill (node 986:18006) — five colour roles,
+ * contained/outline emphasis, full interaction states, and two heights
+ * via `dense`. `sm` = the 20px flat tag (node 3156:83830) — eight colour
+ * roles, no emphasis axis, no interaction states.
+ *
+ * Figma's pill set carries its own height axis as a `small` boolean
+ * rather than a third t-shirt size, and that is mirrored here as `dense`
+ * instead of renaming the ramp: inserting a size *between* the existing
+ * two would silently change what `sm` or `md` means for every existing
+ * call site. See DESIGNER_QUESTIONS.md #30.
  */
 export type ChipSize = 'sm' | 'md';
 
@@ -46,4 +52,20 @@ export interface ChipProps
   appearance?: ChipAppearance;
   /** Pill size. @default 'md' */
   size?: ChipSize;
+  /**
+   * Renders the 32px pill instead of the 36px one (Figma's `small=True`
+   * axis on node 986:18006). Only the vertical padding changes — type,
+   * radius, gap, and glyph size are shared. No effect at `size="sm"`.
+   *
+   * @default false
+   */
+  dense?: boolean;
+  /**
+   * Persistent selected state (Figma `state=selected`), for filter and
+   * multi-select chips. Draws the role's border and its selected fill,
+   * and — on chips that are clickable — sets `aria-pressed`. Hover and
+   * press still read over it. No effect at `size="sm"`, which Figma
+   * draws as a single flat swatch.
+   */
+  selected?: boolean;
 }
