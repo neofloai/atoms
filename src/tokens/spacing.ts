@@ -1,9 +1,13 @@
 /**
- * Spacing tokens — aliased to the primitive "Scale" set in Figma.
+ * Component spacing tokens — aliased to the primitive "Scale" set in
+ * Figma, and unchanged since the first sync.
  *
  * Numeric values are pixels and map directly to MUI's spacing helper
  * via the theme. Use these tokens in components/sx rather than raw
  * pixel numbers so future changes propagate cleanly.
+ *
+ * This is the *component*-scale ladder (4-96px). The page-scale ladder,
+ * which resolves differently per breakpoint, lives in `./responsive.ts`.
  *
  * Generated from `light.tokens.json` (Figma DTCG export); kept in
  * sync via the design hand-off process.

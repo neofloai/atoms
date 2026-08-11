@@ -7,10 +7,9 @@
  * reference these raw values — they should never hardcode hex.
  *
  * Scale names match the designer's Figma library exactly, including
- * `red` (not `error`) and `blue` (not `info`). `purple` is a
- * standalone raw scale not currently used by any semantic token. The MUI
- * palette role mapping in `src/theme/palette.ts` translates these scales
- * to the `error`, `info`, etc. roles.
+ * `red` (not `error`) and `blue` (not `info`). The MUI palette role
+ * mapping in `src/theme/palette.ts` translates these scales to the
+ * `error`, `info`, etc. roles.
  *
  * Token files are intentionally framework-free: no React, no MUI
  * imports, no `'use client'`. Safe to read from Node scripts
@@ -50,7 +49,7 @@ export const colors = {
     200: '#aeb3f3',
     300: '#868fee',
     400: '#5f6aea',
-    500: '#4961dc',
+    500: '#4949dc',
     600: '#343eb3',
     700: '#262f8e',
     800: '#1e2363',

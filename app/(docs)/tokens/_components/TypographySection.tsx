@@ -51,7 +51,9 @@ SlotRow.displayName = 'SlotRow';
 
 /**
  * Renders the typography token system: font families, weights, and the
- * heading / body / caption type scale with live samples in each size.
+ * component-scale heading / body / caption ramp with live samples in each
+ * size. The page-scale ramp, which shares these slot names at different
+ * values, is `ResponsiveSection`.
  */
 export function TypographySection() {
   return (
@@ -61,8 +63,11 @@ export function TypographySection() {
           Typography
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Font families, weights, and the H1-H6 / B1-B2 / caption type
-          scale, synced from the Figma type scale.
+          Font families, weights, and the H1-H6 / B1-B2 / caption ramp
+          components measure against, synced from the Figma text styles.
+          The Responsive section below carries a second ramp that reuses
+          these slot names at page scale &mdash; <code>b1</code> is 13px
+          here and 16px there.
         </Typography>
       </Stack>
 

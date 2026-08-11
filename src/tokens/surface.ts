@@ -3,33 +3,34 @@ import { colors } from './colors';
 /**
  * Surface semantic tokens.
  *
- * Generated from the Figma "component" variable collection export
- * (2026-07-29). Every leaf is a `{ light, dark }` pair so components
- * automatically pick up the right value when the MUI colour scheme
- * flips.
+ * Generated from the Figma "component" collection DTCG export
+ * (`light.tokens.json` + `dark.tokens.json`, 2026-08-11). Every leaf is
+ * a `{ light, dark }` pair so components automatically pick up the right
+ * value when the MUI colour scheme flips.
  *
  * Groups:
- *   - `layers`        -> page background + four nested card surfaces
- *                       (cards 4–6 are "on-color" inverse variants)
- *   - `default`       -> neutral default surface + hover/pressed states
- *   - `<role>`        -> primary, information, success, error, warning
- *                       each with default/default-hover/default-pressed
- *                       plus subtle/subtle-hover/subtle-pressed
- *   - `disabled`      -> single disabled surface
+ *   - `layers`   -> page background + six nested card surfaces
+ *                  (cards 4–6 are "on-color" inverse variants)
+ *   - `default`  -> neutral surface + hover/pressed states
+ *   - `soft`     -> tinted neutral surface, on the `primary` scale
+ *   - `<role>`   -> primary, information, success, error, warning,
+ *                  orange, purple — each with default/defaultHover/
+ *                  defaultPressed plus subtle/subtleHover/subtlePressed
+ *   - `disabled` -> single disabled surface
  *
  * `information` corresponds to MUI's `info` palette role; values are
  * sourced from the `blue` raw scale.
  *
- * `warning`'s `default`/`subtle` (light mode) were corrected one rung
- * up the `yellow` scale (previously `100`/`50`) after the Alert resync
- * (node 973:3010, 2026-07-29) showed `surface/warning/default` =
- * `yellow/200` and `surface/warning/subtle` = `yellow/75` — `error` and
- * `success` matched their existing tokens exactly in the same check, so
- * `warning` alone was off. `defaultHover`/`defaultPressed`/
- * `subtleHover`/`subtlePressed` were shifted the same one rung to keep
- * the ladder's shape consistent with the confirmed `error`/`success`
- * pattern (each avoids colliding with its neighbour); those four were
- * not independently confirmed against a Figma interaction state.
+ * The 2026-08-11 export renamed `default`'s three slots to bare tier
+ * numbers and completed the `orange`/`purple` ladders, which previously
+ * had only a `default` rung with `dark` mirroring `light` as a
+ * placeholder. Both are now real per-mode values.
+ *
+ * Two rungs in that export read as slips rather than intent, and are
+ * carried through verbatim rather than second-guessed: `purple.subtle`
+ * aliases `primary/50` where every other purple rung sits on the
+ * `purple` scale, and `soft`'s three dark values are all
+ * `primary/1000` — a flat ladder. See DESIGNER_QUESTIONS.md #28.
  */
 
 export interface ModeToken {
@@ -52,21 +53,26 @@ export const surface = {
     defaultHover: { light: colors.grey[200], dark: colors.grey[950] },
     defaultPressed: { light: colors.grey[300], dark: colors.grey[900] },
   },
+  soft: {
+    default: { light: colors.primary[25], dark: colors.primary[1000] },
+    defaultHover: { light: colors.primary[50], dark: colors.primary[1000] },
+    defaultPressed: { light: colors.primary[75], dark: colors.primary[1000] },
+  },
   primary: {
     default: { light: colors.primary[500], dark: colors.primary[600] },
     defaultHover: { light: colors.primary[400], dark: colors.primary[700] },
     defaultPressed: { light: colors.primary[200], dark: colors.primary[800] },
-    subtle: { light: colors.primary[50], dark: colors.primary[1000] },
-    subtleHover: { light: colors.primary[75], dark: colors.primary[900] },
-    subtlePressed: { light: colors.primary[100], dark: colors.primary[800] },
+    subtle: { light: colors.primary[50], dark: colors.primary[800] },
+    subtleHover: { light: colors.primary[75], dark: colors.primary[700] },
+    subtlePressed: { light: colors.primary[100], dark: colors.primary[600] },
   },
   information: {
-    default: { light: colors.blue[75], dark: colors.blue[900] },
-    defaultHover: { light: colors.blue[100], dark: colors.blue[800] },
-    defaultPressed: { light: colors.blue[200], dark: colors.blue[700] },
-    subtle: { light: colors.blue[100], dark: colors.blue[1100] },
-    subtleHover: { light: colors.blue[200], dark: colors.blue[1000] },
-    subtlePressed: { light: colors.blue[300], dark: colors.blue[900] },
+    default: { light: colors.blue[75], dark: colors.blue[800] },
+    defaultHover: { light: colors.blue[100], dark: colors.blue[700] },
+    defaultPressed: { light: colors.blue[200], dark: colors.blue[600] },
+    subtle: { light: colors.blue[100], dark: colors.blue[1000] },
+    subtleHover: { light: colors.blue[200], dark: colors.blue[900] },
+    subtlePressed: { light: colors.blue[300], dark: colors.blue[800] },
   },
   success: {
     default: { light: colors.green[75], dark: colors.green[900] },
@@ -93,18 +99,20 @@ export const surface = {
     subtlePressed: { light: colors.yellow[200], dark: colors.yellow[900] },
   },
   orange: {
-    /**
-     * New role — the Chip small-tag sheet (node 3156:83830,
-     * 2026-07-29) is the first consumer and only ever references this
-     * one tier. No hover/pressed/subtle* tier has been drawn in Figma
-     * yet, and `dark` mirrors `light` as a placeholder pending
-     * confirmation — see DESIGNER_QUESTIONS.md #4.
-     */
-    default: { light: colors.orange[100], dark: colors.orange[100] },
+    default: { light: colors.orange[100], dark: colors.orange[900] },
+    defaultHover: { light: colors.orange[200], dark: colors.orange[800] },
+    defaultPressed: { light: colors.orange[300], dark: colors.orange[700] },
+    subtle: { light: colors.orange[50], dark: colors.orange[1100] },
+    subtleHover: { light: colors.orange[75], dark: colors.orange[1000] },
+    subtlePressed: { light: colors.orange[100], dark: colors.orange[900] },
   },
   purple: {
-    /** Same caveat as `orange` above — only `default` is confirmed. */
-    default: { light: colors.purple[75], dark: colors.purple[75] },
+    default: { light: colors.purple[75], dark: colors.purple[900] },
+    defaultHover: { light: colors.purple[100], dark: colors.purple[800] },
+    defaultPressed: { light: colors.purple[200], dark: colors.purple[700] },
+    subtle: { light: colors.primary[50], dark: colors.purple[1100] },
+    subtleHover: { light: colors.purple[75], dark: colors.purple[1000] },
+    subtlePressed: { light: colors.purple[100], dark: colors.purple[900] },
   },
   disabled: {
     default: { light: colors.grey[200], dark: colors.grey[900] },

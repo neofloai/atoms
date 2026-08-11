@@ -3,43 +3,32 @@ import { colors } from './colors';
 /**
  * Text semantic tokens.
  *
- * Per the Figma export, each role exposes typography *slots* rather
- * than interaction states:
+ * Each role exposes typography *slots* rather than interaction states:
  *
  *   text.default.{ heading, body, caption, placeholder, subtle,
  *                  headingOnColor, bodyOnColor, captionOnColor,
  *                  placeholderOnColor }
- *   text.primary.{ heading, body, caption, onColorHover }
- *   text.information.{ ... } (mirrors primary; sourced from `blue`)
- *   text.success.{ ... }     (mirrors primary)
- *   text.error.{ ... }       (mirrors primary)
- *   text.warning.{ ... }     (mirrors primary)
- *   text.orange.{ caption }  (new — see below)
- *   text.purple.{ caption }  (new — see below)
+ *   text.<role>.{ body, caption, accent, onColorHover }
  *   text.disabled.{ default, onColor }
  *
- * Generated from the Figma "component" variable collection export
- * (2026-07-29). That export renamed `default`'s `body`/`caption`/
- * `placeholder` slots to `b1`/`b2`/`b3` (matching the `Sans/B1-B3`
- * type-scale rungs) and added a `subtle` slot; the accent roles
- * (primary/information/success/error/warning) kept a plain numbered
- * `1-4` ladder with no named `body`/`onColorHover` equivalent. Slot
- * *names* below are kept as-is for API stability — only `caption`
- * (verified against the live Button component in a prior sync) and
- * `default`'s renamed slots have a confirmed mapping; `heading` and
- * `body` on the accent roles are unchanged from before this sync
- * pending an explicit design confirmation, since nothing in the
- * codebase currently consumes them.
+ * `<role>` is primary, information, success, error, warning, orange, or
+ * purple. Every one is now a uniform four-rung ladder, darkest first: in
+ * light mode `body`/`caption`/`accent`/`onColorHover` resolve to shades
+ * 700/600/500/400 (800/700/600/500 for the two warm scales, which need an
+ * extra rung of contrast against a light page), and dark mode walks the
+ * same ladder from the other end.
  *
- * `onColorHover` for `error` was confirmed (light mode only) against
- * the TextField status-text spec (node 3179:106156): `text/error/4`
- * resolves to `red/400`, not the prior `red/700` placeholder. `success`
- * needed no change — its `onColorHover` already resolved to `green/400`,
- * matching that same sync. `warning`'s status colour landed on the
- * already-confirmed `caption` slot (`yellow/700`) instead. `primary`'s
- * `onColorHover` was confirmed the same way (light mode only) against
- * the Avatar spec (node 981:16471, 2026-07-29): `text/primary/4`
- * resolves to `primary/400`, not the prior `primary/500` placeholder.
+ * Generated from the Figma "component" collection DTCG export
+ * (2026-08-11). That export numbered the slots instead of naming them
+ * (`text/primary/1`); the names above are ours, mapped in
+ * `scripts/sync-design-tokens.mjs`. It also dropped the accent roles'
+ * darkest `heading` rung — nothing consumed it — and replaced the
+ * hand-guessed `orange`/`purple` singletons, whose `dark` mirrored
+ * `light`, with the full per-mode ladder.
+ *
+ * `default` keeps its descriptive slot names; Figma calls
+ * `body`/`caption`/`placeholder` `b1`/`b2`/`b3` after the type-scale
+ * rungs they pair with.
  */
 
 import type { ModeToken } from './surface';
@@ -58,59 +47,50 @@ export const text = {
     placeholderOnColor: { light: colors.grey[500], dark: colors.grey[600] },
   },
   primary: {
-    heading: { light: colors.primary[800], dark: colors.primary[200] },
-    body: { light: colors.primary[700], dark: colors.primary[300] },
+    body: { light: colors.primary[700], dark: colors.primary[200] },
     caption: { light: colors.primary[600], dark: colors.primary[300] },
-    /**
-     * Confirmed (light mode only) against the Chip small-tag sheet
-     * (node 3156:83830, 2026-07-29): `text/primary/3` resolves to
-     * `primary/500`, distinct from both `caption` (600) and
-     * `onColorHover` (400). `dark` mirrors `light` as a placeholder
-     * pending confirmation.
-     */
-    accent: { light: colors.primary[500], dark: colors.primary[500] },
+    accent: { light: colors.primary[500], dark: colors.primary[400] },
     onColorHover: { light: colors.primary[400], dark: colors.primary[500] },
   },
   information: {
-    heading: { light: colors.blue[800], dark: colors.blue[200] },
-    body: { light: colors.blue[700], dark: colors.blue[300] },
+    body: { light: colors.blue[700], dark: colors.blue[200] },
     caption: { light: colors.blue[600], dark: colors.blue[300] },
-    onColorHover: { light: colors.blue[500], dark: colors.blue[500] },
+    accent: { light: colors.blue[500], dark: colors.blue[400] },
+    onColorHover: { light: colors.blue[400], dark: colors.blue[500] },
   },
   success: {
-    heading: { light: colors.green[800], dark: colors.green[50] },
-    body: { light: colors.green[600], dark: colors.green[75] },
+    body: { light: colors.green[700], dark: colors.green[100] },
     caption: { light: colors.green[600], dark: colors.green[200] },
-    onColorHover: { light: colors.green[400], dark: colors.green[300] },
+    accent: { light: colors.green[500], dark: colors.green[300] },
+    onColorHover: { light: colors.green[400], dark: colors.green[400] },
   },
   error: {
-    heading: { light: colors.red[1000], dark: colors.red[50] },
-    body: { light: colors.red[900], dark: colors.red[75] },
+    body: { light: colors.red[700], dark: colors.red[100] },
     caption: { light: colors.red[600], dark: colors.red[200] },
-    onColorHover: { light: colors.red[400], dark: colors.red[300] },
+    accent: { light: colors.red[500], dark: colors.red[300] },
+    onColorHover: { light: colors.red[400], dark: colors.red[400] },
   },
   warning: {
-    heading: { light: colors.yellow[900], dark: colors.yellow[50] },
-    body: { light: colors.yellow[800], dark: colors.yellow[75] },
-    caption: { light: colors.yellow[700], dark: colors.yellow[200] },
-    onColorHover: { light: colors.yellow[600], dark: colors.yellow[300] },
+    body: { light: colors.yellow[800], dark: colors.yellow[300] },
+    caption: { light: colors.yellow[700], dark: colors.yellow[400] },
+    accent: { light: colors.yellow[600], dark: colors.yellow[500] },
+    onColorHover: { light: colors.yellow[500], dark: colors.yellow[600] },
   },
   orange: {
-    /**
-     * New role — the Chip small-tag sheet (node 3156:83830,
-     * 2026-07-29) is the first consumer and only ever references this
-     * one slot. `dark` mirrors `light` as a placeholder pending
-     * confirmation — see DESIGNER_QUESTIONS.md #4.
-     */
-    caption: { light: colors.orange[600], dark: colors.orange[600] },
+    body: { light: colors.orange[800], dark: colors.orange[100] },
+    caption: { light: colors.orange[700], dark: colors.orange[200] },
+    accent: { light: colors.orange[600], dark: colors.orange[300] },
+    onColorHover: { light: colors.orange[500], dark: colors.orange[400] },
   },
   purple: {
-    /** Same caveat as `orange` above — only this slot is confirmed. */
-    caption: { light: colors.purple[400], dark: colors.purple[400] },
+    body: { light: colors.purple[700], dark: colors.purple[200] },
+    caption: { light: colors.purple[600], dark: colors.purple[300] },
+    accent: { light: colors.purple[500], dark: colors.purple[400] },
+    onColorHover: { light: colors.purple[400], dark: colors.purple[500] },
   },
   disabled: {
     default: { light: colors.grey[500], dark: colors.grey[700] },
-    onColor: { light: colors.grey[500], dark: colors.grey[600] },
+    onColor: { light: colors.grey[500], dark: colors.grey[800] },
   },
 } as const;
 

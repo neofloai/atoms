@@ -8,6 +8,12 @@ import {
 /**
  * MUI typography options built from the typography tokens.
  *
+ * Every variant maps to the *component*-scale ramp in
+ * `src/tokens/typography.ts`. The page-scale ramp in
+ * `src/tokens/responsive.ts` is deliberately not wired into the theme —
+ * it resolves per breakpoint, so a consumer picks the breakpoint rather
+ * than inheriting one.
+ *
  * Mapping (MUI variant -> Figma slot):
  *   h1-h6          -> typography.headings.h1..h6 (all Medium — the
  *                     Figma type scale has no Bold/SemiBold heading cut)

@@ -18,7 +18,7 @@ export function registerGetTokens(server: McpServer): void {
     {
       title: 'Get design tokens',
       description:
-        'Returns Neoflo design tokens as JSON grouped by category (colors, surface, border, text, icon, spacing, typography, elevation, radius). Pass a category to narrow the response, or omit it to get everything. Always use these token values instead of hardcoding colors or spacing.',
+        'Returns Neoflo design tokens as JSON grouped by category (colors, surface, border, text, icon, spacing, typography, responsive, elevation, radius). Pass a category to narrow the response, or omit it to get everything. Always use these token values instead of hardcoding colors or spacing.',
       inputSchema: {
         category: z
           .string()

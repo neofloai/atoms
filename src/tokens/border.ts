@@ -4,11 +4,15 @@ import { colors } from './colors';
  * Border semantic tokens.
  *
  * Mirrors the shape of `surface` — same groups (`layers`, `default`,
- * per-role, `disabled`) but interaction states are `default` /
- * `defaultHover` / `focus` (no `pressed`).
+ * `soft`, per-role, `disabled`). Interaction states end on a focus ring
+ * rather than a pressed state (`default` / `defaultHover` / `focus`);
+ * the neutral `default` group is the exception and keeps
+ * `defaultPressed`, matching its `surface` counterpart.
  *
- * Generated from the Figma "component" variable collection export
- * (2026-07-29).
+ * Generated from the Figma "component" collection DTCG export
+ * (2026-08-11), which renamed every slot to a bare tier number and added
+ * the `soft` group. `soft`'s three dark values are all `grey/900` — a
+ * flat ladder, carried through verbatim. See DESIGNER_QUESTIONS.md #28.
  */
 
 import type { ModeToken } from './surface';
@@ -28,6 +32,11 @@ export const border = {
     default: { light: colors.grey[300], dark: colors.grey[700] },
     defaultHover: { light: colors.grey[400], dark: colors.grey[600] },
     defaultPressed: { light: colors.grey[500], dark: colors.grey[500] },
+  },
+  soft: {
+    default: { light: colors.primary[50], dark: colors.grey[900] },
+    defaultHover: { light: colors.primary[100], dark: colors.grey[900] },
+    focus: { light: colors.primary[300], dark: colors.grey[900] },
   },
   primary: {
     default: { light: colors.primary[100], dark: colors.primary[800] },
