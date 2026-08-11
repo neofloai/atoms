@@ -9,6 +9,7 @@ const ANCHOR_OFFSET_SX = { scrollMarginTop: APP_BAR_HEIGHT + 16 };
 import { border, colors, icon, spacing, surface, text } from '@/src/tokens';
 import { ElevationSection } from './_components/ElevationSection';
 import { RadiusSection } from './_components/RadiusSection';
+import { ResponsiveSection } from './_components/ResponsiveSection';
 import { ScaleSection } from './_components/ScaleSection';
 import { SemanticSection } from './_components/SemanticSection';
 import { SpacingSection } from './_components/SpacingSection';
@@ -84,7 +85,7 @@ export default function TokensPage() {
 
         <SemanticSection
           title="Text"
-          description="Text colour tokens grouped by typography slot (heading, body, caption, placeholder) and per-role variants."
+          description="Text colour tokens grouped by typography slot. The neutral default group runs heading, body, caption, placeholder; every accent role is a four-rung ladder, darkest first: body, caption, accent, onColorHover."
           tokens={text}
           swatchVariant="text"
         />
@@ -103,7 +104,7 @@ export default function TokensPage() {
         <Box id="spacing" sx={ANCHOR_OFFSET_SX}>
           <SpacingSection
             title="Spacing"
-            description="Component spacing scale in pixels. T-shirt-sized steps from 0 (none) up to 96 (xxl)."
+            description="Component spacing scale in pixels. T-shirt-sized steps from 0 (none) up to 96 (xxl). The page-scale ladder, which resolves per breakpoint, is under Responsive below."
             tokens={spacing}
           />
         </Box>
@@ -112,6 +113,12 @@ export default function TokensPage() {
 
         <Box id="typography" sx={ANCHOR_OFFSET_SX}>
           <TypographySection />
+        </Box>
+
+        <Divider />
+
+        <Box id="responsive" sx={ANCHOR_OFFSET_SX}>
+          <ResponsiveSection />
         </Box>
 
         <Divider />

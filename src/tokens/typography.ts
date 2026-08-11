@@ -1,5 +1,17 @@
 /**
- * Typography tokens.
+ * Typography tokens — the *component*-scale ramp.
+ *
+ * This is what every component in the library measures against, and it
+ * is hand-maintained: it comes from Figma's text styles, which the
+ * variable-collection sync (`scripts/sync-design-tokens.mjs`) does not
+ * read.
+ *
+ * `./responsive.ts` carries a second ramp, from the "responsive" variable
+ * collection, that reuses these slot names (`b1`, `b2`, `caption`,
+ * `h1`-`h4`) at page scale — `b1` is 13px here and 16px there, and the
+ * headings all run looser leading. The two are treated as separate ramps;
+ * whether they are meant to be is open, see DESIGNER_QUESTIONS.md #27.
+ * Nothing here changed in the 2026-08-11 sync.
  *
  * Sourced from the Neoflo Product Design System Figma file
  * (`iDCodnA5uZ14EdttjSMCT1`), synced from the Figma "styles" +

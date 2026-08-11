@@ -39,6 +39,7 @@ export const navigation: readonly NavSection[] = [
       { label: 'Tokens', href: '/tokens' },
       { label: 'Typography', href: '/tokens#typography' },
       { label: 'Spacing', href: '/tokens#spacing' },
+      { label: 'Responsive', href: '/tokens#responsive' },
       { label: 'Elevation', href: '/tokens#elevation' },
       { label: 'Radius', href: '/tokens#radius' },
       { label: 'Icons', href: '/icons' },

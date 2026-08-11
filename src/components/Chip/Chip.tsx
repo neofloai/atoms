@@ -152,14 +152,21 @@ interface SmallRoleTokens {
  * different tier of its own ladder (not a uniform "always subtle" or
  * "always default" rule), so these are copied literally per role
  * rather than derived from a pattern.
+ *
+ * `orange` and `purple` moved slot in the 2026-08-11 token sync, which
+ * replaced their hand-guessed singletons with the full four-rung ladder:
+ * the sheet's swatches are `orange/600` and `purple/400`, which are that
+ * ladder's `accent` and `onColorHover` rungs. Same rendered colour in
+ * light mode as before, and a real dark value instead of a mirror of
+ * light.
  */
 const smallRoleTokens: Record<ChipVariant, SmallRoleTokens> = {
   secondary: { bg: surface.layers.card3, text: text.default.subtle },
   primary: { bg: surface.primary.subtle, text: text.primary.accent },
   warning: { bg: surface.warning.subtleHover, text: text.warning.caption },
-  purple: { bg: surface.purple.default, text: text.purple.caption },
+  purple: { bg: surface.purple.default, text: text.purple.onColorHover },
   success: { bg: surface.success.subtleHover, text: text.success.onColorHover },
-  orange: { bg: surface.orange.default, text: text.orange.caption },
+  orange: { bg: surface.orange.default, text: text.orange.accent },
   error: { bg: surface.error.subtlePressed, text: text.error.onColorHover },
   information: {
     bg: surface.information.default,

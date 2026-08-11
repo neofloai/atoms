@@ -14,7 +14,7 @@ Historical entry from an early PDF-based hand-off; `primary/600` is now `#343eb3
 ---
 
 ### 2. Primary button resting color — SUPERSEDED (see #20)
-This entry previously claimed `surface.primary.default.light = primary/600`; the live token export actually has `surface.primary.default.light = primary/500` (`#4961dc`) — already correct in `src/tokens/surface.ts` and what Button/Chip render today. `theme.palette.primary.main` (a separate, MUI-only mapping) had drifted to `primary/600` instead of matching — fixed in `#20`.
+This entry previously claimed `surface.primary.default.light = primary/600`; the live token export actually has `surface.primary.default.light = primary/500` (`#4961dc` at the time, `#4949dc` since — see #22) — already correct in `src/tokens/surface.ts` and what Button/Chip render today. `theme.palette.primary.main` (a separate, MUI-only mapping) had drifted to `primary/600` instead of matching — fixed in `#20`.
 
 ---
 
@@ -27,13 +27,17 @@ These are very light neutrals. A secondary button or chip will render almost whi
 
 ---
 
-### 4. `orange` scale — now has a consumer, but only light-mode + one tier is confirmed (updated 29 July, node 3156:83830)
-Superseded by the Chip resync below (#19): the Chip small-tag component set now uses both `orange` and `purple` as first-class colour roles, so they are no longer unused. `surface.orange.default`, `surface.purple.default`, `text.orange.caption`, `text.purple.caption`, and `text.primary.accent` were added to `src/tokens/surface.ts` / `text.ts` with only the single tier the small tag consumes — light mode confirmed against the live node, dark mode set equal to light as a placeholder.
+### 4. `orange` / `purple` scales — RESOLVED (2026-08-11 token sync), except the pill question
+The Chip small-tag component set (#19) made both `orange` and `purple` first-class colour roles, but the 29 July export only carried the single tier that tag consumes: `surface.orange.default`, `surface.purple.default`, `text.orange.caption`, `text.purple.caption`, and `text.primary.accent` went in with light mode confirmed against the live node and **dark mode set equal to light as a placeholder**.
 
-**Confirm:**
-- Dark-mode values for all five of the above.
-- Whether `orange`/`purple` need the rest of the ladder (`defaultHover`, `defaultPressed`, `subtle*`) — nothing in `src/` consumes those tiers yet.
-- Whether `orange`/`purple` should ever get a `size="md"` pill treatment (see #19), or stay `size="sm"`-only.
+The 11 August export completes both roles — full six-rung `surface` ladders (`default`/`defaultHover`/`defaultPressed` + `subtle`/`subtleHover`/`subtlePressed`) and full four-rung `text`/`icon` ladders — with real per-mode values throughout. Every placeholder above is gone.
+
+Two notes on what that resolved into:
+
+- The tag's swatches turned out to be **`orange/600`** and **`purple/400`**, which on the completed ladder are the `accent` and `onColorHover` rungs, not `caption`. `Chip` now names them that way; the light-mode rendering is unchanged from before, and dark mode is a real value instead of a mirror of light.
+- `surface/purple/subtle` came through aliased to `primary/50` — see #28.
+
+**Still open:** whether `orange`/`purple` should ever get a `size="md"` pill treatment (see #19), or stay `size="sm"`-only. The ladder now exists to support one either way.
 
 ---
 
@@ -231,7 +235,7 @@ Follow-on from #20. The `/branding` page carried a hand-curated grid of 11 liter
 
 ---
 
-### 22. `primary/500` — the brand accent has drifted by one value in Figma (added 5 August, node 3342:3325)
+### 22. `primary/500` — the brand accent has drifted by one value in Figma — RESOLVED (2026-08-11 token sync)
 Re-reading the same "UI to MUI Mapping" swatch board that resolved #20 now returns **`primary/500` = `#4949dc`**, where `src/tokens/colors.ts` has **`#4961dc`**. Nothing else moved: `primary/400` (`#5f6aea`) and `primary/600` (`#343eb3`) still match, and so do every 400/500/600 rung of `grey`, `blue`, `red`, `yellow`, `green`, `orange`, and `purple`. The same value also arrives independently through `text/primary/3` and `icon/primary/3` on the new `menu-item` sheet (node 3204:121756), so it is not a one-off misread of the board.
 
 This is a single raw value, but it is **the** brand accent, so it is the widest-reach change in the file:
@@ -241,9 +245,9 @@ This is a single raw value, but it is **the** brand accent, so it is the widest-
 - `theme.palette.primary.main` — what every unwrapped MUI component defaults to
 - `/branding`, which presents `primary/500` as "the one genuine brand decision"
 
-**Not changed here.** Repointing the raw scale on one node reading would move the accent everywhere at once, which is a brand decision rather than a component fix. `MenuItem variant="action"` references `text.primary.accent` so it inherits whichever value the scale settles on.
+**Not changed at the time.** Repointing the raw scale on one node reading would move the accent everywhere at once, which is a brand decision rather than a component fix. `MenuItem variant="action"` references `text.primary.accent` so it inherits whichever value the scale settles on.
 
-**Confirm:** whether `#4949dc` is the intended new value for `primary/500` (in which case `src/tokens/colors.ts` is a one-line change and the accent shifts system-wide), or whether the Figma variable drifted by accident and `#4961dc` stands.
+**Resolved: `#4949dc` stands.** The 11 August primitive export (`Mode 1.tokens 3.json`) carries `primary/500` = `#4949dc`, so the board reading was the variable, not a misread. That export is a full dump of the primitive collection and it is the *only* colour that moved in it — every other shade of every other scale is byte-identical to the previous export — which is what an intentional single-value edit looks like. `src/tokens/colors.ts` now has it, and the accent shifted system-wide as described above.
 
 ---
 
@@ -341,3 +345,47 @@ None of these reach the 3:1 of WCAG 1.4.11, and none needs to — that threshold
 - Whether `grey/300` is the right light-mode hairline, or whether it now reads too heavy against `grey/200`.
 - The inset scale, if `inset` / `middle` are worth keeping: what a divider indents *to* in this system, given 72px and 16px are both off the scale.
 - Whether a divider should be drawn in Figma at all, or stays engineering-owned like `Skeleton` and motion.
+
+---
+
+### 27. Two type ramps now disagree on the same slot names (added 11 August, "responsive" variable collection)
+The 11 August hand-off added a new Figma variable collection, **responsive**, whose two modes are Desktop (1440px frame) and Mobile (440px). It carries a type ramp and a spacing ladder that both resolve per breakpoint — genuinely new information, and it ships as `src/tokens/responsive.ts`.
+
+The problem is that its rungs are named `B1`, `B2`, `caption`, `H1`-`H4` — the same names the existing `styles.textStyles` ramp uses in `src/tokens/typography.ts`, at different values:
+
+| slot | `typography` (component) | `responsive.desktop` | `responsive.mobile` |
+|---|---|---|---|
+| `b1` | 13 / 20 | 16 / 24 | 16 / 24 |
+| `b2` | 12 / 16 | 14 / 24 | 14 / 20 |
+| `caption` | 10 / 12 | 12 / 16 | 12 / 16 |
+| `h1` | 80 / 80 | 80 / 100 | 56 / 72 |
+| `h2` | 56 / 64 | 56 / 52† | 40 / 52 |
+| `h3` | 36 / 48 | 36 / 52 | 28 / 40 |
+| `h4` | 24 / 32 | 24 / 36 | 20 / 28 |
+
+† Desktop `H2` leading is 80, tighter-looking than the table suggests; the point is that every heading's leading is looser in the new collection while sizes agree on desktop.
+
+**Read as two ramps, not one.** The component ramp is what `Button`, `TextField`, `Select`, `Avatar`, and `Chip` measure against today, and its `b1` = 13px is load-bearing — 25 call sites. The new collection's `b1` = 16px is a page/long-form size, and its H1 = 80px shrinking to 56px is breakpoint behaviour no component in this library has. So `responsive.ts` was added *alongside* `typography.ts` rather than over it, and nothing was resized.
+
+Two things make that read uncomfortable, though:
+
+- The names collide exactly. A consumer reading `b1` has no way to know which ramp they are in.
+- `responsive` has no `h5`/`h6`. The component ramp's `h5` (20 / 28) is byte-identical to Mobile `H4`, and its `h6` (16 / 24) to `B1` — which suggests the old `h1`-`h6` ladder was *derived* by flattening both breakpoints into one list, and that the responsive collection is the real source the text styles are bound to.
+
+**Confirm:**
+- Whether these are two ramps or one. If one, the component ramp is wrong and every text size in the library moves (13 → 16px body is a visible jump, not a tweak) — worth doing deliberately, in its own change.
+- If two: what the page ramp should be called so it stops colliding with the component one.
+- Whether `h5`/`h6` still exist. They are consumed (`Avatar` uses `h6`) but appear in no export.
+
+---
+
+### 28. Three rungs in the 11 August component export read as slips (added 11 August)
+Carried through verbatim rather than second-guessed, but each looks like an editing accident rather than a decision:
+
+- **`surface/purple/subtle` (light) aliases `primary/50`.** Every other rung of `surface.purple` — all five of them, both modes — sits on the `purple` scale. This one points at the *primary* scale, so a purple surface's subtle tier renders indigo.
+- **`surface/soft`'s three dark values are all `primary/1000`.** Light mode is a proper ladder (`primary/25` → `50` → `75`); dark mode is flat, so `default`, `defaultHover`, and `defaultPressed` are indistinguishable in dark mode. A soft-surfaced control would have no visible hover there.
+- **`border/soft`'s three dark values are all `grey/900`.** Same shape as above, and additionally off-scale: light mode is on `primary` (50 / 100 / 300) while dark mode is on `grey`, so the border loses its tint entirely when the scheme flips.
+
+`soft` is a new group in this export and nothing consumes it yet, so nothing renders wrong today. `surface.purple` does ship — in `Chip variant="purple"` — but only its `default` rung, which is correct.
+
+**Confirm:** the intended values for all three. A flat dark ladder is a legitimate choice if soft surfaces are not meant to have interaction states in dark mode, in which case the group should carry one value rather than three identical ones.
