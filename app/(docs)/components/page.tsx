@@ -13,6 +13,7 @@ import { data as alert } from '@/src/components/Alert/Alert.examples';
 import { data as avatar } from '@/src/components/Avatar/Avatar.examples';
 import { data as box } from '@/src/components/Box/Box.examples';
 import { data as button } from '@/src/components/Button/Button.examples';
+import { data as card } from '@/src/components/Card/Card.examples';
 import { data as checkbox } from '@/src/components/Checkbox/Checkbox.examples';
 import { data as chip } from '@/src/components/Chip/Chip.examples';
 import { data as collapse } from '@/src/components/Collapse/Collapse.examples';
@@ -57,6 +58,7 @@ const built: readonly (readonly [ComponentExamplesData, string])[] = [
   [grid, '/components/grid'],
   [container, '/components/container'],
   [divider, '/components/divider'],
+  [card, '/components/card'],
   [button, '/components/button'],
   [iconButton, '/components/icon-button'],
   [textField, '/components/text-field'],
@@ -79,15 +81,12 @@ const built: readonly (readonly [ComponentExamplesData, string])[] = [
   [collapse, '/components/animations#collapse'],
 ];
 
-/** Not yet built — kept visible so the roadmap is legible. */
-const planned: readonly ComponentEntry[] = [
-  {
-    name: 'Card',
-    href: '/components/card',
-    category: 'Data Display',
-    data: null,
-  },
-];
+/**
+ * Not yet built — kept visible so the roadmap is legible. Empty as of
+ * Card shipping; add an entry here (and a `disabled: true` one in
+ * `navigation.ts`) when the next component is committed to but unbuilt.
+ */
+const planned: readonly ComponentEntry[] = [];
 
 const entries: readonly ComponentEntry[] = [
   ...built.map(([data, href]) => ({

@@ -24,11 +24,18 @@
  * decisions. Anything with a visual identity — anything a designer
  * could redline — gets wrapped.
  *
- * Two families qualify today:
+ * Three cases qualify today:
  *
  *   - **Layout primitives** — `Box`, `Stack`, `Grid`, `Container`. Each
  *     records the system-level defaults it deliberately leaves to the
  *     design system in its own file.
+ *   - **`CardMedia`** — the one member of the Card family with nothing
+ *     to brand. Its three declarations (`display: block`,
+ *     `width: 100%`, `object-fit: cover`) are already what the design
+ *     draws, its corners come from the parent `Card`, and its height is
+ *     a content dimension the caller sets. The other four Card parts
+ *     carry surface, border, type, and padding, so all four are
+ *     wrapped. See `src/components/Card/CardMedia.tsx`.
  *   - **Motion primitives** — `Fade`, `Grow`, `Slide`, `Zoom`,
  *     `Collapse`. A transition renders no DOM of its own at all: it
  *     clones a child and animates the child's `style`. Its entire API
@@ -130,6 +137,30 @@ export type {
   SkeletonProps,
   SkeletonVariant,
 } from './components/Skeleton';
+
+/**
+ * The Card family. `Card` is the shell; the other four are the regions
+ * that go inside it. Figma models the eight cells of its component set
+ * as content rather than chrome, so there is no variant prop anywhere
+ * here — a card is composed, not configured. See
+ * `src/components/Card/Card.tsx`.
+ */
+export {
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CardMedia,
+} from './components/Card';
+export type {
+  CardActionsProps,
+  CardContentProps,
+  CardContentTypeMap,
+  CardHeaderProps,
+  CardHeaderTypeMap,
+  CardProps,
+  CardTypeMap,
+} from './components/Card';
 
 /**
  * Motion primitives — MUI's five transitions, re-exported under the

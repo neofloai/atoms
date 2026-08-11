@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="580.5" height="163" viewBox="0 0 580.5 163" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Chart Frame">
+<path id="Rectangle" d="M0 54V163H580V104L535 32.5L505 99.5L475.5 12L445 45.5L415.5 8L384.5 23.5L355 18.5L324 32L295.5 125.5L255 20.5L225 48.5L194.5 26L164 34L135 109.5L105.5 8L80 3L54.5 18L25 91L0 11V54Z" fill="url(#paint0_linear_0_21)"/>
+<path id="Rectangle_2" d="M1 13L25 91L54.5 18L80 3L105.5 8L135 109.5L164 34L194.5 26L225 48.5L255 20.5L295.5 125.5L324 32L355 18.5L384.5 23.5L415.5 8L445 45.5L475.5 12L505 99.5L535 32.5L580 104" stroke="#AEB3F3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_21" x1="290" y1="3" x2="290" y2="163" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D5D8F7"/>
+<stop offset="1" stop-color="#F9F9FC"/>
+</linearGradient>
+</defs>
+</svg>
