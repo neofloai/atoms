@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-11T11:14:58.301Z",
+  "generatedAt": "2026-08-11T12:06:04.862Z",
   "components": [
     {
       "name": "Alert",
@@ -546,14 +546,20 @@
     {
       "name": "Checkbox",
       "category": "Inputs",
-      "tagline": "Selection control with an optional clickable label, checked, indeterminate, and disabled states.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=2080-23677",
+      "tagline": "Selection control with an optional clickable label, two sizes, and checked, indeterminate, and disabled states.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3205-121943",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "default": "—",
           "description": "Visible label beside the control. When omitted, provide an `aria-label` instead."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "default": "'md'",
+          "description": "Box size: `md` is the 16px box, `sm` the 12px one. The pointer target does not shrink with it — MUI keeps its 9px padding either way."
         },
         {
           "name": "checked",
@@ -577,7 +583,7 @@
           "name": "indeterminate",
           "type": "boolean",
           "default": "false",
-          "description": "Mixed state for parent checkboxes over partially-selected groups. Visual only — set `checked` separately."
+          "description": "Mixed state for parent checkboxes over partially-selected groups. Draws a dash on the same filled box as `checked` — visual only, so set `checked` separately."
         },
         {
           "name": "disabled",
@@ -590,6 +596,10 @@
         {
           "title": "Labelled checkbox",
           "code": "<Checkbox label=\"Remember me\" defaultChecked />"
+        },
+        {
+          "title": "Both sizes",
+          "code": "<Checkbox label=\"Default\" defaultChecked />\n<Checkbox label=\"Small\" size=\"sm\" defaultChecked />"
         },
         {
           "title": "Controlled, no visible label",
@@ -608,22 +618,28 @@
         "Use the `label` prop so the text is part of the click target",
         "Provide an `aria-label` whenever there is no visible label",
         "Use `indeterminate` on a parent checkbox over a partially-selected group",
-        "Use checkboxes for independent options — any number can be selected"
+        "Use checkboxes for independent options — any number can be selected",
+        "Keep one size within a single form; `sm` is for dense tables and toolbars"
       ],
       "donts": [
         "Don't use a Checkbox for mutually exclusive options — that's a radio group",
         "Don't use a Checkbox to trigger an immediate action — use a Switch or Button",
         "Don't rewrap the control in your own `FormControlLabel` — the `label` prop handles it",
-        "Don't override the checked colour — it is part of the selector identity"
+        "Don't override the checked colour — it is part of the selector identity",
+        "Don't reach for `sm` to fit a tight layout — the 12px box keeps the same 30px pointer target, so it saves less room than it looks"
       ],
       "relatedComponents": [
+        "Radio",
         "TextField",
         "Button"
       ],
       "accessibility": [
         "The label is wired to the input via `FormControlLabel`, so clicking it toggles the control",
         "Keyboard accessible: focusable with Tab, toggled with Space",
-        "`aria-label` is required when no visible label is rendered"
+        "The pointer target is 34px at `md` and 30px at `sm` — both above the 24px WCAG 2.5.8 minimum, though neither reaches the 44px enhanced target, so give a bare checkbox room in dense rows",
+        "Focus-visible draws a 3px ring around the box. The Figma set specifies no focus state, so this is the same ring `Button` and `IconButton` use",
+        "`aria-label` is required when no visible label is rendered",
+        "A disabled unchecked box renders as a plain grey square with no mark, which reads as filled rather than empty — prefer hiding unavailable options over disabling them"
       ]
     },
     {
@@ -1884,14 +1900,20 @@
     {
       "name": "Radio",
       "category": "Inputs",
-      "tagline": "Single-selection control for mutually exclusive options, with an optional clickable label and a RadioGroup wrapper.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=2080-23677",
+      "tagline": "Single-selection control for mutually exclusive options, with an optional clickable label, two sizes, and a RadioGroup wrapper.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3653-28080",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "default": "—",
           "description": "Visible label beside the control. When omitted, provide an `aria-label` instead."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "default": "'md'",
+          "description": "Circle size: `md` is the 16px circle, `sm` the 12px one. Set it on every radio in a group — `RadioGroup` has no size axis to inherit from."
         },
         {
           "name": "value",
@@ -1928,6 +1950,10 @@
           "code": "<RadioGroup row value={size} onChange={handleSizeChange}>\n  <Radio value=\"sm\" label=\"Small\" />\n  <Radio value=\"md\" label=\"Medium\" />\n  <Radio value=\"lg\" label=\"Large\" />\n</RadioGroup>"
         },
         {
+          "title": "Small radios in a group",
+          "code": "<RadioGroup value={density} onChange={handleDensityChange}>\n  <Radio size=\"sm\" value=\"compact\" label=\"Compact\" />\n  <Radio size=\"sm\" value=\"cosy\" label=\"Cosy\" />\n</RadioGroup>"
+        },
+        {
           "title": "Disabled options",
           "code": "<RadioGroup value={tier} onChange={handleTierChange}>\n  <Radio value=\"free\" label=\"Free\" />\n  <Radio value=\"paid\" label=\"Paid\" disabled />\n</RadioGroup>"
         },
@@ -1940,21 +1966,27 @@
         "Wrap radios in a `RadioGroup` so selection and keyboard navigation work",
         "Use the `label` prop so the text is part of the click target",
         "Provide an `aria-label` whenever there is no visible label",
-        "Use radios for 2–5 mutually exclusive options that should all be visible"
+        "Use radios for 2–5 mutually exclusive options that should all be visible",
+        "Give every radio in a group the same `size` — the group does not set it for them"
       ],
       "donts": [
         "Don't use a Radio for independent options — that's a Checkbox",
         "Don't use radios for long option lists — use a Select instead",
         "Don't leave a radio group with no selected default unless 'none' is meaningful",
-        "Don't override the selected colour — it is part of the selector identity"
+        "Don't override the selected colour — it is part of the selector identity",
+        "Don't rely on the border alone to show what is selected — hover draws the same border, so the dot is the only unambiguous signal"
       ],
       "relatedComponents": [
         "Checkbox",
+        "Select",
         "TextField"
       ],
       "accessibility": [
         "The label is wired to the input via `FormControlLabel`, so clicking it selects the control",
         "Within a `RadioGroup`, Arrow keys move selection and Tab moves focus out of the group",
+        "The pointer target is 34px at `md` and 30px at `sm` — both above the 24px WCAG 2.5.8 minimum, though neither reaches the 44px enhanced target",
+        "Focus-visible draws a 3px ring around the circle. The Figma set specifies no focus state, so this is the same ring `Button` and `IconButton` use",
+        "Selected and hovered radios share the same border colour, so selection is carried by the dot alone — do not remove it or rely on the ring to convey state",
         "`aria-label` is required when no visible label is rendered"
       ]
     },

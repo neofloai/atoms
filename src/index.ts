@@ -120,10 +120,14 @@ export { Select } from './components/Select';
 export type { SelectProps, SelectStatus } from './components/Select';
 
 export { Checkbox } from './components/Checkbox';
-export type { CheckboxProps } from './components/Checkbox';
+export type { CheckboxProps, CheckboxSize } from './components/Checkbox';
 
 export { Radio, RadioGroup } from './components/Radio';
-export type { RadioGroupProps, RadioProps } from './components/Radio';
+export type {
+  RadioGroupProps,
+  RadioProps,
+  RadioSize,
+} from './components/Radio';
 
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';

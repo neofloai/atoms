@@ -1,23 +1,35 @@
 'use client';
 
 import * as React from 'react';
+import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Checkbox } from '@/src/components/Checkbox';
 
+import type { CheckboxProps } from '@/src/components/Checkbox';
+
 function PreviewCard({
   title,
+  note,
   children,
 }: {
   title: string;
+  note?: string;
   children: React.ReactNode;
 }) {
   return (
     <Stack spacing={1.5}>
-      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-        {title}
-      </Typography>
+      <Stack spacing={0.5}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+          {title}
+        </Typography>
+        {note && (
+          <Typography variant="body2" color="text.secondary">
+            {note}
+          </Typography>
+        )}
+      </Stack>
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
         {children}
       </Paper>
@@ -28,9 +40,28 @@ function PreviewCard({
 PreviewCard.displayName = 'PreviewCard';
 
 /**
- * Live rendering of the Checkbox states from the Figma selector set:
- * unchecked / checked / indeterminate, with and without labels, and
- * the disabled combinations.
+ * The six cells on the Figma set's `state` axis (node 3205:121943).
+ * Figma calls the indeterminate dash `unselect`; it is the same filled
+ * box as `selected` with a different mark.
+ */
+const STATES: readonly { label: string; props: Partial<CheckboxProps> }[] = [
+  { label: 'Unchecked', props: {} },
+  { label: 'Checked', props: { defaultChecked: true } },
+  { label: 'Indeterminate', props: { indeterminate: true } },
+  { label: 'Disabled', props: { disabled: true } },
+  {
+    label: 'Disabled checked',
+    props: { disabled: true, defaultChecked: true },
+  },
+  {
+    label: 'Disabled indeterminate',
+    props: { disabled: true, indeterminate: true },
+  },
+];
+
+/**
+ * Live rendering of the Checkbox states from the Figma component set,
+ * at both sizes, plus the interactive parent / child pattern.
  */
 export function CheckboxShowcase() {
   const [parentDemo, setParentDemo] = React.useState([true, false]);
@@ -59,14 +90,42 @@ export function CheckboxShowcase() {
 
   return (
     <Stack spacing={4}>
-      <PreviewCard title="States">
+      <PreviewCard
+        title="States"
+        note="Checked and indeterminate share one filled box — only the mark differs, and it grows in on the way there. Hover an enabled box to see the subtle fill the set draws for it."
+      >
         <Stack spacing={1} sx={{ alignItems: 'flex-start' }}>
-          <Checkbox label="Unchecked" />
-          <Checkbox label="Checked" defaultChecked />
-          <Checkbox label="Indeterminate" indeterminate />
-          <Checkbox label="Disabled" disabled />
-          <Checkbox label="Disabled checked" disabled defaultChecked />
+          {STATES.map((state) => (
+            <Checkbox key={state.label} label={state.label} {...state.props} />
+          ))}
         </Stack>
+      </PreviewCard>
+
+      <PreviewCard
+        title="Sizes"
+        note="16px and 12px boxes. The pointer target stays 34px and 30px, so `sm` saves less room than the box suggests."
+      >
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'auto auto',
+            columnGap: 4,
+            rowGap: 1,
+            justifyContent: 'start',
+            alignItems: 'center',
+          }}
+        >
+          {STATES.map((state) => (
+            <React.Fragment key={state.label}>
+              <Checkbox label={`${state.label} — md`} {...state.props} />
+              <Checkbox
+                size="sm"
+                label={`${state.label} — sm`}
+                {...state.props}
+              />
+            </React.Fragment>
+          ))}
+        </Box>
       </PreviewCard>
 
       <PreviewCard title="Parent / child selection">
@@ -93,7 +152,10 @@ export function CheckboxShowcase() {
       </PreviewCard>
 
       <PreviewCard title="Without a visible label">
-        <Checkbox aria-label="Select row" />
+        <Stack direction="row" spacing={2}>
+          <Checkbox aria-label="Select row" />
+          <Checkbox size="sm" aria-label="Select small row" />
+        </Stack>
       </PreviewCard>
     </Stack>
   );
