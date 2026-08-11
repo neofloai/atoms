@@ -1,4 +1,3 @@
-import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
@@ -67,14 +66,6 @@ export default function CheckboxDocsPage() {
               View design in Figma
             </Link>
           )}
-          <Alert severity="info" sx={{ mt: 1 }}>
-            The Figma selector set does not yet define hover/focus states
-            or confirm the checked colour and dark-mode values — see
-            DESIGNER_QUESTIONS.md #14. The Phosphor glyphs from the sheet
-            are in; until the rest is confirmed, the checked state uses
-            the primary token and interaction behaviour stays MUI
-            default. Styling may change once the design team responds.
-          </Alert>
         </Stack>
 
         <Divider />

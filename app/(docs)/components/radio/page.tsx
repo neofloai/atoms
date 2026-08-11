@@ -1,4 +1,3 @@
-import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
@@ -67,16 +66,6 @@ export default function RadioDocsPage() {
               View design in Figma
             </Link>
           )}
-          <Alert severity="info" sx={{ mt: 1 }}>
-            The Figma selector set renders the selected radio in flat
-            grey (an apparent export inconsistency) and does not define
-            hover/focus states or dark-mode values — see
-            DESIGNER_QUESTIONS.md #14. The implemented selected state —
-            dark outer ring with a primary filled dot — follows the
-            design reference provided on 10 June; interaction behaviour
-            stays MUI default. Styling may change once the design team
-            responds.
-          </Alert>
         </Stack>
 
         <Divider />
