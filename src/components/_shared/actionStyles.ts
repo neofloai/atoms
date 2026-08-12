@@ -241,11 +241,33 @@ export function paired(
   return { ...light, ...theme.applyStyles('dark', dark) };
 }
 
-export function focusRing(theme: Theme, token: ModeToken): CSSObject {
+/**
+ * Where the focus ring is drawn relative to the control's box.
+ *
+ * `outer` is the house default and what every Figma focus cell shows: a
+ * 3px ring just outside the border, on a control with space around it.
+ * `inset` draws the same ring just *inside* the box instead, for a
+ * control that spans its container edge to edge — a full-bleed row has
+ * no outside to put a ring in, so an outer one would either be clipped
+ * or paint over the neighbouring row. `Accordion`'s summary is the
+ * first caller; see `AccordionSummary.tsx`.
+ */
+export type FocusRingPlacement = 'outer' | 'inset';
+
+function ringShadow(color: string, placement: FocusRingPlacement): string {
+  const offset = placement === 'inset' ? 'inset ' : '';
+  return `${offset}0 0 0 ${FOCUS_RING_WIDTH_PX}px ${color}`;
+}
+
+export function focusRing(
+  theme: Theme,
+  token: ModeToken,
+  placement: FocusRingPlacement = 'outer'
+): CSSObject {
   return {
-    boxShadow: `0 0 0 ${FOCUS_RING_WIDTH_PX}px ${token.light}`,
+    boxShadow: ringShadow(token.light, placement),
     ...theme.applyStyles('dark', {
-      boxShadow: `0 0 0 ${FOCUS_RING_WIDTH_PX}px ${token.dark}`,
+      boxShadow: ringShadow(token.dark, placement),
     }),
   };
 }
@@ -264,11 +286,12 @@ export function focusRing(theme: Theme, token: ModeToken): CSSObject {
 export function pairedFocusRing(
   theme: Theme,
   styles: Record<string, ModeToken>,
-  ring: ModeToken
+  ring: ModeToken,
+  placement: FocusRingPlacement = 'outer'
 ): CSSObject {
   const [light, dark] = splitModes(styles);
-  light.boxShadow = `0 0 0 ${FOCUS_RING_WIDTH_PX}px ${ring.light}`;
-  dark.boxShadow = `0 0 0 ${FOCUS_RING_WIDTH_PX}px ${ring.dark}`;
+  light.boxShadow = ringShadow(ring.light, placement);
+  dark.boxShadow = ringShadow(ring.dark, placement);
   return { ...light, ...theme.applyStyles('dark', dark) };
 }
 
