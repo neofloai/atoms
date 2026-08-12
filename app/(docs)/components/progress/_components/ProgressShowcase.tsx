@@ -290,7 +290,7 @@ export function ProgressShowcase() {
       <PreviewCard
         title="Inside a control"
         description={
-          'Both action components already render a spinner for their `loading` state — MUI\'s own, at `color="inherit"` and `size={16}`, so it takes the control\'s label colour and needs nothing from here. On a button with a label, pass `loadingPosition="start"` so the spinner takes the icon\'s place; the default `center` position leaves the label showing underneath in this theme (DESIGNER_QUESTIONS.md #36). Use `color="inherit"` directly for anything hand-composed.'
+          'Both action components already render a spinner for their `loading` state — MUI\'s own, at `color="inherit"` and `size={16}`, so it takes the control\'s label colour and needs nothing from here. On a button with a label, pass `loadingPosition="start"` so the spinner takes the icon\'s place; the default `center` position leaves the label showing underneath in this theme. Use `color="inherit"` directly for anything hand-composed.'
         }
       >
         <Stack

@@ -213,14 +213,7 @@ export const data: ComponentExamplesData = {
     "Don't disable a row without saying why in the label or a nearby row; a dead choice with no explanation reads as a bug",
     "Don't hardcode the glyph size with `sx` on the item — pass `size={16}` on the icon, so the rule applies to the icon and not to every child",
     "Don't set `dense` on each item when the whole list is dense — `slotProps={{ list: { dense: true } }}` on the Menu does it once and is inherited",
-    "Don't use `variant=\"secondary\"` as a substitute for `disabled` — one is a quieter label, the other is an inert row, and only the second is announced",
+    "Don't use `variant=\"secondary\"` as a substitute for `disabled` — one is a quieter label, the other is an inert row",
   ],
   relatedComponents: ['Menu', 'Select', 'Checkbox'],
-  accessibility: [
-    'Renders an `<li role="menuitem">` inside the Menu\'s list, so arrow keys move to it and Enter or Space activates it',
-    'Disabled items keep their place in the reading order but are skipped by arrow-key navigation, so the label still has to make sense on its own',
-    'Tone is colour only — `secondary` and `action` carry no semantics, so never let the colour of a row be the only thing that distinguishes what it does',
-    'The `action` tone on the panel surface, and the hover/focus tint behind it, were both checked for contrast in light and dark; a custom tint through `sx` needs the same check',
-    'With `component="a"`, the row stays a menu item to assistive technology and gains the link\'s own affordances — do not add `role="link"` on top',
-  ],
 };

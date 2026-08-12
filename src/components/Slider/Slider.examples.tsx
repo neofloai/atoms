@@ -104,7 +104,7 @@ export const data: ComponentExamplesData = {
   examples: [
     {
       title: 'Single value',
-      description: 'A slider has no built-in label — name it with `aria-label`.',
+      description: 'A range, a value, and an `onChange`.',
       code: '<Slider aria-label="Volume" defaultValue={40} />',
     },
     {
@@ -156,7 +156,6 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Give every slider an `aria-label`, or point `aria-labelledby` at visible text',
     'Use `getAriaLabel` on a range slider so each thumb is named separately',
     'Save on `onChangeCommitted`, and treat `onChange` as a preview — it fires on every movement',
     'Show the chosen value somewhere: `valueLabelDisplay="auto"`, `marks` with labels, or your own readout',
@@ -170,11 +169,4 @@ export const data: ComponentExamplesData = {
     "Don't override the rail or track colour — they carry the filled/unfilled distinction",
   ],
   relatedComponents: ['Switch', 'TextField'],
-  accessibility: [
-    'Renders MUI\'s hidden `<input type="range">` per thumb, so the value is exposed with `role="slider"` and its min/max/now',
-    'Keyboard accessible: arrows step by `step`, Page Up/Down by `shiftStep` (10 by default), Home/End jump to the ends',
-    '`aria-label` or `aria-labelledby` is required — there is no visible label slot',
-    'Use `getAriaValueText` to announce a formatted value ("40 percent") instead of a bare number',
-    'The 42px touch target is taller than the visible bar, so the control stays draggable on touch devices',
-  ],
 };

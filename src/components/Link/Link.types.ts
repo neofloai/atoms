@@ -52,11 +52,10 @@ export type LinkColor =
  * When the underline is drawn. MUI's union, unchanged, because it names
  * CSS rather than Material.
  *
- * `always` is the default and the accessible choice: colour alone is not
- * a sufficient signal (WCAG 1.4.1), so a link in a run of text needs the
- * line. `hover` and `none` are for places where something else already
- * marks the link — a nav item, a card that is entirely clickable, a
- * footer column.
+ * `always` is the default: colour alone is a weak signal, so a link in a
+ * run of text needs the line. `hover` and `none` are for places where
+ * something else already marks the link — a nav item, a card that is
+ * entirely clickable, a footer column.
  */
 export type LinkUnderline = 'always' | 'hover' | 'none';
 

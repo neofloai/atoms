@@ -28,8 +28,7 @@ import type {
  *
  * MUI's `size="large"`. The Figma component set (node 3763:4790) draws
  * two sizes and no third, so there is no 44px toggle to name. `Chip`
- * has the same two-value ladder for the same reason. See
- * DESIGNER_QUESTIONS.md #37.
+ * has the same two-value ladder for the same reason.
  *
  * ## Added
  *

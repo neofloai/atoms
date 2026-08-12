@@ -44,7 +44,7 @@ const fontSpecs: readonly FontSpec[] = [
     name: 'Clash Grotesk',
     role: 'Marketing display',
     family: fontFamilies.marketing.sans,
-    note: 'Not yet self-hosted — falls back to DM Sans (see DESIGNER_QUESTIONS.md #7).',
+    note: 'Not yet self-hosted — falls back to DM Sans.',
   },
 ];
 

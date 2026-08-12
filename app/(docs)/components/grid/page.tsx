@@ -318,26 +318,6 @@ export default function GridDocsPage() {
           </Stack>
         </Stack>
 
-        {data.accessibility && (
-          <>
-            <Divider />
-            <Stack spacing={1.5} sx={{ maxWidth: PROSE }}>
-              <SectionHeading id="accessibility">Accessibility</SectionHeading>
-              <Stack component="ul" spacing={1} sx={{ pl: 2.5, m: 0 }}>
-                {data.accessibility.map((item) => (
-                  <Typography
-                    key={item}
-                    component="li"
-                    variant="body2"
-                    color="text.secondary"
-                  >
-                    {item}
-                  </Typography>
-                ))}
-              </Stack>
-            </Stack>
-          </>
-        )}
       </Stack>
     </Container>
   );

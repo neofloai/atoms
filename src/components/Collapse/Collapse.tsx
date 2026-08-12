@@ -38,22 +38,8 @@
  * Honoured automatically via `motion: { reducedMotion: 'system' }` in
  * `src/theme/index.ts`.
  *
- * ## Accessibility
- *
- * `Collapse` manages size, not semantics. A disclosure still needs its
- * trigger wired to it: `aria-expanded` on the control and
- * `aria-controls` pointing at the collapsing region's `id`. Without
- * that, a screen reader user gets a button with no stated effect and a
- * region that appears with no announcement. Pair it with
- * `unmountOnExit` so the hidden content is out of the accessibility
- * tree entirely rather than present at zero height.
- *
- * @example A disclosure, wired up
- * <Button
- *   onClick={() => setOpen(!open)}
- *   aria-expanded={open}
- *   aria-controls="billing-details"
- * >
+ * @example A disclosure
+ * <Button onClick={() => setOpen(!open)}>
  *   {open ? 'Hide details' : 'Show details'}
  * </Button>
  * <Collapse in={open} timeout="auto" unmountOnExit>

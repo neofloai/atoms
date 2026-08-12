@@ -89,8 +89,6 @@ const StyledIconButton = styled(MuiIconButton, {
  * hover / pressed / focus / disabled state styling in both colour
  * schemes.
  *
- * Always provide an `aria-label` — the control has no visible text.
- *
  * @example Primary action
  * <IconButton aria-label="Save to favourites"><HeartIcon /></IconButton>
  *

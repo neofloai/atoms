@@ -27,7 +27,7 @@ export const data: ComponentExamplesData = {
       type: 'ElementType',
       default: "'div'",
       description:
-        'Element rendered at the root, fully type-checked so the swapped element’s own props are accepted. A card is usually an `article` or a `section` rather than a bare `div` — worth setting, since it is the only thing that tells a screen reader the group exists.',
+        'Element rendered at the root, fully type-checked so the swapped element’s own props are accepted. A card is usually an `article` or a `section` rather than a bare `div`.',
     },
     {
       name: 'sx',
@@ -76,7 +76,7 @@ export const data: ComponentExamplesData = {
       type: 'ElementType',
       default: "'div'",
       description:
-        'Set to `img` (with `src` and `alt`) for a real image element, which is what the design draws and what a screen reader can describe. The default `div` takes a CSS background through `image` instead, and has no intrinsic height — it collapses to 0px unless you give it one.',
+        'Set to `img` (with `src` and `alt`) for a real image element, which is what the design draws. The default `div` takes a CSS background through `image` instead, and has no intrinsic height — it collapses to 0px unless you give it one.',
     },
     {
       name: 'CardMedia image',
@@ -201,7 +201,7 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
-      title: 'A heading a screen reader can navigate to',
+      title: 'Promoting the title to a real heading',
       description:
         'The title renders as a `<span>` by default, so a page of cards has no headings in it. Give the card a semantic root and promote the title to a real heading at the level the surrounding page uses.',
       code: [
@@ -277,15 +277,5 @@ export const data: ComponentExamplesData = {
     'Divider',
     'Grid',
     'Avatar',
-  ],
-  accessibility: [
-    'A card renders a `<div>` by default, which carries no meaning at all — `component="article"` or `component="section"` is what turns it into a group a screen reader can find and skip',
-    '`CardHeader`’s title is a `<span>`, so a page of cards has no headings in it until you promote it: `slotProps={{ title: { component: "h2" } }}`, at the level the surrounding outline calls for',
-    'A `section` needs an accessible name to be listed as a landmark — pair `aria-labelledby` on the card with an `id` on the title, or the region is announced as an unnamed group',
-    'Media that carries meaning needs `component="img"` and a real `alt`; the `image` prop paints a CSS background, which no screen reader can describe. Decorative media takes `alt=""`, not a missing `alt`',
-    'The action row is a plain row of buttons, so tab order follows the markup — put the primary action last, as the design draws it, and the reading order and the visual order stay the same',
-    'There is no clickable-card affordance in this library, which also means there is no nested-interactive trap: a card with a button inside it has exactly one tab stop per button, not one for the card as well',
-    'The card is separated from the page almost entirely by its border, and that border is faint by design: `border.layers.card1` against `surface.layers.card1` measures 1.11:1 in light mode and 1.05:1 in dark, while the card surface itself is only 1.03:1 and 1.07:1 from the page behind it. WCAG 1.4.11 asks 3:1, but it covers controls and meaningful graphics rather than grouping edges — so this is not a failure, it does mean the boundary cannot be the only thing conveying the group. Give the card a semantic root and a heading, and the grouping survives for anyone who cannot see the edge',
-    'Text inside a card clears AA comfortably on both schemes: the title is 19.8:1 in light mode and the description 5.1:1, rising to 6.9:1 in dark. Nothing here depends on the faint border being visible',
   ],
 };

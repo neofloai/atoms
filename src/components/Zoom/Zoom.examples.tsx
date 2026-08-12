@@ -145,14 +145,6 @@ export const data: ComponentExamplesData = {
     "Don't run two zooms in the same slot without a delay; they overlap and read as a flicker",
     "Don't reach for `Zoom` when the size is unpredictable — it has no `timeout=\"auto\"`, which is `Grow`'s whole reason to exist",
     "Don't scale something that also moves the page around it; combine it with a fixed-size slot instead",
-    "Don't use it as the only signal that an action became available — a screen reader user gets no scale, so the control's appearance needs announcing another way",
   ],
   relatedComponents: ['Grow', 'Fade', 'Slide', 'IconButton'],
-  accessibility: [
-    'Respects `prefers-reduced-motion: reduce` automatically via the theme\'s `motion: { reducedMotion: "system" }`',
-    'A control at `scale(0)` still occupies the tab order and still responds to clicks at its centre — always pass `unmountOnExit` for interactive children',
-    'Adds no ARIA; a control that appears in response to a selection still needs an accessible name and, ideally, a live region announcing that it became available',
-    'When two controls share a slot, make sure the label changes with the control, or a screen reader announces the old one until the swap completes',
-    'Keep the duration short: the control is not usefully clickable until it has reached full size',
-  ],
 };

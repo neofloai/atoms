@@ -248,28 +248,6 @@ export default function DividerDocsPage() {
           </Stack>
         </Stack>
 
-        {data.accessibility && (
-          <>
-            <Divider />
-            <Stack spacing={1.5} sx={{ maxWidth: PROSE }}>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Accessibility
-              </Typography>
-              <Stack component="ul" spacing={1} sx={{ pl: 2.5, m: 0 }}>
-                {data.accessibility.map((item) => (
-                  <Typography
-                    key={item}
-                    component="li"
-                    variant="body2"
-                    color="text.secondary"
-                  >
-                    {item}
-                  </Typography>
-                ))}
-              </Stack>
-            </Stack>
-          </>
-        )}
       </Stack>
     </Container>
   );

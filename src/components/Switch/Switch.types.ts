@@ -12,8 +12,7 @@ import type * as React from 'react';
  */
 export interface SwitchProps extends Omit<MuiSwitchProps, 'color'> {
   /**
-   * Visible label rendered beside the control. When omitted, provide
-   * an `aria-label` instead.
+   * Visible label rendered beside the control.
    */
   label?: React.ReactNode;
 }

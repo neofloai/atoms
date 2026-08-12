@@ -95,28 +95,12 @@ const StyledCircularProgress = styled(MuiCircularProgress, {
  * The Product Design System file has no progress, spinner, or loader
  * component, so nothing here was transcribed from a sheet. The colours
  * are composed from existing semantic tokens and the geometry is MUI's.
- * See `DESIGNER_QUESTIONS.md` #36.
- *
- * ## Accessibility
- *
- * MUI puts `role="progressbar"` on the root and, for `determinate`
- * only, `aria-valuenow` / `aria-valuemin` / `aria-valuemax`. Two things
- * follow, and neither can be fixed inside this component:
- *
- *   - **It has no accessible name of its own.** Give it one with
- *     `aria-label`, or point `aria-labelledby` at the heading it
- *     belongs to. A `progressbar` with no name is announced as an
- *     unlabelled progress bar.
- *   - **A spinner should usually not be the thing that announces the
- *     wait.** Put `aria-busy` on the region being loaded and
- *     `aria-describedby` on it pointing at the indicator — MUI's own
- *     documented pattern, and the one in the examples.
  *
  * @example A wait with no percentage
- * <CircularProgress aria-label="Loading results" />
+ * <CircularProgress />
  *
  * @example A known percentage
- * <CircularProgress variant="determinate" value={72} enableTrackSlot aria-label="Upload progress" />
+ * <CircularProgress variant="determinate" value={72} enableTrackSlot />
  *
  * @example Inside a control, taking the control's colour
  * <CircularProgress color="inherit" size={16} />

@@ -113,7 +113,7 @@ const StyledAlert = styled(MuiAlert, {
  * than inline in the page. The sheet's only two axes are `state` and
  * `float`; both are modelled literally (`severity`, `floating`) — there
  * is no `style`/emphasis axis, so unlike an earlier version of this
- * component there is no `variant` prop (see DESIGNER_QUESTIONS.md #17).
+ * component there is no `variant` prop.
  *
  * Colours resolve from the token-built theme palette (and, for
  * `floating`, the shared surface/border tokens), so every severity is

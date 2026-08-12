@@ -24,8 +24,7 @@ import type { OverrideProps } from '@mui/material/OverridableComponent';
  * would type-check, render no change, and leave the caller looking for
  * the bug in their own code. A compiler error is the better failure.
  *
- * If an elevated card is wanted, it needs a Figma cell first; see
- * DESIGNER_QUESTIONS.md #31.
+ * If an elevated card is wanted, it needs a Figma cell first.
  */
 type LockedSurfaceProp = 'variant' | 'elevation' | 'raised' | 'square';
 

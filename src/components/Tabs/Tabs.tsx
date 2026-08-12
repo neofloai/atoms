@@ -160,29 +160,25 @@ EndCaret.displayName = 'TabsEndCaret';
  * `value` plus `onChange(event, value)`, matched against each child's
  * `value`.
  *
- * Three things worth knowing:
+ * Two things worth knowing:
  *
  * - **`Tabs` renders the tab list, not the panels.** MUI's material
  *   package has no `TabPanel`, and this design system has no Figma node
- *   for one, so the panels stay yours: render a `div role="tabpanel"`
- *   wired to the selected tab with `id` / `aria-labelledby`. The docs
- *   page shows the wiring. See DESIGNER_QUESTIONS.md #40.
- * - **The bar needs a name.** It renders `role="tablist"` with none of
- *   its own, so pass `aria-label` (or `aria-labelledby`) describing what
- *   the tabs switch between.
+ *   for one, so the panels stay yours: render the selected panel next to
+ *   the bar and swap it on `onChange`. The docs page shows the wiring.
  * - **`variant` here is MUI's overflow behaviour**, not the house
  *   "colour role" meaning it has on `Button` and `Chip`. Use
  *   `variant="scrollable"` when the tabs can outgrow their container.
  *
  * @example
- * <Tabs value={tab} onChange={(_, next) => setTab(next)} aria-label="Invoice status">
+ * <Tabs value={tab} onChange={(_, next) => setTab(next)}>
  *   <Tab label="All" value="all" />
  *   <Tab label="Open" value="open" count={12} />
  *   <Tab label="Paid" value="paid" />
  * </Tabs>
  *
  * @example Too many to fit
- * <Tabs value={tab} onChange={handleChange} variant="scrollable" aria-label="Regions">
+ * <Tabs value={tab} onChange={handleChange} variant="scrollable">
  *   {regions.map((r) => <Tab key={r.id} label={r.name} value={r.id} />)}
  * </Tabs>
  *

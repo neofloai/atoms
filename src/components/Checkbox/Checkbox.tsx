@@ -40,8 +40,7 @@ const StyledCheckbox = styled(MuiCheckbox)(({ theme }) => ({
  * disabled styling in both colour schemes. Interaction behaviour stays
  * MUI default.
  *
- * Pass `label` to render a clickable label beside the control; without
- * one, supply an `aria-label`.
+ * Pass `label` to render a clickable label beside the control.
  *
  * @example Labelled checkbox
  * <Checkbox label="Remember me" defaultChecked />

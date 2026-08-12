@@ -166,15 +166,10 @@ const StyledToggleButton = styled(MuiToggleButton, {
  * `ToggleButtonGroup` the group owns selection and matches it against
  * `value`, so `selected` is not passed by hand there.
  *
- * Two things worth knowing:
- *
- * - **Selection is carried by the glyph, not only the fill.** The fill
- *   under the pointer is the same fill selection uses; the ink is what
- *   differs. That is a consequence of where the design put the selected
- *   fill — see `toggleButtonTokens.ts`.
- * - **An icon-only toggle needs an `aria-label`.** MUI supplies
- *   `aria-pressed` from `selected`, so assistive technology announces
- *   the pressed state, but it has no name of its own to announce.
+ * One thing worth knowing: **selection is carried by the glyph, not only
+ * the fill.** The fill under the pointer is the same fill selection uses;
+ * the ink is what differs. That is a consequence of where the design put
+ * the selected fill — see `toggleButtonTokens.ts`.
  *
  * @example Standalone
  * <ToggleButton value="bold" selected={bold} onChange={() => setBold(!bold)} aria-label="Bold">

@@ -131,9 +131,4 @@ export const data: ComponentExamplesData = {
     "Don't stack many alerts at once; surface the single most important message",
   ],
   relatedComponents: ['Button', 'IconButton'],
-  accessibility: [
-    'Renders with role="alert" by default; pass role="status" for lower-urgency messages',
-    'The close button and any action are keyboard-accessible and never steal focus',
-    'Icon and colour are decorative — the message text conveys the state',
-  ],
 };

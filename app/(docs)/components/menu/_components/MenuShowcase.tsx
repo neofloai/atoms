@@ -66,9 +66,8 @@ PreviewCard.displayName = 'PreviewCard';
 
 /**
  * A trigger button paired with a menu, wired the way the docs tell you
- * to wire one: the anchor element is the single piece of state, `open`
- * is derived from it, and the trigger carries the ARIA that tells a
- * screen reader it opens a menu.
+ * to wire one: the anchor element is the single piece of state, and
+ * `open` is derived from it.
  */
 function MenuDemo({
   trigger,

@@ -124,7 +124,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Inside a list',
       description:
-        'A bare `<hr>` is not valid between `<li>` elements. `component="li"` keeps the markup legal, and MUI still supplies `role="separator"` — so the rule stays announced without breaking the list.',
+        'A bare `<hr>` is not valid between `<li>` elements. `component="li"` keeps the markup legal, and MUI still supplies `role="separator"`.',
       code: [
         "import { Divider, Stack, Typography } from '@neoflo/atoms';",
         '',
@@ -183,15 +183,7 @@ export const data: ComponentExamplesData = {
     'Don’t use a divider as a decorative line or a border; for an edge on a surface, use a border on that surface',
     'Don’t recolour it per usage — the hairline is one token so that every surface in the system agrees',
     'Don’t give a labelled divider a whole sentence; the label names the group that follows, so keep it to a word or two',
-    'Don’t rely on a divider to convey meaning on its own — it is announced as a separator, but it carries no name for what it is separating',
+    'Don’t rely on a divider to convey meaning on its own — it separates, but it names nothing',
   ],
   relatedComponents: ['Stack', 'Menu', 'MenuItem', 'Box'],
-  accessibility: [
-    'A plain divider renders a real `<hr>`, which is already a separator in the accessibility tree — no role is added, and none is needed',
-    'Adding `children` or `orientation="vertical"` switches the root to a `<div>`; MUI then supplies `role="separator"` and the matching `aria-orientation` itself',
-    'A labelled divider announces its text, so the label is read as part of the separator — keep it to a short name for the group that follows',
-    'A separator that is purely decorative can be hidden with `aria-hidden`, but prefer leaving it announced: it tells a screen-reader user the grouping exists at all',
-    'The hairline is drawn from `border.default.default` rather than `palette.divider`, which raises it from 1.00:1 to 1.74:1 against the dark `card1` surface — MUI’s default is exactly the same colour as that surface, so the rule is invisible there',
-    'No divider reaches the 3:1 of WCAG 1.4.11, and none is expected to: that threshold covers controls and graphics needed to understand the content, and a separator is neither. Never let a rule be the only thing conveying a boundary — the grouping has to hold without it',
-  ],
 };

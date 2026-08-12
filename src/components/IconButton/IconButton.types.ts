@@ -25,9 +25,6 @@ export type IconButtonSize = 'sm' | 'md' | 'lg';
  * Extends MUI's `IconButtonProps` minus the props we remap (`size`,
  * `color`). Everything else — `onClick`, `disabled`, `loading`,
  * `href`, `sx` — passes through.
- *
- * Icon-only controls have no visible text: always provide an
- * `aria-label` describing the action.
  */
 export interface IconButtonProps
   extends Omit<MuiIconButtonProps, 'size' | 'color'> {

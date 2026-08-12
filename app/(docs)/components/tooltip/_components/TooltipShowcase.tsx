@@ -80,8 +80,7 @@ export function TooltipShowcase() {
           </Tooltip>
           {/*
             The trigger's own `aria-label` wins over the one MUI derives
-            from `title`, so the two have to say the same thing — see the
-            Accessibility notes below.
+            from `title`, so the two have to say the same thing.
           */}
           <Tooltip title="Delete for everyone">
             <IconButton variant="error" aria-label="Delete for everyone">

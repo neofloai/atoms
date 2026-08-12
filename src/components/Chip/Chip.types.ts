@@ -32,7 +32,7 @@ export type ChipAppearance = Exclude<ActionAppearance, 'text'>;
  * rather than a third t-shirt size, and that is mirrored here as `dense`
  * instead of renaming the ramp: inserting a size *between* the existing
  * two would silently change what `sm` or `md` means for every existing
- * call site. See DESIGNER_QUESTIONS.md #30.
+ * call site.
  */
 export type ChipSize = 'sm' | 'md';
 
@@ -62,10 +62,9 @@ export interface ChipProps
   dense?: boolean;
   /**
    * Persistent selected state (Figma `state=selected`), for filter and
-   * multi-select chips. Draws the role's border and its selected fill,
-   * and — on chips that are clickable — sets `aria-pressed`. Hover and
-   * press still read over it. No effect at `size="sm"`, which Figma
-   * draws as a single flat swatch.
+   * multi-select chips. Draws the role's border and its selected fill;
+   * hover and press still read over it. No effect at `size="sm"`, which
+   * Figma draws as a single flat swatch.
    */
   selected?: boolean;
 }

@@ -45,7 +45,7 @@ export type ProgressColor =
  *     `sm` / `md` / `lg` ladder: MUI never names sizes here, so there
  *     is no Material word to rename, and the useful values are set by
  *     whatever the spinner sits inside — 16px in a `Button`, 20px in a
- *     dense table row. See `DESIGNER_QUESTIONS.md` #36.
+ *     dense table row.
  *   - `thickness` — stroke width in the 44-unit viewBox, default
  *     `3.6`, so it scales with `size` rather than staying a fixed
  *     px count.
@@ -55,7 +55,7 @@ export type ProgressColor =
  *   - `disableShrink` — stops the indeterminate arc from breathing,
  *     leaving a constant-length arc that only rotates.
  *   - `classes`, `sx`, `className`, `style`, and every `span`
- *     attribute, including the `aria-*` a spinner needs.
+ *     attribute.
  */
 export interface CircularProgressProps
   extends Omit<MuiCircularProgressProps, 'color'> {

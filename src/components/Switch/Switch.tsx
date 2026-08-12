@@ -145,8 +145,7 @@ const StyledSwitch = styled(MuiSwitch)(({ theme }) => ({
  * keyboard toggling, the ripple, the sliding transition, the thumb
  * shadow — is MUI default throughout.
  *
- * Pass `label` to render a clickable label beside the control; without
- * one, supply an `aria-label`.
+ * Pass `label` to render a clickable label beside the control.
  *
  * @example Labelled switch
  * <Switch label="Enable notifications" defaultChecked />

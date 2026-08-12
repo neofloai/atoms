@@ -26,7 +26,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Draws the button pressed, and sets `aria-pressed`. Only for a standalone toggle — inside a group the group owns this.',
+        'Draws the button pressed. Only for a standalone toggle — inside a group the group owns this.',
     },
     {
       name: 'color',
@@ -40,7 +40,7 @@ export const data: ComponentExamplesData = {
       type: "'sm' | 'md'",
       default: "'md'",
       description:
-        'A 36px box with a 20px glyph, or 32px with 16px. MUI’s `large` is not exposed — Figma draws two sizes (DESIGNER_QUESTIONS.md #37).',
+        'A 36px box with a 20px glyph, or 32px with 16px. MUI’s `large` is not exposed — Figma draws two sizes.',
     },
     {
       name: 'appearance',
@@ -90,13 +90,6 @@ export const data: ComponentExamplesData = {
       default: 'false',
       description:
         'On the group, disables every child. A disabled toggle that is still selected keeps a fill, so it does not read as off.',
-    },
-    {
-      name: 'aria-label / aria-labelledby',
-      type: 'string',
-      default: '—',
-      description:
-        'Required on an icon-only toggle, and on the group. Neither has a name of its own; `aria-pressed` comes free from `selected`.',
     },
     {
       name: 'sx',
@@ -193,7 +186,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'With a label',
       description:
-        'Children are arbitrary, so a glyph and a word both work. The label makes the `aria-label` unnecessary.',
+        'Children are arbitrary, so a glyph and a word both work.',
       code: [
         '<ToggleButtonGroup exclusive value={period} onChange={(_, next) => next && setPeriod(next)} aria-label="Period">',
         '  <ToggleButton value="day">Day</ToggleButton>',
@@ -292,7 +285,6 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Give every icon-only toggle an `aria-label`, and the group one describing what it controls — `aria-pressed` comes free from `selected`, but neither component has a name',
     'Use `exclusive` when the options are alternatives, and leave it off when they are independent — that choice is the whole difference between a segmented control and a toolbar',
     'Reject the `null` an exclusive group sends when the last selected button is pressed again, if the thing being chosen must always have a value',
     'Use one group per decision. Two groups side by side in one toolbar is right; one group holding both is not',
@@ -306,17 +298,7 @@ export const data: ComponentExamplesData = {
     "Don't use a group of one. A single toggle needs no `value` comparison, so `selected` on a standalone `ToggleButton` says the same thing with less machinery",
     "Don't put more than about five toggles in a row before considering a `Select` — a row of icons has no room for the labels that would explain them",
     "Don't mix `size` within a group; the shared borders assume the buttons are the same height",
-    "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control, and screen readers announce the pressed state anyway",
+    "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control",
   ],
   relatedComponents: ['IconButton', 'Chip', 'Checkbox', 'Divider'],
-  accessibility: [
-    'MUI renders each toggle as a `<button>` with `aria-pressed` reflecting `selected`, which is the correct pattern for a control that stays on. Nothing extra is needed for the state to be announced — but the *name* is yours to supply on an icon-only toggle',
-    'The group renders `role="group"` with no accessible name. `aria-label` on the group is what turns three unrelated buttons into "Text alignment, group"',
-    'Keyboard behaviour is a plain button row: Tab moves between the toggles, Space and Enter press the focused one. An exclusive group is deliberately *not* a radio group — it does not trap arrow keys, and each button stays in the tab order',
-    'A pressed toggle is legible by ink, not by fill. The fill under the pointer is the same fill selection uses, so the difference between hovered and selected is the glyph colour — `icon/default/subtle` when off, `icon/default/b1` when on, measured 5.75:1 apart in light and 6.30:1 in dark. The selected glyph itself reads 12.1:1 on its own fill in light and 10.4:1 in dark',
-    'The unselected glyph is the one measured failure. `icon/default/subtle` on a page is 2.25:1 in light and 1.86:1 in dark, under the 3:1 that WCAG 1.4.11 asks of a graphic carrying meaning — and on an icon-only toggle the glyph is the only label there is. It is kept as the component set specifies it rather than quietly corrected; `icon/default/placeholder` would clear the threshold at 3.76:1 and 3.61:1 while staying 3.2:1 or better from the selected ink (DESIGNER_QUESTIONS.md #37). Until that is settled, give an icon-only row a `Tooltip`, or use labels',
-    'Neither the fill nor the border is information. The selected fill is 1.07:1 against a light page and 1.12:1 against a dark one; the 1px border is 1.14:1 and 1.05:1. Both are there to group and to hint, which is why the pressed state does not depend on either',
-    'The focus ring is a 3px `box-shadow` and the group deliberately does not clip its children, so a focused toggle at either end of a row shows its whole ring',
-    'A disabled toggle keeps its fill when it is selected, so "on but unavailable" and "off but unavailable" stay different',
-  ],
 };

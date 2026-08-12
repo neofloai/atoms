@@ -63,7 +63,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Remove the child from the DOM once it has faded out. Without it the node stays at `opacity: 0` — still focusable and still read by screen readers, which is usually wrong for content that is meant to be gone.',
+        'Remove the child from the DOM once it has faded out. Without it the node stays at `opacity: 0` — still focusable and still in the layout, which is usually wrong for content that is meant to be gone.',
     },
     {
       name: 'disablePrefersReducedMotion',
@@ -84,7 +84,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Revealing a result',
       description:
-        'The default case: a boolean drives the transition and nothing else is configured. `unmountOnExit` matters here — a success message left in the DOM at zero opacity is still announced by a screen reader.',
+        'The default case: a boolean drives the transition and nothing else is configured. `unmountOnExit` matters here — a success message left in the DOM at zero opacity is still there, and still focusable.',
       code: [
         '<Fade in={submitted} unmountOnExit>',
         '  <Alert severity="success">Invite sent to {email}.</Alert>',
@@ -141,7 +141,7 @@ export const data: ComponentExamplesData = {
   ],
   dos: [
     'Reach for `Fade` first — it is the least movement that still communicates a change, and it never causes layout shift',
-    'Pass `unmountOnExit` for anything that should be gone when hidden, so it leaves the accessibility tree and the tab order with it',
+    'Pass `unmountOnExit` for anything that should be gone when hidden, so it leaves the DOM and the tab order with it',
     'Leave `timeout` alone unless you have a reason; the default reads `theme.transitions` and keeps every transition in the library in step',
     'Use `appear={false}` for content that is already open on page load',
     'Do cleanup in `onExited` rather than in the handler that flipped the boolean',
@@ -154,11 +154,4 @@ export const data: ComponentExamplesData = {
     "Don't stack a fade on a parent and a fade on its child — the opacities multiply and the inner one appears to lag",
   ],
   relatedComponents: ['Grow', 'Zoom', 'Slide', 'Collapse'],
-  accessibility: [
-    'Respects `prefers-reduced-motion: reduce` automatically — the theme sets `motion: { reducedMotion: "system" }`, so the state change lands instantly rather than tweening',
-    'Carries no ARIA and adds no DOM; the semantics belong to the child and to whatever control toggles it',
-    'Without `unmountOnExit` the hidden child stays focusable and announced at `opacity: 0` — pass it, or manage `inert` yourself',
-    'A fade is not an announcement: content that appears in response to a user action still needs a live region, or focus moved to it, for a screen reader to notice',
-    'Keep durations short enough that a keyboard user tabbing quickly is never waiting on an animation to finish before the target is interactive',
-  ],
 };

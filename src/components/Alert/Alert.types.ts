@@ -14,10 +14,10 @@ export type AlertSeverity = 'error' | 'warning' | 'success' | 'info';
  * `severity`, `color`) — `variant` is dropped entirely: the component
  * set (node 973:3010, resynced 2026-07-29) has only two axes, `state`
  * and `float`, both modelled below (`severity`, `floating`); there is
- * no `style`/emphasis axis in the design (see DESIGNER_QUESTIONS.md
- * #17). Everything else — `action`, `icon`, `iconMapping`, `onClose`,
- * `slots`, `sx` — passes through. Colours come from the token-built
- * theme palette, never from inline values.
+ * no `style`/emphasis axis in the design. Everything else — `action`,
+ * `icon`, `iconMapping`, `onClose`, `slots`, `sx` — passes through.
+ * Colours come from the token-built theme palette, never from inline
+ * values.
  */
 export interface AlertProps
   extends Omit<MuiAlertProps, 'variant' | 'severity' | 'color' | 'title'> {

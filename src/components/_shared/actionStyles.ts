@@ -17,7 +17,6 @@ import type { ModeToken } from '@/src/tokens';
  * fill on focus. Call sites pass their `ActionControl` so those stay in
  * this one table rather than leaking into the components. Each was read
  * off `IconButton`'s own component set, not assumed from `Button`'s.
- * See DESIGNER_QUESTIONS.md #29.
  *
  * Figma draws `IconButton`'s glyph from the `icon/*` variable group and
  * `Button`'s label from `text/*`. Every slot these two controls touch
