@@ -113,6 +113,20 @@ export type {
   ChipVariant,
 } from './components/Chip';
 
+/**
+ * `Link` narrows one prop (`color`, to the house roles) and adds none.
+ * Unlike every other component here it is not a `styled()` wrapper — MUI
+ * `Link` is a plain `forwardRef`, so its styling has to ride on `sx` to
+ * land in the right place in the cascade. See `Link.tsx`.
+ */
+export { Link } from './components/Link';
+export type {
+  LinkColor,
+  LinkProps,
+  LinkTypeMap,
+  LinkUnderline,
+} from './components/Link';
+
 export { TextField } from './components/TextField';
 export type {
   TextFieldProps,
