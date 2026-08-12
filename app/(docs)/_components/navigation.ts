@@ -69,6 +69,7 @@ export const navigation: readonly NavSection[] = [
       { label: 'Menu', href: '/components/menu' },
       { label: 'Tooltip', href: '/components/tooltip' },
       { label: 'Skeleton', href: '/components/skeleton' },
+      { label: 'Progress', href: '/components/progress' },
       { label: 'Animations', href: '/components/animations' },
     ],
   },
