@@ -191,6 +191,22 @@ export type {
   AccordionTypeMap,
 } from './components/Accordion';
 
+/**
+ * The tab family — MUI's `Tabs` and `Tab`, matching the two Figma
+ * components (`tabs` 3463:12630 and `tab-items` 3463:12373). `Tabs` owns
+ * the bar's rule, the 24px rhythm, and the indicator; `Tab` owns one
+ * label and its optional count.
+ *
+ * Two of MUI's props are dropped (`textColor`, `indicatorColor` — this
+ * design has no colour axis) and two are added: `disabled` on the bar,
+ * which is Figma's `enabled` axis, and `count` on a tab, which is its
+ * `tag` axis. The panels are not part of it — MUI ships no `TabPanel`
+ * and there is no Figma node for one. See
+ * `src/components/Tabs/Tabs.types.ts`.
+ */
+export { Tab, Tabs } from './components/Tabs';
+export type { TabProps, TabsProps } from './components/Tabs';
+
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';
 
