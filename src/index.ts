@@ -207,6 +207,41 @@ export type {
 export { Tab, Tabs } from './components/Tabs';
 export type { TabProps, TabsProps } from './components/Tabs';
 
+/**
+ * The stepper family — MUI's `Stepper` / `Step` / `StepLabel` /
+ * `StepContent` / `StepConnector`, matching the Figma `stepper` component
+ * set (node 3663:40573), plus `StepCollapse`.
+ *
+ * Nothing is renamed and nothing is dropped. One MUI default moves —
+ * `orientation`, to `'vertical'`, which is the only direction the design
+ * draws. Figma's `done` / `not-done` axis is MUI's own step state, and its
+ * `title` / `text` / `action` axis is content rather than a prop: a step is
+ * a `StepLabel` plus, optionally, a `StepContent`.
+ *
+ * `StepCollapse` is the one part with no MUI counterpart — the `collapse`
+ * cell, a row that folds a run of steps up. It assembles `ButtonBase` and
+ * the `expanded` + `onChange` pair `Accordion` uses rather than inventing
+ * behaviour. See `src/components/Stepper/Stepper.types.ts`.
+ */
+export {
+  Step,
+  StepCollapse,
+  StepConnector,
+  StepContent,
+  StepLabel,
+  Stepper,
+} from './components/Stepper';
+export type {
+  StepCollapseProps,
+  StepConnectorProps,
+  StepContentProps,
+  StepLabelProps,
+  StepProps,
+  StepTypeMap,
+  StepperProps,
+  StepperTypeMap,
+} from './components/Stepper';
+
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';
 
