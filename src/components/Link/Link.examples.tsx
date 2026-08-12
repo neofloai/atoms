@@ -19,7 +19,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'The link text. Make it name the destination: it is what a screen reader reads out of a list of links, with none of the sentence around it.',
+        'The link text. Make it name the destination: it is what someone scanning a list of links reads, with none of the sentence around it.',
     },
     {
       name: 'href',
@@ -61,7 +61,7 @@ export const data: ComponentExamplesData = {
       type: 'string',
       default: '—',
       description:
-        '`"_blank"` opens a new tab. Say so in the link text or an `aria-label` — a new tab moves the user without warning and disables the back button. Modern browsers imply `rel="noopener"` here; `rel="noreferrer"` is still worth adding for older ones.',
+        '`"_blank"` opens a new tab. Say so in the link text — a new tab moves the user without warning and disables the back button. Modern browsers imply `rel="noopener"` here; `rel="noreferrer"` is still worth adding for older ones.',
     },
     {
       name: 'align / noWrap / gutterBottom',
@@ -173,7 +173,7 @@ export const data: ComponentExamplesData = {
     'Write the destination into the link text (`billing settings`, `Q3 revenue report`), since links are read out of context',
     'Use `component={NextLink}` for in-app navigation so the app does not do a full page load',
     'Use `color="inherit"` for a link inside already-coloured copy — an `Alert` message, a caption, a heading',
-    'Say when a link opens a new tab, in the text or an `aria-label`',
+    'Say in the link text when a link opens a new tab',
     'Use `component="button"` with `type="button"` when there is nothing to navigate to',
     'Reach for `Button` (or `Button appearance="text"`) when the thing is an action rather than a destination',
   ],
@@ -186,19 +186,4 @@ export const data: ComponentExamplesData = {
     'Don’t use a link for a destructive action — `color="error"` colours a link *to* something, it does not make one safe to delete with',
   ],
   relatedComponents: ['Button', 'Alert', 'MenuItem', 'Divider', 'Card'],
-  accessibility: [
-    'The default `underline="always"` is what satisfies WCAG 1.4.1: a link in a block of text is identified by more than its colour',
-    'That resting line is Material’s 40% of the ink, which composited over the surface measures 1.86:1 (`warning`) to 2.38:1 (`error`) in light mode and 2.48:1 to 3.26:1 in dark. WCAG sets no ratio for a text decoration, and the ink itself is well clear of 4.5:1 — but the line is deliberately quiet, and raising the 40% is a one-number change if the designer wants it firmer',
-    'Resting ink measures 10.98:1 (`primary`), 12.95:1 (`secondary`), 11.93:1 (`success`), 10.92:1 (`error`), 10.12:1 (`information`), and 6.45:1 (`warning`) against the light page, and 9.63:1 or better in dark mode — all clear of the 4.5:1 in WCAG 1.4.3',
-    'Hover carries two signals, so neither has to do the job alone: the underline goes from 40% of the ink to full strength, and the ink itself dims one rung. The dimmed rung stays above 4.5:1 for every role except `warning` (3.60:1 light) — logged in DESIGNER_QUESTIONS.md #39 rather than quietly clamped',
-    'An `underline="none"` link has only the colour shift to mark hover, which is why that mode is for links whose position already identifies them',
-    'Focus-visible draws a 3px `currentColor` outline at 2px offset. Because it is the link’s own ink it measures 6.45:1 at worst against the page, clearing the 3:1 of WCAG 1.4.11 — which the house `box-shadow` ring token does not in light mode (2.19:1, see #38)',
-    'The ring appears on keyboard focus only. MUI tracks that in state and applies `.Mui-focusVisible`, so clicking a link does not leave a ring behind',
-    'Enter activates an anchor; Space does not, and should not. With `component="button"` both work, because it is a real button',
-    'With `component="button"`, pass `type="button"` — a bare `<button>` inside a `<form>` submits it',
-    '`target="_blank"` moves the user to a new tab with no announcement of its own. Name it in the link text or an `aria-label` (WCAG 3.2.5)',
-    'WCAG 2.5.8 (24px pointer targets) exempts links inside a sentence, which is why an inline link is not padded out to a control-sized hit area. A link standing alone in a toolbar or a footer should be spaced, not enlarged',
-    '`:visited` is deliberately unstyled — the design system has no visited colour, and because the wrapper sets `color`, the browser’s default purple never applies. Visited state is therefore not conveyed at all; raise it with the designer if a documentation surface needs it',
-    'Nothing here removes the browser’s own navigation affordances: the status-bar URL, middle-click, open-in-new-tab, and copy-link all keep working, which is the whole reason to prefer a link over a click handler',
-  ],
 };

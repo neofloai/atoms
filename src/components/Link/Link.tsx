@@ -42,7 +42,7 @@ import type { LinkColor, LinkProps, LinkTypeMap } from './Link.types';
  *     does with its label (`_shared/actionStyles.ts`), so a `primary`
  *     link and a `primary` outline Button are the same blue at rest and
  *     move together. Press is not a third rung: the ladders only run one
- *     way, and the rungs past `caption` fall under 4.5:1 in one scheme or
+ *     way, and the rungs past `caption` go too pale against one scheme or
  *     the other — measured, not assumed. On an underlined link the colour
  *     is the quieter half of the hover signal, since the underline below
  *     carries most of it; the shift is kept anyway because it is the
@@ -59,13 +59,10 @@ import type { LinkColor, LinkProps, LinkTypeMap } from './Link.types';
  *     `from-font`, matching the one underline the design system does draw
  *     — a `text` Button on hover.
  *   - **Focus-visible is a 3px `currentColor` outline at 2px offset**,
- *     not the house `box-shadow` ring. Three reasons, in order of
- *     weight: the ring token measures 2.19:1 in light mode against the
- *     page, under the 3:1 WCAG 1.4.11 asks of a focus indicator, while
- *     the link's own ink is 6.45:1 at worst; a `box-shadow` cannot be
- *     offset, so on text with no padding it would paint over the glyphs
- *     and the underline; and `outline` is what MUI itself reaches for on
- *     this component. The ring problem is system-wide and logged in #38.
+ *     not the house `box-shadow` ring. A `box-shadow` cannot be offset,
+ *     so on text with no padding it would paint over the glyphs and the
+ *     underline; `outline` is also what MUI itself reaches for on this
+ *     component.
  *
  * ## Why the styling goes through `sx` and not `styled()`
  *
@@ -102,7 +99,7 @@ import type { LinkColor, LinkProps, LinkTypeMap } from './Link.types';
  *
  * <Link component={NextLink} href="/settings/team">Team settings</Link>
  *
- * @example A new tab, named so a screen reader says where it goes
+ * @example A new tab, with the destination said in the text
  * <Link href="https://status.neoflo.ai" target="_blank" rel="noreferrer">
  *   Status page (opens in a new tab)
  * </Link>
@@ -126,10 +123,9 @@ import type { LinkColor, LinkProps, LinkTypeMap } from './Link.types';
  * move the other way would make the rule two sentences instead of one.
  *
  * `warning` is the one role whose hover rung is not comfortable:
- * `yellow/700` on the page measures 3.60:1 in light mode, under the
- * 4.5:1 of WCAG 1.4.3. It is offered because MUI, `Chip`, `Badge`, and
- * `Progress` all offer it, and flagged in the docs and in
- * DESIGNER_QUESTIONS.md #39 rather than silently dropped.
+ * `yellow/700` on the page is a pale rung against a light surface. It is
+ * offered because MUI, `Chip`, `Badge`, and `Progress` all offer it, and
+ * tracked in DESIGNER_QUESTIONS.md #39 rather than silently dropped.
  */
 interface RoleTokens {
   readonly rest: ModeToken;

@@ -144,14 +144,6 @@ export const data: ComponentExamplesData = {
     "Don't slide something in from one edge and out through another unless the movement genuinely represents a sequence",
     "Don't leave a large panel sliding across the whole viewport when it belongs to a card — clip it or set `container`",
     "Don't set `disablePrefersReducedMotion` here; of the five transitions this is the one most likely to make a motion-sensitive user unwell",
-    "Don't rely on the slide to announce anything — a screen reader user gets no movement at all, so the content still needs focus moved to it or a live region",
   ],
   relatedComponents: ['Fade', 'Grow', 'Zoom', 'Collapse'],
-  accessibility: [
-    'Respects `prefers-reduced-motion: reduce` automatically via the theme\'s `motion: { reducedMotion: "system" }` — the panel appears in place instead of travelling',
-    'Without `unmountOnExit` the hidden panel sits off-screen, still focusable: tabbing walks into content the user cannot see, which is a genuine keyboard trap',
-    'Adds no ARIA — a sheet or drawer still needs its own role, an accessible name, and focus management on open and close',
-    'Move focus into the panel on `onEntered` rather than when `in` flips, so focus does not land on a moving element',
-    'Large translations are the motion class most associated with vestibular discomfort; keep the distance and duration modest even for users who have not set a preference',
-  ],
 };

@@ -139,10 +139,6 @@ const StyledSlider = styled(MuiSlider)(({ theme }) => ({
  * Horizontal only. MUI's `orientation="vertical"` is not part of this
  * API. Pass an array to `value` / `defaultValue` for a two-thumb range.
  *
- * Sliders have no built-in label: give a single-thumb slider an
- * `aria-label` (or point `aria-labelledby` at visible text), and a range
- * slider a `getAriaLabel` so each thumb is named.
- *
  * @example Single value
  * <Slider aria-label="Volume" defaultValue={40} />
  *

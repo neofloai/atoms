@@ -72,13 +72,6 @@ export const data: ComponentExamplesData = {
         'Selects a tab as soon as the arrow keys reach it, instead of waiting for Enter or Space. Right when switching tabs is instant and cheap; wrong when it fetches — a keyboard user passing over four tabs would fire four requests.',
     },
     {
-      name: 'Tabs aria-label',
-      type: 'string',
-      default: '—',
-      description:
-        'Names the bar. It renders `role="tablist"` with no name of its own, so say what the tabs switch between (“Invoice status”, not “Tabs”). `aria-labelledby` works too when a visible heading already says it.',
-    },
-    {
       name: 'Tab label',
       type: 'ReactNode',
       default: '—',
@@ -132,7 +125,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A bar and its panels',
       description:
-        'The whole pattern. `Tabs` is the tab list only — MUI’s material package ships no `TabPanel`, so the panel is a plain element wired to the tab by `id` and `aria-labelledby`.',
+        'The whole pattern. `Tabs` is the tab list only — MUI’s material package ships no `TabPanel`, so the panel is a plain element you render beside the bar and swap on `onChange`.',
       code: `const [tab, setTab] = React.useState('overview');
 
 <>
@@ -150,7 +143,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'With counts',
       description:
-        'The Figma `tag` axis. Give the tab an `aria-label` when the number on its own would not read clearly.',
+        'The Figma `tag` axis — a count beside the label, in the design’s small chip.',
       code: `<Tabs value={status} onChange={(_, next) => setStatus(next)} aria-label="Invoice status">
   <Tab label="All" value="all" count={48} />
   <Tab label="Open" value="open" count={12} aria-label="Open, 12 invoices" />
@@ -237,8 +230,6 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Give the bar an `aria-label` saying what the tabs switch between — it renders `role="tablist"` with no name of its own',
-    'Wire each panel to its tab with `role="tabpanel"`, `id`, and `aria-labelledby`, and give the tab a matching `aria-controls`',
     'Give every `Tab` a stable `value` when the row is built from data, rather than relying on child order',
     'Use `variant="scrollable"` for a row that can outgrow its container, and `fullWidth` for three or four tabs on a phone',
     'Use `count` for the number behind a tab instead of writing it into the label — it gets the house pill and the right ink',
@@ -249,25 +240,9 @@ export const data: ComponentExamplesData = {
     'Don’t use tabs for a sequence — a wizard needs an order and a “next”, which a tab bar does not have',
     'Don’t use `selectionFollowsFocus` when a tab loads data; arrowing across the row would fire a request per tab',
     'Don’t combine `centered` with `variant="scrollable"` — MUI documents the two as incompatible',
-    'Don’t rely on the indicator alone to say which tab is selected on a low-quality display: it measures 2.87:1 in light mode and 2.12:1 in dark, under the 3:1 that WCAG 1.4.11 asks of a state indicator',
     'Don’t disable a tab that will never become available — leave it out instead',
     'Don’t nest a tab bar inside another one; two rows of tabs on one screen leaves no way to tell which owns the panel',
     'Don’t put more than a handful of tabs in a `standard` bar — past that it wants `scrollable`, or a `Select`',
   ],
   relatedComponents: ['Tab', 'ToggleButtonGroup', 'Divider', 'Card', 'Chip'],
-  accessibility: [
-    'MUI supplies the ARIA pattern: `role="tablist"` on the bar, `role="tab"` with `aria-selected` on each tab, and a roving tabindex so the row is one stop in the tab order. Arrow keys move within it, Home and End jump to the ends, Enter and Space activate',
-    'The panels are yours, and so is their wiring: `role="tabpanel"`, an `id` the tab points at with `aria-controls`, and `aria-labelledby` back at the tab. Give the panel `tabIndex={0}` when it holds no focusable content of its own, so a keyboard user can reach it',
-    'The unselected label is Figma’s `text/default/b3`, which measures 3.76:1 on the light page and 3.61:1 on dark — under the 4.5:1 WCAG 1.4.3 asks of 13px text. It is the design’s value, shipped as drawn rather than quietly corrected; one rung darker (`text/default/b2`) would measure 5.22:1. Raised with the designer in DESIGNER_QUESTIONS.md #40',
-    'The selected label is `text/default/b1` at 12.95:1 light and 11.72:1 dark, and the disabled one is exempt from 1.4.3',
-    'Selection is carried by two signals, not one. The ink moves two rungs — 3.44:1 between the selected and unselected label in light mode, 3.25:1 in dark, both clear of 3:1 — and the indicator appears under the selected tab. The indicator on its own measures 2.87:1 light and 2.12:1 dark against the page, so it is the ink difference that carries the 3:1 of WCAG 1.4.11',
-    'Focus-visible draws a 3px `currentColor` ring inside the tab’s box. Because it is the tab’s own ink it measures 3.67:1 at worst (an unselected tab on a card) and 12.62:1 on the selected one, clearing the 3:1 of WCAG 1.4.11 — which the house `box-shadow` ring token does not in light mode (2.19:1, see #38)',
-    'The ring is inset rather than outside the box, because a tab spans the bar’s full height and an outer ring would have nothing above or below to sit in — `variant="scrollable"` would clip it. The 12px of vertical and 8px of horizontal padding are what keep a 3px ring clear of the glyphs',
-    'The ring appears on keyboard focus only. MUI tracks that in state and applies `.Mui-focusVisible`, so clicking a tab does not leave a ring behind',
-    'A tab is the full 44px of the bar and at least 8px wider than its label, so even a three-letter tab clears the 24×24px WCAG 2.5.8 asks of a pointer target without relying on the standard’s spacing exception. Figma draws the item at 32px with the label flush to the top; the 12px gap it specifies is mirrored above the label here so the label is centred and the hover surface covers the tab rather than hanging below the text (DESIGNER_QUESTIONS.md #40)',
-    'A count is part of the tab’s accessible name, and Chrome separates the two: the first tab of the counts example announces as “All 48”, not “All48”. Pass an `aria-label` where the bare number would still be ambiguous. That pill measures 5.85:1 in light mode but 3.21:1 in dark, which is a property of `Chip size="sm" variant="primary"` rather than of this component',
-    'Selection never changes the label’s weight — every Figma cell is `Sans/B1/Regular` — so the row does not reflow as the selection moves, and a screen magnifier does not lose its place',
-    '`selectionFollowsFocus` implements the ARIA pattern’s “automatic activation”. Leave it off for anything that loads, which is the pattern’s own advice',
-    'A disabled tab keeps a real `disabled` attribute, so it is skipped by the arrow keys as well as unclickable',
-  ],
 };

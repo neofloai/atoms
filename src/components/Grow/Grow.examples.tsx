@@ -138,11 +138,4 @@ export const data: ComponentExamplesData = {
     "Don't use it for content that pushes the page around; a scaling element that also reflows the layout reads as a glitch",
   ],
   relatedComponents: ['Fade', 'Zoom', 'Slide', 'Menu'],
-  accessibility: [
-    'Respects `prefers-reduced-motion: reduce` automatically via the theme\'s `motion: { reducedMotion: "system" }`',
-    'Adds no DOM and no ARIA — a surface revealed this way still needs its own role, and its trigger still needs `aria-expanded`',
-    'With `timeout="auto"` a tall panel can animate for close to half a second; move focus into it on `onEntered` rather than immediately, or the focus lands on a moving target',
-    'Use `unmountOnExit` so a closed surface is out of the tab order rather than scaled to nothing and still focusable',
-    'A stagger multiplies the wait for the last item — keep the step small enough that keyboard users are not held up by it',
-  ],
 };

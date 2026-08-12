@@ -33,13 +33,6 @@ export const data: ComponentExamplesData = {
       description: 'Square control size: 32px, 36px, or 44px.',
     },
     {
-      name: 'aria-label',
-      type: 'string',
-      default: '—',
-      description:
-        'Required for accessibility — the control has no visible text.',
-    },
-    {
       name: 'loading',
       type: 'boolean',
       default: 'false',
@@ -90,7 +83,6 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Always provide an `aria-label` describing the action',
     'Use icons from `@neoflo/atoms/icons` so size and weight defaults apply',
     'Use `appearance="text"` for toolbar and inline actions',
     'Match the `variant` to the action semantics (e.g. `error` for delete)',
@@ -102,8 +94,4 @@ export const data: ComponentExamplesData = {
     "Don't use multiple contained `primary` icon buttons in one toolbar",
   ],
   relatedComponents: ['Button'],
-  accessibility: [
-    '`aria-label` is required — there is no visible text fallback',
-    'Focus-visible state renders a 3px ring that meets contrast requirements',
-  ],
 };

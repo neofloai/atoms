@@ -254,7 +254,6 @@ export const data: ComponentExamplesData = {
   dos: [
     'Close the menu from each item\'s `onClick` — a selection does not fire `onClose`, so nothing else will',
     'Capture the anchor with `event.currentTarget` and derive `open` from it, so one piece of state drives both',
-    'Give the trigger `aria-haspopup="true"` plus `aria-expanded` and `aria-controls`, so a screen reader announces that it opens a menu',
     'Mark the current choice with `selected` rather than a checkmark glyph — the tint and the initial focus both follow from it',
     'Reach the panel through `sx={{ "& .MuiMenu-paper": { … } }}` when it needs a width or a height cap',
   ],
@@ -266,11 +265,4 @@ export const data: ComponentExamplesData = {
     "Don't paint the panel yourself — the surface, border, corners, and shadow all come from the design, and `sx` on the Menu root styles the modal wrapper, not the panel",
   ],
   relatedComponents: ['MenuItem', 'Select', 'IconButton'],
-  accessibility: [
-    'Renders MUI\'s modal + `role="menu"` list, and moves focus into it on open — arrow keys move between items, Escape closes, and focus returns to the trigger',
-    'The trigger is not part of this component: pair it with `aria-haspopup="true"`, `aria-expanded={open}`, and `aria-controls` pointing at the menu\'s `id`',
-    'Disabled items are skipped by arrow-key navigation but stay in the reading order, so a disabled row still needs a label that makes sense out of context',
-    'A `Divider` between groups is decorative and announces nothing — if a group has a meaning, give it a `ListSubheader` as well',
-    'Hover and keyboard focus share one tint, so an item highlighted by either route looks the same; that tint is the only thing distinguishing the focused row, so do not remove it',
-  ],
 };

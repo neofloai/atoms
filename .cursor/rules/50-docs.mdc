@@ -75,14 +75,26 @@ export const data: ButtonExamplesData = {
 
   // Related components
   relatedComponents: ['IconButton', 'ButtonGroup'],
-
-  // Optional: accessibility notes
-  accessibility: [
-    'Always provide visible text or aria-label for icon-only buttons',
-    'Disabled buttons announce their state to screen readers',
-  ],
 };
 ```
+
+## What docs pages do not carry
+
+Two things are deliberately absent from every component page, and from the
+`data` object that feeds it. Do not add them back.
+
+- **No accessibility section.** These components ship into internal
+  dashboards, so accessibility is not a documented concern here. There is
+  no `accessibility` field on `ComponentExamplesData`, no `## Accessibility`
+  heading in a component's JSDoc, and no contrast/WCAG measurements in
+  `dos`, `donts`, or prop descriptions. MUI's own ARIA behaviour is left
+  untouched in the components — it just isn't documented.
+- **No links to internal notes.** `DESIGNER_QUESTIONS.md` is an internal
+  log. Never reference it — by name or by number — anywhere a reader or a
+  package consumer can see it: docs pages, `*.examples.tsx` `data` fields,
+  or the JSDoc on an exported symbol (that one ships in `dist/index.d.ts`).
+  Record the open question in `DESIGNER_QUESTIONS.md` itself and, if the
+  page needs to explain a deviation, state the deviation on its own terms.
 
 ## Writing do's and don'ts
 

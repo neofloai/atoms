@@ -51,8 +51,7 @@ PreviewCard.displayName = 'PreviewCard';
 /**
  * The whole pattern, panels included — the part `Tabs` does not ship, so
  * the docs had better show it. `hidden` keeps the inactive panels in the
- * DOM but out of the accessibility tree, which is what lets a browser
- * find-in-page still work while a screen reader hears only one.
+ * DOM rather than unmounting them, so their state survives a switch.
  */
 function AccountSections() {
   const [tab, setTab] = React.useState('overview');

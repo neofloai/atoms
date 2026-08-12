@@ -108,8 +108,4 @@ export const data: ComponentExamplesData = {
     "Don't use `size=\"sm\"` for primary page-level CTAs",
   ],
   relatedComponents: ['IconButton'],
-  accessibility: [
-    'Always provide visible text or aria-label for icon-only usage',
-    'Focus-visible state renders a 3px ring that meets contrast requirements',
-  ],
 };

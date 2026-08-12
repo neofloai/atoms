@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-12T11:54:31.047Z",
+  "generatedAt": "2026-08-12T12:36:28.247Z",
   "components": [
     {
       "name": "Accordion",
@@ -35,7 +35,7 @@
           "name": "disabled",
           "type": "boolean",
           "default": "false",
-          "description": "Makes the row inert: it cannot be opened, and it leaves the tab order because the summary renders a real disabled `button`. The ink greys to `text/disabled/default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less."
+          "description": "Makes the row inert: it cannot be opened, and the summary renders a real disabled `button`. The ink greys to `text/disabled/default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less."
         },
         {
           "name": "component",
@@ -66,12 +66,6 @@
           "type": "ReactNode",
           "default": "<CaretDownIcon size={16} />",
           "description": "The indicator at the trailing edge. Defaults to the design’s 16px caret, which MUI rotates 180° when the item opens — that rotation is Phosphor’s `CaretUp` to the pixel, which is the second glyph the sheet draws. Pass `null` to remove it."
-        },
-        {
-          "name": "AccordionSummary id / aria-controls",
-          "type": "string",
-          "default": "—",
-          "description": "Worth passing together. MUI labels the revealed region from the summary’s `id` and gives the region the summary’s `aria-controls` as its own `id`; with neither set, the region has `role=\"region\"` and no accessible name, so it is not exposed as a landmark."
         },
         {
           "name": "AccordionDetails children",
@@ -119,9 +113,9 @@
           "code": "<Accordion defaultExpanded>\n  <AccordionSummary>Notification preferences</AccordionSummary>\n  <AccordionDetails>\n    Email digests are sent every Monday at 9am in your local timezone.\n  </AccordionDetails>\n  <AccordionActions>\n    <Button variant=\"secondary\" size=\"sm\">Reset</Button>\n    <Button size=\"sm\">Save</Button>\n  </AccordionActions>\n</Accordion>"
         },
         {
-          "title": "The heading level, and the region’s name",
-          "description": "Two details that only matter for assistive technology, and both are one prop each. The header is an `h3` by default; the revealed region is only announced as a landmark if it has a name.",
-          "code": "<Accordion slots={{ heading: 'h2' }}>\n  <AccordionSummary id=\"billing-header\" aria-controls=\"billing-panel\">\n    Billing\n  </AccordionSummary>\n  <AccordionDetails>Invoices are issued on the first of the month.</AccordionDetails>\n</Accordion>"
+          "title": "Setting the heading level",
+          "description": "The header renders an `h3`. Set the `heading` slot when the level around it is different.",
+          "code": "<Accordion slots={{ heading: 'h2' }}>\n  <AccordionSummary>Billing</AccordionSummary>\n  <AccordionDetails>Invoices are issued on the first of the month.</AccordionDetails>\n</Accordion>"
         },
         {
           "title": "A row that says why it is closed",
@@ -142,7 +136,6 @@
       "dos": [
         "Write the summary as the question or the label someone is scanning for — it is the only part of the item that is always on screen",
         "Control the group when opening one item should close the others, and leave every item uncontrolled when they are independent",
-        "Pass `id` and `aria-controls` on the summary, so the revealed body is a named region rather than an anonymous one",
         "Set `slots={{ heading: \"h2\" }}` (or whichever level fits) when a page has several of these — the default `h3` is a guess about your outline",
         "Open one item by default when the pattern is not obvious from the page, using `defaultExpanded`",
         "Keep the body short enough that opening one item does not push the next one off the screen; a long body wants a page, not a row",
@@ -152,7 +145,7 @@
         "Don't put an accordion around content people need to compare — two things that have to be read together should not take two clicks and a scroll to see at once",
         "Don't hide anything a first-time user must read to proceed; a collapsed row is a row most people will not open",
         "Don't nest an accordion inside an accordion. Two levels of disclosure is a navigation tree, and it should look like one",
-        "Don't put a button, link, or checkbox inside `AccordionSummary` — the summary *is* a button, and nesting one inside it is invalid HTML that assistive technology reports inconsistently. Put the control in the body, or move it out of the item",
+        "Don't put a button, link, or checkbox inside `AccordionSummary` — the summary *is* a button, and nesting one inside it is invalid HTML. Put the control in the body, or move it out of the item",
         "Don't reach for `sx` to add a radius or a shadow to make an item look like a card. If a card is what is wanted, use `Card`; this component is a list row on purpose",
         "Don't use `expanded` without `onChange` — the item will render open or closed and then refuse to move, which reads as a broken control rather than a locked one"
       ],
@@ -162,19 +155,6 @@
         "Divider",
         "Button",
         "MenuItem"
-      ],
-      "accessibility": [
-        "The full ARIA disclosure pattern comes for free. MUI renders the summary as a real `<button>` carrying `aria-expanded`, wraps it in a heading element, and gives the revealed body `role=\"region\"` — so Enter and Space both toggle, and the state is announced. Nothing here had to be added",
-        "Two attributes are still yours to pass. `id` and `aria-controls` on `AccordionSummary` are what wire the region to its heading (`aria-labelledby` and the panel `id` are derived from them); with neither, the region has no accessible name and is not exposed as a landmark at all",
-        "The heading is an `h3` by default, which is a guess. A page whose sections are `h2` should pass `slots={{ heading: \"h2\" }}` — the element is reset with `all: unset`, so changing the level changes nothing visually",
-        "Tab moves between summaries and nothing else — there is no arrow-key navigation, which matches the WAI-ARIA accordion pattern where arrow support is explicitly optional. Every row stays a single tab stop",
-        "The whole row is the hit target, not just the caret: 52px tall closed, which clears the 44px of WCAG 2.5.5 Target Size (AAA) with room to spare",
-        "Text contrast is comfortable in both schemes: the title measures 12.62:1 in light and 10.96:1 in dark, and the body 5.09:1 and 6.94:1, against the item’s own `surface/layers/card 1`. The caret is the title’s colour, so it clears 1.4.11 at the same 12.62:1 and 10.96:1",
-        "The focus ring is the one measured failure, and it is not this component’s alone. The house 3px ring (`border/default/defaultPressed`, `grey/500`) is 2.19:1 against the item in light mode — under the 3:1 WCAG 1.4.11 asks of a focus indicator — while dark mode is fine at 7.83:1. The same token rings `Button`, `IconButton`, `Chip`, `Checkbox`, `Radio`, and `ToggleButton`, so the fix belongs to the system rather than here: `grey/625` would clear both schemes at 3.67:1 and 4.69:1 (DESIGNER_QUESTIONS.md #38)",
-        "The ring is drawn *inset* rather than outside the box, because the summary spans the item edge to edge — an outer ring would paint over the next row’s hairline. Same 3px, same token, same behaviour on `:focus-visible` only, so a mouse click never shows it",
-        "The hairline between two rows is 1.11:1 in light and 1.05:1 in dark against the surface it sits on — the same `border/layers/card 1` on `surface/layers/card 1` pairing `Card` measured (DESIGNER_QUESTIONS.md #31). WCAG does not set a threshold for a grouping edge, but at those ratios the separation is carried by the 16px rhythm rather than by the line, so do not rely on it to mark where one row ends",
-        "A disabled row leaves the tab order entirely (a real `disabled` button), so it can never be focused and then found unresponsive. Its ink measures 2.19:1 and 1.74:1 — below 4.5:1, but 1.4.3 exempts inactive controls, and the alternative is MUI’s 38% fade of the whole row, which is worse on both counts",
-        "The theme sets `motion.reducedMotion: \"system\"`, so under `prefers-reduced-motion: reduce` the height animation, the caret rotation, and the summary’s padding all land instantly instead of tweening. The item still opens; it just stops moving"
       ]
     },
     {
@@ -272,11 +252,6 @@
       "relatedComponents": [
         "Button",
         "IconButton"
-      ],
-      "accessibility": [
-        "Renders with role=\"alert\" by default; pass role=\"status\" for lower-urgency messages",
-        "The close button and any action are keyboard-accessible and never steal focus",
-        "Icon and colour are decorative — the message text conveys the state"
       ]
     },
     {
@@ -301,7 +276,7 @@
           "name": "alt",
           "type": "string",
           "default": "—",
-          "description": "Alternative text for the image, also used by screen readers. Inherited from MUI."
+          "description": "Alternative text for the image. Inherited from MUI."
         },
         {
           "name": "size",
@@ -380,10 +355,6 @@
       ],
       "relatedComponents": [
         "Chip"
-      ],
-      "accessibility": [
-        "Set `alt` on image avatars so screen readers announce the person or entity",
-        "Initials and icon avatars are decorative by default — convey the name in adjacent text"
       ]
     },
     {
@@ -461,7 +432,7 @@
       "examples": [
         {
           "title": "Unread count",
-          "description": "The count belongs in the control's accessible name, because the badge itself is `aria-hidden`.",
+          "description": "A count on the corner of the control it belongs to. Keep it short — a badge is a marker, not a label.",
           "code": "<Badge badgeContent={4} color=\"error\">\n  <IconButton aria-label=\"4 unread notifications\">\n    <BellIcon />\n  </IconButton>\n</Badge>"
         },
         {
@@ -490,7 +461,6 @@
         }
       ],
       "dos": [
-        "Put the count in the wrapped control's `aria-label` — MUI marks the badge `aria-hidden`, so it is never read out",
         "Use `overlap=\"circular\"` over an avatar or any round target, so the badge tucks in rather than floating off the edge",
         "Use `variant=\"dot\"` when the fact that something changed matters more than how much did",
         "Keep `badgeContent` to a number or one short word; the counter is 20px tall and grows sideways",
@@ -500,7 +470,7 @@
       "donts": [
         "Don't rely on the colour alone to carry meaning — a `warning` and an `error` dot are two shades of the same 8px circle to most people",
         "Don't use a badge as a label for the element it covers; it sits on top of the corner and will hide content",
-        "Don't put anything interactive inside `badgeContent` — the badge is `aria-hidden` and cannot be reached by keyboard",
+        "Don't put anything interactive inside `badgeContent` — the badge is a marker, and nothing inside it can be clicked",
         "Don't raise `max` past three digits; use a standalone badge or plain text when the exact number matters",
         "Don't wrap a block-level layout in a badge — the root is `inline-flex`, so it is meant to sit around a single control",
         "Don't drop a childless badge into a row of text expecting it to take up space: the root measures 0x0 and the badge overhangs it on every side, so it will land on whatever is next to it"
@@ -509,14 +479,6 @@
         "Avatar",
         "Chip",
         "IconButton"
-      ],
-      "accessibility": [
-        "MUI renders the badge with `aria-hidden=\"true\"`, so assistive technology never reads `badgeContent`. Whatever it says has to be repeated in the wrapped control's accessible name — `aria-label=\"4 unread notifications\"` rather than `aria-label=\"Notifications\"`",
-        "Keep that label in sync with the count as it changes, so a screen reader and the screen never disagree",
-        "A badge is decoration, not a control: it takes no focus and fires no events. Anything clickable has to be the child",
-        "The counter pairs each role's fill with its own ink, which clears 4.5:1 on ten of the twelve role-and-scheme combinations. Two do not, both inherited from the same tokens a filled `Button` uses: `warning` in light mode (3.1:1) and `primary` in dark mode (2.3:1) — so don't put a number that has to be read precisely on either",
-        "A `dot` clears 3:1 against the page on every role except light-mode `warning` (2.2:1), which is a mid yellow on a near-white page. Nothing has a dot as its only indication of state, so pair it with text either way",
-        "`invisible` animates with a transform, so it is exempt from `prefers-reduced-motion` concerns about movement across the page, but it does still animate — pass `invisible` only when the change is meaningful"
       ]
     },
     {
@@ -599,10 +561,6 @@
         "Container",
         "Alert",
         "Chip"
-      ],
-      "accessibility": [
-        "Renders a `<div>` by default, which carries no semantics — use `component` to render the element the content actually is",
-        "Box adds no ARIA of its own; when it becomes an interactive element, supply the role, focus handling, and label yourself"
       ]
     },
     {
@@ -694,10 +652,6 @@
       ],
       "relatedComponents": [
         "IconButton"
-      ],
-      "accessibility": [
-        "Always provide visible text or aria-label for icon-only usage",
-        "Focus-visible state renders a 3px ring that meets contrast requirements"
       ]
     },
     {
@@ -716,7 +670,7 @@
           "name": "component",
           "type": "ElementType",
           "default": "'div'",
-          "description": "Element rendered at the root, fully type-checked so the swapped element’s own props are accepted. A card is usually an `article` or a `section` rather than a bare `div` — worth setting, since it is the only thing that tells a screen reader the group exists."
+          "description": "Element rendered at the root, fully type-checked so the swapped element’s own props are accepted. A card is usually an `article` or a `section` rather than a bare `div`."
         },
         {
           "name": "sx",
@@ -758,7 +712,7 @@
           "name": "CardMedia component",
           "type": "ElementType",
           "default": "'div'",
-          "description": "Set to `img` (with `src` and `alt`) for a real image element, which is what the design draws and what a screen reader can describe. The default `div` takes a CSS background through `image` instead, and has no intrinsic height — it collapses to 0px unless you give it one."
+          "description": "Set to `img` (with `src` and `alt`) for a real image element, which is what the design draws. The default `div` takes a CSS background through `image` instead, and has no intrinsic height — it collapses to 0px unless you give it one."
         },
         {
           "name": "CardMedia image",
@@ -800,7 +754,7 @@
           "code": "import { Avatar, Card, CardHeader, Divider, Stack, Typography } from '@neoflo/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardHeader title=\"Reviewers\" />\n  <Stack component=\"ul\" sx={{ listStyle: \"none\", p: 0, m: 0 }} divider={<Divider component=\"li\" />}>\n    {reviewers.map((person) => (\n      <Stack\n        key={person.id}\n        component=\"li\"\n        direction=\"row\"\n        spacing={1}\n        sx={{ alignItems: \"center\", p: 2 }}\n      >\n        <Avatar size=\"md\">{person.initials}</Avatar>\n        <Stack>\n          <Typography variant=\"body1\">{person.name}</Typography>\n          <Typography variant=\"body2\" color=\"text.secondary\">{person.role}</Typography>\n        </Stack>\n      </Stack>\n    ))}\n  </Stack>\n</Card>"
         },
         {
-          "title": "A heading a screen reader can navigate to",
+          "title": "Promoting the title to a real heading",
           "description": "The title renders as a `<span>` by default, so a page of cards has no headings in it. Give the card a semantic root and promote the title to a real heading at the level the surrounding page uses.",
           "code": "import { Card, CardHeader } from '@neoflo/atoms';\n\n<Card component=\"section\" aria-labelledby=\"usage-title\">\n  <CardHeader\n    component=\"header\"\n    title=\"Usage\"\n    subheader=\"Billing period to date\"\n    slotProps={{ title: { id: \"usage-title\", component: \"h2\" } }}\n  />\n</Card>"
         },
@@ -840,16 +794,6 @@
         "Divider",
         "Grid",
         "Avatar"
-      ],
-      "accessibility": [
-        "A card renders a `<div>` by default, which carries no meaning at all — `component=\"article\"` or `component=\"section\"` is what turns it into a group a screen reader can find and skip",
-        "`CardHeader`’s title is a `<span>`, so a page of cards has no headings in it until you promote it: `slotProps={{ title: { component: \"h2\" } }}`, at the level the surrounding outline calls for",
-        "A `section` needs an accessible name to be listed as a landmark — pair `aria-labelledby` on the card with an `id` on the title, or the region is announced as an unnamed group",
-        "Media that carries meaning needs `component=\"img\"` and a real `alt`; the `image` prop paints a CSS background, which no screen reader can describe. Decorative media takes `alt=\"\"`, not a missing `alt`",
-        "The action row is a plain row of buttons, so tab order follows the markup — put the primary action last, as the design draws it, and the reading order and the visual order stay the same",
-        "There is no clickable-card affordance in this library, which also means there is no nested-interactive trap: a card with a button inside it has exactly one tab stop per button, not one for the card as well",
-        "The card is separated from the page almost entirely by its border, and that border is faint by design: `border.layers.card1` against `surface.layers.card1` measures 1.11:1 in light mode and 1.05:1 in dark, while the card surface itself is only 1.03:1 and 1.07:1 from the page behind it. WCAG 1.4.11 asks 3:1, but it covers controls and meaningful graphics rather than grouping edges — so this is not a failure, it does mean the boundary cannot be the only thing conveying the group. Give the card a semantic root and a heading, and the grouping survives for anyone who cannot see the edge",
-        "Text inside a card clears AA comfortably on both schemes: the title is 19.8:1 in light mode and the description 5.1:1, rising to 6.9:1 in dark. Nothing here depends on the faint border being visible"
       ]
     },
     {
@@ -862,7 +806,7 @@
           "name": "label",
           "type": "ReactNode",
           "default": "—",
-          "description": "Visible label beside the control. When omitted, provide an `aria-label` instead."
+          "description": "Visible label beside the control."
         },
         {
           "name": "checked",
@@ -915,7 +859,6 @@
       ],
       "dos": [
         "Use the `label` prop so the text is part of the click target",
-        "Provide an `aria-label` whenever there is no visible label",
         "Use `indeterminate` on a parent checkbox over a partially-selected group",
         "Use checkboxes for independent options — any number can be selected"
       ],
@@ -928,11 +871,6 @@
       "relatedComponents": [
         "TextField",
         "Button"
-      ],
-      "accessibility": [
-        "The label is wired to the input via `FormControlLabel`, so clicking it toggles the control",
-        "Keyboard accessible: focusable with Tab, toggled with Space",
-        "`aria-label` is required when no visible label is rendered"
       ]
     },
     {
@@ -975,7 +913,7 @@
           "name": "selected",
           "type": "boolean",
           "default": "—",
-          "description": "Persistent selected state for filter chips: draws the role border plus the selected fill, and sets `aria-pressed` on clickable chips. No effect at `size=\"sm\"`."
+          "description": "Persistent selected state for filter chips: draws the role border plus the selected fill. No effect at `size=\"sm\"`."
         },
         {
           "name": "avatar",
@@ -1045,7 +983,7 @@
         "Match the `variant` to the meaning (e.g. `success` for healthy states, `error` for failures)",
         "Use `appearance=\"outline\"` for filter chips and lower-emphasis tags",
         "Use `onDelete` for removable selections so the affordance is consistent",
-        "Pair `selected` with `onClick` so the state is reachable by keyboard and announced",
+        "Pair `selected` with `onClick` so the chip is a real control rather than a static pill",
         "Keep labels short — one or two words"
       ],
       "donts": [
@@ -1054,17 +992,12 @@
         "Don't mix sizes within one group of chips",
         "Don't hardcode background or border colours — the variant covers both colour schemes",
         "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
-        "Don't use `selected` to mean \"active nav item\" — it announces a toggle, not a location",
+        "Don't use `selected` to mean \"active nav item\" — it reads as a toggle, not a location",
         "Don't mix `dense` and default pills in the same row — the 4px difference reads as misalignment"
       ],
       "relatedComponents": [
         "Button",
         "IconButton"
-      ],
-      "accessibility": [
-        "Clickable chips at `size=\"md\"` are focusable and render a 3px focus-visible ring. Figma defines no focused state for either size, so the ring is a library addition",
-        "`selected` sets `aria-pressed` on clickable chips, and is drawn with a border rather than a fill shift alone so it survives the pointer leaving",
-        "The delete affordance is keyboard-accessible via Backspace/Delete when the chip has focus"
       ]
     },
     {
@@ -1112,7 +1045,7 @@
           "name": "mountOnEnter / unmountOnExit",
           "type": "boolean",
           "default": "false",
-          "description": "Defer mounting until the first expand, and remove the content once collapsed. `unmountOnExit` is what keeps hidden content out of the accessibility tree rather than present at zero height."
+          "description": "Defer mounting until the first expand, and remove the content once collapsed. `unmountOnExit` is what keeps hidden content out of the DOM rather than present at zero height."
         },
         {
           "name": "disablePrefersReducedMotion",
@@ -1135,8 +1068,8 @@
       ],
       "examples": [
         {
-          "title": "A disclosure, wired up",
-          "description": "`Collapse` manages size, not semantics. The trigger needs `aria-expanded` and `aria-controls` pointing at the region, or a screen reader user gets a button with no stated effect and content that appears without announcement.",
+          "title": "A disclosure",
+          "description": "`Collapse` manages size, not semantics — the trigger and what it opens are yours to wire together.",
           "code": "const [open, setOpen] = React.useState(false);\n\n<Button\n  appearance=\"text\"\n  onClick={() => setOpen(!open)}\n  aria-expanded={open}\n  aria-controls=\"billing-details\"\n>\n  {open ? \"Hide details\" : \"Show details\"}\n</Button>\n<Collapse in={open} timeout=\"auto\" unmountOnExit>\n  <Box id=\"billing-details\" sx={{ pt: 2 }}>\n    <Typography variant=\"body2\">{details}</Typography>\n  </Box>\n</Collapse>"
         },
         {
@@ -1156,22 +1089,20 @@
         },
         {
           "title": "A list of expanding rows",
-          "description": "One `Collapse` per row, each driven by its own boolean. Keep the trigger and the region adjacent in the DOM so the announcement order matches the reading order.",
+          "description": "One `Collapse` per row, each driven by its own boolean. Keep the trigger and the region adjacent in the DOM so the markup reads in the order it renders.",
           "code": "{sections.map((section) => (\n  <Box key={section.id}>\n    <Button\n      appearance=\"text\"\n      onClick={() => toggle(section.id)}\n      aria-expanded={openIds.includes(section.id)}\n      aria-controls={`section-${section.id}`}\n    >\n      {section.title}\n    </Button>\n    <Collapse in={openIds.includes(section.id)} timeout=\"auto\" unmountOnExit>\n      <Box id={`section-${section.id}`} sx={{ px: 2, pb: 2 }}>\n        {section.body}\n      </Box>\n    </Collapse>\n  </Box>\n))}"
         }
       ],
       "dos": [
         "Use `Collapse` whenever the surrounding content should move out of the way rather than be covered",
         "Pass `timeout=\"auto\"` so the duration suits how much is being revealed",
-        "Wire the trigger with `aria-expanded` and `aria-controls` — the component supplies none of that",
-        "Add `unmountOnExit` so collapsed content leaves the accessibility tree and the tab order",
+        "Add `unmountOnExit` so collapsed content leaves the DOM and the tab order",
         "Reach for `collapsedSize` before writing a truncation of your own"
       ],
       "donts": [
         "Don't use it for floating content — a popover or menu should not push the page around; that is `Grow` or `Fade`",
         "Don't leave the default flat 300ms on content of wildly varying length; a long section crawls and a short one is over before it registers",
         "Don't animate a collapse inside another collapse — the outer one measures a target that is still moving and lands at the wrong height",
-        "Don't rely on the animation to communicate the state change; the trigger's label and `aria-expanded` are what a screen reader user actually gets",
         "Don't collapse content that contains focus — move focus out first, or the browser scrolls to chase a shrinking element"
       ],
       "relatedComponents": [
@@ -1179,13 +1110,6 @@
         "Grow",
         "Alert",
         "Skeleton"
-      ],
-      "accessibility": [
-        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }` — the content appears at full size instantly",
-        "Supplies no ARIA of its own: the trigger needs `aria-expanded` and `aria-controls`, and the region needs the matching `id`",
-        "Without `unmountOnExit`, collapsed content is present at zero height — with `overflow: hidden` it is visually gone but a screen reader may still reach it, and focusable children stay in the tab order",
-        "Do not collapse a region that currently holds focus; move focus to the trigger first, or the browser follows the shrinking element and scrolls the page",
-        "The height change reflows everything below, so anything the user was reading moves — keep durations short and avoid collapsing on scroll or hover"
       ]
     },
     {
@@ -1297,13 +1221,6 @@
         "Box",
         "Grid",
         "Stack"
-      ],
-      "accessibility": [
-        "Renders a `<div>` and adds no ARIA — set `component` to the landmark the region is, and keep to one `<main>` per page",
-        "Container applies no roles, labels, or focus handling of its own; it only bounds and centres",
-        "A width bound is a readability control: WCAG 1.4.8 asks for no more than 80 characters per line of body text, which a `lg` container of unbroken prose exceeds even though nothing is technically broken",
-        "Gutters are what keep text off the screen edge — if you disable them on a full-width section, reintroduce the padding somewhere inside it",
-        "Both the fluid and the `fixed` bound are maximums, not fixed widths, so content still reflows down to 320px as WCAG 1.4.10 requires"
       ]
     },
     {
@@ -1384,7 +1301,7 @@
         },
         {
           "title": "Inside a list",
-          "description": "A bare `<hr>` is not valid between `<li>` elements. `component=\"li\"` keeps the markup legal, and MUI still supplies `role=\"separator\"` — so the rule stays announced without breaking the list.",
+          "description": "A bare `<hr>` is not valid between `<li>` elements. `component=\"li\"` keeps the markup legal, and MUI still supplies `role=\"separator\"`.",
           "code": "import { Divider, Stack, Typography } from '@neoflo/atoms';\n\n<Stack component=\"ul\" spacing={1} sx={{ listStyle: \"none\", p: 0, m: 0 }}>\n  <Typography component=\"li\" variant=\"body2\">Rename</Typography>\n  <Typography component=\"li\" variant=\"body2\">Duplicate</Typography>\n  <Divider component=\"li\" />\n  <Typography component=\"li\" variant=\"body2\">Delete</Typography>\n</Stack>"
         },
         {
@@ -1411,21 +1328,13 @@
         "Don’t use a divider as a decorative line or a border; for an edge on a surface, use a border on that surface",
         "Don’t recolour it per usage — the hairline is one token so that every surface in the system agrees",
         "Don’t give a labelled divider a whole sentence; the label names the group that follows, so keep it to a word or two",
-        "Don’t rely on a divider to convey meaning on its own — it is announced as a separator, but it carries no name for what it is separating"
+        "Don’t rely on a divider to convey meaning on its own — it separates, but it names nothing"
       ],
       "relatedComponents": [
         "Stack",
         "Menu",
         "MenuItem",
         "Box"
-      ],
-      "accessibility": [
-        "A plain divider renders a real `<hr>`, which is already a separator in the accessibility tree — no role is added, and none is needed",
-        "Adding `children` or `orientation=\"vertical\"` switches the root to a `<div>`; MUI then supplies `role=\"separator\"` and the matching `aria-orientation` itself",
-        "A labelled divider announces its text, so the label is read as part of the separator — keep it to a short name for the group that follows",
-        "A separator that is purely decorative can be hidden with `aria-hidden`, but prefer leaving it announced: it tells a screen-reader user the grouping exists at all",
-        "The hairline is drawn from `border.default.default` rather than `palette.divider`, which raises it from 1.00:1 to 1.74:1 against the dark `card1` surface — MUI’s default is exactly the same colour as that surface, so the rule is invisible there",
-        "No divider reaches the 3:1 of WCAG 1.4.11, and none is expected to: that threshold covers controls and graphics needed to understand the content, and a separator is neither. Never let a rule be the only thing conveying a boundary — the grouping has to hold without it"
       ]
     },
     {
@@ -1473,7 +1382,7 @@
           "name": "unmountOnExit",
           "type": "boolean",
           "default": "false",
-          "description": "Remove the child from the DOM once it has faded out. Without it the node stays at `opacity: 0` — still focusable and still read by screen readers, which is usually wrong for content that is meant to be gone."
+          "description": "Remove the child from the DOM once it has faded out. Without it the node stays at `opacity: 0` — still focusable and still in the layout, which is usually wrong for content that is meant to be gone."
         },
         {
           "name": "disablePrefersReducedMotion",
@@ -1491,7 +1400,7 @@
       "examples": [
         {
           "title": "Revealing a result",
-          "description": "The default case: a boolean drives the transition and nothing else is configured. `unmountOnExit` matters here — a success message left in the DOM at zero opacity is still announced by a screen reader.",
+          "description": "The default case: a boolean drives the transition and nothing else is configured. `unmountOnExit` matters here — a success message left in the DOM at zero opacity is still there, and still focusable.",
           "code": "<Fade in={submitted} unmountOnExit>\n  <Alert severity=\"success\">Invite sent to {email}.</Alert>\n</Fade>"
         },
         {
@@ -1517,7 +1426,7 @@
       ],
       "dos": [
         "Reach for `Fade` first — it is the least movement that still communicates a change, and it never causes layout shift",
-        "Pass `unmountOnExit` for anything that should be gone when hidden, so it leaves the accessibility tree and the tab order with it",
+        "Pass `unmountOnExit` for anything that should be gone when hidden, so it leaves the DOM and the tab order with it",
         "Leave `timeout` alone unless you have a reason; the default reads `theme.transitions` and keeps every transition in the library in step",
         "Use `appear={false}` for content that is already open on page load",
         "Do cleanup in `onExited` rather than in the handler that flipped the boolean"
@@ -1534,13 +1443,6 @@
         "Zoom",
         "Slide",
         "Collapse"
-      ],
-      "accessibility": [
-        "Respects `prefers-reduced-motion: reduce` automatically — the theme sets `motion: { reducedMotion: \"system\" }`, so the state change lands instantly rather than tweening",
-        "Carries no ARIA and adds no DOM; the semantics belong to the child and to whatever control toggles it",
-        "Without `unmountOnExit` the hidden child stays focusable and announced at `opacity: 0` — pass it, or manage `inert` yourself",
-        "A fade is not an announcement: content that appears in response to a user action still needs a live region, or focus moved to it, for a screen reader to notice",
-        "Keep durations short enough that a keyboard user tabbing quickly is never waiting on an animation to finish before the target is interactive"
       ]
     },
     {
@@ -1697,13 +1599,6 @@
         "Stack",
         "Box",
         "Container"
-      ],
-      "accessibility": [
-        "Renders a `<div>` by default and adds no ARIA — set `component` to the element the region actually is (`ul`, `section`, `nav`)",
-        "Reading and tab order follow the DOM, which is the order you write the items in — a `size` that reorders the visual layout at a breakpoint does not reorder the content",
-        "`direction=\"row-reverse\"` reverses the visual order while leaving DOM order untouched, so avoid it wherever sequence carries meaning",
-        "With `component=\"ul\"`, each item needs `component=\"li\"` for the group to be announced as a list",
-        "Grid controls arrangement only — it applies no focus handling, roles, or labels of its own"
       ]
     },
     {
@@ -1801,13 +1696,6 @@
         "Zoom",
         "Slide",
         "Menu"
-      ],
-      "accessibility": [
-        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }`",
-        "Adds no DOM and no ARIA — a surface revealed this way still needs its own role, and its trigger still needs `aria-expanded`",
-        "With `timeout=\"auto\"` a tall panel can animate for close to half a second; move focus into it on `onEntered` rather than immediately, or the focus lands on a moving target",
-        "Use `unmountOnExit` so a closed surface is out of the tab order rather than scaled to nothing and still focusable",
-        "A stagger multiplies the wait for the last item — keep the step small enough that keyboard users are not held up by it"
       ]
     },
     {
@@ -1833,12 +1721,6 @@
           "type": "'sm' | 'md' | 'lg'",
           "default": "'md'",
           "description": "Square control size: 32px, 36px, or 44px."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "default": "—",
-          "description": "Required for accessibility — the control has no visible text."
         },
         {
           "name": "loading",
@@ -1872,7 +1754,6 @@
         }
       ],
       "dos": [
-        "Always provide an `aria-label` describing the action",
         "Use icons from `@neoflo/atoms/icons` so size and weight defaults apply",
         "Use `appearance=\"text\"` for toolbar and inline actions",
         "Match the `variant` to the action semantics (e.g. `error` for delete)"
@@ -1885,10 +1766,6 @@
       ],
       "relatedComponents": [
         "Button"
-      ],
-      "accessibility": [
-        "`aria-label` is required — there is no visible text fallback",
-        "Focus-visible state renders a 3px ring that meets contrast requirements"
       ]
     },
     {
@@ -1900,7 +1777,7 @@
           "name": "children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The link text. Make it name the destination: it is what a screen reader reads out of a list of links, with none of the sentence around it."
+          "description": "The link text. Make it name the destination: it is what someone scanning a list of links reads, with none of the sentence around it."
         },
         {
           "name": "href",
@@ -1936,7 +1813,7 @@
           "name": "target",
           "type": "string",
           "default": "—",
-          "description": "`\"_blank\"` opens a new tab. Say so in the link text or an `aria-label` — a new tab moves the user without warning and disables the back button. Modern browsers imply `rel=\"noopener\"` here; `rel=\"noreferrer\"` is still worth adding for older ones."
+          "description": "`\"_blank\"` opens a new tab. Say so in the link text — a new tab moves the user without warning and disables the back button. Modern browsers imply `rel=\"noopener\"` here; `rel=\"noreferrer\"` is still worth adding for older ones."
         },
         {
           "name": "align / noWrap / gutterBottom",
@@ -2008,7 +1885,7 @@
         "Write the destination into the link text (`billing settings`, `Q3 revenue report`), since links are read out of context",
         "Use `component={NextLink}` for in-app navigation so the app does not do a full page load",
         "Use `color=\"inherit\"` for a link inside already-coloured copy — an `Alert` message, a caption, a heading",
-        "Say when a link opens a new tab, in the text or an `aria-label`",
+        "Say in the link text when a link opens a new tab",
         "Use `component=\"button\"` with `type=\"button\"` when there is nothing to navigate to",
         "Reach for `Button` (or `Button appearance=\"text\"`) when the thing is an action rather than a destination"
       ],
@@ -2026,21 +1903,6 @@
         "MenuItem",
         "Divider",
         "Card"
-      ],
-      "accessibility": [
-        "The default `underline=\"always\"` is what satisfies WCAG 1.4.1: a link in a block of text is identified by more than its colour",
-        "That resting line is Material’s 40% of the ink, which composited over the surface measures 1.86:1 (`warning`) to 2.38:1 (`error`) in light mode and 2.48:1 to 3.26:1 in dark. WCAG sets no ratio for a text decoration, and the ink itself is well clear of 4.5:1 — but the line is deliberately quiet, and raising the 40% is a one-number change if the designer wants it firmer",
-        "Resting ink measures 10.98:1 (`primary`), 12.95:1 (`secondary`), 11.93:1 (`success`), 10.92:1 (`error`), 10.12:1 (`information`), and 6.45:1 (`warning`) against the light page, and 9.63:1 or better in dark mode — all clear of the 4.5:1 in WCAG 1.4.3",
-        "Hover carries two signals, so neither has to do the job alone: the underline goes from 40% of the ink to full strength, and the ink itself dims one rung. The dimmed rung stays above 4.5:1 for every role except `warning` (3.60:1 light) — logged in DESIGNER_QUESTIONS.md #39 rather than quietly clamped",
-        "An `underline=\"none\"` link has only the colour shift to mark hover, which is why that mode is for links whose position already identifies them",
-        "Focus-visible draws a 3px `currentColor` outline at 2px offset. Because it is the link’s own ink it measures 6.45:1 at worst against the page, clearing the 3:1 of WCAG 1.4.11 — which the house `box-shadow` ring token does not in light mode (2.19:1, see #38)",
-        "The ring appears on keyboard focus only. MUI tracks that in state and applies `.Mui-focusVisible`, so clicking a link does not leave a ring behind",
-        "Enter activates an anchor; Space does not, and should not. With `component=\"button\"` both work, because it is a real button",
-        "With `component=\"button\"`, pass `type=\"button\"` — a bare `<button>` inside a `<form>` submits it",
-        "`target=\"_blank\"` moves the user to a new tab with no announcement of its own. Name it in the link text or an `aria-label` (WCAG 3.2.5)",
-        "WCAG 2.5.8 (24px pointer targets) exempts links inside a sentence, which is why an inline link is not padded out to a control-sized hit area. A link standing alone in a toolbar or a footer should be spaced, not enlarged",
-        "`:visited` is deliberately unstyled — the design system has no visited colour, and because the wrapper sets `color`, the browser’s default purple never applies. Visited state is therefore not conveyed at all; raise it with the designer if a documentation surface needs it",
-        "Nothing here removes the browser’s own navigation affordances: the status-bar URL, middle-click, open-in-new-tab, and copy-link all keep working, which is the whole reason to prefer a link over a click handler"
       ]
     },
     {
@@ -2174,7 +2036,6 @@
       "dos": [
         "Close the menu from each item's `onClick` — a selection does not fire `onClose`, so nothing else will",
         "Capture the anchor with `event.currentTarget` and derive `open` from it, so one piece of state drives both",
-        "Give the trigger `aria-haspopup=\"true\"` plus `aria-expanded` and `aria-controls`, so a screen reader announces that it opens a menu",
         "Mark the current choice with `selected` rather than a checkmark glyph — the tint and the initial focus both follow from it",
         "Reach the panel through `sx={{ \"& .MuiMenu-paper\": { … } }}` when it needs a width or a height cap"
       ],
@@ -2189,13 +2050,6 @@
         "MenuItem",
         "Select",
         "IconButton"
-      ],
-      "accessibility": [
-        "Renders MUI's modal + `role=\"menu\"` list, and moves focus into it on open — arrow keys move between items, Escape closes, and focus returns to the trigger",
-        "The trigger is not part of this component: pair it with `aria-haspopup=\"true\"`, `aria-expanded={open}`, and `aria-controls` pointing at the menu's `id`",
-        "Disabled items are skipped by arrow-key navigation but stay in the reading order, so a disabled row still needs a label that makes sense out of context",
-        "A `Divider` between groups is decorative and announces nothing — if a group has a meaning, give it a `ListSubheader` as well",
-        "Hover and keyboard focus share one tint, so an item highlighted by either route looks the same; that tint is the only thing distinguishing the focused row, so do not remove it"
       ]
     },
     {
@@ -2327,19 +2181,12 @@
         "Don't disable a row without saying why in the label or a nearby row; a dead choice with no explanation reads as a bug",
         "Don't hardcode the glyph size with `sx` on the item — pass `size={16}` on the icon, so the rule applies to the icon and not to every child",
         "Don't set `dense` on each item when the whole list is dense — `slotProps={{ list: { dense: true } }}` on the Menu does it once and is inherited",
-        "Don't use `variant=\"secondary\"` as a substitute for `disabled` — one is a quieter label, the other is an inert row, and only the second is announced"
+        "Don't use `variant=\"secondary\"` as a substitute for `disabled` — one is a quieter label, the other is an inert row"
       ],
       "relatedComponents": [
         "Menu",
         "Select",
         "Checkbox"
-      ],
-      "accessibility": [
-        "Renders an `<li role=\"menuitem\">` inside the Menu's list, so arrow keys move to it and Enter or Space activates it",
-        "Disabled items keep their place in the reading order but are skipped by arrow-key navigation, so the label still has to make sense on its own",
-        "Tone is colour only — `secondary` and `action` carry no semantics, so never let the colour of a row be the only thing that distinguishes what it does",
-        "The `action` tone on the panel surface, and the hover/focus tint behind it, were both checked for contrast in light and dark; a custom tint through `sx` needs the same check",
-        "With `component=\"a\"`, the row stays a menu item to assistive technology and gains the link's own affordances — do not add `role=\"link\"` on top"
       ]
     },
     {
@@ -2393,19 +2240,13 @@
           "name": "valueBuffer",
           "type": "number",
           "default": "—",
-          "description": "LinearProgress `buffer` only. A second, further-ahead value — bytes fetched but not yet played. Not announced to assistive technology."
+          "description": "LinearProgress `buffer` only. A second, further-ahead value — bytes fetched but not yet played."
         },
         {
           "name": "min / max",
           "type": "number",
           "default": "0 / 100",
           "description": "The scale `value` is read against, so a byte or step count can be passed straight through without converting to a percentage."
-        },
-        {
-          "name": "aria-label / aria-labelledby",
-          "type": "string",
-          "default": "—",
-          "description": "Neither component has an accessible name of its own. One of these is required, or the wait is announced as an unlabelled progress bar."
         },
         {
           "name": "sx",
@@ -2424,11 +2265,6 @@
           "title": "A known percentage",
           "description": "`enableTrackSlot` gives the ring its unfilled remainder; a bar always has one.",
           "code": "<CircularProgress\n  variant=\"determinate\"\n  value={72}\n  enableTrackSlot\n  aria-label=\"Upload progress\"\n/>\n\n<LinearProgress variant=\"determinate\" value={72} aria-label=\"Upload progress\" />"
-        },
-        {
-          "title": "Loading a region",
-          "description": "MUI's documented ARIA pattern: the region owns the busy state and points at the bar, so the wait is announced once, in context.",
-          "code": "<Box aria-busy={loading} aria-describedby=\"invoices-progress\">\n  {loading && (\n    <LinearProgress id=\"invoices-progress\" aria-label=\"Loading invoices\" />\n  )}\n  <InvoiceTable rows={rows} />\n</Box>"
         },
         {
           "title": "Inside a control",
@@ -2457,11 +2293,9 @@
         }
       ],
       "dos": [
-        "Give every indicator an `aria-label`, or point `aria-labelledby` at the heading it belongs to — neither component has a name of its own",
         "Use `LinearProgress` when a region is loading and `CircularProgress` when a single control is busy",
         "Use `determinate` as soon as a real percentage exists; a spinner that could be a bar wastes information the user already has",
         "Pass `min` / `max` and let the component do the arithmetic, rather than converting bytes or steps to a percentage first",
-        "Put `aria-busy` on the region being loaded and have it point at the indicator with `aria-describedby` — MUI's documented pattern",
         "Reach for `Skeleton` instead when the shape of the content that is coming is already known — it says more than a spinner does",
         "Turn on `enableTrackSlot` for a determinate ring, so the remaining share of the circle is visible rather than implied"
       ],
@@ -2469,7 +2303,7 @@
         "Don't leave a spinner as the only thing on screen for a long wait — after a second or two people need to know what is being waited for, which is text, not an indicator",
         "Don't use `determinate` with a value that jumps backwards or sticks at 99 — an honest spinner beats a dishonest bar",
         "Don't put a spinner inside a `Button` by hand; the `loading` prop already renders one at the right size and colour, and keeps the label's width — pair it with `loadingPosition=\"start\"` so the spinner replaces the icon rather than sitting over the label",
-        "Don't rely on `valueBuffer` to communicate anything important — it is drawn but never announced, because ARIA has no second value",
+        "Don't rely on `valueBuffer` to communicate anything important — it is drawn, and nothing more",
         "Don't stack several indicators for one operation; one indicator per wait, at the level the wait belongs to",
         "Don't use `color` to signal a result — a bar turning `error` red mid-flight reads as a state change, and a finished operation should be replaced by its outcome, not recoloured"
       ],
@@ -2477,16 +2311,6 @@
         "Skeleton",
         "Button",
         "Slider"
-      ],
-      "accessibility": [
-        "MUI renders `role=\"progressbar\"` with no name attached. `aria-label` or `aria-labelledby` is required on both components — this is the one accessibility detail the wrapper cannot supply for you",
-        "`determinate` and `buffer` also get `aria-valuenow` / `aria-valuemin` / `aria-valuemax`, so a percentage is announced. `indeterminate` and `query` deliberately omit them, which is how ARIA expresses \"in progress, amount unknown\"",
-        "Pass `aria-valuetext` when the number needs units to make sense — \"3 of 8 files\" rather than \"37\"",
-        "For a region that is loading, put `aria-busy` on the region and `aria-describedby` pointing at the indicator, rather than putting a live region on the indicator itself. Announcing every percentage tick is worse than announcing none",
-        "The theme sets `motion.reducedMotion: \"system\"`, so both components stop animating under `prefers-reduced-motion`. A spinner then reads as a frozen arc and a bar as a static stub in the middle of the track — MUI's own behaviour, and the reason a wait needs accompanying text either way (DESIGNER_QUESTIONS.md #36)",
-        "Where the fill meets the track, eleven of the twelve role-and-scheme combinations clear 3:1 — measured 3.5:1 to 10.7:1. The exception is `warning` in light mode at 1.35:1: a mid yellow and a mid grey are almost the same luminance, and no rung of the neutral ladder fixes it. Use `warning` on a dark page, or use the default `primary` and put the warning in text (DESIGNER_QUESTIONS.md #36)",
-        "The track itself is a subtle fill rather than a 3:1 boundary — 1.62:1 against a light card, 1.20:1 against a dark one. That is deliberate: pushing the track to 3:1 would demand roughly 9:1 from the fill, which no role colour has. So the *filled* portion is what carries the value, and a bar whose remaining share has to be legible on its own needs a number beside it",
-        "Both roots are `<span>`s with no interactive behaviour: they take no focus, fire no events, and add nothing to the tab order"
       ]
     },
     {
@@ -2499,7 +2323,7 @@
           "name": "label",
           "type": "ReactNode",
           "default": "—",
-          "description": "Visible label beside the control. When omitted, provide an `aria-label` instead."
+          "description": "Visible label beside the control."
         },
         {
           "name": "value",
@@ -2547,7 +2371,6 @@
       "dos": [
         "Wrap radios in a `RadioGroup` so selection and keyboard navigation work",
         "Use the `label` prop so the text is part of the click target",
-        "Provide an `aria-label` whenever there is no visible label",
         "Use radios for 2–5 mutually exclusive options that should all be visible"
       ],
       "donts": [
@@ -2559,11 +2382,6 @@
       "relatedComponents": [
         "Checkbox",
         "TextField"
-      ],
-      "accessibility": [
-        "The label is wired to the input via `FormControlLabel`, so clicking it selects the control",
-        "Within a `RadioGroup`, Arrow keys move selection and Tab moves focus out of the group",
-        "`aria-label` is required when no visible label is rendered"
       ]
     },
     {
@@ -2594,7 +2412,7 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation status. Colours the border and helper text; `error` also sets `aria-invalid`. Omit for the neutral state."
+          "description": "Validation status. Colours the border and helper text. Omit for the neutral state."
         },
         {
           "name": "helperText",
@@ -2640,9 +2458,9 @@
         }
       ],
       "dos": [
-        "Always provide a `label` — use `aria-label` only when a visible label is impossible",
+        "Always provide a `label`",
         "Pair every `status` with a `helperText` explaining what to fix or confirm",
-        "Use MUI `MenuItem` for options so keyboard navigation and a11y work out of the box"
+        "Use MUI `MenuItem` for options so keyboard navigation works out of the box"
       ],
       "donts": [
         "Don't rely on border colour alone to communicate validation — set `helperText` too",
@@ -2650,11 +2468,6 @@
       ],
       "relatedComponents": [
         "TextField"
-      ],
-      "accessibility": [
-        "`status=\"error\"` sets `aria-invalid` on the field",
-        "Helper text is associated with the field via `aria-describedby`",
-        "Built on MUI `Select`, so full keyboard support (arrow keys, type-ahead, `Esc` to close) comes for free"
       ]
     },
     {
@@ -2747,18 +2560,12 @@
           "title": "Animation",
           "description": "The default pulse suits most cases. Use `wave` when several placeholders sit together and a synchronised fade would read as flicker; use `false` when the skeleton is inside something that already animates. Reduced-motion users get a static block from all three without any extra work.",
           "code": "<Skeleton />\n<Skeleton animation=\"wave\" />\n<Skeleton animation={false} />"
-        },
-        {
-          "title": "Announcing the load",
-          "description": "The skeleton itself carries no ARIA, which is deliberate — the loading state belongs to the region, not to each grey block inside it. Mark the region busy and let a screen reader announce the content once it arrives, instead of narrating a dozen placeholders.",
-          "code": "<Box aria-busy={loading} aria-live=\"polite\">\n  {loading ? (\n    <Skeleton width={180} />\n  ) : (\n    <Typography>{user.name}</Typography>\n  )}\n</Box>"
         }
       ],
       "dos": [
         "Match the placeholder to the shape and size of the content it replaces, so nothing jumps when the data lands",
         "Pass the real component as `children` to inherit its dimensions instead of hardcoding `width` and `height` that will drift",
         "Vary the line widths in a paragraph placeholder — a stack of identical bars does not read as text",
-        "Put `aria-busy` on the region being loaded, and let the skeletons stay silent",
         "Render as many placeholder rows as you expect back, so the page height is roughly right before the data arrives"
       ],
       "donts": [
@@ -2771,13 +2578,6 @@
       "relatedComponents": [
         "Avatar",
         "Alert"
-      ],
-      "accessibility": [
-        "Carries no ARIA and is not focusable, matching MUI — a placeholder is decoration, and the loading state belongs on the region around it via `aria-busy`",
-        "Honours `prefers-reduced-motion: reduce`: both the pulse and the wave stop, leaving a static block that still communicates the layout",
-        "Children passed for dimension inference are hidden with `visibility: hidden`, so they never reach the accessibility tree or get announced",
-        "Announce the arrival once with `aria-live=\"polite\"` on the container rather than per placeholder, so a screen reader reads the content and not the wait",
-        "The fill composites against whatever surface it sits on, keeping a constant step in both colour schemes — a custom `bgcolor` needs its own contrast check on every surface it will appear on"
       ]
     },
     {
@@ -2873,21 +2673,13 @@
         "Don't use it for content in the normal flow — a sliding element that also reflows the page fights itself; that is `Collapse`",
         "Don't slide something in from one edge and out through another unless the movement genuinely represents a sequence",
         "Don't leave a large panel sliding across the whole viewport when it belongs to a card — clip it or set `container`",
-        "Don't set `disablePrefersReducedMotion` here; of the five transitions this is the one most likely to make a motion-sensitive user unwell",
-        "Don't rely on the slide to announce anything — a screen reader user gets no movement at all, so the content still needs focus moved to it or a live region"
+        "Don't set `disablePrefersReducedMotion` here; of the five transitions this is the one most likely to make a motion-sensitive user unwell"
       ],
       "relatedComponents": [
         "Fade",
         "Grow",
         "Zoom",
         "Collapse"
-      ],
-      "accessibility": [
-        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }` — the panel appears in place instead of travelling",
-        "Without `unmountOnExit` the hidden panel sits off-screen, still focusable: tabbing walks into content the user cannot see, which is a genuine keyboard trap",
-        "Adds no ARIA — a sheet or drawer still needs its own role, an accessible name, and focus management on open and close",
-        "Move focus into the panel on `onEntered` rather than when `in` flips, so focus does not land on a moving element",
-        "Large translations are the motion class most associated with vestibular discomfort; keep the distance and duration modest even for users who have not set a preference"
       ]
     },
     {
@@ -2977,7 +2769,7 @@
       "examples": [
         {
           "title": "Single value",
-          "description": "A slider has no built-in label — name it with `aria-label`.",
+          "description": "A range, a value, and an `onChange`.",
           "code": "<Slider aria-label=\"Volume\" defaultValue={40} />"
         },
         {
@@ -3000,7 +2792,6 @@
         }
       ],
       "dos": [
-        "Give every slider an `aria-label`, or point `aria-labelledby` at visible text",
         "Use `getAriaLabel` on a range slider so each thumb is named separately",
         "Save on `onChangeCommitted`, and treat `onChange` as a preview — it fires on every movement",
         "Show the chosen value somewhere: `valueLabelDisplay=\"auto\"`, `marks` with labels, or your own readout",
@@ -3016,13 +2807,6 @@
       "relatedComponents": [
         "Switch",
         "TextField"
-      ],
-      "accessibility": [
-        "Renders MUI's hidden `<input type=\"range\">` per thumb, so the value is exposed with `role=\"slider\"` and its min/max/now",
-        "Keyboard accessible: arrows step by `step`, Page Up/Down by `shiftStep` (10 by default), Home/End jump to the ends",
-        "`aria-label` or `aria-labelledby` is required — there is no visible label slot",
-        "Use `getAriaValueText` to announce a formatted value (\"40 percent\") instead of a bare number",
-        "The 42px touch target is taller than the visible bar, so the control stays draggable on touch devices"
       ]
     },
     {
@@ -3128,19 +2912,13 @@
         "Don't reach for Stack when the layout has two axes or needs per-child placement — that is a flex or grid `Box`",
         "Don't hardcode a gap in `sx` (`gap: '12px'`) — `spacing` already resolves from the theme spacing scale",
         "Don't nest a Stack around each child to space it — one Stack spaces all of its immediate children",
-        "Don't pass a bare `<hr>` or a plain `Box` as the `divider` of a `component=\"ul\"` Stack — neither is valid between `<li>` elements; use `<Divider component=\"li\" />`, which stays legal and still announces as a separator"
+        "Don't pass a bare `<hr>` or a plain `Box` as the `divider` of a `component=\"ul\"` Stack — neither is valid between `<li>` elements; use `<Divider component=\"li\" />`, which stays legal"
       ],
       "relatedComponents": [
         "Box",
         "Grid",
         "Container",
         "Divider"
-      ],
-      "accessibility": [
-        "Renders a `<div>` by default, which carries no semantics — set `component` to the element the group actually is (`ul`, `nav`, `fieldset`)",
-        "With `component=\"ul\"`, each child needs `component=\"li\"` for the group to be announced as a list",
-        "A `Divider` passed as the `divider` prop announces as a separator, but it never names what it separates — keep the meaning in the children rather than in the rule",
-        "Stack changes visual order only through `direction` — `row-reverse` and `column-reverse` leave the DOM and tab order unchanged, so avoid them where reading order matters"
       ]
     },
     {
@@ -3153,7 +2931,7 @@
           "name": "label",
           "type": "ReactNode",
           "default": "—",
-          "description": "Visible label beside the control. When omitted, provide an `aria-label` instead."
+          "description": "Visible label beside the control."
         },
         {
           "name": "checked",
@@ -3202,7 +2980,6 @@
       ],
       "dos": [
         "Use the `label` prop so the text is part of the click target",
-        "Provide an `aria-label` whenever there is no visible label",
         "Use a Switch for settings that take effect immediately, with no separate save step",
         "Use checkboxes instead for a form field the user submits later"
       ],
@@ -3214,12 +2991,6 @@
       "relatedComponents": [
         "Checkbox",
         "Radio"
-      ],
-      "accessibility": [
-        "The label is wired to the input via `FormControlLabel`, so clicking it toggles the control",
-        "Keyboard accessible: focusable with Tab, toggled with Space",
-        "Exposed to assistive tech with `role=\"switch\"`, so its state reads as \"on\"/\"off\" rather than \"checked\"/\"unchecked\"",
-        "`aria-label` is required when no visible label is rendered"
       ]
     },
     {
@@ -3277,12 +3048,6 @@
           "description": "Selects a tab as soon as the arrow keys reach it, instead of waiting for Enter or Space. Right when switching tabs is instant and cheap; wrong when it fetches — a keyboard user passing over four tabs would fire four requests."
         },
         {
-          "name": "Tabs aria-label",
-          "type": "string",
-          "default": "—",
-          "description": "Names the bar. It renders `role=\"tablist\"` with no name of its own, so say what the tabs switch between (“Invoice status”, not “Tabs”). `aria-labelledby` works too when a visible heading already says it."
-        },
-        {
           "name": "Tab label",
           "type": "ReactNode",
           "default": "—",
@@ -3328,12 +3093,12 @@
       "examples": [
         {
           "title": "A bar and its panels",
-          "description": "The whole pattern. `Tabs` is the tab list only — MUI’s material package ships no `TabPanel`, so the panel is a plain element wired to the tab by `id` and `aria-labelledby`.",
+          "description": "The whole pattern. `Tabs` is the tab list only — MUI’s material package ships no `TabPanel`, so the panel is a plain element you render beside the bar and swap on `onChange`.",
           "code": "const [tab, setTab] = React.useState('overview');\n\n<>\n  <Tabs value={tab} onChange={(_, next) => setTab(next)} aria-label=\"Account sections\">\n    <Tab label=\"Overview\" value=\"overview\" id=\"tab-overview\" aria-controls=\"panel-overview\" />\n    <Tab label=\"Members\" value=\"members\" id=\"tab-members\" aria-controls=\"panel-members\" />\n    <Tab label=\"Billing\" value=\"billing\" id=\"tab-billing\" aria-controls=\"panel-billing\" />\n  </Tabs>\n\n  <div role=\"tabpanel\" id=\"panel-overview\" aria-labelledby=\"tab-overview\" hidden={tab !== 'overview'}>\n    ...\n  </div>\n</>"
         },
         {
           "title": "With counts",
-          "description": "The Figma `tag` axis. Give the tab an `aria-label` when the number on its own would not read clearly.",
+          "description": "The Figma `tag` axis — a count beside the label, in the design’s small chip.",
           "code": "<Tabs value={status} onChange={(_, next) => setStatus(next)} aria-label=\"Invoice status\">\n  <Tab label=\"All\" value=\"all\" count={48} />\n  <Tab label=\"Open\" value=\"open\" count={12} aria-label=\"Open, 12 invoices\" />\n  <Tab label=\"Paid\" value=\"paid\" count={36} />\n</Tabs>"
         },
         {
@@ -3372,8 +3137,6 @@
         }
       ],
       "dos": [
-        "Give the bar an `aria-label` saying what the tabs switch between — it renders `role=\"tablist\"` with no name of its own",
-        "Wire each panel to its tab with `role=\"tabpanel\"`, `id`, and `aria-labelledby`, and give the tab a matching `aria-controls`",
         "Give every `Tab` a stable `value` when the row is built from data, rather than relying on child order",
         "Use `variant=\"scrollable\"` for a row that can outgrow its container, and `fullWidth` for three or four tabs on a phone",
         "Use `count` for the number behind a tab instead of writing it into the label — it gets the house pill and the right ink",
@@ -3384,7 +3147,6 @@
         "Don’t use tabs for a sequence — a wizard needs an order and a “next”, which a tab bar does not have",
         "Don’t use `selectionFollowsFocus` when a tab loads data; arrowing across the row would fire a request per tab",
         "Don’t combine `centered` with `variant=\"scrollable\"` — MUI documents the two as incompatible",
-        "Don’t rely on the indicator alone to say which tab is selected on a low-quality display: it measures 2.87:1 in light mode and 2.12:1 in dark, under the 3:1 that WCAG 1.4.11 asks of a state indicator",
         "Don’t disable a tab that will never become available — leave it out instead",
         "Don’t nest a tab bar inside another one; two rows of tabs on one screen leaves no way to tell which owns the panel",
         "Don’t put more than a handful of tabs in a `standard` bar — past that it wants `scrollable`, or a `Select`"
@@ -3395,21 +3157,6 @@
         "Divider",
         "Card",
         "Chip"
-      ],
-      "accessibility": [
-        "MUI supplies the ARIA pattern: `role=\"tablist\"` on the bar, `role=\"tab\"` with `aria-selected` on each tab, and a roving tabindex so the row is one stop in the tab order. Arrow keys move within it, Home and End jump to the ends, Enter and Space activate",
-        "The panels are yours, and so is their wiring: `role=\"tabpanel\"`, an `id` the tab points at with `aria-controls`, and `aria-labelledby` back at the tab. Give the panel `tabIndex={0}` when it holds no focusable content of its own, so a keyboard user can reach it",
-        "The unselected label is Figma’s `text/default/b3`, which measures 3.76:1 on the light page and 3.61:1 on dark — under the 4.5:1 WCAG 1.4.3 asks of 13px text. It is the design’s value, shipped as drawn rather than quietly corrected; one rung darker (`text/default/b2`) would measure 5.22:1. Raised with the designer in DESIGNER_QUESTIONS.md #40",
-        "The selected label is `text/default/b1` at 12.95:1 light and 11.72:1 dark, and the disabled one is exempt from 1.4.3",
-        "Selection is carried by two signals, not one. The ink moves two rungs — 3.44:1 between the selected and unselected label in light mode, 3.25:1 in dark, both clear of 3:1 — and the indicator appears under the selected tab. The indicator on its own measures 2.87:1 light and 2.12:1 dark against the page, so it is the ink difference that carries the 3:1 of WCAG 1.4.11",
-        "Focus-visible draws a 3px `currentColor` ring inside the tab’s box. Because it is the tab’s own ink it measures 3.67:1 at worst (an unselected tab on a card) and 12.62:1 on the selected one, clearing the 3:1 of WCAG 1.4.11 — which the house `box-shadow` ring token does not in light mode (2.19:1, see #38)",
-        "The ring is inset rather than outside the box, because a tab spans the bar’s full height and an outer ring would have nothing above or below to sit in — `variant=\"scrollable\"` would clip it. The 12px of vertical and 8px of horizontal padding are what keep a 3px ring clear of the glyphs",
-        "The ring appears on keyboard focus only. MUI tracks that in state and applies `.Mui-focusVisible`, so clicking a tab does not leave a ring behind",
-        "A tab is the full 44px of the bar and at least 8px wider than its label, so even a three-letter tab clears the 24×24px WCAG 2.5.8 asks of a pointer target without relying on the standard’s spacing exception. Figma draws the item at 32px with the label flush to the top; the 12px gap it specifies is mirrored above the label here so the label is centred and the hover surface covers the tab rather than hanging below the text (DESIGNER_QUESTIONS.md #40)",
-        "A count is part of the tab’s accessible name, and Chrome separates the two: the first tab of the counts example announces as “All 48”, not “All48”. Pass an `aria-label` where the bare number would still be ambiguous. That pill measures 5.85:1 in light mode but 3.21:1 in dark, which is a property of `Chip size=\"sm\" variant=\"primary\"` rather than of this component",
-        "Selection never changes the label’s weight — every Figma cell is `Sans/B1/Regular` — so the row does not reflow as the selection moves, and a screen magnifier does not lose its place",
-        "`selectionFollowsFocus` implements the ARIA pattern’s “automatic activation”. Leave it off for anything that loads, which is the pattern’s own advice",
-        "A disabled tab keeps a real `disabled` attribute, so it is skipped by the arrow keys as well as unclickable"
       ]
     },
     {
@@ -3434,7 +3181,7 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation status. Colours the border and helper text; `error` also sets `aria-invalid`. Omit for the neutral state."
+          "description": "Validation status. Colours the border and helper text. Omit for the neutral state."
         },
         {
           "name": "helperText",
@@ -3528,7 +3275,7 @@
         }
       ],
       "dos": [
-        "Always provide a `label` — use `aria-label` only when a visible label is impossible",
+        "Always provide a `label`",
         "Pair every `status` with a `helperText` explaining what to fix or confirm",
         "Use `minRows`/`maxRows` for free-form text so the field grows with content",
         "Keep helper text to one short sentence"
@@ -3542,11 +3289,6 @@
       "relatedComponents": [
         "Button",
         "IconButton"
-      ],
-      "accessibility": [
-        "`status=\"error\"` sets `aria-invalid` on the input",
-        "Helper text is associated with the input via `aria-describedby`",
-        "The static label stays visible at all times — no information is lost on focus"
       ]
     },
     {
@@ -3565,7 +3307,7 @@
           "name": "selected",
           "type": "boolean",
           "default": "false",
-          "description": "Draws the button pressed, and sets `aria-pressed`. Only for a standalone toggle — inside a group the group owns this."
+          "description": "Draws the button pressed. Only for a standalone toggle — inside a group the group owns this."
         },
         {
           "name": "color",
@@ -3577,7 +3319,7 @@
           "name": "size",
           "type": "'sm' | 'md'",
           "default": "'md'",
-          "description": "A 36px box with a 20px glyph, or 32px with 16px. MUI’s `large` is not exposed — Figma draws two sizes (DESIGNER_QUESTIONS.md #37)."
+          "description": "A 36px box with a 20px glyph, or 32px with 16px. MUI’s `large` is not exposed — Figma draws two sizes."
         },
         {
           "name": "appearance",
@@ -3622,12 +3364,6 @@
           "description": "On the group, disables every child. A disabled toggle that is still selected keeps a fill, so it does not read as off."
         },
         {
-          "name": "aria-label / aria-labelledby",
-          "type": "string",
-          "default": "—",
-          "description": "Required on an icon-only toggle, and on the group. Neither has a name of its own; `aria-pressed` comes free from `selected`."
-        },
-        {
           "name": "sx",
           "type": "SxProps",
           "default": "—",
@@ -3657,7 +3393,7 @@
         },
         {
           "title": "With a label",
-          "description": "Children are arbitrary, so a glyph and a word both work. The label makes the `aria-label` unnecessary.",
+          "description": "Children are arbitrary, so a glyph and a word both work.",
           "code": "<ToggleButtonGroup exclusive value={period} onChange={(_, next) => next && setPeriod(next)} aria-label=\"Period\">\n  <ToggleButton value=\"day\">Day</ToggleButton>\n  <ToggleButton value=\"week\">Week</ToggleButton>\n  <ToggleButton value=\"month\">Month</ToggleButton>\n</ToggleButtonGroup>"
         },
         {
@@ -3677,7 +3413,6 @@
         }
       ],
       "dos": [
-        "Give every icon-only toggle an `aria-label`, and the group one describing what it controls — `aria-pressed` comes free from `selected`, but neither component has a name",
         "Use `exclusive` when the options are alternatives, and leave it off when they are independent — that choice is the whole difference between a segmented control and a toolbar",
         "Reject the `null` an exclusive group sends when the last selected button is pressed again, if the thing being chosen must always have a value",
         "Use one group per decision. Two groups side by side in one toolbar is right; one group holding both is not",
@@ -3691,23 +3426,13 @@
         "Don't use a group of one. A single toggle needs no `value` comparison, so `selected` on a standalone `ToggleButton` says the same thing with less machinery",
         "Don't put more than about five toggles in a row before considering a `Select` — a row of icons has no room for the labels that would explain them",
         "Don't mix `size` within a group; the shared borders assume the buttons are the same height",
-        "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control, and screen readers announce the pressed state anyway"
+        "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control"
       ],
       "relatedComponents": [
         "IconButton",
         "Chip",
         "Checkbox",
         "Divider"
-      ],
-      "accessibility": [
-        "MUI renders each toggle as a `<button>` with `aria-pressed` reflecting `selected`, which is the correct pattern for a control that stays on. Nothing extra is needed for the state to be announced — but the *name* is yours to supply on an icon-only toggle",
-        "The group renders `role=\"group\"` with no accessible name. `aria-label` on the group is what turns three unrelated buttons into \"Text alignment, group\"",
-        "Keyboard behaviour is a plain button row: Tab moves between the toggles, Space and Enter press the focused one. An exclusive group is deliberately *not* a radio group — it does not trap arrow keys, and each button stays in the tab order",
-        "A pressed toggle is legible by ink, not by fill. The fill under the pointer is the same fill selection uses, so the difference between hovered and selected is the glyph colour — `icon/default/subtle` when off, `icon/default/b1` when on, measured 5.75:1 apart in light and 6.30:1 in dark. The selected glyph itself reads 12.1:1 on its own fill in light and 10.4:1 in dark",
-        "The unselected glyph is the one measured failure. `icon/default/subtle` on a page is 2.25:1 in light and 1.86:1 in dark, under the 3:1 that WCAG 1.4.11 asks of a graphic carrying meaning — and on an icon-only toggle the glyph is the only label there is. It is kept as the component set specifies it rather than quietly corrected; `icon/default/placeholder` would clear the threshold at 3.76:1 and 3.61:1 while staying 3.2:1 or better from the selected ink (DESIGNER_QUESTIONS.md #37). Until that is settled, give an icon-only row a `Tooltip`, or use labels",
-        "Neither the fill nor the border is information. The selected fill is 1.07:1 against a light page and 1.12:1 against a dark one; the 1px border is 1.14:1 and 1.05:1. Both are there to group and to hint, which is why the pressed state does not depend on either",
-        "The focus ring is a 3px `box-shadow` and the group deliberately does not clip its children, so a focused toggle at either end of a row shows its whole ring",
-        "A disabled toggle keeps its fill when it is selected, so \"on but unavailable\" and \"off but unavailable\" stay different"
       ]
     },
     {
@@ -3744,7 +3469,7 @@
           "name": "describeChild",
           "type": "boolean",
           "default": "false",
-          "description": "Exposes the title as the trigger's description (`aria-describedby`) rather than its label. Use it when the trigger already has visible text."
+          "description": "Exposes the title as the trigger's description rather than its label. Use it when the trigger already has visible text."
         },
         {
           "name": "open",
@@ -3810,12 +3535,12 @@
       "examples": [
         {
           "title": "Naming an icon-only control",
-          "description": "The most common use: the tooltip becomes the trigger's accessible label.",
+          "description": "The most common use: the tooltip says what the glyph means.",
           "code": "<Tooltip title=\"Archive\">\n  <IconButton aria-label=\"Archive\">\n    <ArchiveIcon />\n  </IconButton>\n</Tooltip>"
         },
         {
           "title": "Describing a control that already has a label",
-          "description": "`describeChild` wires the title up as a description, so a screen reader reads the button text first.",
+          "description": "`describeChild` wires the title up as a description rather than a label, for a trigger that already has text.",
           "code": "<Tooltip\n  title=\"Sends a copy to everyone on the thread\"\n  describeChild\n  placement=\"top\"\n>\n  <Button>Reply all</Button>\n</Tooltip>"
         },
         {
@@ -3839,8 +3564,7 @@
         }
       ],
       "dos": [
-        "Use a tooltip to name an icon-only control — it becomes the accessible label",
-        "Keep an icon button's `aria-label` identical to the tooltip's `title`; the trigger's own label wins, so a different one hides the tooltip text from screen readers",
+        "Use a tooltip to say what an icon-only control does",
         "Add `describeChild` when the trigger already has visible text, so the label is not replaced",
         "Keep it to a phrase or a sentence; the bubble wraps at a 300px column but is not a place for paragraphs",
         "Wrap a disabled trigger in a `<span>`, since a disabled element emits no pointer events",
@@ -3857,15 +3581,6 @@
         "IconButton",
         "Menu",
         "Alert"
-      ],
-      "accessibility": [
-        "By default the title becomes the trigger's `aria-label`; with `describeChild` it is exposed as `aria-describedby` instead, and only while the tooltip is open",
-        "An `aria-label` on the trigger itself wins over the one derived from `title` — MUI lets the child's own props through last. If the two disagree, the tooltip text is never announced, so keep them identical",
-        "Opens on keyboard focus as well as hover, so a tab-only user gets the same information",
-        "Escape closes an open tooltip without moving focus",
-        "On touch, a long press opens it (`enterTouchDelay`, 700ms) and it hides again after `leaveTouchDelay`",
-        "Interactive by default: the pointer can move onto the bubble without it closing, which is what lets a link inside it be reached",
-        "The bubble is portalled to the end of the body; the popper around it carries `role=\"tooltip\"` and the id that `aria-describedby` points at, so it is announced with the trigger rather than as loose text"
       ]
     },
     {
@@ -3955,21 +3670,13 @@
         "Don't zoom a panel or a card — scaling a large surface distorts its text on the way in; `Grow` measures its child and `Fade` avoids the problem entirely",
         "Don't run two zooms in the same slot without a delay; they overlap and read as a flicker",
         "Don't reach for `Zoom` when the size is unpredictable — it has no `timeout=\"auto\"`, which is `Grow`'s whole reason to exist",
-        "Don't scale something that also moves the page around it; combine it with a fixed-size slot instead",
-        "Don't use it as the only signal that an action became available — a screen reader user gets no scale, so the control's appearance needs announcing another way"
+        "Don't scale something that also moves the page around it; combine it with a fixed-size slot instead"
       ],
       "relatedComponents": [
         "Grow",
         "Fade",
         "Slide",
         "IconButton"
-      ],
-      "accessibility": [
-        "Respects `prefers-reduced-motion: reduce` automatically via the theme's `motion: { reducedMotion: \"system\" }`",
-        "A control at `scale(0)` still occupies the tab order and still responds to clicks at its centre — always pass `unmountOnExit` for interactive children",
-        "Adds no ARIA; a control that appears in response to a selection still needs an accessible name and, ideally, a live region announcing that it became available",
-        "When two controls share a slot, make sure the label changes with the control, or a screen reader announces the old one until the swap completes",
-        "Keep the duration short: the control is not usefully clickable until it has reached full size"
       ]
     }
   ]

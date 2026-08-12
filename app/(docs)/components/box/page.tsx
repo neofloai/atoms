@@ -93,9 +93,8 @@ export default function BoxDocsPage() {
             A bordered Box is not a Card. A tinted Box is not an{' '}
             <code>Alert</code>. A padded Box with a label is not a{' '}
             <code>Chip</code>. When a purpose-built component exists, it
-            carries states, accessibility, and both colour schemes that a Box
-            does not — reproducing its look by hand is how a product drifts
-            off-system.
+            carries states and both colour schemes that a Box does not —
+            reproducing its look by hand is how a product drifts off-system.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             For a row or a column of evenly spaced siblings, reach for{' '}
@@ -237,26 +236,6 @@ export default function BoxDocsPage() {
           </Stack>
         </Stack>
 
-        {data.accessibility && (
-          <>
-            <Divider />
-            <Stack spacing={1.5} sx={{ maxWidth: PROSE }}>
-              <SectionHeading id="accessibility">Accessibility</SectionHeading>
-              <Stack component="ul" spacing={1} sx={{ pl: 2.5, m: 0 }}>
-                {data.accessibility.map((item) => (
-                  <Typography
-                    key={item}
-                    component="li"
-                    variant="body2"
-                    color="text.secondary"
-                  >
-                    {item}
-                  </Typography>
-                ))}
-              </Stack>
-            </Stack>
-          </>
-        )}
       </Stack>
     </Container>
   );

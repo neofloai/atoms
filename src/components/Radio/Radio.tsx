@@ -71,8 +71,8 @@ const StyledRadio = styled(MuiRadio)(({ theme }) => ({
  * default.
  *
  * Place radios inside a `RadioGroup` to get single selection and
- * keyboard navigation. Pass `label` to render a clickable label
- * beside the control; without one, supply an `aria-label`.
+ * keyboard navigation. Pass `label` to render a clickable label beside
+ * the control.
  *
  * @example Inside a group
  * <RadioGroup value={plan} onChange={handlePlanChange}>

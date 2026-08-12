@@ -69,14 +69,6 @@ const SURFACES = [
 
 const TEXT_ALIGNS: readonly DividerTextAlign[] = ['left', 'center', 'right'];
 
-/** Measured light/dark contrast against each layer — see `Divider.tsx`. */
-const CONTRAST: Record<string, { mui: string; ours: string }> = {
-  page: { mui: '1.25 / 1.07', ours: '1.61 / 1.86' },
-  'card 1': { mui: '1.22 / 1.00', ours: '1.57 / 1.74' },
-  'card 2': { mui: '1.16 / 1.05', ours: '1.50 / 1.66' },
-  'card 3': { mui: '1.09 / 1.15', ours: '1.41 / 1.51' },
-};
-
 export function DividerShowcase() {
   return (
     <Stack spacing={4}>
@@ -167,7 +159,7 @@ export function DividerShowcase() {
 
       <PreviewCard
         title="Every surface"
-        hint="The one decision on this page, rendered. Each layer shows MUI's palette.divider above the Neoflo hairline. On dark card 1 the MUI rule is exactly the same colour as the surface — 1.00:1 — so it does not render at all. Switch the page to dark mode to see it go."
+        hint="The one decision on this page, rendered. Each layer shows MUI's palette.divider above the Neoflo hairline. On dark card 1 the MUI rule is exactly the same colour as the surface, so it does not render at all. Switch the page to dark mode to see it go."
       >
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
@@ -199,29 +191,20 @@ export function DividerShowcase() {
                     <Box
                       sx={{ borderTop: 1, borderColor: 'divider', height: 0 }}
                     />
-                    <Typography variant="caption" color="text.secondary">
-                      {CONTRAST[label].mui}
-                    </Typography>
                   </Stack>
                   <Stack spacing={0.5}>
                     <Typography variant="caption" color="text.secondary">
                       Atoms Divider
                     </Typography>
                     <Divider />
-                    <Typography variant="caption" color="text.secondary">
-                      {CONTRAST[label].ours}
-                    </Typography>
                   </Stack>
                 </Stack>
               </Box>
             ))}
           </Stack>
           <Typography variant="caption" color="text.secondary">
-            Ratios are light / dark. None reaches the 3:1 of WCAG 1.4.11,
-            and none needs to — that threshold covers controls and graphics
-            required to understand the content, and a separator is neither.
-            The bar is that the rule is visible on every layer, which
-            palette.divider was failing outright.
+            The bar is simply that the rule stays visible on every layer,
+            which palette.divider was failing outright.
           </Typography>
         </Stack>
       </PreviewCard>

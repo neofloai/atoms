@@ -30,7 +30,7 @@ export const data: ComponentExamplesData = {
       type: "'error' | 'success' | 'warning'",
       default: '—',
       description:
-        'Validation status. Colours the border and helper text; `error` also sets `aria-invalid`. Omit for the neutral state.',
+        'Validation status. Colours the border and helper text. Omit for the neutral state.',
     },
     {
       name: 'helperText',
@@ -186,7 +186,7 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Always provide a `label` — use `aria-label` only when a visible label is impossible',
+    'Always provide a `label`',
     'Pair every `status` with a `helperText` explaining what to fix or confirm',
     'Use `minRows`/`maxRows` for free-form text so the field grows with content',
     'Keep helper text to one short sentence',
@@ -198,9 +198,4 @@ export const data: ComponentExamplesData = {
     "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended",
   ],
   relatedComponents: ['Button', 'IconButton'],
-  accessibility: [
-    '`status="error"` sets `aria-invalid` on the input',
-    'Helper text is associated with the input via `aria-describedby`',
-    'The static label stays visible at all times — no information is lost on focus',
-  ],
 };

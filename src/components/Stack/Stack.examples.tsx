@@ -205,13 +205,7 @@ export const data: ComponentExamplesData = {
     "Don't reach for Stack when the layout has two axes or needs per-child placement — that is a flex or grid `Box`",
     "Don't hardcode a gap in `sx` (`gap: '12px'`) — `spacing` already resolves from the theme spacing scale",
     "Don't nest a Stack around each child to space it — one Stack spaces all of its immediate children",
-    "Don't pass a bare `<hr>` or a plain `Box` as the `divider` of a `component=\"ul\"` Stack — neither is valid between `<li>` elements; use `<Divider component=\"li\" />`, which stays legal and still announces as a separator",
+    "Don't pass a bare `<hr>` or a plain `Box` as the `divider` of a `component=\"ul\"` Stack — neither is valid between `<li>` elements; use `<Divider component=\"li\" />`, which stays legal",
   ],
   relatedComponents: ['Box', 'Grid', 'Container', 'Divider'],
-  accessibility: [
-    'Renders a `<div>` by default, which carries no semantics — set `component` to the element the group actually is (`ul`, `nav`, `fieldset`)',
-    'With `component="ul"`, each child needs `component="li"` for the group to be announced as a list',
-    'A `Divider` passed as the `divider` prop announces as a separator, but it never names what it separates — keep the meaning in the children rather than in the rule',
-    'Stack changes visual order only through `direction` — `row-reverse` and `column-reverse` leave the DOM and tab order unchanged, so avoid them where reading order matters',
-  ],
 };

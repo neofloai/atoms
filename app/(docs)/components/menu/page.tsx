@@ -163,7 +163,7 @@ Guidance.displayName = 'Guidance';
 const DESIGN_NOTES: readonly { title: string; body: string }[] = [
   {
     title: 'Hover is one layer above the design value',
-    body: 'The menu-item sheet tints hover with surface/layers/card 2 — #f5f5f3, which is the exact fill of the panel it sits in. Inside a menu that hover is invisible. The item sheet was drawn against the page surface, where the tint reads fine; the composed menu is what ships, so hover moves one rung up the same ladder to card 3. Smallest deviation that preserves the intent, and it is tracked in DESIGNER_QUESTIONS.md #23.',
+    body: 'The menu-item sheet tints hover with surface/layers/card 2 — #f5f5f3, which is the exact fill of the panel it sits in. Inside a menu that hover is invisible. The item sheet was drawn against the page surface, where the tint reads fine; the composed menu is what ships, so hover moves one rung up the same ladder to card 3. Smallest deviation that preserves the intent.',
   },
   {
     title: 'Keyboard focus is not in the sheet',
@@ -187,7 +187,7 @@ const DESIGN_NOTES: readonly { title: string; body: string }[] = [
   },
   {
     title: 'The action tone tracks the token, not today\'s Figma hex',
-    body: 'Figma currently reports text/primary/3 as #4949dc while this system\'s primary/500 is #4961dc. That is a drift in the raw brand accent affecting Button, Chip, and the palette too — not something specific to menus — so the component references the token and the drift is tracked in DESIGNER_QUESTIONS.md #22.',
+    body: 'Figma currently reports text/primary/3 as #4949dc while this system\'s primary/500 is #4961dc. That is a drift in the raw brand accent affecting Button, Chip, and the palette too — not something specific to menus — so the component references the token and the drift is tracked with the design team.',
   },
 ];
 
@@ -350,36 +350,6 @@ export default function MenuDocsPage() {
           </Typography>
           <Guidance data={menuData} label="Menu" />
           <Guidance data={menuItemData} label="MenuItem" />
-        </Stack>
-
-        <Divider />
-
-        <Stack spacing={3} sx={{ maxWidth: PROSE }}>
-          <Typography variant="h5" sx={{ fontWeight: 700 }}>
-            Accessibility
-          </Typography>
-          {[
-            { label: 'Menu', notes: menuData.accessibility ?? [] },
-            { label: 'MenuItem', notes: menuItemData.accessibility ?? [] },
-          ].map((group) => (
-            <Stack key={group.label} spacing={1.5}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                {group.label}
-              </Typography>
-              <Stack component="ul" spacing={1} sx={{ pl: 2.5, m: 0 }}>
-                {group.notes.map((note) => (
-                  <Typography
-                    key={note}
-                    component="li"
-                    variant="body2"
-                    color="text.secondary"
-                  >
-                    {note}
-                  </Typography>
-                ))}
-              </Stack>
-            </Stack>
-          ))}
         </Stack>
       </Stack>
     </Container>

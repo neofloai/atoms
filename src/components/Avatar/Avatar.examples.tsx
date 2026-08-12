@@ -31,7 +31,7 @@ export const data: ComponentExamplesData = {
       type: 'string',
       default: '—',
       description:
-        'Alternative text for the image, also used by screen readers. Inherited from MUI.',
+        'Alternative text for the image. Inherited from MUI.',
     },
     {
       name: 'size',
@@ -126,8 +126,4 @@ export const data: ComponentExamplesData = {
     "Don't rely on the badge colour alone to convey status — pair it with text elsewhere",
   ],
   relatedComponents: ['Chip'],
-  accessibility: [
-    'Set `alt` on image avatars so screen readers announce the person or entity',
-    'Initials and icon avatars are decorative by default — convey the name in adjacent text',
-  ],
 };

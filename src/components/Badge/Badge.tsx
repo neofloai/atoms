@@ -173,9 +173,6 @@ const StyledBadge = styled(MuiBadge, {
  * corners and their `overlap` offsets, and rendering standalone when
  * there is no child.
  *
- * MUI marks the badge `aria-hidden`, so the count is never announced —
- * put it in the wrapped control's accessible name.
- *
  * @example Count on an icon button
  * <Badge badgeContent={4} color="error">
  *   <IconButton aria-label="4 unread notifications">

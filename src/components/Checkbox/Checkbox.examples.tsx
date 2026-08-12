@@ -17,7 +17,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'Visible label beside the control. When omitted, provide an `aria-label` instead.',
+        'Visible label beside the control.',
     },
     {
       name: 'checked',
@@ -87,7 +87,6 @@ export const data: ComponentExamplesData = {
   ],
   dos: [
     'Use the `label` prop so the text is part of the click target',
-    'Provide an `aria-label` whenever there is no visible label',
     'Use `indeterminate` on a parent checkbox over a partially-selected group',
     'Use checkboxes for independent options — any number can be selected',
   ],
@@ -98,9 +97,4 @@ export const data: ComponentExamplesData = {
     "Don't override the checked colour — it is part of the selector identity",
   ],
   relatedComponents: ['TextField', 'Button'],
-  accessibility: [
-    'The label is wired to the input via `FormControlLabel`, so clicking it toggles the control',
-    'Keyboard accessible: focusable with Tab, toggled with Space',
-    '`aria-label` is required when no visible label is rendered',
-  ],
 };

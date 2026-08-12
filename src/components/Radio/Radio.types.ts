@@ -15,8 +15,7 @@ import type {
 export interface RadioProps
   extends Omit<MuiRadioProps, 'color' | 'size' | 'icon' | 'checkedIcon'> {
   /**
-   * Visible label rendered beside the control. When omitted, provide
-   * an `aria-label` instead.
+   * Visible label rendered beside the control.
    */
   label?: React.ReactNode;
 }

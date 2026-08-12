@@ -162,26 +162,11 @@ export const data: ComponentExamplesData = {
         '<Skeleton animation={false} />',
       ].join('\n'),
     },
-    {
-      title: 'Announcing the load',
-      description:
-        'The skeleton itself carries no ARIA, which is deliberate — the loading state belongs to the region, not to each grey block inside it. Mark the region busy and let a screen reader announce the content once it arrives, instead of narrating a dozen placeholders.',
-      code: [
-        '<Box aria-busy={loading} aria-live="polite">',
-        '  {loading ? (',
-        '    <Skeleton width={180} />',
-        '  ) : (',
-        '    <Typography>{user.name}</Typography>',
-        '  )}',
-        '</Box>',
-      ].join('\n'),
-    },
   ],
   dos: [
     'Match the placeholder to the shape and size of the content it replaces, so nothing jumps when the data lands',
     'Pass the real component as `children` to inherit its dimensions instead of hardcoding `width` and `height` that will drift',
     'Vary the line widths in a paragraph placeholder — a stack of identical bars does not read as text',
-    'Put `aria-busy` on the region being loaded, and let the skeletons stay silent',
     'Render as many placeholder rows as you expect back, so the page height is roughly right before the data arrives',
   ],
   donts: [
@@ -192,11 +177,4 @@ export const data: ComponentExamplesData = {
     "Don't wrap real text in a skeleton to grey it out; children are hidden outright, so it is a measuring device and not a dimming effect",
   ],
   relatedComponents: ['Avatar', 'Alert'],
-  accessibility: [
-    'Carries no ARIA and is not focusable, matching MUI — a placeholder is decoration, and the loading state belongs on the region around it via `aria-busy`',
-    'Honours `prefers-reduced-motion: reduce`: both the pulse and the wave stop, leaving a static block that still communicates the layout',
-    'Children passed for dimension inference are hidden with `visibility: hidden`, so they never reach the accessibility tree or get announced',
-    'Announce the arrival once with `aria-live="polite"` on the container rather than per placeholder, so a screen reader reads the content and not the wait',
-    'The fill composites against whatever surface it sits on, keeping a constant step in both colour schemes — a custom `bgcolor` needs its own contrast check on every surface it will appear on',
-  ],
 };

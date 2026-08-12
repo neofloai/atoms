@@ -97,7 +97,7 @@ const DESIGN_NOTES: readonly { title: string; body: string }[] = [
   },
   {
     title: 'reducedMotion is now system-wide',
-    body: 'src/theme/index.ts sets motion: { reducedMotion: "system" }. MUI 9 defaults it to "never", so until now every transition in the library ignored the OS setting — the gap flagged as a system-level issue in DESIGNER_QUESTIONS.md #24 when Skeleton shipped. Turning it on affects more than this page: Menu\'s open animation, and any MUI internal built on these transitions, now complete instantly for a user who has asked for less motion. The state change is unaffected; only the tween is dropped.',
+    body: 'src/theme/index.ts sets motion: { reducedMotion: "system" }. MUI 9 defaults it to "never", so until now every transition in the library ignored the OS setting. Turning it on affects more than this page: Menu\'s open animation, and any MUI internal built on these transitions, now complete instantly for a user who has asked for less motion. The state change is unaffected; only the tween is dropped.',
   },
   {
     title: 'These are re-exports, not wrappers',
@@ -251,14 +251,6 @@ function TransitionSection({
         </Stack>
       </Stack>
 
-      {data.accessibility && (
-        <Stack spacing={1.5} sx={{ maxWidth: PROSE }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-            Accessibility
-          </Typography>
-          <BulletList items={data.accessibility} />
-        </Stack>
-      )}
     </Stack>
   );
 }

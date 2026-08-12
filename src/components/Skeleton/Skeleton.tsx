@@ -45,14 +45,6 @@ import type { SkeletonTypeMap } from './Skeleton.types';
  *     control radius. Nothing to override. A skeleton standing in for
  *     a *card* wants the 24px card radius, which is `sx={{
  *     borderRadius: 3 }}` — see the examples.
- *   - **No ARIA on the root.** MUI documents this component's ARIA as
- *     "None" and the decision is right: a skeleton is decoration, and
- *     the loading *state* belongs on the region being loaded
- *     (`aria-busy`), not on each grey block inside it. Adding
- *     `aria-hidden` here would also empty a live region whose only
- *     child is a skeleton. The container-level pattern is in the
- *     examples and the accessibility notes.
- *
  * ## What this wrapper adds
  *
  * One thing: it honours `prefers-reduced-motion`. This is the first
@@ -75,10 +67,8 @@ import type { SkeletonTypeMap } from './Skeleton.types';
  *   <Avatar size="md" />
  * </Skeleton>
  *
- * @example A region that announces itself while loading
- * <Box aria-busy={loading} aria-live="polite">
- *   {loading ? <Skeleton width={180} /> : <Typography>{user.name}</Typography>}
- * </Box>
+ * @example Swapped for the real thing once it lands
+ * {loading ? <Skeleton width={180} /> : <Typography>{user.name}</Typography>}
  *
  * @see Related: Avatar, Alert
  */

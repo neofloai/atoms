@@ -133,24 +133,12 @@ const StyledLinearProgress = styled(MuiLinearProgress, {
  * The Product Design System file has no progress, spinner, or loader
  * component, so nothing here was transcribed from a sheet. The colours
  * are composed from existing semantic tokens and the geometry is MUI's.
- * See `DESIGNER_QUESTIONS.md` #36.
- *
- * ## Accessibility
- *
- * MUI puts `role="progressbar"` on the root and, for `determinate` and
- * `buffer`, `aria-valuenow` / `aria-valuemin` / `aria-valuemax`. It has
- * no accessible name of its own, so pass `aria-label` or point
- * `aria-labelledby` at the heading it belongs to; for a region that is
- * loading, put `aria-busy` on the region and have it describe itself
- * with `aria-describedby` pointing at the bar. `valueBuffer` is not
- * announced at all — nothing in ARIA models a second value — so a
- * buffer bar needs the same name and the same live text as a plain one.
  *
  * @example A wait with no percentage
- * <LinearProgress aria-label="Loading invoices" />
+ * <LinearProgress />
  *
  * @example A known percentage
- * <LinearProgress variant="determinate" value={72} aria-label="Upload progress" />
+ * <LinearProgress variant="determinate" value={72} />
  *
  * @example Streaming, with a buffered position behind the real one
  * <LinearProgress variant="buffer" value={48} valueBuffer={64} />

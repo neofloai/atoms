@@ -60,7 +60,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Defer mounting until the first expand, and remove the content once collapsed. `unmountOnExit` is what keeps hidden content out of the accessibility tree rather than present at zero height.',
+        'Defer mounting until the first expand, and remove the content once collapsed. `unmountOnExit` is what keeps hidden content out of the DOM rather than present at zero height.',
     },
     {
       name: 'disablePrefersReducedMotion',
@@ -86,9 +86,9 @@ export const data: ComponentExamplesData = {
   ],
   examples: [
     {
-      title: 'A disclosure, wired up',
+      title: 'A disclosure',
       description:
-        '`Collapse` manages size, not semantics. The trigger needs `aria-expanded` and `aria-controls` pointing at the region, or a screen reader user gets a button with no stated effect and content that appears without announcement.',
+        '`Collapse` manages size, not semantics — the trigger and what it opens are yours to wire together.',
       code: [
         'const [open, setOpen] = React.useState(false);',
         '',
@@ -152,7 +152,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A list of expanding rows',
       description:
-        'One `Collapse` per row, each driven by its own boolean. Keep the trigger and the region adjacent in the DOM so the announcement order matches the reading order.',
+        'One `Collapse` per row, each driven by its own boolean. Keep the trigger and the region adjacent in the DOM so the markup reads in the order it renders.',
       code: [
         '{sections.map((section) => (',
         '  <Box key={section.id}>',
@@ -177,23 +177,14 @@ export const data: ComponentExamplesData = {
   dos: [
     'Use `Collapse` whenever the surrounding content should move out of the way rather than be covered',
     'Pass `timeout="auto"` so the duration suits how much is being revealed',
-    'Wire the trigger with `aria-expanded` and `aria-controls` — the component supplies none of that',
-    'Add `unmountOnExit` so collapsed content leaves the accessibility tree and the tab order',
+    'Add `unmountOnExit` so collapsed content leaves the DOM and the tab order',
     'Reach for `collapsedSize` before writing a truncation of your own',
   ],
   donts: [
     "Don't use it for floating content — a popover or menu should not push the page around; that is `Grow` or `Fade`",
     "Don't leave the default flat 300ms on content of wildly varying length; a long section crawls and a short one is over before it registers",
     "Don't animate a collapse inside another collapse — the outer one measures a target that is still moving and lands at the wrong height",
-    "Don't rely on the animation to communicate the state change; the trigger's label and `aria-expanded` are what a screen reader user actually gets",
     "Don't collapse content that contains focus — move focus out first, or the browser scrolls to chase a shrinking element",
   ],
   relatedComponents: ['Fade', 'Grow', 'Alert', 'Skeleton'],
-  accessibility: [
-    'Respects `prefers-reduced-motion: reduce` automatically via the theme\'s `motion: { reducedMotion: "system" }` — the content appears at full size instantly',
-    'Supplies no ARIA of its own: the trigger needs `aria-expanded` and `aria-controls`, and the region needs the matching `id`',
-    'Without `unmountOnExit`, collapsed content is present at zero height — with `overflow: hidden` it is visually gone but a screen reader may still reach it, and focusable children stay in the tab order',
-    'Do not collapse a region that currently holds focus; move focus to the trigger first, or the browser follows the shrinking element and scrolls the page',
-    'The height change reflows everything below, so anything the user was reading moves — keep durations short and avoid collapsing on scroll or hover',
-  ],
 };

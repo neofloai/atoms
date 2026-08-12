@@ -126,9 +126,7 @@ const TabLabel = styled('span')({
  * Two things worth knowing:
  *
  * - **`count` renders a `Chip size="sm"`**, which is the component Figma
- *   nests here, so the pill is the same one used everywhere else. It
- *   lands inside the tab's accessible name ("Open 12"); give the tab an
- *   `aria-label` where the bare number would be ambiguous.
+ *   nests here, so the pill is the same one used everywhere else.
  * - **`disabled` is inherited from the bar and cannot be undone.**
  *   `Tabs disabled` disables every tab; a tab can add its own on top,
  *   but not opt back in.

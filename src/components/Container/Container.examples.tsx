@@ -210,11 +210,4 @@ export const data: ComponentExamplesData = {
     "Don't use a Container just to centre one element — `mx: 'auto'` with a `maxWidth` on a `Box` is the whole of it, without the gutters or the breakpoint bound",
   ],
   relatedComponents: ['Box', 'Grid', 'Stack'],
-  accessibility: [
-    'Renders a `<div>` and adds no ARIA — set `component` to the landmark the region is, and keep to one `<main>` per page',
-    'Container applies no roles, labels, or focus handling of its own; it only bounds and centres',
-    'A width bound is a readability control: WCAG 1.4.8 asks for no more than 80 characters per line of body text, which a `lg` container of unbroken prose exceeds even though nothing is technically broken',
-    'Gutters are what keep text off the screen edge — if you disable them on a full-width section, reintroduce the padding somewhere inside it',
-    'Both the fluid and the `fixed` bound are maximums, not fixed widths, so content still reflows down to 320px as WCAG 1.4.10 requires',
-  ],
 };

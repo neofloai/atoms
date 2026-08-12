@@ -15,8 +15,7 @@ export interface CheckboxProps
     'color' | 'size' | 'icon' | 'checkedIcon' | 'indeterminateIcon'
   > {
   /**
-   * Visible label rendered beside the control. When omitted, provide
-   * an `aria-label` instead.
+   * Visible label rendered beside the control.
    */
   label?: React.ReactNode;
 }

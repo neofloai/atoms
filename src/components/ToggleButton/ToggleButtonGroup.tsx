@@ -82,9 +82,6 @@ const StyledToggleButtonGroup = styled(MuiToggleButtonGroup, {
  * set the default for every child, and a child can still override any of
  * them.
  *
- * The group renders `role="group"` with no name of its own, so give it an
- * `aria-label` describing what the row controls.
- *
  * @example One of several — text alignment
  * <ToggleButtonGroup
  *   exclusive

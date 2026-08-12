@@ -45,7 +45,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Exposes the title as the trigger\'s description (`aria-describedby`) rather than its label. Use it when the trigger already has visible text.',
+        'Exposes the title as the trigger\'s description rather than its label. Use it when the trigger already has visible text.',
     },
     {
       name: 'open',
@@ -117,7 +117,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Naming an icon-only control',
       description:
-        'The most common use: the tooltip becomes the trigger\'s accessible label.',
+        'The most common use: the tooltip says what the glyph means.',
       code: [
         '<Tooltip title="Archive">',
         '  <IconButton aria-label="Archive">',
@@ -129,7 +129,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Describing a control that already has a label',
       description:
-        '`describeChild` wires the title up as a description, so a screen reader reads the button text first.',
+        '`describeChild` wires the title up as a description rather than a label, for a trigger that already has text.',
       code: [
         '<Tooltip',
         '  title="Sends a copy to everyone on the thread"',
@@ -193,8 +193,7 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Use a tooltip to name an icon-only control — it becomes the accessible label',
-    "Keep an icon button's `aria-label` identical to the tooltip's `title`; the trigger's own label wins, so a different one hides the tooltip text from screen readers",
+    'Use a tooltip to say what an icon-only control does',
     'Add `describeChild` when the trigger already has visible text, so the label is not replaced',
     'Keep it to a phrase or a sentence; the bubble wraps at a 300px column but is not a place for paragraphs',
     'Wrap a disabled trigger in a `<span>`, since a disabled element emits no pointer events',
@@ -208,13 +207,4 @@ export const data: ComponentExamplesData = {
     "Don't wrap a fragment or a plain string — the trigger has to be a single element that takes a ref",
   ],
   relatedComponents: ['IconButton', 'Menu', 'Alert'],
-  accessibility: [
-    'By default the title becomes the trigger\'s `aria-label`; with `describeChild` it is exposed as `aria-describedby` instead, and only while the tooltip is open',
-    "An `aria-label` on the trigger itself wins over the one derived from `title` — MUI lets the child's own props through last. If the two disagree, the tooltip text is never announced, so keep them identical",
-    'Opens on keyboard focus as well as hover, so a tab-only user gets the same information',
-    'Escape closes an open tooltip without moving focus',
-    'On touch, a long press opens it (`enterTouchDelay`, 700ms) and it hides again after `leaveTouchDelay`',
-    'Interactive by default: the pointer can move onto the bubble without it closing, which is what lets a link inside it be reached',
-    'The bubble is portalled to the end of the body; the popper around it carries `role="tooltip"` and the id that `aria-describedby` points at, so it is announced with the trigger rather than as loose text',
-  ],
 };

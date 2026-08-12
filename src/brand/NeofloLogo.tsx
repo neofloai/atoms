@@ -12,7 +12,7 @@ export interface NeofloLogoProps {
   variant?: NeofloLogoVariant;
   /** Height of the icon mark in px; the wordmark scales from it. @default 24 */
   size?: number;
-  /** Accessible label for the logo. @default 'Neoflo' */
+  /** Label for the logo. @default 'Neoflo' */
   title?: string;
 }
 

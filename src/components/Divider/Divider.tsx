@@ -41,11 +41,10 @@ import type { DividerTypeMap } from './Divider.types';
  * than marginal:
  *
  *   - on `surface.layers.card1` (`grey/1000`, `#171716`) the rule is
- *     *the same colour as the surface*. Measured, that is a contrast
- *     ratio of exactly 1.00:1 — the rule does not render at all
- *   - on `card2` (`grey/950`, 1.05:1) and `background.paper`
- *     (`grey/1050`, 1.04:1) it is darker than what it sits on, so it
- *     reads as a smudge rather than a line
+ *     *the same colour as the surface* — it does not render at all
+ *   - on `card2` (`grey/950`) and `background.paper` (`grey/1050`) it is
+ *     darker than what it sits on, so it reads as a smudge rather than
+ *     a line
  *
  * This is not a new discovery — `Menu` already hand-patches it for
  * dividers inside a menu panel, and the menu docs page carries a note
@@ -58,13 +57,11 @@ import type { DividerTypeMap } from './Divider.types';
  * dark layer in the system and `grey/300` (`#cccac6`) is darker than
  * every light one, so a single token holds on the page, on all three
  * card layers, and on `background.paper` in both colour schemes. Every
- * surface improves: 1.00 to 1.74 on dark `card1`, 1.04 to 1.82 on dark
- * `paper`, 1.09 to 1.41 on light `card3`.
+ * surface improves — most of all dark `card1` and `paper`, where the
+ * rule went from invisible to legible.
  *
- * None of those reach the 3:1 of WCAG 1.4.11, and none is expected to
- * — that threshold covers controls and graphics needed to understand
- * the content, and a separator is neither. The bar here is "visible on
- * every surface", which `palette.divider` was failing outright.
+ * The bar here is "visible on every surface", which `palette.divider`
+ * was failing outright.
  *
  * The one cost is that a light-mode rule moves a rung down the grey
  * scale, `grey/200` to `grey/300` — slightly more present than MUI's
@@ -94,11 +91,9 @@ import type { DividerTypeMap } from './Divider.types';
  * indistinguishable from one the designer specified. `fullWidth`, the
  * default, involves no such number and is unaffected.
  *
- * The ARIA is MUI's and it is already right, so nothing is added. A
- * plain divider renders `<hr>`, which is a separator natively. Adding
- * children or `orientation="vertical"` switches the root to a `<div>`
- * and MUI supplies `role="separator"` plus the matching
- * `aria-orientation` itself.
+ * The semantics are MUI's. A plain divider renders `<hr>`; adding
+ * children or `orientation="vertical"` switches the root to a `<div>`,
+ * which MUI marks as a separator itself.
  *
  * @example Between sections of a page
  * <Divider />

@@ -95,7 +95,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Unread count',
       description:
-        'The count belongs in the control\'s accessible name, because the badge itself is `aria-hidden`.',
+        'A count on the corner of the control it belongs to. Keep it short — a badge is a marker, not a label.',
       code: [
         '<Badge badgeContent={4} color="error">',
         '  <IconButton aria-label="4 unread notifications">',
@@ -160,7 +160,6 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Put the count in the wrapped control\'s `aria-label` — MUI marks the badge `aria-hidden`, so it is never read out',
     'Use `overlap="circular"` over an avatar or any round target, so the badge tucks in rather than floating off the edge',
     'Use `variant="dot"` when the fact that something changed matters more than how much did',
     'Keep `badgeContent` to a number or one short word; the counter is 20px tall and grows sideways',
@@ -170,18 +169,10 @@ export const data: ComponentExamplesData = {
   donts: [
     "Don't rely on the colour alone to carry meaning — a `warning` and an `error` dot are two shades of the same 8px circle to most people",
     "Don't use a badge as a label for the element it covers; it sits on top of the corner and will hide content",
-    "Don't put anything interactive inside `badgeContent` — the badge is `aria-hidden` and cannot be reached by keyboard",
+    "Don't put anything interactive inside `badgeContent` — the badge is a marker, and nothing inside it can be clicked",
     "Don't raise `max` past three digits; use a standalone badge or plain text when the exact number matters",
     "Don't wrap a block-level layout in a badge — the root is `inline-flex`, so it is meant to sit around a single control",
     "Don't drop a childless badge into a row of text expecting it to take up space: the root measures 0x0 and the badge overhangs it on every side, so it will land on whatever is next to it",
   ],
   relatedComponents: ['Avatar', 'Chip', 'IconButton'],
-  accessibility: [
-    'MUI renders the badge with `aria-hidden="true"`, so assistive technology never reads `badgeContent`. Whatever it says has to be repeated in the wrapped control\'s accessible name — `aria-label="4 unread notifications"` rather than `aria-label="Notifications"`',
-    'Keep that label in sync with the count as it changes, so a screen reader and the screen never disagree',
-    'A badge is decoration, not a control: it takes no focus and fires no events. Anything clickable has to be the child',
-    "The counter pairs each role's fill with its own ink, which clears 4.5:1 on ten of the twelve role-and-scheme combinations. Two do not, both inherited from the same tokens a filled `Button` uses: `warning` in light mode (3.1:1) and `primary` in dark mode (2.3:1) — so don't put a number that has to be read precisely on either",
-    'A `dot` clears 3:1 against the page on every role except light-mode `warning` (2.2:1), which is a mid yellow on a near-white page. Nothing has a dot as its only indication of state, so pair it with text either way',
-    '`invisible` animates with a transform, so it is exempt from `prefers-reduced-motion` concerns about movement across the page, but it does still animate — pass `invisible` only when the change is meaningful',
-  ],
 };

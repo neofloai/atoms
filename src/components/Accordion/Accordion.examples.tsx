@@ -49,7 +49,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Makes the row inert: it cannot be opened, and it leaves the tab order because the summary renders a real disabled `button`. The ink greys to `text/disabled/default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less.',
+        'Makes the row inert: it cannot be opened, and the summary renders a real disabled `button`. The ink greys to `text/disabled/default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less.',
     },
     {
       name: 'component',
@@ -85,13 +85,6 @@ export const data: ComponentExamplesData = {
       default: '<CaretDownIcon size={16} />',
       description:
         'The indicator at the trailing edge. Defaults to the design’s 16px caret, which MUI rotates 180° when the item opens — that rotation is Phosphor’s `CaretUp` to the pixel, which is the second glyph the sheet draws. Pass `null` to remove it.',
-    },
-    {
-      name: 'AccordionSummary id / aria-controls',
-      type: 'string',
-      default: '—',
-      description:
-        'Worth passing together. MUI labels the revealed region from the summary’s `id` and gives the region the summary’s `aria-controls` as its own `id`; with neither set, the region has `role="region"` and no accessible name, so it is not exposed as a landmark.',
     },
     {
       name: 'AccordionDetails children',
@@ -194,14 +187,12 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
-      title: 'The heading level, and the region’s name',
+      title: 'Setting the heading level',
       description:
-        'Two details that only matter for assistive technology, and both are one prop each. The header is an `h3` by default; the revealed region is only announced as a landmark if it has a name.',
+        'The header renders an `h3`. Set the `heading` slot when the level around it is different.',
       code: [
         '<Accordion slots={{ heading: \'h2\' }}>',
-        '  <AccordionSummary id="billing-header" aria-controls="billing-panel">',
-        '    Billing',
-        '  </AccordionSummary>',
+        '  <AccordionSummary>Billing</AccordionSummary>',
         '  <AccordionDetails>Invoices are issued on the first of the month.</AccordionDetails>',
         '</Accordion>',
       ].join('\n'),
@@ -247,7 +238,6 @@ export const data: ComponentExamplesData = {
   dos: [
     'Write the summary as the question or the label someone is scanning for — it is the only part of the item that is always on screen',
     'Control the group when opening one item should close the others, and leave every item uncontrolled when they are independent',
-    'Pass `id` and `aria-controls` on the summary, so the revealed body is a named region rather than an anonymous one',
     'Set `slots={{ heading: "h2" }}` (or whichever level fits) when a page has several of these — the default `h3` is a guess about your outline',
     'Open one item by default when the pattern is not obvious from the page, using `defaultExpanded`',
     'Keep the body short enough that opening one item does not push the next one off the screen; a long body wants a page, not a row',
@@ -257,22 +247,9 @@ export const data: ComponentExamplesData = {
     "Don't put an accordion around content people need to compare — two things that have to be read together should not take two clicks and a scroll to see at once",
     "Don't hide anything a first-time user must read to proceed; a collapsed row is a row most people will not open",
     "Don't nest an accordion inside an accordion. Two levels of disclosure is a navigation tree, and it should look like one",
-    "Don't put a button, link, or checkbox inside `AccordionSummary` — the summary *is* a button, and nesting one inside it is invalid HTML that assistive technology reports inconsistently. Put the control in the body, or move it out of the item",
+    "Don't put a button, link, or checkbox inside `AccordionSummary` — the summary *is* a button, and nesting one inside it is invalid HTML. Put the control in the body, or move it out of the item",
     "Don't reach for `sx` to add a radius or a shadow to make an item look like a card. If a card is what is wanted, use `Card`; this component is a list row on purpose",
     "Don't use `expanded` without `onChange` — the item will render open or closed and then refuse to move, which reads as a broken control rather than a locked one",
   ],
   relatedComponents: ['Card', 'Collapse', 'Divider', 'Button', 'MenuItem'],
-  accessibility: [
-    'The full ARIA disclosure pattern comes for free. MUI renders the summary as a real `<button>` carrying `aria-expanded`, wraps it in a heading element, and gives the revealed body `role="region"` — so Enter and Space both toggle, and the state is announced. Nothing here had to be added',
-    'Two attributes are still yours to pass. `id` and `aria-controls` on `AccordionSummary` are what wire the region to its heading (`aria-labelledby` and the panel `id` are derived from them); with neither, the region has no accessible name and is not exposed as a landmark at all',
-    'The heading is an `h3` by default, which is a guess. A page whose sections are `h2` should pass `slots={{ heading: "h2" }}` — the element is reset with `all: unset`, so changing the level changes nothing visually',
-    'Tab moves between summaries and nothing else — there is no arrow-key navigation, which matches the WAI-ARIA accordion pattern where arrow support is explicitly optional. Every row stays a single tab stop',
-    'The whole row is the hit target, not just the caret: 52px tall closed, which clears the 44px of WCAG 2.5.5 Target Size (AAA) with room to spare',
-    'Text contrast is comfortable in both schemes: the title measures 12.62:1 in light and 10.96:1 in dark, and the body 5.09:1 and 6.94:1, against the item’s own `surface/layers/card 1`. The caret is the title’s colour, so it clears 1.4.11 at the same 12.62:1 and 10.96:1',
-    'The focus ring is the one measured failure, and it is not this component’s alone. The house 3px ring (`border/default/defaultPressed`, `grey/500`) is 2.19:1 against the item in light mode — under the 3:1 WCAG 1.4.11 asks of a focus indicator — while dark mode is fine at 7.83:1. The same token rings `Button`, `IconButton`, `Chip`, `Checkbox`, `Radio`, and `ToggleButton`, so the fix belongs to the system rather than here: `grey/625` would clear both schemes at 3.67:1 and 4.69:1 (DESIGNER_QUESTIONS.md #38)',
-    'The ring is drawn *inset* rather than outside the box, because the summary spans the item edge to edge — an outer ring would paint over the next row’s hairline. Same 3px, same token, same behaviour on `:focus-visible` only, so a mouse click never shows it',
-    'The hairline between two rows is 1.11:1 in light and 1.05:1 in dark against the surface it sits on — the same `border/layers/card 1` on `surface/layers/card 1` pairing `Card` measured (DESIGNER_QUESTIONS.md #31). WCAG does not set a threshold for a grouping edge, but at those ratios the separation is carried by the 16px rhythm rather than by the line, so do not rely on it to mark where one row ends',
-    'A disabled row leaves the tab order entirely (a real `disabled` button), so it can never be focused and then found unresponsive. Its ink measures 2.19:1 and 1.74:1 — below 4.5:1, but 1.4.3 exempts inactive controls, and the alternative is MUI’s 38% fade of the whole row, which is worse on both counts',
-    'The theme sets `motion.reducedMotion: "system"`, so under `prefers-reduced-motion: reduce` the height animation, the caret rotation, and the summary’s padding all land instantly instead of tweening. The item still opens; it just stops moving',
-  ],
 };

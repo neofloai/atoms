@@ -30,5 +30,4 @@ export interface ComponentExamplesData {
   dos: string[];
   donts: string[];
   relatedComponents?: string[];
-  accessibility?: string[];
 }

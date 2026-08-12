@@ -17,7 +17,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'Visible label beside the control. When omitted, provide an `aria-label` instead.',
+        'Visible label beside the control.',
     },
     {
       name: 'checked',
@@ -76,7 +76,6 @@ export const data: ComponentExamplesData = {
   ],
   dos: [
     'Use the `label` prop so the text is part of the click target',
-    'Provide an `aria-label` whenever there is no visible label',
     'Use a Switch for settings that take effect immediately, with no separate save step',
     'Use checkboxes instead for a form field the user submits later',
   ],
@@ -86,10 +85,4 @@ export const data: ComponentExamplesData = {
     "Don't override the track or thumb colour — they are part of the selector identity",
   ],
   relatedComponents: ['Checkbox', 'Radio'],
-  accessibility: [
-    'The label is wired to the input via `FormControlLabel`, so clicking it toggles the control',
-    'Keyboard accessible: focusable with Tab, toggled with Space',
-    'Exposed to assistive tech with `role="switch"`, so its state reads as "on"/"off" rather than "checked"/"unchecked"',
-    '`aria-label` is required when no visible label is rendered',
-  ],
 };

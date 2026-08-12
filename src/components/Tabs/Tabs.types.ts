@@ -52,10 +52,6 @@ import type {
  * `variant`, `centered`, `scrollButtons`, `allowScrollButtonsMobile`,
  * `visibleScrollbar`, `selectionFollowsFocus`, `action`, `slots` /
  * `slotProps`, plus `sx` / `classes` / `component`.
- *
- * The bar renders `role="tablist"` with no name of its own, so give it
- * an `aria-label` (or `aria-labelledby`) saying what the tabs switch
- * between.
  */
 export interface TabsProps
   extends Omit<MuiTabsProps, 'textColor' | 'indicatorColor'> {
@@ -86,8 +82,7 @@ export interface TabProps extends MuiTabProps {
    * matches, or unread items sit behind this tab.
    *
    * Rendered as `Chip size="sm"`, which is the component Figma nests
-   * here. It reads as part of the tab's accessible name ("Invoices 12"),
-   * so pass an `aria-label` when the bare number would be ambiguous.
+   * here, so the pill is the same one used everywhere else.
    */
   count?: React.ReactNode;
 }

@@ -36,7 +36,7 @@ export const data: ComponentExamplesData = {
       type: "'error' | 'success' | 'warning'",
       default: '—',
       description:
-        'Validation status. Colours the border and helper text; `error` also sets `aria-invalid`. Omit for the neutral state.',
+        'Validation status. Colours the border and helper text. Omit for the neutral state.',
     },
     {
       name: 'helperText',
@@ -103,18 +103,13 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Always provide a `label` — use `aria-label` only when a visible label is impossible',
+    'Always provide a `label`',
     'Pair every `status` with a `helperText` explaining what to fix or confirm',
-    'Use MUI `MenuItem` for options so keyboard navigation and a11y work out of the box',
+    'Use MUI `MenuItem` for options so keyboard navigation works out of the box',
   ],
   donts: [
     "Don't rely on border colour alone to communicate validation — set `helperText` too",
     "Don't override the 1px border or 8px radius — they are part of the field identity",
   ],
   relatedComponents: ['TextField'],
-  accessibility: [
-    '`status="error"` sets `aria-invalid` on the field',
-    'Helper text is associated with the field via `aria-describedby`',
-    'Built on MUI `Select`, so full keyboard support (arrow keys, type-ahead, `Esc` to close) comes for free',
-  ],
 };

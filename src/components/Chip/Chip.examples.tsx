@@ -51,7 +51,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: '—',
       description:
-        'Persistent selected state for filter chips: draws the role border plus the selected fill, and sets `aria-pressed` on clickable chips. No effect at `size="sm"`.',
+        'Persistent selected state for filter chips: draws the role border plus the selected fill. No effect at `size="sm"`.',
     },
     {
       name: 'avatar',
@@ -153,7 +153,7 @@ export const data: ComponentExamplesData = {
     'Match the `variant` to the meaning (e.g. `success` for healthy states, `error` for failures)',
     'Use `appearance="outline"` for filter chips and lower-emphasis tags',
     'Use `onDelete` for removable selections so the affordance is consistent',
-    'Pair `selected` with `onClick` so the state is reachable by keyboard and announced',
+    'Pair `selected` with `onClick` so the chip is a real control rather than a static pill',
     'Keep labels short — one or two words',
   ],
   donts: [
@@ -162,13 +162,8 @@ export const data: ComponentExamplesData = {
     "Don't mix sizes within one group of chips",
     "Don't hardcode background or border colours — the variant covers both colour schemes",
     "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
-    "Don't use `selected` to mean \"active nav item\" — it announces a toggle, not a location",
+    "Don't use `selected` to mean \"active nav item\" — it reads as a toggle, not a location",
     "Don't mix `dense` and default pills in the same row — the 4px difference reads as misalignment",
   ],
   relatedComponents: ['Button', 'IconButton'],
-  accessibility: [
-    'Clickable chips at `size="md"` are focusable and render a 3px focus-visible ring. Figma defines no focused state for either size, so the ring is a library addition',
-    '`selected` sets `aria-pressed` on clickable chips, and is drawn with a border rather than a fill shift alone so it survives the pointer leaving',
-    'The delete affordance is keyboard-accessible via Backspace/Delete when the chip has focus',
-  ],
 };

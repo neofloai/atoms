@@ -17,7 +17,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'Visible label beside the control. When omitted, provide an `aria-label` instead.',
+        'Visible label beside the control.',
     },
     {
       name: 'value',
@@ -92,7 +92,6 @@ export const data: ComponentExamplesData = {
   dos: [
     'Wrap radios in a `RadioGroup` so selection and keyboard navigation work',
     'Use the `label` prop so the text is part of the click target',
-    'Provide an `aria-label` whenever there is no visible label',
     'Use radios for 2–5 mutually exclusive options that should all be visible',
   ],
   donts: [
@@ -102,9 +101,4 @@ export const data: ComponentExamplesData = {
     "Don't override the selected colour — it is part of the selector identity",
   ],
   relatedComponents: ['Checkbox', 'TextField'],
-  accessibility: [
-    'The label is wired to the input via `FormControlLabel`, so clicking it selects the control',
-    'Within a `RadioGroup`, Arrow keys move selection and Tab moves focus out of the group',
-    '`aria-label` is required when no visible label is rendered',
-  ],
 };
