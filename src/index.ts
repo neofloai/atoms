@@ -151,6 +151,19 @@ export type {
 } from './components/Skeleton';
 
 /**
+ * The progress family — the two indicators MUI documents on one page,
+ * sharing one colour table (`src/components/Progress/progressTokens.ts`)
+ * so the arc and the bar cannot drift apart. `CircularProgress` for a
+ * busy control, `LinearProgress` for a loading region.
+ */
+export { CircularProgress, LinearProgress } from './components/Progress';
+export type {
+  CircularProgressProps,
+  LinearProgressProps,
+  ProgressColor,
+} from './components/Progress';
+
+/**
  * The Card family. `Card` is the shell; the other four are the regions
  * that go inside it. Figma models the eight cells of its component set
  * as content rather than chrome, so there is no variant prop anywhere
