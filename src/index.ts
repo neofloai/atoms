@@ -150,6 +150,33 @@ export type {
   ToggleButtonSize,
 } from './components/ToggleButton';
 
+/**
+ * The accordion family — MUI's four parts, all four of which the Figma
+ * set draws (node 3653:30452). `Accordion` is the item and owns
+ * `expanded`; `AccordionSummary` is the header row and the button;
+ * `AccordionDetails` is the body; `AccordionActions` is the trailing
+ * button row from the `open-button` variant.
+ *
+ * No prop is renamed and none is added: the set's four variants are
+ * `expanded`, composition, and a stack of siblings, all of which MUI
+ * already models. Five Paper/layout props are locked shut instead — see
+ * `src/components/Accordion/Accordion.types.ts`.
+ */
+export {
+  Accordion,
+  AccordionActions,
+  AccordionDetails,
+  AccordionSummary,
+} from './components/Accordion';
+export type {
+  AccordionActionsProps,
+  AccordionDetailsProps,
+  AccordionProps,
+  AccordionSummaryProps,
+  AccordionSummaryTypeMap,
+  AccordionTypeMap,
+} from './components/Accordion';
+
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';
 
