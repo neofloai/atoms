@@ -134,6 +134,22 @@ export type { SwitchProps } from './components/Switch';
 export { Slider } from './components/Slider';
 export type { SliderProps, SliderSize } from './components/Slider';
 
+/**
+ * The two components MUI documents on one Toggle Button page, sharing
+ * one colour table (`src/components/ToggleButton/toggleButtonTokens.ts`)
+ * so a grouped toggle and a standalone one cannot drift apart. The group
+ * passes `color` / `size` / `appearance` down to its children, and a
+ * child's own prop wins.
+ */
+export { ToggleButton, ToggleButtonGroup } from './components/ToggleButton';
+export type {
+  ToggleButtonAppearance,
+  ToggleButtonColor,
+  ToggleButtonGroupProps,
+  ToggleButtonProps,
+  ToggleButtonSize,
+} from './components/ToggleButton';
+
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';
 
