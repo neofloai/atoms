@@ -548,3 +548,40 @@ Two values do.
 - **No dark-mode export.** The sheet gives `#31302e` and `#fefefd` as raw light values. Both tokens are *inverse* layers, so in dark mode the bubble flips to `grey/400` with `grey/1100` text — a light bubble on a dark page, which is the design system's own convention (`Slider`'s value bubble does the same one rung up at `card 4`) and reads correctly in the browser. **Confirm** the flip is intended rather than a dark bubble in both schemes.
 
 **Verified in-browser (light and dark, 0 console errors):** bubble `rgb(49,48,46)` on `rgb(254,254,253)` text in light and `rgb(191,188,183)` / `rgb(13,13,12)` in dark; 8px radius; `8px 12px` padding; `12px/20px` at weight 400 with `letter-spacing: 0.48px`; `max-width: 324px` measuring a 300px text column, which wraps the sheet's own sample copy to the same four lines it wraps to in Figma; 36px tall on a single line (8 + 20 + 8), exactly as drawn; tip 12 × 8.52 in the bubble's fill, flush with the bubble edge on all six sheet placements; `arrow={false}` removes it; opens on hover and on keyboard focus, closes on Escape; `describeChild` moves the title from the trigger's `aria-label` to `aria-describedby` pointing at the popper's `role="tooltip"`.
+
+### 35. Badge — no sheet exists, so the colours were composed from existing tokens; two of the twelve resulting pairs fail contrast, and both come from `Button`'s table rather than from Badge (added 12 August, no node)
+Requested as "wrap MUI, don't refer to Figma", so nothing here was read off a sheet. The geometry is MUI's (20px counter, 8px dot, the four anchors and their `overlap` offsets) with only two substitutions: MUI's off-ladder `0 6px` padding became `spacing.component.xxs` (4px), and its `10px` radius became `radius.full`, since a pill and a circle are the same declaration once the counter's height and min-width are equal. The 20px height is not on any ladder — neither `spacing` nor `radius` has a 20 rung — so it is carried as a named constant, the way `Chip` carries its own heights, and it is deliberately the same 20px as `Chip`'s flat tag. **Confirm** a Badge sheet is not coming; if one is, the colours below are the part to check.
+
+Two colour rules were composed, and they are the decisions to review.
+
+**1. The counter uses the filled-`Button` pairing; the dot uses the role's accent ink instead.** The counter fills with `surface.<role>.default` under `text.<role>.caption` — literally the table in `_shared/actionStyles.ts`, so a `warning` badge is the same yellow as a `warning` button, with `primary` keeping its saturated fill and on-colour label as it does there. A **dot** could not use the same fill: at 8px there are no digits to carry the signal, and `surface.error.default` is `red/75`, which against a white page measures 1.2:1 — effectively invisible. The dot therefore draws in `icon.<role>.accent`, the group meant for small graphic marks, which lands on the saturated middle of each ladder. On `primary` the two happen to be the same colour, which is why a primary dot and a primary counter match exactly and the other five are a shade apart. **Confirm** the two-rung split is right, rather than one colour for both.
+
+**2. Two of the twelve role-and-scheme combinations fail WCAG, and they fail on `Button` too.** Measured in the browser from the rendered pixels:
+
+| | light | dark |
+|---|---|---|
+| primary | 6.4:1 | **2.3:1** |
+| secondary | 12.1:1 | 11.0:1 |
+| success | 6.0:1 | 8.7:1 |
+| error | 6.8:1 | 7.3:1 |
+| warning | **3.1:1** | 9.1:1 |
+| information | 6.6:1 | 4.9:1 |
+
+- **`warning` in light mode is 3.1:1** — `yellow/700` digits on a `yellow/200` fill. Yellow cannot be both recognisably yellow and 4.5:1 against a pale yellow, so this needs a designer's call, not a nudge. The matching dot is 2.2:1 against the page, the only dot under 3:1.
+- **`primary` in dark mode is 2.3:1** — because `surface.primary.default.dark` is `primary/600` (a mid-dark blue) while `text.default.headingOnColor.dark` is `grey/1100` (near-black). Those two tokens disagree about what "on colour" means in dark mode: one assumes the coloured surface is light, the other draws it dark.
+
+Neither is introduced by Badge. A contained `primary` Button measures the same `rgb(52,62,179)` on `rgb(13,13,12)` in dark mode, verified on `/components/button`. The badge was kept consistent with the button rather than quietly corrected, because a badge pinned to the corner of a primary button that used a different ink would read as a bug. **Decide** at the token level — a fix to either pair lands on `Button`, `IconButton`, and `Badge` together.
+
+**Implemented — everything else is MUI's, untouched:** the `standard` / `dot` shape axis, `max` clamping to `99+`, `showZero`, `invisible` with its scale-out transform, all four `anchorOrigin` corners, `overlap="circular"`'s 14% inset, the `--Badge-inset` / `--Badge-translate` / `--Badge-origin` variables MUI writes as inline styles, `zIndex: 1` over ripples, the forced-colours border, `slots` / `slotProps`, and rendering standalone with no child.
+
+**Two API notes:**
+
+- **The colour role is on `color`, not `variant`.** MUI's `variant` on this component is the *shape* axis (`standard` / `dot`), not an emphasis axis, so there was nothing Material-specific to rename and it is kept verbatim — which puts the colour role on `color`, as on `Avatar`. `information` is the only renamed value (MUI's `info`); MUI's neutral `default` is this system's `secondary`.
+- **`color` defaults to `'primary'`, against MUI's `'default'`,** matching `Chip`. **Confirm** — the neutral treatment is still one word away.
+
+**Two things worth a designer's eye that are MUI behaviours, not choices:**
+
+- **A childless badge has a 0×0 root** and stays centred on that point, overhanging ~17px to each side of a `"Beta"` label. It is documented as needing space of its own, with `Chip size="sm"` pointed to for an inline label — but if the design system wants a real inline badge, that is a different component.
+- **`Avatar` already draws its status dot through this same MUI Badge**, with its own 8px diameter, its own four colours (`success` / `error` / `warning` / `neutral`, filled from `surface.<role>.default`) and a 2px `background.paper` ring that the standalone Badge does not have. The diameters agree; the colours do not — `Avatar`'s `error` dot is `red/75`, the pale fill described above, so it measures 1.2:1 against a white page (its `success` dot 1.35:1, its `warning` dot 1.16:1). Left alone, since it is out of scope here. **Decide** whether `Avatar`'s dot should move onto the accent inks, at which point the two could share one table.
+
+**Verified in-browser (light and dark, 0 console errors):** counter 20×20 at `radius.full` with `0 4px` padding, 12px DM Sans at weight 500, `aria-hidden="true"` on the badge span in every case; single digit renders a 20px circle, `42` measures 22.4px, `1204` clamps to `99+` at 29.8px, `0` is invisible until `showZero`, `"Beta"` measures 33.7px; dot 8×8 with zero padding; all six roles resolve to the tokens above in both schemes; the four anchors produce MUI's four inset/translate pairs, and `overlap="circular"` moves the inset to 5.59px — 14% of a 40px avatar.

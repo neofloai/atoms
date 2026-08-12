@@ -50,6 +50,7 @@ export const navigation: readonly NavSection[] = [
     items: [
       { label: 'Alert', href: '/components/alert' },
       { label: 'Avatar', href: '/components/avatar' },
+      { label: 'Badge', href: '/components/badge' },
       { label: 'Box', href: '/components/box' },
       { label: 'Stack', href: '/components/stack' },
       { label: 'Grid', href: '/components/grid' },
