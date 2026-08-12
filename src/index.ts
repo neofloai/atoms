@@ -65,6 +65,9 @@ export type {
   AvatarSize,
 } from './components/Avatar';
 
+export { Badge } from './components/Badge';
+export type { BadgeColor, BadgeProps } from './components/Badge';
+
 export { Box } from './components/Box';
 export type { BoxProps } from './components/Box';
 
