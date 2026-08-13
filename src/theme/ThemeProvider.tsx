@@ -3,6 +3,8 @@
 import * as React from 'react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { IconContext } from '@phosphor-icons/react';
 import { neofloTheme } from '@/src/theme';
 import './fonts';
@@ -57,6 +59,14 @@ const NEOFLO_ICON_DEFAULTS = {
  * cache provider around this one -- the Next.js docs site wraps it with
  * `AppRouterCacheProvider` in `app/layout.tsx`.
  *
+ * MUI X's `LocalizationProvider` is included, pinned to the Day.js adapter,
+ * so `DatePicker` works anywhere below this provider with nothing to
+ * configure. Day.js is the date library Atoms standardises on -- see
+ * `src/components/DatePicker/DatePicker.tsx` for why the adapter is fixed
+ * rather than a prop, and note the cost: every consumer of this provider
+ * carries Day.js (~7.5 KB gzipped with its adapter) whether or not they
+ * render a picker.
+ *
  * Re-exported from the package root so consumers can wrap their own apps.
  */
 export function NeofloThemeProvider({
@@ -66,9 +76,11 @@ export function NeofloThemeProvider({
   return (
     <MuiThemeProvider theme={neofloTheme} defaultMode={defaultMode} disableTransitionOnChange>
       <CssBaseline />
-      <IconContext.Provider value={NEOFLO_ICON_DEFAULTS}>
-        {children}
-      </IconContext.Provider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <IconContext.Provider value={NEOFLO_ICON_DEFAULTS}>
+          {children}
+        </IconContext.Provider>
+      </LocalizationProvider>
     </MuiThemeProvider>
   );
 }
