@@ -64,6 +64,7 @@ export const navigation: readonly NavSection[] = [
       { label: 'TextField', href: '/components/text-field' },
       { label: 'Select', href: '/components/select' },
       { label: 'DatePicker', href: '/components/date-picker' },
+      { label: 'TimePicker', href: '/components/time-picker' },
       { label: 'Checkbox', href: '/components/checkbox' },
       { label: 'Radio', href: '/components/radio' },
       { label: 'Switch', href: '/components/switch' },
