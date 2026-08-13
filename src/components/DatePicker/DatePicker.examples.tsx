@@ -242,5 +242,5 @@ export const data: ComponentExamplesData = {
     'Don’t write `slotProps={{ textField: { helperText } }}` — `helperText` is a prop here, and the two paths writing to the same slot is worth avoiding',
     'Don’t use it for a range; MUI X puts `DateRangePicker` in the paid tier, so a range is two pickers bounded against each other',
   ],
-  relatedComponents: ['TextField', 'Select', 'Menu', 'Tooltip'],
+  relatedComponents: ['TimePicker', 'TextField', 'Select', 'Menu'],
 };

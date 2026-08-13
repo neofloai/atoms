@@ -137,25 +137,34 @@ export { Select } from './components/Select';
 export type { SelectProps, SelectStatus } from './components/Select';
 
 /**
- * The one component built on MUI **X** rather than MUI Material, because
- * Material has no date picker. MUI X's community tier is MIT-licensed, and
- * `@mui/x-date-pickers` is a direct dependency alongside `@mui/material`.
+ * The two components built on MUI **X** rather than MUI Material, because
+ * Material has neither a date nor a time picker. MUI X's community tier is
+ * MIT-licensed, and `@mui/x-date-pickers` is a direct dependency alongside
+ * `@mui/material`.
  *
- * Its value is a **Day.js** object, not a native `Date`. Day.js is the date
- * library Atoms standardises on — MUI X requires one, and pinning a single
- * choice is what keeps every Neoflo app agreeing on one date type. The
- * adapter is installed by `NeofloThemeProvider`, so a picker below it needs
- * no setup; one rendered outside it throws, because MUI X reads its adapter
- * from context.
+ * Their value is a **Day.js** object, not a native `Date`. Day.js is the
+ * date library Atoms standardises on — MUI X requires one, and pinning a
+ * single choice is what keeps every Neoflo app agreeing on one date type.
+ * The adapter is installed by `NeofloThemeProvider`, so a picker below it
+ * needs no setup; one rendered outside it throws, because MUI X reads its
+ * adapter from context. A `TimePicker`'s value carries a date as well as a
+ * time, because Day.js has no time-only type.
  *
- * MUI X's whole prop surface survives. Only the responsive variants are not
- * exported: `DatePicker` already switches between the desktop popover and
- * the mobile modal itself, off `desktopModeMediaQuery`. Four props are
- * lifted out of `slotProps` so the picker reads like the `TextField` beside
- * it — see `src/components/DatePicker/DatePicker.types.ts`.
+ * MUI X's whole prop surface survives on both. Only the responsive variants
+ * are not exported: each picker already switches between the desktop
+ * popover and the mobile modal itself, off `desktopModeMediaQuery`. The
+ * same four props are lifted out of `slotProps` on both, so a picker reads
+ * like the `TextField` beside it — see the two `*.types.ts` files.
+ *
+ * They share their field and their popover, held in
+ * `src/components/_shared/pickerTokens.ts` and `pickerStyles.tsx`; only the
+ * view inside the panel is written per component.
  */
 export { DatePicker } from './components/DatePicker';
 export type { DatePickerProps, DatePickerStatus } from './components/DatePicker';
+
+export { TimePicker } from './components/TimePicker';
+export type { TimePickerProps, TimePickerStatus } from './components/TimePicker';
 
 export { Checkbox } from './components/Checkbox';
 export type { CheckboxProps } from './components/Checkbox';
