@@ -136,6 +136,27 @@ export type {
 export { Select } from './components/Select';
 export type { SelectProps, SelectStatus } from './components/Select';
 
+/**
+ * The one component built on MUI **X** rather than MUI Material, because
+ * Material has no date picker. MUI X's community tier is MIT-licensed, and
+ * `@mui/x-date-pickers` is a direct dependency alongside `@mui/material`.
+ *
+ * Its value is a **Day.js** object, not a native `Date`. Day.js is the date
+ * library Atoms standardises on — MUI X requires one, and pinning a single
+ * choice is what keeps every Neoflo app agreeing on one date type. The
+ * adapter is installed by `NeofloThemeProvider`, so a picker below it needs
+ * no setup; one rendered outside it throws, because MUI X reads its adapter
+ * from context.
+ *
+ * MUI X's whole prop surface survives. Only the responsive variants are not
+ * exported: `DatePicker` already switches between the desktop popover and
+ * the mobile modal itself, off `desktopModeMediaQuery`. Four props are
+ * lifted out of `slotProps` so the picker reads like the `TextField` beside
+ * it — see `src/components/DatePicker/DatePicker.types.ts`.
+ */
+export { DatePicker } from './components/DatePicker';
+export type { DatePickerProps, DatePickerStatus } from './components/DatePicker';
+
 export { Checkbox } from './components/Checkbox';
 export type { CheckboxProps } from './components/Checkbox';
 

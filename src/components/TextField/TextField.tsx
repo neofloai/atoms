@@ -15,6 +15,7 @@ import {
 } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
+import { adornmentBox, adornmentButton } from '../_shared/fieldStyles';
 
 import type { CSSObject } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
@@ -163,8 +164,17 @@ const StyledTextField = styled(MuiTextField, {
     // Multiline padding lives on the root, not the textarea.
     '& .MuiInputBase-inputMultiline': { padding: 0 },
     '& .MuiInputAdornment-root': {
+      ...adornmentBox(),
       ...paired(theme, { color: text.default.caption }),
     },
+    // Any button in either adornment, whether or not it is wrapped in an
+    // `InputAdornment`: one circular target, one ripple, and no effect on
+    // the field's height. Without this, an `IconButton` at the end took
+    // the house `sm` size of 32px and pushed a 36px field to 48px, so two
+    // fields in the same form disagreed depending on what they carried.
+    // See `../_shared/fieldStyles.ts`.
+    '& .MuiInputAdornment-root .MuiIconButton-root, & .MuiOutlinedInput-root > .MuiIconButton-root':
+      adornmentButton(theme),
     '& .MuiFormHelperText-root': {
       margin: `${spacing.component.xxs}px 0 0`,
       padding: `0 ${FIELD_PADDING_PX}px`,

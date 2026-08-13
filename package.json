@@ -54,7 +54,9 @@
     "@fontsource/dm-sans": "^5.3.0",
     "@fontsource/instrument-serif": "^5.2.8",
     "@mui/material": "^9.2.0",
-    "@phosphor-icons/react": "^2.1.10"
+    "@mui/x-date-pickers": "^9.11.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "dayjs": "^1.11.21"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
