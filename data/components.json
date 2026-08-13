@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T16:02:55.660Z",
+  "generatedAt": "2026-08-13T17:21:09.225Z",
   "components": [
     {
       "name": "Accordion",
@@ -579,7 +579,7 @@
           "name": "appearance",
           "type": "'contained' | 'outline' | 'text'",
           "default": "'contained'",
-          "description": "Visual emphasis: solid fill, 1px border, or label-only. `text` sits flush (no horizontal padding) and underlines on hover rather than taking a background."
+          "description": "Visual emphasis: solid fill, 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label."
         },
         {
           "name": "size",
@@ -2076,7 +2076,7 @@
           "name": "appearance",
           "type": "'contained' | 'outline' | 'text'",
           "default": "'contained'",
-          "description": "Visual emphasis: solid fill, 1px border, or bare glyph. `text` takes a background on hover, focus, and press — unlike `Button`, where it underlines instead."
+          "description": "Visual emphasis: solid fill, 1px border, or bare glyph. `text` takes the role’s soft fill on hover, focus and press — the same states, and the same fills, as `Button`’s `text`."
         },
         {
           "name": "size",

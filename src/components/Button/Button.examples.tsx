@@ -24,7 +24,7 @@ export const data: ComponentExamplesData = {
       type: "'contained' | 'outline' | 'text'",
       default: "'contained'",
       description:
-        'Visual emphasis: solid fill, 1px border, or label-only. `text` sits flush (no horizontal padding) and underlines on hover rather than taking a background.',
+        'Visual emphasis: solid fill, 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label.',
     },
     {
       name: 'size',

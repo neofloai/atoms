@@ -11,12 +11,17 @@ import type { ModeToken } from '@/src/tokens';
  *
  * They no longer agree on every *value*, though. The 11 August update
  * moved `Button`'s low-emphasis treatment and left `IconButton`'s
- * alone, so four things now depend on which control is asking:
- * `primary`'s soft fills, `primary`'s resting `outline` label, whether
- * `text` underlines or fills on hover, and whether `text` repeats that
- * fill on focus. Call sites pass their `ActionControl` so those stay in
- * this one table rather than leaking into the components. Each was read
- * off `IconButton`'s own component set, not assumed from `Button`'s.
+ * alone, so two things still depend on which control is asking:
+ * `primary`'s soft fills and `primary`'s resting `outline` label. Call
+ * sites pass their `ActionControl` so those stay in this one table
+ * rather than leaking into the components. Both were read off
+ * `IconButton`'s own component set, not assumed from `Button`'s.
+ *
+ * The third disagreement is closed by decision rather than by an
+ * export: that update also had a hovered `text` Button mark itself with
+ * an underline and no fill, where the IconButton set kept the soft
+ * fill. Both controls now take the fill — see the `text` branch at the
+ * bottom of `appearanceStyles`.
  *
  * Figma draws `IconButton`'s glyph from the `icon/*` variable group and
  * `Button`'s label from `text/*`. Every slot these two controls touch
@@ -159,8 +164,21 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     // The neutral group has no separate `subtle` ladder, and its first
     // rung is already the *filled* resting fill — so the soft states
     // start one rung further in to stay distinguishable from it.
+    //
+    // Dark mode has to start one rung further still. `defaultHover` is
+    // `grey/950`, which sits directly against the `grey/1000` that both
+    // `Card` and `Dialog` use as their surface: a hovered `secondary`
+    // `text` button measured `rgb(28,28,26)` on `rgb(23,23,22)` there,
+    // a shade you cannot see. So hover drops onto the pressed rung in
+    // dark mode only — light is untouched. The two states then coincide
+    // in dark, which is the same price #44 paid on the dialog's close
+    // button and for the same reason: below `grey/900` the neutral scale
+    // jumps to `grey/800`. Two components now short a rung.
     soft: bothControls({
-      hover: surface.default.defaultHover,
+      hover: {
+        light: surface.default.defaultHover.light,
+        dark: surface.default.defaultPressed.dark,
+      },
       pressed: surface.default.defaultPressed,
       outlineText: text.default.body,
     }),
@@ -360,31 +378,23 @@ export function appearanceStyles(
     };
   }
 
-  if (control === 'button') {
-    return {
-      backgroundColor: 'transparent',
-      ...paired(theme, { color: role.accentText }),
-      // Button's `text` variants take no fill in any state — hover
-      // marks itself with an underline instead (node 983:17088), and
-      // press and focus are drawn identically to rest (983:17170,
-      // 983:17079). The focus ring is the only affordance there, so it
-      // stays.
-      '&:hover': {
-        backgroundColor: 'transparent',
-        textDecorationLine: 'underline',
-        textDecorationThickness: 'from-font',
-        textUnderlinePosition: 'from-font',
-      },
-      '&:active': { backgroundColor: 'transparent' },
-      '&.Mui-focusVisible': focusRing(theme, role.focusRing),
-      '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
-    };
-  }
-
-  // `IconButton`'s `text` glyph keeps the fills `Button`'s label gave
-  // up: hover, press *and* focus each take one (nodes 983:17497,
-  // 983:17464, 983:17479). A glyph has no underline to mark itself
-  // with, which is the likeliest reason the two sets parted here.
+  // `text`, one implementation for both controls: the role's soft fill
+  // on hover, press and focus, over a transparent resting box. The same
+  // fills `outline` takes one rung of emphasis up, so a text button and
+  // an outlined button of the same role shade by the same amount.
+  //
+  // Figma parts the two sets here. The IconButton cells take the fill
+  // (nodes 983:17497, 983:17464, 983:17479); a hovered `text` Button
+  // underlines and stays transparent (983:17088), with press and focus
+  // drawn identically to rest (983:17170, 983:17079). The fill is what
+  // ships for both, which is also MUI's behaviour — it clears the
+  // underline off its own text button explicitly (`&:hover {
+  // textDecoration: 'none' }`) and marks hover with a 4% wash of the
+  // role colour, the same job this system's `subtle` rung does. A label
+  // that grows a line under the pointer reads as a link, and there is a
+  // `Link` for that; it also left press and focus with no fill of their
+  // own, so two of the four states were indistinguishable from rest.
+  // Deliberate departure from the export — DESIGNER_QUESTIONS.md #45.
   return {
     backgroundColor: 'transparent',
     ...paired(theme, { color: role.accentText }),

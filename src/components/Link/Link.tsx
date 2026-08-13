@@ -56,8 +56,8 @@ import type { LinkColor, LinkProps, LinkTypeMap } from './Link.types';
  *     its line is a bluer, lighter hue than the text above it and
  *     ignores an `sx` colour override. Mixing `currentColor` instead
  *     keeps the line the link's own colour in both schemes. Thickness is
- *     `from-font`, matching the one underline the design system does draw
- *     — a `text` Button on hover.
+ *     `from-font`, matching the only other underline in the library —
+ *     the step collapse row's hover.
  *   - **Focus-visible is a 3px `currentColor` outline at 2px offset**,
  *     not the house `box-shadow` ring. A `box-shadow` cannot be offset,
  *     so on text with no padding it would paint over the glyphs and the
