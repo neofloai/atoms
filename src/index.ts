@@ -326,6 +326,36 @@ export type {
 } from './components/Card';
 
 /**
+ * The Dialog family — a modal panel that interrupts the page to ask for a
+ * decision. `Dialog` is the shell; the other four are the regions inside
+ * it, mirroring MUI's own composition.
+ *
+ * The panel is `Card`'s shell to the token — the same `card 1` fill, the
+ * same 1px `card 1` edge, the same 16px corners — so a dialog and a card
+ * on one page cannot drift apart. It carries no shadow, because the
+ * backdrop does the separating.
+ *
+ * `DialogTitle` is the one place with an API beyond MUI's: Figma draws a
+ * subtitle, an icon badge and a close button in every one of its title
+ * cells, and MUI's title is a single `Typography` with room for none of
+ * them. See `src/components/Dialog/DialogTitle.tsx`.
+ */
+export {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from './components/Dialog';
+export type {
+  DialogActionsProps,
+  DialogContentProps,
+  DialogContentTextProps,
+  DialogProps,
+  DialogTitleProps,
+} from './components/Dialog';
+
+/**
  * Motion primitives — MUI's five transitions, re-exported under the
  * Neoflo API so consumers never reach into `@mui/material` for them.
  *
