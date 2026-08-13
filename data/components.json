@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T17:21:09.225Z",
+  "generatedAt": "2026-08-13T19:43:14.150Z",
   "components": [
     {
       "name": "Accordion",
@@ -1700,6 +1700,114 @@
       ]
     },
     {
+      "name": "Drawer",
+      "category": "Navigation",
+      "tagline": "A panel anchored to an edge of the viewport — a nav rail beside the page, or a sheet that slides over it. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.",
+      "props": [
+        {
+          "name": "variant",
+          "type": "'temporary' | 'persistent' | 'permanent'",
+          "default": "'temporary'",
+          "description": "How the panel relates to the page. `temporary` floats over it behind a backdrop and closes on Escape or a click outside; `persistent` pushes the content aside and stays until dismissed; `permanent` is always there and never closes — the app rail. Only `temporary` is a modal."
+        },
+        {
+          "name": "anchor",
+          "type": "'left' | 'right' | 'top' | 'bottom'",
+          "default": "'left'",
+          "description": "Edge the panel belongs to. It also decides which edge draws the hairline — the one facing the content — so a left drawer is ruled on its right and a bottom sheet along its top."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg' | number",
+          "default": "'md'",
+          "description": "Width of the panel: 220px for a nav rail, 400px for a form or a record, 520px for a full detail sheet, or pixels for a width that is a state rather than a rung — a folded rail, a resized sheet. Changes animate. It lands on the panel and on the space a docked drawer reserves, which is why the width is a prop and not something to put on `slotProps.paper`. Ignored on `top` and `bottom`, where the height follows the content."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "default": "false",
+          "description": "Whether the panel is shown. Ignored by `permanent`, which has no closed state — that variant needs no state at all."
+        },
+        {
+          "name": "onClose",
+          "type": "(event, reason) => void",
+          "default": "—",
+          "description": "Fires when a `temporary` drawer asks to be dismissed. `reason` is `\"escapeKeyDown\"` or `\"backdropClick\"`. Omit it and both are refused, which is how a sheet is made to close only through its own button."
+        },
+        {
+          "name": "hideBackdrop",
+          "type": "boolean",
+          "default": "false",
+          "description": "Drop the scrim behind a `temporary` drawer. The panel is drawn flat because the backdrop is what separates it from the page, so a drawer without one usually wants a shadow back through `slotProps`."
+        },
+        {
+          "name": "transitionDuration",
+          "type": "number | { enter, exit }",
+          "default": "theme.transitions.duration",
+          "description": "How long the slide takes. Left alone it resolves from the theme, which honours `prefers-reduced-motion`, so prefer overriding it only for a panel whose contents make the default feel wrong."
+        },
+        {
+          "name": "slotProps",
+          "type": "{ paper, backdrop, root, docked, transition }",
+          "default": "{}",
+          "description": "Props for each part of the panel. `paper` is the one to reach for: it carries the panel’s own padding, puts a shadow back with `sx={{ boxShadow: 3 }}`, or drops the panel into normal flow with `sx={{ position: \"relative\" }}`. Width is the exception — that belongs on `size`."
+        }
+      ],
+      "examples": [
+        {
+          "title": "A detail sheet over the page",
+          "description": "The common case. `temporary` floats the sheet above the content rather than reflowing it, which matters when what is behind it is a wide table — squeezing that would re-lay-out every column each time a row is clicked. Mount it only while a row is selected and the contents rebuild per record.",
+          "code": "const [selectedId, setSelectedId] = React.useState<string | null>(null);\n\n<Drawer\n  anchor=\"right\"\n  size=\"lg\"\n  open={selectedId !== null}\n  onClose={() => setSelectedId(null)}\n>\n  <Stack sx={{ p: 3, gap: 2 }}>\n    <Typography variant=\"h6\">Invoice INV-2291</Typography>\n    <Typography variant=\"body2\" color=\"text.secondary\">\n      Raised 4 days ago, awaiting vendor response.\n    </Typography>\n  </Stack>\n</Drawer>"
+        },
+        {
+          "title": "A permanent nav rail",
+          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge.",
+          "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer\n    variant=\"permanent\"\n    size=\"sm\"\n    slotProps={{ paper: { sx: { py: 2.5 } } }}\n  >\n    <Stack sx={{ px: 2, gap: 2, pb: 2 }}>\n      <NeofloLogo variant=\"full\" size={20} />\n      <Button\n        variant=\"secondary\"\n        appearance=\"outline\"\n        size=\"sm\"\n        fullWidth\n        startIcon={<SuitcaseSimpleIcon size={16} />}\n        endIcon={<CaretUpDownIcon size={14} />}\n        onClick={openWorkspaceMenu}\n      >\n        Non Trade AP DB\n      </Button>\n    </Stack>\n\n    <Divider />\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <Stack sx={{ flex: 1, px: 2, py: 2, gap: 1 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ToggleButton\n          key={key}\n          value={key}\n          selected={active === key}\n          onChange={() => setActive(key)}\n          appearance=\"text\"\n          size=\"sm\"\n          sx={{ gap: 1, justifyContent: \"flex-start\", textTransform: \"none\" }}\n        >\n          <Icon size={20} />\n          {label}\n        </ToggleButton>\n      ))}\n    </Stack>\n\n    <Divider />\n\n    <Stack sx={{ px: 2, pt: 2.5 }}>\n      <Button\n        variant=\"secondary\"\n        appearance=\"text\"\n        fullWidth\n        endIcon={<CaretDownIcon size={16} />}\n        onClick={openUserMenu}\n        sx={{ justifyContent: \"space-between\", textTransform: \"none\" }}\n      >\n        <Avatar size=\"sm\">AV</Avatar>\n      </Button>\n    </Stack>\n  </Drawer>\n\n  <Box sx={{ flex: 1, p: 3 }}>{children}</Box>\n</Stack>"
+        },
+        {
+          "title": "A rail that collapses to icons",
+          "description": "One rail, two widths. There is no collapsed rung on the scale, because a rail folding to a strip of icons is the same panel narrowed — so it is the same prop with a raw number. The width animates and the panel clips its own overflow, which is what lets the labels drop out without pushing the rail back open.",
+          "code": "const [collapsed, setCollapsed] = React.useState(false);\n\n<Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n  <NavOfYourOwn collapsed={collapsed} />\n</Drawer>"
+        },
+        {
+          "title": "Pushing the page aside instead of covering it",
+          "description": "`persistent` docks the panel like `permanent` but keeps an open state, so the content next to it reflows as the panel arrives. Use it for a filter rail the user leaves open while they work — not for a sheet they glance at and dismiss, where the reflow is the whole cost.",
+          "code": "<Stack direction=\"row\">\n  <Drawer variant=\"persistent\" open={filtersOpen}>\n    <FiltersOfYourOwn />\n  </Drawer>\n  <Box sx={{ flex: 1 }}>{results}</Box>\n</Stack>"
+        },
+        {
+          "title": "A bottom sheet, as tall as its content",
+          "description": "`size` is a width, so it does nothing on the two vertical anchors — a top or bottom drawer is as tall as what is inside it, which is MUI’s behaviour and the right one for a sheet of actions. Give the content its own padding and the sheet takes that height.",
+          "code": "<Drawer anchor=\"bottom\" open={open} onClose={handleClose}>\n  <Stack sx={{ p: 3, gap: 1 }}>\n    <Button variant=\"error\">Delete 3 invoices</Button>\n    <Button appearance=\"text\" variant=\"secondary\" onClick={handleClose}>\n      Cancel\n    </Button>\n  </Stack>\n</Drawer>"
+        },
+        {
+          "title": "A rail inside a container",
+          "description": "MUI keeps the panel `position: fixed` for every variant, so a docked drawer pins itself to the edge of the window rather than of its parent. That is right for an app shell and wrong inside a card or a demo box; putting the panel back in normal flow is one line.",
+          "code": "<Drawer\n  variant=\"permanent\"\n  size=\"sm\"\n  slotProps={{ paper: { sx: { position: \"relative\" } } }}\n>\n  <NavOfYourOwn />\n</Drawer>"
+        }
+      ],
+      "dos": [
+        "Use `temporary` for anything the user opens, reads and dismisses — it brings the backdrop, the Escape key and the scroll lock with it",
+        "Use `permanent` for the app rail and `size=\"sm\"`, so every Neoflo shell has the same 220px column",
+        "Mount a `temporary` drawer only while it has something to show, so its contents rebuild per record instead of holding the last one",
+        "Match the `anchor` to what the panel is: a rail belongs on the left, a record on the right, a row of actions at the bottom",
+        "Drive a collapsing rail from `size` with a pixel number, so the panel and the space it reserves fold together and animate"
+      ],
+      "donts": [
+        "Don't set the width with `sx` or `slotProps.paper` — `size` is the only place it reaches both the panel and the space a docked drawer reserves",
+        "Don't use `persistent` for a sheet that is glanced at and closed — reflowing the page on every open is what makes it the wrong variant",
+        "Don't expect `size` to do anything on a `top` or `bottom` anchor; give the content padding and let the sheet take its height",
+        "Don't put a `permanent` drawer inside a container without `position: \"relative\"` on the paper — it will pin itself to the window instead",
+        "Don't add a shadow to a `temporary` drawer that still has its backdrop; the scrim is already doing that job"
+      ],
+      "relatedComponents": [
+        "Navbar",
+        "Dialog",
+        "Card",
+        "Menu",
+        "Slide"
+      ]
+    },
+    {
       "name": "Fade",
       "category": "Motion",
       "tagline": "Animates a child between transparent and opaque when a boolean flips — the quietest of the five transitions, and the right default for anything that appears in place.",
@@ -2549,6 +2657,123 @@
         "Menu",
         "Select",
         "Checkbox"
+      ]
+    },
+    {
+      "name": "Navbar",
+      "category": "Navigation",
+      "tagline": "The bar across the top of an app, in two heights — a 48px app bar or a 72px page header. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The contents of the row. It is a flex container with no gap of its own, so space children with `Box sx={{ flex: 1 }}` between groups or `sx={{ ml: \"auto\" }}` on the first trailing item."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "default": "'sm'",
+          "description": "How tall the bar is, and therefore what kind of bar it is. `sm` is the 48px app bar — one row of controls belonging to the whole screen. `md` is the 72px page header, tall enough for a `NavbarTitle` with a line of context under it plus the actions that apply to the record on screen. Only the height differs; surface, rule, gutter and row are identical."
+        },
+        {
+          "name": "position",
+          "type": "'static' | 'sticky' | 'fixed' | 'absolute' | 'relative'",
+          "default": "'static'",
+          "description": "How the bar sits on the page. `static` keeps it in flow above the content — the app-shell case, and the reason this is the default rather than MUI’s `fixed`. Use `sticky` for a bar that should stay put as the page scrolls; `fixed` and `absolute` take the bar out of flow, so the page needs its own spacer underneath — `NAVBAR_HEIGHT_PX` is exported for exactly that."
+        },
+        {
+          "name": "disableGutters",
+          "type": "boolean",
+          "default": "false",
+          "description": "Drop the 24px inline gutter so the first and last children sit flush with the page edge. Reach for it when the bar’s own children already carry the inset — a full-bleed `Tabs`, for instance."
+        },
+        {
+          "name": "component",
+          "type": "ElementType",
+          "default": "'header'",
+          "description": "Root element. Already a `header`, which is usually right; swap it when the bar is nested inside one that exists."
+        },
+        {
+          "name": "slotProps",
+          "type": "{ toolbar }",
+          "default": "{}",
+          "description": "Props for the row inside the bar. `toolbar: { component: \"nav\" }` is the usual one, for a bar that is genuinely the page’s navigation rather than a title strip."
+        },
+        {
+          "name": "sx",
+          "type": "SxProps",
+          "default": "—",
+          "description": "The bar is drawn flat because its bottom rule does the separating. `sx={{ boxShadow: 2 }}` is the seam if a `sticky` bar needs to lift off content scrolling under it."
+        },
+        {
+          "name": "NavbarTitle children",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The page title, at the `h5` ramp in medium weight and heading ink. Rendered as a real `h1` inside the block, and truncated with an ellipsis rather than wrapped — the bar’s height is fixed, so a second line would be clipped instead."
+        },
+        {
+          "name": "NavbarTitle meta",
+          "type": "{ icon?, label }[]",
+          "default": "—",
+          "description": "The line under the title — a reference, a name, a date. Each item is an optional 16px glyph and a label at the `b2` ramp in muted ink, and the block draws a vertical rule between each pair. Omit it for a bar with nothing but a title."
+        }
+      ],
+      "examples": [
+        {
+          "title": "An app bar with a title and trailing actions",
+          "description": "The shape almost every bar takes: what the screen is on the left, what you can do to it on the right, and a flexible gap doing the separating. The gap is composition rather than a prop, so a tight cluster of icon buttons chooses its own spacing.",
+          "code": "<Navbar>\n  <Typography variant=\"subtitle1\" sx={{ fontWeight: 600 }}>\n    Query log\n  </Typography>\n  <Box sx={{ flex: 1 }} />\n  <IconButton variant=\"secondary\" appearance=\"text\" size=\"sm\" aria-label=\"Search\">\n    <MagnifyingGlassIcon />\n  </IconButton>\n  <IconButton variant=\"secondary\" appearance=\"text\" size=\"sm\" aria-label=\"Notifications\">\n    <BellIcon />\n  </IconButton>\n  <Avatar size=\"sm\">AV</Avatar>\n</Navbar>"
+        },
+        {
+          "title": "The shell: a bar above, a rail beside",
+          "description": "Navbar and Drawer are painted from the same surface and the same edge token, so they meet at the corner without a seam. The bar sits above the row that holds the rail, which is what puts the sidebar toggle in the bar and lets the rail collapse under it.",
+          "code": "<Stack sx={{ minHeight: \"100vh\" }}>\n  <Navbar>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label=\"Collapse sidebar\"\n      onClick={() => setCollapsed((open) => !open)}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n  </Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, minHeight: 0 }}>\n    <Drawer variant=\"permanent\" size=\"sm\">\n      <NavOfYourOwn collapsed={collapsed} />\n    </Drawer>\n    <Box sx={{ flex: 1, p: 3, overflowY: \"auto\" }}>{children}</Box>\n  </Stack>\n</Stack>"
+        },
+        {
+          "title": "A page header, with the record and its actions",
+          "description": "The `md` bar. A `NavbarTitle` carries the page name and the line of context under it; the actions after the spacer are ordinary `Button`s, so their roles say what they do — `error` outline for the destructive one, contained primary for the one that moves the record forward. The bar itself is the same surface and rule as the app bar above it, only taller.",
+          "code": "<Navbar size=\"md\">\n  <IconButton\n    variant=\"secondary\"\n    appearance=\"text\"\n    size=\"sm\"\n    aria-label=\"Open navigation\"\n  >\n    <ListIcon />\n  </IconButton>\n\n  <NavbarTitle\n    meta={[\n      { icon: <TicketIcon size={NAVBAR_META_ICON_PX} />, label: \"#345\" },\n      { icon: <UserIcon size={NAVBAR_META_ICON_PX} />, label: \"Nike Sales\" },\n      { icon: <CalendarBlankIcon size={NAVBAR_META_ICON_PX} />, label: \"05 Jun 2025\" },\n    ]}\n    sx={{ ml: 3 }}\n  >\n    Matching\n  </NavbarTitle>\n\n  <Box sx={{ flex: 1 }} />\n\n  <Stack direction=\"row\" sx={{ gap: 1.5 }}>\n    <Button appearance=\"outline\" size=\"sm\" startIcon={<StarFourIcon size={16} />}>\n      Ask Neo\n    </Button>\n    <Button variant=\"error\" appearance=\"outline\" size=\"sm\">\n      Reject\n    </Button>\n    <Button size=\"sm\" endIcon={<ArrowRightIcon size={16} />}>\n      Validate\n    </Button>\n  </Stack>\n</Navbar>"
+        },
+        {
+          "title": "A page header with nothing but a title",
+          "description": "Drop `meta` and the block is one line, still vertically centred in the 72px bar. Worth reaching for when the page has no record behind it — a settings screen, a list — and the extra height is holding actions rather than context.",
+          "code": "<Navbar size=\"md\">\n  <NavbarTitle>Vendor details</NavbarTitle>\n  <Box sx={{ flex: 1 }} />\n  <Button size=\"sm\">Add vendor</Button>\n</Navbar>"
+        },
+        {
+          "title": "Staying put as the page scrolls",
+          "description": "`sticky` keeps the bar in flow — so no spacer is needed — while pinning it to the top once the page moves under it. That is the one case a flat bar reads badly, which is why the shadow is reachable rather than locked away.",
+          "code": "<Navbar position=\"sticky\" sx={{ boxShadow: 2 }}>\n  <Typography variant=\"subtitle1\" sx={{ fontWeight: 600 }}>Vendors</Typography>\n</Navbar>"
+        },
+        {
+          "title": "A real nav landmark, flush to the page edge",
+          "description": "The root is a `header`, which is right for a title strip and not for a bar whose whole job is navigation. Name the row `nav` and drop the gutter when the children — a `Tabs` here — already carry their own inset.",
+          "code": "<Navbar disableGutters slotProps={{ toolbar: { component: \"nav\" } }}>\n  <Tabs value={tab} onChange={(_, next) => setTab(next)}>\n    <Tab label=\"All\" />\n    <Tab label=\"Open\" count={12} />\n    <Tab label=\"Resolved\" />\n  </Tabs>\n</Navbar>"
+        }
+      ],
+      "dos": [
+        "Leave `position` at `static` for an app shell, and use `sticky` when the bar should follow the page",
+        "Use `size=\"md\"` with a `NavbarTitle` when the bar names a page or a record, and `size=\"sm\"` when it only carries controls",
+        "Put the record’s facts in `meta` rather than in the title — a title that reads \"Matching #345 · Nike Sales\" cannot truncate gracefully",
+        "Put one `Box sx={{ flex: 1 }}` between the leading group and the trailing one, so the bar has a single split point",
+        "Use `appearance=\"text\"` icon buttons in the bar — the bar is already a surface, so contained buttons read as a second layer on it",
+        "Pair it with a `permanent` Drawer for the standard shell; the two share their surface and edge tokens",
+        "Name the row with `slotProps={{ toolbar: { component: \"nav\" } }}` when the bar carries the page’s navigation"
+      ],
+      "donts": [
+        "Don't use `position=\"fixed\"` without a spacer under it — the first thing on the page will start behind the bar. `<Box sx={{ height: NAVBAR_HEIGHT_PX }} />` is the spacer",
+        "Don't recolour the bar; there is one surface for every container in the system, and `color` is removed from the type rather than left to do nothing",
+        "Don't add a shadow to a `static` bar — the bottom rule is the separation, and a shadow on a bar that cannot scroll under anything is decoration",
+        "Don't stack rows inside a `sm` bar to fit a title and its context — that is what `size=\"md\"` and `NavbarTitle` are, and a third row belongs in a `Tabs` bar beneath the header",
+        "Don't put a page's actions inside `NavbarTitle` — it owns the title and its context, and the roles of the buttons beside it are decisions about the page",
+        "Don't put more than one primary action in the bar — it is the screen's chrome, not its call to action"
+      ],
+      "relatedComponents": [
+        "Drawer",
+        "Tabs",
+        "IconButton",
+        "Avatar",
+        "Menu"
       ]
     },
     {

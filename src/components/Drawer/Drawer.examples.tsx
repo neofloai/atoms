@@ -1,0 +1,234 @@
+import type { ComponentExamplesData } from '@/src/types/docs';
+
+/**
+ * Docs + MCP data for `Drawer`. Read by `scripts/generate.ts` and served
+ * through the MCP `get_component` tool and the docs site.
+ *
+ * No `figmaUrl`: the Product Design System file has no drawer cell. The
+ * treatment is the shared panel surface every other container uses, and
+ * the widths are measured from the Vendor Query shell — see
+ * `drawerMetrics.ts`.
+ */
+export const data: ComponentExamplesData = {
+  name: 'Drawer',
+  category: 'Navigation',
+  tagline:
+    'A panel anchored to an edge of the viewport — a nav rail beside the page, or a sheet that slides over it. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.',
+  props: [
+    {
+      name: 'variant',
+      type: "'temporary' | 'persistent' | 'permanent'",
+      default: "'temporary'",
+      description:
+        'How the panel relates to the page. `temporary` floats over it behind a backdrop and closes on Escape or a click outside; `persistent` pushes the content aside and stays until dismissed; `permanent` is always there and never closes — the app rail. Only `temporary` is a modal.',
+    },
+    {
+      name: 'anchor',
+      type: "'left' | 'right' | 'top' | 'bottom'",
+      default: "'left'",
+      description:
+        'Edge the panel belongs to. It also decides which edge draws the hairline — the one facing the content — so a left drawer is ruled on its right and a bottom sheet along its top.',
+    },
+    {
+      name: 'size',
+      type: "'sm' | 'md' | 'lg' | number",
+      default: "'md'",
+      description:
+        'Width of the panel: 220px for a nav rail, 400px for a form or a record, 520px for a full detail sheet, or pixels for a width that is a state rather than a rung — a folded rail, a resized sheet. Changes animate. It lands on the panel and on the space a docked drawer reserves, which is why the width is a prop and not something to put on `slotProps.paper`. Ignored on `top` and `bottom`, where the height follows the content.',
+    },
+    {
+      name: 'open',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Whether the panel is shown. Ignored by `permanent`, which has no closed state — that variant needs no state at all.',
+    },
+    {
+      name: 'onClose',
+      type: '(event, reason) => void',
+      default: '—',
+      description:
+        'Fires when a `temporary` drawer asks to be dismissed. `reason` is `"escapeKeyDown"` or `"backdropClick"`. Omit it and both are refused, which is how a sheet is made to close only through its own button.',
+    },
+    {
+      name: 'hideBackdrop',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Drop the scrim behind a `temporary` drawer. The panel is drawn flat because the backdrop is what separates it from the page, so a drawer without one usually wants a shadow back through `slotProps`.',
+    },
+    {
+      name: 'transitionDuration',
+      type: 'number | { enter, exit }',
+      default: "theme.transitions.duration",
+      description:
+        'How long the slide takes. Left alone it resolves from the theme, which honours `prefers-reduced-motion`, so prefer overriding it only for a panel whose contents make the default feel wrong.',
+    },
+    {
+      name: 'slotProps',
+      type: '{ paper, backdrop, root, docked, transition }',
+      default: '{}',
+      description:
+        'Props for each part of the panel. `paper` is the one to reach for: it carries the panel’s own padding, puts a shadow back with `sx={{ boxShadow: 3 }}`, or drops the panel into normal flow with `sx={{ position: "relative" }}`. Width is the exception — that belongs on `size`.',
+    },
+  ],
+  examples: [
+    {
+      title: 'A detail sheet over the page',
+      description:
+        'The common case. `temporary` floats the sheet above the content rather than reflowing it, which matters when what is behind it is a wide table — squeezing that would re-lay-out every column each time a row is clicked. Mount it only while a row is selected and the contents rebuild per record.',
+      code: [
+        'const [selectedId, setSelectedId] = React.useState<string | null>(null);',
+        '',
+        '<Drawer',
+        '  anchor="right"',
+        '  size="lg"',
+        '  open={selectedId !== null}',
+        '  onClose={() => setSelectedId(null)}',
+        '>',
+        '  <Stack sx={{ p: 3, gap: 2 }}>',
+        '    <Typography variant="h6">Invoice INV-2291</Typography>',
+        '    <Typography variant="body2" color="text.secondary">',
+        '      Raised 4 days ago, awaiting vendor response.',
+        '    </Typography>',
+        '  </Stack>',
+        '</Drawer>',
+      ].join('\n'),
+    },
+    {
+      title: 'A permanent nav rail',
+      description:
+        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge.',
+      code: [
+        '<Stack direction="row" sx={{ minHeight: "100vh" }}>',
+        '  <Drawer',
+        '    variant="permanent"',
+        '    size="sm"',
+        '    slotProps={{ paper: { sx: { py: 2.5 } } }}',
+        '  >',
+        '    <Stack sx={{ px: 2, gap: 2, pb: 2 }}>',
+        '      <NeofloLogo variant="full" size={20} />',
+        '      <Button',
+        '        variant="secondary"',
+        '        appearance="outline"',
+        '        size="sm"',
+        '        fullWidth',
+        '        startIcon={<SuitcaseSimpleIcon size={16} />}',
+        '        endIcon={<CaretUpDownIcon size={14} />}',
+        '        onClick={openWorkspaceMenu}',
+        '      >',
+        '        Non Trade AP DB',
+        '      </Button>',
+        '    </Stack>',
+        '',
+        '    <Divider />',
+        '',
+        '    {/* The nav takes the slack, which is what pins the footer down. */}',
+        '    <Stack sx={{ flex: 1, px: 2, py: 2, gap: 1 }}>',
+        '      {NAV.map(({ key, label, Icon }) => (',
+        '        <ToggleButton',
+        '          key={key}',
+        '          value={key}',
+        '          selected={active === key}',
+        '          onChange={() => setActive(key)}',
+        '          appearance="text"',
+        '          size="sm"',
+        '          sx={{ gap: 1, justifyContent: "flex-start", textTransform: "none" }}',
+        '        >',
+        '          <Icon size={20} />',
+        '          {label}',
+        '        </ToggleButton>',
+        '      ))}',
+        '    </Stack>',
+        '',
+        '    <Divider />',
+        '',
+        '    <Stack sx={{ px: 2, pt: 2.5 }}>',
+        '      <Button',
+        '        variant="secondary"',
+        '        appearance="text"',
+        '        fullWidth',
+        '        endIcon={<CaretDownIcon size={16} />}',
+        '        onClick={openUserMenu}',
+        '        sx={{ justifyContent: "space-between", textTransform: "none" }}',
+        '      >',
+        '        <Avatar size="sm">AV</Avatar>',
+        '      </Button>',
+        '    </Stack>',
+        '  </Drawer>',
+        '',
+        '  <Box sx={{ flex: 1, p: 3 }}>{children}</Box>',
+        '</Stack>',
+      ].join('\n'),
+    },
+    {
+      title: 'A rail that collapses to icons',
+      description:
+        'One rail, two widths. There is no collapsed rung on the scale, because a rail folding to a strip of icons is the same panel narrowed — so it is the same prop with a raw number. The width animates and the panel clips its own overflow, which is what lets the labels drop out without pushing the rail back open.',
+      code: [
+        'const [collapsed, setCollapsed] = React.useState(false);',
+        '',
+        '<Drawer variant="permanent" size={collapsed ? 64 : "sm"}>',
+        '  <NavOfYourOwn collapsed={collapsed} />',
+        '</Drawer>',
+      ].join('\n'),
+    },
+    {
+      title: 'Pushing the page aside instead of covering it',
+      description:
+        '`persistent` docks the panel like `permanent` but keeps an open state, so the content next to it reflows as the panel arrives. Use it for a filter rail the user leaves open while they work — not for a sheet they glance at and dismiss, where the reflow is the whole cost.',
+      code: [
+        '<Stack direction="row">',
+        '  <Drawer variant="persistent" open={filtersOpen}>',
+        '    <FiltersOfYourOwn />',
+        '  </Drawer>',
+        '  <Box sx={{ flex: 1 }}>{results}</Box>',
+        '</Stack>',
+      ].join('\n'),
+    },
+    {
+      title: 'A bottom sheet, as tall as its content',
+      description:
+        '`size` is a width, so it does nothing on the two vertical anchors — a top or bottom drawer is as tall as what is inside it, which is MUI’s behaviour and the right one for a sheet of actions. Give the content its own padding and the sheet takes that height.',
+      code: [
+        '<Drawer anchor="bottom" open={open} onClose={handleClose}>',
+        '  <Stack sx={{ p: 3, gap: 1 }}>',
+        '    <Button variant="error">Delete 3 invoices</Button>',
+        '    <Button appearance="text" variant="secondary" onClick={handleClose}>',
+        '      Cancel',
+        '    </Button>',
+        '  </Stack>',
+        '</Drawer>',
+      ].join('\n'),
+    },
+    {
+      title: 'A rail inside a container',
+      description:
+        'MUI keeps the panel `position: fixed` for every variant, so a docked drawer pins itself to the edge of the window rather than of its parent. That is right for an app shell and wrong inside a card or a demo box; putting the panel back in normal flow is one line.',
+      code: [
+        '<Drawer',
+        '  variant="permanent"',
+        '  size="sm"',
+        '  slotProps={{ paper: { sx: { position: "relative" } } }}',
+        '>',
+        '  <NavOfYourOwn />',
+        '</Drawer>',
+      ].join('\n'),
+    },
+  ],
+  dos: [
+    'Use `temporary` for anything the user opens, reads and dismisses — it brings the backdrop, the Escape key and the scroll lock with it',
+    'Use `permanent` for the app rail and `size="sm"`, so every Neoflo shell has the same 220px column',
+    'Mount a `temporary` drawer only while it has something to show, so its contents rebuild per record instead of holding the last one',
+    'Match the `anchor` to what the panel is: a rail belongs on the left, a record on the right, a row of actions at the bottom',
+    'Drive a collapsing rail from `size` with a pixel number, so the panel and the space it reserves fold together and animate',
+  ],
+  donts: [
+    "Don't set the width with `sx` or `slotProps.paper` — `size` is the only place it reaches both the panel and the space a docked drawer reserves",
+    "Don't use `persistent` for a sheet that is glanced at and closed — reflowing the page on every open is what makes it the wrong variant",
+    "Don't expect `size` to do anything on a `top` or `bottom` anchor; give the content padding and let the sheet take its height",
+    "Don't put a `permanent` drawer inside a container without `position: \"relative\"` on the paper — it will pin itself to the window instead",
+    "Don't add a shadow to a `temporary` drawer that still has its backdrop; the scrim is already doing that job",
+  ],
+  relatedComponents: ['Navbar', 'Dialog', 'Card', 'Menu', 'Slide'],
+};

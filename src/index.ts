@@ -356,6 +356,72 @@ export type {
 } from './components/Dialog';
 
 /**
+ * The two halves of an app shell — the bar across the top and the panel
+ * down the side. They are exported together because they are drawn
+ * together: both take `surface/layers/card 2` behind a 1px
+ * `border/layers/card 2`, so a bar and a rail meeting at the corner
+ * match, and neither needs styling of its own to look like it belongs.
+ *
+ * That is one rung above the `card 1` a `Card` or a `Dialog` takes, and
+ * deliberately so — chrome sits above content on the neutral ladder, so a
+ * card on the page reads as sitting *on* the app rather than beside it.
+ * Both frames of the shell they were drawn for bind that pair
+ * independently, the bar as well as the rail.
+ *
+ * Neither has a cell in the Product Design System file. Their colour comes
+ * from the app's own frames, and their dimensions — the bar's 48px height,
+ * the rail's 220px width, the sheet's 400 and 520 — are measured from the
+ * Vendor Query shell, the one place a Neoflo drawer and navbar ship today.
+ *
+ * `Drawer` adds one prop to MUI's and locks nothing. `Navbar` folds MUI's
+ * `Toolbar` into its `AppBar`, because the two are never useful apart,
+ * and locks the four props that would recolour a bar that has one
+ * treatment. Both flatten MUI's shadow and leave `elevation` reachable
+ * through `sx` or `slotProps`, the seam `Dialog` opened.
+ */
+export { Drawer } from './components/Drawer';
+export type {
+  DrawerAnchor,
+  DrawerProps,
+  DrawerSize,
+  DrawerVariant,
+} from './components/Drawer';
+
+/**
+ * `Navbar` has two rungs, and they are two kinds of bar. `size="sm"` is
+ * the 48px app bar that spans a screen; `size="md"` is the 72px page
+ * header, tall enough for a title with a line of context under it and the
+ * actions that apply to the record on screen. Only the height differs —
+ * surface, rule, gutter and row are identical — so it is a `size` rather
+ * than a `variant`, and what fills the bar is composition either way.
+ *
+ * `NavbarTitle` is the one part of a page header that is geometry rather
+ * than composition: the title, the 4px gap, and a `meta` row of glyphs and
+ * labels separated by vertical rules. The actions stay with the caller,
+ * because whether a page's action is destructive or confirming is a
+ * decision about the page and not about its header.
+ *
+ * `NAVBAR_HEIGHT_PX` is keyed by size and ships alongside them, because
+ * two layout problems need the number and cannot read it off the DOM: a
+ * `fixed` bar is out of flow and the page under it needs a spacer exactly
+ * that tall, and anything sharing a baseline with the bar's contents — the
+ * first row of a rail beside it — has to match it.
+ */
+export {
+  NAVBAR_HEIGHT_PX,
+  NAVBAR_META_ICON_PX,
+  Navbar,
+  NavbarTitle,
+} from './components/Navbar';
+export type {
+  NavbarMetaItem,
+  NavbarPosition,
+  NavbarProps,
+  NavbarSize,
+  NavbarTitleProps,
+} from './components/Navbar';
+
+/**
  * Motion primitives — MUI's five transitions, re-exported under the
  * Neoflo API so consumers never reach into `@mui/material` for them.
  *
