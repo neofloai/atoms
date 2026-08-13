@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --no-install agent-browser eval '\\(\\(\\)=>{ *)",
+      "Bash(npx --no-install agent-browser eval \"\\(\\(\\)=>{const b=[...document.querySelectorAll\\('button'\\)].find\\(x=>x.textContent.trim\\(\\)==='Title only'\\);b.click\\(\\);return 'opened'}\\)\\(\\)\")",
+      "Bash(npx --no-install agent-browser eval \"\\(\\(\\)=>{const f=document.querySelector\\('.MuiDialogActions-root'\\);const c=[...f.querySelectorAll\\('button'\\)].find\\(b=>b.textContent.trim\\(\\)==='Cancel'\\);c.id='cancelProbe';return 'tagged'}\\)\\(\\)\")",
+      "Bash(npx --no-install agent-browser eval \"\\(\\(\\)=>{const c=document.getElementById\\('cancelProbe'\\);const p=document.querySelector\\('.MuiDialog-paper'\\);return JSON.stringify\\({cancel:getComputedStyle\\(c\\).backgroundColor,panel:getComputedStyle\\(p\\).backgroundColor}\\)}\\)\\(\\)\")",
+      "Bash(npx --no-install agent-browser hover \"#cancelProbe\")",
+      "Bash(npx --no-install agent-browser reload)",
+      "Bash(npx --no-install agent-browser eval \"\\(\\(\\)=>{const c=document.getElementById\\('cancelProbe'\\);const p=document.querySelector\\('.MuiDialog-paper'\\);const s=getComputedStyle\\(c\\);return JSON.stringify\\({hoverBg:s.backgroundColor,panel:getComputedStyle\\(p\\).backgroundColor,ink:s.color,dec:s.textDecorationLine,w:Math.round\\(c.getBoundingClientRect\\(\\).width\\)}\\)}\\)\\(\\)\")"
+    ]
+  }
+}

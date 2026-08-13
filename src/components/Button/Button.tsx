@@ -67,16 +67,22 @@ const sizeMetrics: Record<
  *     *inside* the frame, so its outlined and filled buttons are both
  *     44px at `lg`; a CSS border sits outside the content box, which
  *     would otherwise make ours 46.
- *   - `text` sits flush — Figma gives it `Scale/0` on the inline axis
- *     at every size (node 983:16993), so a text link lines up with the
- *     copy it sits under rather than being inset by the control.
+ *   - `text` is inset less than the other two — 8px against 12 — which
+ *     is the relationship MUI keeps between its own text and filled
+ *     buttons (8 against 16). Figma gives it `Scale/0` at every size
+ *     (node 983:16993), which was right while a hovered text button
+ *     took no fill; now that it shades, a flush label would have the
+ *     fill running straight into the glyphs on both sides. Recorded in
+ *     DESIGNER_QUESTIONS.md #45 with the hover change that caused it.
  */
+const TEXT_PADDING_INLINE_PX = spacing.component.xs;
+
 function paddingFor(size: ButtonSize, appearance: ButtonAppearance): CSSObject {
   const { block, inline } = sizeMetrics[size];
   return {
     paddingBlock:
       appearance === 'outline' ? block - OUTLINE_BORDER_WIDTH_PX : block,
-    paddingInline: appearance === 'text' ? 0 : inline,
+    paddingInline: appearance === 'text' ? TEXT_PADDING_INLINE_PX : inline,
   };
 }
 

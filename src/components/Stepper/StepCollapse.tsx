@@ -56,8 +56,11 @@ const EllipsisDot = styled('span')(({ theme }) => ({
 /*
  * A bare label, not a control with a box: no horizontal padding, so the
  * text starts exactly on the step margin. Hover marks itself with an
- * underline and no fill, which is what `Button`'s `text` appearance does
- * for the same reason — there is no room here for a surface.
+ * underline and no fill, because a flush label has no room for a
+ * surface — a fill would run straight into the glyphs. That makes this
+ * the one underline left in the library: `Button`'s `text` appearance
+ * used to work the same way and now takes a fill, having been given the
+ * inline padding to hold one (DESIGNER_QUESTIONS.md #45).
  */
 const CollapseButton = styled(ButtonBase)(({ theme }) => ({
   ...collapseType,
