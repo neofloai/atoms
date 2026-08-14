@@ -128,10 +128,7 @@ export type {
 } from './components/Link';
 
 export { TextField } from './components/TextField';
-export type {
-  TextFieldProps,
-  TextFieldStatus,
-} from './components/TextField';
+export type { TextFieldProps, TextFieldStatus } from './components/TextField';
 
 export { Select } from './components/Select';
 export type { SelectProps, SelectStatus } from './components/Select';
@@ -161,10 +158,16 @@ export type { SelectProps, SelectStatus } from './components/Select';
  * view inside the panel is written per component.
  */
 export { DatePicker } from './components/DatePicker';
-export type { DatePickerProps, DatePickerStatus } from './components/DatePicker';
+export type {
+  DatePickerProps,
+  DatePickerStatus,
+} from './components/DatePicker';
 
 export { TimePicker } from './components/TimePicker';
-export type { TimePickerProps, TimePickerStatus } from './components/TimePicker';
+export type {
+  TimePickerProps,
+  TimePickerStatus,
+} from './components/TimePicker';
 
 export { Checkbox } from './components/Checkbox';
 export type { CheckboxProps } from './components/Checkbox';
@@ -428,10 +431,10 @@ export type {
  * This is the simple table, and it is the right default: it renders the
  * markup you write, so a cell holds a `Chip` or an `Avatar` or two lines
  * of text without a column definition, and it ships nothing you are not
- * using. The data grid, which lands after it, is the one to reach for
- * when the table is the screen's work rather than one of its panels —
- * thousands of rows to virtualise, sorting and filtering and pagination
- * you would otherwise write by hand, inline editing, CSV export.
+ * using. `DataGrid`, below, is the one to reach for when the table is the
+ * screen's work rather than one of its panels — thousands of rows to
+ * virtualise, sorting and filtering and pagination you would otherwise
+ * write by hand, inline editing, CSV export.
  *
  * Three things about the design are worth knowing before reading the
  * props, because each explains a piece of the API:
@@ -479,6 +482,48 @@ export type {
 } from './components/Table';
 
 /**
+ * The same design, driven by MUI X's grid engine — for when the table is
+ * the screen's work rather than one of its panels.
+ *
+ * Everything the community grid documents survives: virtualised rows,
+ * sorting, filtering, pagination, inline editing, selection, CSV export,
+ * server-side data. That is the whole reason to be here, so none of it is
+ * renamed or wrapped. What the wrapper changes is the look, and three
+ * decisions inside it are worth knowing:
+ *
+ *   - **The frame goes.** MUI borders and rounds the grid and fills it
+ *     with `background.paper`; the design draws the same stack of bands
+ *     the table does, hairline under every row including the last, no
+ *     edge of its own. A grid needs a *height* though — MUI's root is
+ *     `height: 100%`, so a grid in an unsized parent renders as a line.
+ *     There is a 320px floor to stop that happening silently.
+ *   - **`size` is the density,** 48 / 56 / 64 over a flat 32px header, the
+ *     same three values `Table` takes. It replaces `rowHeight`,
+ *     `columnHeaderHeight` and `density`, which are the same fact stated
+ *     three times and disagree the moment two of them are set.
+ *   - **The footer is rewritten.** MUI's is a rows-per-page `Select` and
+ *     two arrows; the design's is `1–20 of 278 transactions` and three
+ *     filled buttons, where the jump-to-start appears only once you have
+ *     left the first page. `rowNoun` is what it counts in.
+ *
+ * Row tints come from `rowState`, a function of the row rather than a
+ * prop, because a grid has no per-row markup to hang one on. And a column
+ * menu words its sort rows from the column's type — "Low to high" for a
+ * number, "A to Z" for a string, "Old to new" for a date — which is what
+ * Figma draws three separate menus to say.
+ */
+export {
+  DATA_GRID_HEADER_HEIGHT_PX,
+  DATA_GRID_ROW_HEIGHT_PX,
+  DataGrid,
+} from './components/DataGrid';
+export type {
+  DataGridProps,
+  DataGridRowState,
+  DataGridSize,
+} from './components/DataGrid';
+
+/**
  * Motion primitives — MUI's five transitions, re-exported under the
  * Neoflo API so consumers never reach into `@mui/material` for them.
  *
@@ -505,7 +550,4 @@ export { Slide } from './components/Slide';
 export type { SlideDirection, SlideProps } from './components/Slide';
 
 export { Collapse } from './components/Collapse';
-export type {
-  CollapseOrientation,
-  CollapseProps,
-} from './components/Collapse';
+export type { CollapseOrientation, CollapseProps } from './components/Collapse';

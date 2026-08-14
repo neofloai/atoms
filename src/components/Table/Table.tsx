@@ -40,8 +40,8 @@ const TableRoot = styled(MuiTable)(({ theme }) => ({
  * using. Reach for it for a fixed or short list of records: a summary on
  * a dashboard, the lines of one invoice, a settings matrix.
  *
- * The data grid, which lands after this, is the one to reach for when
- * the table is the screen's work rather than one of its panels:
+ * `DataGrid` is the one to reach for when the table is the screen's work
+ * rather than one of its panels:
  * thousands of rows that need virtualising, sorting and filtering and
  * pagination that you would otherwise write by hand, inline editing,
  * column resizing, CSV export, server-side data. Every one of those is
