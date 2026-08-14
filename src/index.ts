@@ -422,6 +422,63 @@ export type {
 } from './components/Navbar';
 
 /**
+ * The table family — seven pieces that only make sense together, so they
+ * ship together the way the dialog's five do.
+ *
+ * This is the simple table, and it is the right default: it renders the
+ * markup you write, so a cell holds a `Chip` or an `Avatar` or two lines
+ * of text without a column definition, and it ships nothing you are not
+ * using. The data grid, which lands after it, is the one to reach for
+ * when the table is the screen's work rather than one of its panels —
+ * thousands of rows to virtualise, sorting and filtering and pagination
+ * you would otherwise write by hand, inline editing, CSV export.
+ *
+ * Three things about the design are worth knowing before reading the
+ * props, because each explains a piece of the API:
+ *
+ *   - **A table draws no edge.** No border, no radius, no shadow, no fill
+ *     of its own — the Figma set is 320 tall for a header and six 48px
+ *     rows, which is `32 + 6 × 48` with nothing left over. So it takes
+ *     the colour of whatever it is dropped onto, and the edge around it
+ *     is a `Card`'s to draw.
+ *   - **Density belongs to the table.** One `size` — 48, 56 or 64 —
+ *     reaches every row through context, because MUI's own `size` holds
+ *     two values where the design has three. The header stays 32 in all
+ *     three: it is a label strip rather than a row of data.
+ *   - **`State` is not one prop.** Four of the design's six row states
+ *     are things MUI's row already models (`hover`, `selected`,
+ *     `disabled`, plain); the two that are left describe the data rather
+ *     than the pointer, and arrive as `state` on the row.
+ *
+ * `TABLE_ROW_HEIGHT_PX` and `TABLE_HEADER_ROW_HEIGHT_PX` ship alongside,
+ * for the layout problems that need the number and cannot read it off the
+ * DOM — a `Skeleton` standing in for a row while it loads, or a virtual
+ * list that has to know a row's height before rendering one.
+ */
+export {
+  TABLE_HEADER_ROW_HEIGHT_PX,
+  TABLE_ROW_HEIGHT_PX,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableSortLabel,
+} from './components/Table';
+export type {
+  TableBodyProps,
+  TableCellProps,
+  TableContainerProps,
+  TableHeadProps,
+  TableProps,
+  TableRowProps,
+  TableRowState,
+  TableSize,
+  TableSortLabelProps,
+} from './components/Table';
+
+/**
  * Motion primitives — MUI's five transitions, re-exported under the
  * Neoflo API so consumers never reach into `@mui/material` for them.
  *
