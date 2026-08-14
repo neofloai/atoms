@@ -23,7 +23,7 @@ import { INVOICES, initials, money } from './records';
 
 import type { TableRowState, TableSize } from '@/src/components/Table';
 
-/** The three densities, in the order the Figma `Size` axis lists them. */
+/** The three densities, smallest first. */
 const SIZES: readonly { size: TableSize; height: number }[] = [
   { size: 'sm', height: 48 },
   { size: 'md', height: 56 },
@@ -221,15 +221,15 @@ SortableTable.displayName = 'SortableTable';
  * Five previews: the assembled design, the three densities, the row
  * states, a sortable header, and a pinned one.
  *
- * The first is the one to read against Figma — it is node 3223:61897
- * rebuilt from Atoms parts, column for column.
+ * The first is the assembled table, rebuilt from Atoms parts, column for
+ * column.
  */
 export function TableShowcase() {
   return (
     <Stack spacing={4}>
       <PreviewCard
         title="A table of records"
-        description="The design's own table, rebuilt from Atoms parts: a reference with its timestamp under it, a vendor, a status Chip, an attachment, a right-aligned amount, and the row's actions. None of those columns is a prop on the table — a cell holds whatever you put in it, which is the whole reason to reach for this rather than a grid."
+        description="A table of records, rebuilt from Atoms parts: a reference with its timestamp under it, a vendor, a status Chip, an attachment, a right-aligned amount, and the row's actions. None of those columns is a prop on the table — a cell holds whatever you put in it, which is the whole reason to reach for this rather than a grid."
       >
         <RecordsTable size="sm" />
       </PreviewCard>

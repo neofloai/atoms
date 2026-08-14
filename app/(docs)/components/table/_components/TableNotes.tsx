@@ -26,12 +26,12 @@ export function TableNotes() {
           settings matrix.
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          The data grid, which lands after this, is the one to reach for when
-          the table is the screen&apos;s work rather than one of its panels:
-          thousands of rows that need virtualising, sorting and filtering and
-          pagination you would otherwise write by hand, inline editing, column
-          resizing, CSV export, server-side data. Every one of those is a reason
-          to switch; none of them is a reason to grow this component.
+          The <code>DataGrid</code> is the one to reach for when the table is
+          the screen&apos;s work rather than one of its panels: thousands of
+          rows that need virtualising, sorting and filtering and pagination you
+          would otherwise write by hand, inline editing, column resizing, CSV
+          export, server-side data. Every one of those is a reason to switch;
+          none of them is a reason to grow this component.
         </Typography>
       </Stack>
 
@@ -41,7 +41,7 @@ export function TableNotes() {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           There is no outer border, no radius, no shadow and no fill of its own.
-          The Figma set measures 320px for a header and six 48px rows, which is{' '}
+          A header and six 48px rows measures 320, which is{' '}
           <code>32 + 6 × 48</code> with nothing left over — no padding around
           the set, no gap between rows. So a table takes the colour of whatever
           it is dropped onto, and the edge around it is a <code>Card</code>
@@ -49,9 +49,8 @@ export function TableNotes() {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           The one line it does draw is the hairline under each row, including
-          the last, so a table ends on a rule rather than on nothing. Figma
-          stacks them that way, and <code>Accordion</code> ends its lists the
-          same way.
+          the last, so a table ends on a rule rather than on nothing.{' '}
+          <code>Accordion</code> ends its lists the same way.
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Two of MUI&apos;s defaults are what make a MUI table look like one,
@@ -92,8 +91,8 @@ export function TableNotes() {
           What a cell holds is not a prop
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          The design draws twelve cell variants, and ten of them are content: a
-          chip, a person, an amount, an attachment, a toggle, a loading
+          Of the twelve kinds of cell this table is built for, ten are content:
+          a chip, a person, an amount, an attachment, a toggle, a loading
           placeholder, a button. Those are <code>Chip</code>,{' '}
           <code>Avatar</code>, <code>Switch</code> and <code>Skeleton</code> put
           in a cell, and no prop should stand between a caller and doing that.
@@ -136,9 +135,9 @@ export function TableNotes() {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           <code>disabled</code> greys the ink and the hairline and stops the row
-          answering the pointer. It is visual only, as it is in Figma: the
-          checkbox and the buttons inside keep their own <code>disabled</code>,
-          because a row cannot disable a descendant it does not own.
+          answering the pointer. It is visual only: the checkbox and the buttons
+          inside keep their own <code>disabled</code>, because a row cannot
+          disable a descendant it does not own.
         </Typography>
       </Stack>
 

@@ -43,7 +43,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Mark the row as chosen. The design brackets it between two `border/primary/2` hairlines rather than deepening its fill, because selection and hover share the same surface. The upper line belongs to the row above, so a selected first row keeps a grey line over it.',
+        'Mark the row as chosen. It is bracketed between two `border/primary/2` hairlines rather than deepening its fill, because selection and hover share the same surface. The upper line belongs to the row above, so a selected first row keeps a grey line over it.',
     },
     {
       name: 'TableRow state',
@@ -57,7 +57,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Grey the row’s ink and its hairline, and stop it answering the pointer. Visual only, as it is in Figma: controls inside the row keep their own `disabled`, because a row cannot disable a descendant it does not own.',
+        'Grey the row’s ink and its hairline, and stop it answering the pointer. Visual only: controls inside the row keep their own `disabled`, because a row cannot disable a descendant it does not own.',
     },
     {
       name: 'TableCell align',
@@ -142,7 +142,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Two lines in one row, and a leading glyph',
       description:
-        'The design’s richest cells are still cells. `secondary` puts a muted line under the first with no gap between them, and `icon` holds a node 8px clear of the text — a glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.',
+        'The richest cells are still cells. `secondary` puts a muted line under the first with no gap between them, and `icon` holds a node 8px clear of the text — a glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.',
       code: [
         '<TableRow>',
         '  <TableCell icon={<UploadSimpleIcon size={16} />} secondary="14 Feb 2026 · 21:38">',
