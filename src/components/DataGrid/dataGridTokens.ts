@@ -128,13 +128,18 @@ export const DATA_GRID_FOOTER_LABEL_GAP_PX = spacing.component.xs;
 export const DATA_GRID_FOOTER_HEIGHT_PX = 48;
 
 /**
- * A grid with no height of its own falls back to this.
+ * What the selection checkbox keeps of its own padding: `Scale/100`, a
+ * quarter of MUI's 9.
  *
- * MUI's grid is `height: 100%` and expects a sized parent — dropped into
- * an auto-height one it collapses to nothing, which is the most common
- * way a first grid appears broken. A header and six `sm` rows is
- * `32 + 6 × 48 = 320`, which is the assembled Figma frame's own height,
- * so the fallback is the design's table rather than a round number. An
- * explicit `height`, `sx`, or `autoHeight` wins over it.
+ * The control's padding is its hover halo — MUI rounds the whole button,
+ * so the padding is the ring you see behind the glyph, and at 0 the ring
+ * is the glyph and reads as a smudge. Full padding is not available
+ * either: 9 makes a 42px control, and the header strip is 32 tall.
+ *
+ * 4 makes it `24 + 4 + 4 = 32` — exactly the header's height, and the
+ * same box as the `sm` `IconButton` the footer uses, so every round
+ * target in the grid is one size. The 4 is given back as a negative
+ * inline margin so the glyph still starts on the 24px edge inset rather
+ * than 4 inside it.
  */
-export const DATA_GRID_FALLBACK_HEIGHT_PX = 320;
+export const DATA_GRID_CHECKBOX_HALO_PADDING_PX = spacing.component.xxs;

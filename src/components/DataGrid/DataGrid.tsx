@@ -221,9 +221,9 @@ interface DataGridComponent {
  *
  * A grid needs a height. MUI's root is `height: 100%`, which resolves to
  * nothing in a parent that has no height of its own, and a grid that
- * renders as a 1px line is almost always this. There is a 320px floor
- * here so that never happens silently, but say what you mean: put it in a
- * sized box, or pass `autoHeight` to let it grow with its rows.
+ * renders as a 1px line is almost always this. Say which of the two you
+ * mean: put it in a sized box, or pass `autoHeight` to let it grow with
+ * its rows.
  *
  * Sorting is on by default and paginating is not, which is MUI's split
  * and worth keeping — `pagination` is what brings up the designed footer.
