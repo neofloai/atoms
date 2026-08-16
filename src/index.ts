@@ -279,6 +279,48 @@ export type {
   StepperTypeMap,
 } from './components/Stepper';
 
+/**
+ * The list family — MUI's six parts, matching the Figma `list` frame
+ * (node 3653:29671).
+ *
+ * The sheet is 120 symbols across four axes, and not one axis becomes a
+ * prop, because MUI already models all four as composition: `Type` is
+ * which leading slot you write, `Action` is `secondaryAction`, `2-line`
+ * is whether `ListItemText` got a `secondary`, and `State` is CSS plus
+ * MUI's own `disabled`. So nothing is renamed and nothing is added.
+ *
+ * Two props are locked instead, both because the design picks one
+ * answer. `divider` comes off the two row components — the hairline is
+ * drawn unconditionally, since all 120 symbols carry it and its colour
+ * is a state indicator rather than a decoration. `disablePadding` comes
+ * off `List`, because the rows carry the rhythm and a list-level gutter
+ * would push the first row down. See `src/components/List/List.types.ts`.
+ *
+ * The one real departure from MUI's mechanics is that `secondaryAction`
+ * is laid out in flow rather than absolutely positioned, so a long title
+ * shortens to make room for the trailing control instead of sliding
+ * underneath it — see `ListItem.tsx`.
+ */
+export {
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from './components/List';
+export type {
+  ListItemAvatarProps,
+  ListItemButtonProps,
+  ListItemButtonTypeMap,
+  ListItemIconProps,
+  ListItemProps,
+  ListItemTextProps,
+  ListItemTypeMap,
+  ListProps,
+  ListTypeMap,
+} from './components/List';
+
 export { Menu } from './components/Menu';
 export type { MenuProps } from './components/Menu';
 
