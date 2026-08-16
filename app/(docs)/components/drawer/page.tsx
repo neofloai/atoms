@@ -33,7 +33,7 @@ export default function DrawerDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Drawer } from '@neoflo/atoms';`}</code>
+            <code>{`import { Drawer } from '@neofloai/atoms';`}</code>
           </Typography>
           <Typography variant="body2" color="text.secondary">
             No Figma source — the panel takes the shared container surface,

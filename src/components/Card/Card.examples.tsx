@@ -99,7 +99,7 @@ export const data: ComponentExamplesData = {
       description:
         'Figma’s `text` header over its action row. Nothing sets the 16px inset or the 16px gap between them — the regions bring their own padding, and a region that follows another padded region drops its top padding so the two share one gutter.',
       code: [
-        "import { Button, Card, CardActions, CardHeader } from '@neoflo/atoms';",
+        "import { Button, Card, CardActions, CardHeader } from '@neofloai/atoms';",
         '',
         '<Card component="article" sx={{ maxWidth: 400 }}>',
         '  <CardHeader',
@@ -118,7 +118,7 @@ export const data: ComponentExamplesData = {
       description:
         'The media region sits outside the padded box, so it reaches the card’s edges and is clipped to its corners. The height is a content dimension rather than a token — Figma uses 124px here and 132px on the metric card, so the caller sets it.',
       code: [
-        "import { Card, CardHeader, CardMedia } from '@neoflo/atoms';",
+        "import { Card, CardHeader, CardMedia } from '@neofloai/atoms';",
         '',
         '<Card sx={{ maxWidth: 400 }}>',
         '  <CardHeader title="Lizards" subheader="Recorded in Queensland, 2026." />',
@@ -136,8 +136,8 @@ export const data: ComponentExamplesData = {
       description:
         'Figma’s `info` header, built as a composition rather than a `CardHeader`. The badge sits directly beside the number, 8px away — `CardHeader`’s `action` slot would push it to the far edge of the card instead, because MUI stretches the title block to fill the row.',
       code: [
-        "import { ArrowUpRightIcon } from '@neoflo/atoms/icons';",
-        "import { Card, CardContent, Chip, IconButton, Stack, Typography } from '@neoflo/atoms';",
+        "import { ArrowUpRightIcon } from '@neofloai/atoms/icons';",
+        "import { Card, CardContent, Chip, IconButton, Stack, Typography } from '@neofloai/atoms';",
         '',
         '<Card sx={{ maxWidth: 400 }}>',
         '  <CardContent>',
@@ -161,7 +161,7 @@ export const data: ComponentExamplesData = {
       description:
         '`CardContent` is the padded region for anything else. MUI pads its last child’s bottom to 24px; this one is symmetric at 16, so a card of pure text does not measure 8px taller than the same card with actions after it.',
       code: [
-        "import { Card, CardContent, CardHeader, Typography } from '@neoflo/atoms';",
+        "import { Card, CardContent, CardHeader, Typography } from '@neofloai/atoms';",
         '',
         '<Card sx={{ maxWidth: 400 }}>',
         '  <CardHeader title="Storage" />',
@@ -176,7 +176,7 @@ export const data: ComponentExamplesData = {
       description:
         'Rows go after the padded box so they reach both edges, and each row brings its own 16px inset. The rule between rows is drawn from `border.default.default` rather than the card’s own border token — `border.layers.card1` on `surface.layers.card1` is a 1.05:1 hairline, which is invisible.',
       code: [
-        "import { Avatar, Card, CardHeader, Divider, Stack, Typography } from '@neoflo/atoms';",
+        "import { Avatar, Card, CardHeader, Divider, Stack, Typography } from '@neofloai/atoms';",
         '',
         '<Card sx={{ maxWidth: 400 }}>',
         '  <CardHeader title="Reviewers" />',
@@ -205,7 +205,7 @@ export const data: ComponentExamplesData = {
       description:
         'The title renders as a `<span>` by default, so a page of cards has no headings in it. Give the card a semantic root and promote the title to a real heading at the level the surrounding page uses.',
       code: [
-        "import { Card, CardHeader } from '@neoflo/atoms';",
+        "import { Card, CardHeader } from '@neofloai/atoms';",
         '',
         '<Card component="section" aria-labelledby="usage-title">',
         '  <CardHeader',
@@ -222,7 +222,7 @@ export const data: ComponentExamplesData = {
       description:
         'The action row is right-aligned, which is what the design draws. A card that needs an action at each edge is not a case Figma covers, so there is no prop for it — reach for `sx` rather than a wrapper.',
       code: [
-        "import { Button, Card, CardActions, CardHeader } from '@neoflo/atoms';",
+        "import { Button, Card, CardActions, CardHeader } from '@neofloai/atoms';",
         '',
         '<Card>',
         '  <CardHeader title="Trial ending" subheader="3 days left on the Pro plan." />',
@@ -238,7 +238,7 @@ export const data: ComponentExamplesData = {
       description:
         'Cards have no width of their own — they fill what they are given. `Grid` sets the column count and the gutter, and every card in a row matches height because a grid item stretches by default.',
       code: [
-        "import { Card, CardHeader, Grid } from '@neoflo/atoms';",
+        "import { Card, CardHeader, Grid } from '@neofloai/atoms';",
         '',
         '<Grid container spacing={3}>',
         '  {metrics.map((metric) => (',

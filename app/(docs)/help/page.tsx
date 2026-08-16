@@ -167,7 +167,7 @@ const reportChecklist: readonly string[] = [
   'What you were building, not only what broke — the intent is usually what decides whether the answer is a fix, a new prop, or a different component',
   'The component and the prop, with a snippet small enough to paste straight back',
   'Which colour mode, and which surface it sat on — several past bugs were visible in one mode only',
-  'The version of Atoms you have: the commit or tag recorded next to @neoflo/atoms in your package-lock.json',
+  'The version of Atoms you have: the commit or tag recorded next to @neofloai/atoms in your package-lock.json',
   'A screenshot, and a Figma link if the design already exists',
 ];
 

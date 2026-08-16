@@ -53,7 +53,7 @@ export default function BadgeDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Badge } from '@neoflo/atoms';`}</code>
+            <code>{`import { Badge } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

@@ -53,7 +53,7 @@ export default function SelectDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Select } from '@neoflo/atoms';`}</code>
+            <code>{`import { Select } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

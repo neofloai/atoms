@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-09T16:43:02.426Z",
+  "generatedAt": "2026-08-16T12:48:00.382Z",
   "brand": {
     "name": "Neoflo",
     "tagline": "The Neoflo brand: one monochrome mark, a single blue accent, and a two-typeface system, all expressed through the Atoms theme.",
@@ -15,7 +15,7 @@
           "about"
         ],
         "summary": "Neoflo is a calm, precise product brand: monochrome by default, with a single confident blue accent and restrained type.",
-        "body": "Neoflo is a calm, precise, product-first brand. The system leans on a neutral greyscale foundation so content and data stay the focus, with one confident blue accent reserved for primary actions and emphasis.\n\nAtoms is the design system that ships the brand. Everything visual — colour, type, spacing, elevation, the logo — flows through the Atoms theme, so any product built on @neoflo/atoms is on-brand by construction. Do not introduce off-theme colours, fonts, or a restyled logo."
+        "body": "Neoflo is a calm, precise, product-first brand. The system leans on a neutral greyscale foundation so content and data stay the focus, with one confident blue accent reserved for primary actions and emphasis.\n\nAtoms is the design system that ships the brand. Everything visual — colour, type, spacing, elevation, the logo — flows through the Atoms theme, so any product built on @neofloai/atoms is on-brand by construction. Do not introduce off-theme colours, fonts, or a restyled logo."
       },
       {
         "id": "logo",
@@ -29,7 +29,7 @@
           "neoflo logo"
         ],
         "summary": "The Neoflo mark is a single monochrome \"N\" Union shape; use NeofloLogo (mark or full lockup), which inherits currentColor.",
-        "body": "The Neoflo logo is a single geometric \"N\" mark. It comes in two forms: the mark (icon only) and the full lockup (mark + the lowercase \"neoflo\" wordmark).\n\nShip it with the NeofloLogo component, never a re-drawn copy:\n\n  import { NeofloLogo } from '@neoflo/atoms';\n\n  <NeofloLogo />                          // icon mark, 24px\n  <NeofloLogo variant=\"full\" size={28} /> // mark + wordmark\n\nThe logo is monochrome and renders from currentColor, so it is dark on light surfaces and light on dark surfaces from one source — there are no separate colour assets. Set the colour by setting `color` on an ancestor. Keep clear space around it, do not recolour it into the brand blue, and do not stretch or rotate it."
+        "body": "The Neoflo logo is a single geometric \"N\" mark. It comes in two forms: the mark (icon only) and the full lockup (mark + the lowercase \"neoflo\" wordmark).\n\nShip it with the NeofloLogo component, never a re-drawn copy:\n\n  import { NeofloLogo } from '@neofloai/atoms';\n\n  <NeofloLogo />                          // icon mark, 24px\n  <NeofloLogo variant=\"full\" size={28} /> // mark + wordmark\n\nThe logo is monochrome and renders from currentColor, so it is dark on light surfaces and light on dark surfaces from one source — there are no separate colour assets. Set the colour by setting `color` on an ancestor. Keep clear space around it, do not recolour it into the brand blue, and do not stretch or rotate it."
       },
       {
         "id": "favicon",
@@ -94,7 +94,7 @@
           "defaultMode"
         ],
         "summary": "One MUI-based theme drives the brand. Wrap apps in NeofloThemeProvider; light and dark are both first-class, defaulting to the system scheme.",
-        "body": "The brand is delivered as one MUI v9 theme built entirely from tokens. Wrap your app once in NeofloThemeProvider and every Atoms component is themed and on-brand:\n\n  import { NeofloThemeProvider } from '@neoflo/atoms';\n\n  <NeofloThemeProvider>{children}</NeofloThemeProvider>\n\nLight and dark are both first-class — every semantic token carries a light and a dark value. The provider defaults to the system colour scheme; pass defaultMode=\"light\" or \"dark\" to pin a single scheme. Do not theme components individually or override brand colours; change the tokens/theme instead."
+        "body": "The brand is delivered as one MUI v9 theme built entirely from tokens. Wrap your app once in NeofloThemeProvider and every Atoms component is themed and on-brand:\n\n  import { NeofloThemeProvider } from '@neofloai/atoms';\n\n  <NeofloThemeProvider>{children}</NeofloThemeProvider>\n\nLight and dark are both first-class — every semantic token carries a light and a dark value. The provider defaults to the system colour scheme; pass defaultMode=\"light\" or \"dark\" to pin a single scheme. Do not theme components individually or override brand colours; change the tokens/theme instead."
       }
     ]
   }

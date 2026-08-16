@@ -53,7 +53,7 @@ export default function CheckboxDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Checkbox } from '@neoflo/atoms';`}</code>
+            <code>{`import { Checkbox } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

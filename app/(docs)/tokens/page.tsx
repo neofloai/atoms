@@ -40,7 +40,7 @@ export default function TokensPage() {
             Single source of truth for every brand colour. Raw scales feed
             the semantic layer, which feeds the MUI theme. Edit values in
             <code> src/tokens/</code> — every consumer of{' '}
-            <code>@neoflo/atoms</code> picks up the change on next install.
+            <code>@neofloai/atoms</code> picks up the change on next install.
           </Typography>
         </Stack>
 

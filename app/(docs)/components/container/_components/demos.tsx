@@ -17,7 +17,7 @@ import { demoFactory } from '../../../_components/demoPairing';
  *
  * These previews import from `@/src/components/*` rather than
  * `@mui/material`, so the page exercises the same export path a
- * consumer of `@neoflo/atoms` would take.
+ * consumer of `@neofloai/atoms` would take.
  *
  * A caveat the previews cannot escape: they render inside the docs
  * column, which is ~712px wide. That is narrower than `md`, `lg`, and

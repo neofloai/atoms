@@ -52,7 +52,7 @@ export default function SliderDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Slider } from '@neoflo/atoms';`}</code>
+            <code>{`import { Slider } from '@neofloai/atoms';`}</code>
           </Typography>
         </Stack>
 

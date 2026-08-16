@@ -53,7 +53,7 @@ export default function AvatarDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Avatar } from '@neoflo/atoms';`}</code>
+            <code>{`import { Avatar } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

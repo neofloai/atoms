@@ -53,7 +53,7 @@ export default function TimePickerDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { TimePicker } from '@neoflo/atoms';`}</code>
+            <code>{`import { TimePicker } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl ? (
             <MuiLink

@@ -34,7 +34,7 @@ export default function DataGridDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { DataGrid } from '@neoflo/atoms';`}</code>
+            <code>{`import { DataGrid } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <MuiLink

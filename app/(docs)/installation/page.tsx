@@ -1,36 +1,38 @@
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import NextLink from '@/app/_lib/Link';
+
+import { CodeBlock } from '../_components/CodeBlock';
+
+/**
+ * Deliberately short — just enough to install and use Atoms in a project.
+ * The full reference (CI/CD, Docker, AWS deployment, every import/theming
+ * rule, update semantics) lives in src/install/index.ts, served through
+ * the MCP endpoint for AI editors. This page and that source are not meant
+ * to match line-for-line: this one is the quick-start, that one is the
+ * exhaustive one.
+ */
 export const metadata = {
   title: 'Installation — Atoms',
   description:
-    'Install @neoflo/atoms from the private GitHub repository and set up the theme provider in a Next.js or React app.',
+    'Install @neofloai/atoms from GitHub Packages and set up the theme provider in a Next.js or React app.',
 };
 
-const sshInstall = `npm install git+ssh://git@github.com/neofloai/atoms.git`;
+const npmrcSnippet = `@neofloai:registry=https://npm.pkg.github.com`;
 
-const pinnedInstall = `# Pin to a branch
-npm install git+ssh://git@github.com/neofloai/atoms.git#main
+const ghAuthSnippet = `gh auth refresh -h github.com -s read:packages
+npm config set //npm.pkg.github.com/:_authToken "$(gh auth token)" --location=global`;
 
-# Pin to a tag (recommended for production)
-npm install git+ssh://git@github.com/neofloai/atoms.git#v1.0.0
+const tokenSnippet = `npm config set //npm.pkg.github.com/:_authToken YOUR_TOKEN --location=global`;
 
-# Pin to an exact commit
-npm install git+ssh://git@github.com/neofloai/atoms.git#1a2b3c4`;
-
-const httpsInstall = `npm install git+https://github.com/neofloai/atoms.git`;
-
-const ciToken = `git config --global \\
-  url."https://\${GITHUB_TOKEN}@github.com/".insteadOf \\
-  "https://github.com/"
-
-npm install git+https://github.com/neofloai/atoms.git`;
+const installCommand = `npm install @neofloai/atoms@^1.0.0`;
 
 const nextProviderSetup = `// app/layout.tsx
-import { NeofloThemeProvider } from '@neoflo/atoms';
+import { NeofloThemeProvider } from '@neofloai/atoms';
 
 export default function RootLayout({
   children,
@@ -49,7 +51,7 @@ export default function RootLayout({
 const reactProviderSetup = `// src/main.tsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { NeofloThemeProvider } from '@neoflo/atoms';
+import { NeofloThemeProvider } from '@neofloai/atoms';
 import { App } from './App';
 
 createRoot(document.getElementById('root')!).render(
@@ -60,46 +62,23 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );`;
 
-const nextSsrCache = `// app/layout.tsx — optional, flicker-free SSR styles
-// npm install @mui/material-nextjs @emotion/cache
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
-import { NeofloThemeProvider } from '@neoflo/atoms';
+const usageExample = `import { Button } from '@neofloai/atoms';
+import { spacing, colors } from '@neofloai/atoms/tokens';
+import { ShieldCheckIcon } from '@neofloai/atoms/icons';`;
 
-// ...inside <body>
-<AppRouterCacheProvider options={{ enableCssLayer: true }}>
-  <NeofloThemeProvider>{children}</NeofloThemeProvider>
-</AppRouterCacheProvider>`;
+const deploymentNpmrc = `@neofloai:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}`;
 
-const colorModeSetup = `// Follows the OS color scheme by default.
-// Pin it when your UI is designed for a single scheme:
-<NeofloThemeProvider defaultMode="light">
-  {children}
-</NeofloThemeProvider>`;
+const deploymentGhActions = `# job needs: permissions: { packages: read }
+env:
+  NODE_AUTH_TOKEN: \${{ secrets.GITHUB_TOKEN }}`;
 
-const usageExample = `import { neofloTheme } from '@neoflo/atoms';
-import { spacing, colors } from '@neoflo/atoms/tokens';
-import { ShieldCheckIcon } from '@neoflo/atoms/icons';`;
+const deploymentDocker = `RUN --mount=type=secret,id=npm_token \\
+  NODE_AUTH_TOKEN=$(cat /run/secrets/npm_token) npm ci --ignore-scripts`;
 
-function CodeBlock({ children }: { children: string }) {
-  return (
-    <Paper
-      variant="outlined"
-      sx={{
-        p: 2,
-        borderRadius: 1.5,
-        fontFamily: 'var(--font-geist-mono), monospace',
-        fontSize: 13,
-        bgcolor: 'action.hover',
-        whiteSpace: 'pre',
-        overflowX: 'auto',
-      }}
-    >
-      {children}
-    </Paper>
-  );
-}
-
-CodeBlock.displayName = 'CodeBlock';
+const deploymentCodeBuild = `# store NODE_AUTH_TOKEN in Secrets Manager; grant the service role
+# secretsmanager:GetSecretValue
+DOCKER_BUILDKIT=1 docker build --secret id=npm_token,env=NODE_AUTH_TOKEN -t $REPOSITORY_URI:latest .`;
 
 export default function InstallationPage() {
   return (
@@ -113,10 +92,12 @@ export default function InstallationPage() {
             Installation
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            <code>@neoflo/atoms</code> lives in a private GitHub repository
-            (<code>neofloai/atoms</code>) and is installed straight from git —
-            it is not published to the public npm registry. Anyone with read
-            access to the repo can install it.
+            <code>@neofloai/atoms</code> is published to{' '}
+            <strong>GitHub Packages</strong> — a private registry. This is a
+            Neoflo-internal package: only engineers in the{' '}
+            <code>neofloai</code> GitHub org with read access granted on the
+            package can install it. Works in any React 18 or 19 app —
+            Next.js, Vite, or CRA.
           </Typography>
         </Stack>
 
@@ -125,18 +106,37 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              Requirements
+              1. Authenticate
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Atoms works in any React 18 or 19 app — Next.js (App Router),
-              Vite, or CRA. <code>react</code> and <code>react-dom</code> are
-              peer dependencies your app already provides; MUI v9, Emotion, and
-              the brand fonts (DM Sans + Instrument Serif) ship inside
-              the package, so you do not install or load them separately. The
-              package ships compiled JavaScript, so no bundler transpile config
-              is needed.
+              Add this to your project&apos;s <code>.npmrc</code> (safe to
+              commit — no token in it):
             </Typography>
           </Stack>
+          <CodeBlock>{npmrcSnippet}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            Then, <strong>once per machine, ever</strong> — covers every{' '}
+            <code>@neofloai</code> package, not just this one. If you have
+            the{' '}
+            <Link href="https://cli.github.com/" target="_blank" rel="noreferrer">
+              gh CLI
+            </Link>{' '}
+            authenticated already, there&apos;s no token to create by hand:
+          </Typography>
+          <CodeBlock>{ghAuthSnippet}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            No <code>gh</code> CLI? Create a token scoped to{' '}
+            <code>read:packages</code> only (
+            <Link
+              href="https://github.com/settings/tokens/new?scopes=read:packages&description=neofloai-npm"
+              target="_blank"
+              rel="noreferrer"
+            >
+              github.com/settings/tokens/new
+            </Link>
+            ), then:
+          </Typography>
+          <CodeBlock>{tokenSnippet}</CodeBlock>
         </Stack>
 
         <Divider />
@@ -144,46 +144,10 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              1. Install from GitHub
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              If your machine has an SSH key linked to a GitHub account with
-              access to <code>neofloai/atoms</code>, this is all you need:
+              2. Install
             </Typography>
           </Stack>
-          <CodeBlock>{sshInstall}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            By default this installs from the default branch. For
-            reproducible builds, pin to a tag or commit:
-          </Typography>
-          <CodeBlock>{pinnedInstall}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            Prefer HTTPS? This works too, using your cached git credentials
-            (or a personal access token when prompted):
-          </Typography>
-          <CodeBlock>{httpsInstall}</CodeBlock>
-        </Stack>
-
-        <Divider />
-
-        <Stack spacing={3} sx={{ maxWidth: 720 }}>
-          <Stack spacing={0.5}>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              2. CI and Docker builds
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Build machines have no SSH key, so authenticate with a
-              fine-grained personal access token (read-only access to the
-              repo is enough). Rewrite GitHub URLs to include the token
-              before <code>npm install</code> runs:
-            </Typography>
-          </Stack>
-          <CodeBlock>{ciToken}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            Store the token as a CI secret (for example{' '}
-            <code>GITHUB_TOKEN</code> in GitHub Actions). Never commit it to
-            the repository or a lockfile.
-          </Typography>
+          <CodeBlock>{installCommand}</CodeBlock>
         </Stack>
 
         <Divider />
@@ -194,10 +158,9 @@ export default function InstallationPage() {
               3. Wrap your app in the theme provider
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              <code>NeofloThemeProvider</code> applies the Neoflo MUI theme
-              (light and dark), the CSS baseline, and Phosphor icon defaults
-              in one wrapper. It is framework-agnostic — add it once at the
-              root of your app.
+              <code>NeofloThemeProvider</code> applies the Neoflo MUI theme,
+              CSS baseline, and Phosphor icon defaults in one wrapper. Add it
+              once at the root of your app.
             </Typography>
           </Stack>
           <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
@@ -208,20 +171,6 @@ export default function InstallationPage() {
             React (Vite / CRA)
           </Typography>
           <CodeBlock>{reactProviderSetup}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            For server-rendered Next.js apps, you can optionally wrap{' '}
-            <code>NeofloThemeProvider</code> with the MUI{' '}
-            <code>AppRouterCacheProvider</code> to insert Emotion styles during
-            streaming (avoids a flash of unstyled content):
-          </Typography>
-          <CodeBlock>{nextSsrCache}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            The theme follows the OS color scheme by default. If your UI is
-            designed for a single scheme, pin it with the{' '}
-            <code>defaultMode</code> prop (<code>&quot;light&quot;</code>,{' '}
-            <code>&quot;dark&quot;</code>, or <code>&quot;system&quot;</code>):
-          </Typography>
-          <CodeBlock>{colorModeSetup}</CodeBlock>
         </Stack>
 
         <Divider />
@@ -229,19 +178,61 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              4. Import and build
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Everything is exposed through the package root and three
-              subpaths — components from the root, tokens, the theme object,
-              and tree-shakable icons:
+              4. Import and use
             </Typography>
           </Stack>
           <CodeBlock>{usageExample}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
-            Import only from these entry points. Reaching into{' '}
-            <code>@mui/material</code> directly bypasses the design system
-            and is not supported.
+            Import only from these entry points — never{' '}
+            <code>@mui/material</code> directly, and never{' '}
+            <code>@neofloai/atoms/dist/*</code>.
+          </Typography>
+        </Stack>
+
+        <Divider />
+
+        <Stack spacing={3} sx={{ maxWidth: 720 }}>
+          <Stack spacing={0.5}>
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+              Deployment
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Two things to add to your project so your CI/CD and Docker
+              builds can install <code>@neofloai/atoms</code> too.
+            </Typography>
+          </Stack>
+
+          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+            1. Add a <code>.npmrc</code> file to your project root, and
+            commit it
+          </Typography>
+          <CodeBlock>{deploymentNpmrc}</CodeBlock>
+
+          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+            2. Give your build the token — pick whichever you use
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            <strong>GitHub Actions</strong>: add this to the workflow step
+            that runs <code>npm ci</code>:
+          </Typography>
+          <CodeBlock>{deploymentGhActions}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            <strong>Dockerfile</strong>: add this line where you currently
+            run <code>npm ci</code>:
+          </Typography>
+          <CodeBlock>{deploymentDocker}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            <strong>AWS CodeBuild</strong>: add this to{' '}
+            <code>buildspec.yml</code> (needs a one-time setup: store the
+            token in Secrets Manager, grant the CodeBuild role{' '}
+            <code>secretsmanager:GetSecretValue</code>):
+          </Typography>
+          <CodeBlock>{deploymentCodeBuild}</CodeBlock>
+
+          <Typography variant="body2" color="text.secondary">
+            That&apos;s it — nothing else changes. The running container
+            itself needs none of this; by the time it exists,{' '}
+            <code>@neofloai/atoms</code> is already installed.
           </Typography>
         </Stack>
 
@@ -249,15 +240,20 @@ export default function InstallationPage() {
 
         <Stack spacing={1.5} sx={{ maxWidth: 720 }}>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>
-            Updating
+            Need more?
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Git installs are locked to the commit recorded in{' '}
-            <code>package-lock.json</code>. To pull a newer version, re-run
-            the install command with the new tag (or run{' '}
-            <code>npm update @neoflo/atoms</code> when tracking a branch).
-            Pair the upgrade with the MCP endpoint so your AI editor always
-            codes against the version you have installed.
+            Updating to a new version and the full rule set (import
+            boundaries, theming, escape hatches) live in the MCP reference —
+            connect your AI editor to it (see the{' '}
+            <Link component={NextLink} href="/mcp-guide">
+              MCP guide
+            </Link>
+            ) and ask it directly. Missing a variant or component? See{' '}
+            <Link component={NextLink} href="/help">
+              Help &amp; support
+            </Link>
+            .
           </Typography>
         </Stack>
       </Stack>

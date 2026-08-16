@@ -67,7 +67,7 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
   }, [query]);
 
   async function handleCopy(name: string): Promise<void> {
-    const snippet = `import { ${name} } from '@neoflo/atoms/icons';`;
+    const snippet = `import { ${name} } from '@neofloai/atoms/icons';`;
     try {
       await navigator.clipboard.writeText(snippet);
       setCopied(name);
@@ -136,7 +136,7 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
           phosphoricons.com
         </Box>
         {' '}— every icon shown there is importable from{' '}
-        <code>@neoflo/atoms/icons</code>. Names there are unsuffixed, so add{' '}
+        <code>@neofloai/atoms/icons</code>. Names there are unsuffixed, so add{' '}
         <code>Icon</code>: <code>magnifying-glass</code> imports as{' '}
         <code>MagnifyingGlassIcon</code>.
       </Typography>

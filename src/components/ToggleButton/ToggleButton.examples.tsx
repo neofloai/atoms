@@ -218,7 +218,7 @@ export const data: ComponentExamplesData = {
       description:
         'The composition from the design file: `appearance="text"` on a surface that already has the edge and the shadow, with a `Divider` between the two groups. One group per decision, so alignment and formatting keep separate selections. The 1px padding is the frame\'s 2px `Scale/50` with the border taken out of it, the same subtraction the components make.',
       code: [
-        "import { border, elevation, radius, spacing, surface } from '@neoflo/atoms/tokens';",
+        "import { border, elevation, radius, spacing, surface } from '@neofloai/atoms/tokens';",
         '',
         '<Box',
         '  sx={(theme) => ({',

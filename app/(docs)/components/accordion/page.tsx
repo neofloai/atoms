@@ -54,7 +54,7 @@ export default function AccordionDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { Accordion, AccordionSummary, AccordionDetails, AccordionActions } from '@neoflo/atoms';`}
+              {`import { Accordion, AccordionSummary, AccordionDetails, AccordionActions } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl && (

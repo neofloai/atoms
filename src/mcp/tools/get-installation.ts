@@ -46,7 +46,7 @@ function renderFramework(
 
 /**
  * Registers the `get_installation` tool: returns framework-specific setup
- * instructions for adding @neoflo/atoms to a project.
+ * instructions for adding @neofloai/atoms to a project.
  */
 export function registerGetInstallation(server: McpServer): void {
   server.registerTool(
@@ -54,7 +54,7 @@ export function registerGetInstallation(server: McpServer): void {
     {
       title: 'Get installation steps',
       description:
-        'Returns step-by-step instructions to install and set up @neoflo/atoms in a project, tailored to the framework. Pass framework "nextjs" for a Next.js App Router app or "react" for a React app (Vite/CRA); omit it to get instructions for every supported framework. Always call this when the user asks how to install, add, or set up the design system.',
+        'Returns step-by-step instructions to install and set up @neofloai/atoms in a project, tailored to the framework. Pass framework "nextjs" for a Next.js App Router app or "react" for a React app (Vite/CRA); omit it to get instructions for every supported framework. Always call this when the user asks how to install, add, or set up the design system.',
       inputSchema: {
         framework: z
           .enum(['nextjs', 'react'])

@@ -53,7 +53,7 @@ export default function TabsDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Tabs, Tab } from '@neoflo/atoms';`}</code>
+            <code>{`import { Tabs, Tab } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl ? (
             <MuiLink

@@ -107,7 +107,7 @@ export default function StackDocsPage() {
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="import">Import</SectionHeading>
-          <CodeBlock>{`import { Stack } from '@neoflo/atoms';`}</CodeBlock>
+          <CodeBlock>{`import { Stack } from '@neofloai/atoms';`}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
             Stack carries MUI&apos;s own <code>&apos;use client&apos;</code>{' '}
             boundary, so it renders straight from a React Server Component —

@@ -14,7 +14,7 @@ export function registerGetPattern(server: McpServer): void {
     {
       title: 'Get page pattern',
       description:
-        'Returns the full page layout code for a named pattern (dashboard, settings, auth, etc.) built from @neoflo/atoms components. Returns markdown with a complete tsx code block. Use this instead of composing page layouts from scratch.',
+        'Returns the full page layout code for a named pattern (dashboard, settings, auth, etc.) built from @neofloai/atoms components. Returns markdown with a complete tsx code block. Use this instead of composing page layouts from scratch.',
       inputSchema: {
         name: z
           .string()

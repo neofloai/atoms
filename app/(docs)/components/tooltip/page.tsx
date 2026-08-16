@@ -53,7 +53,7 @@ export default function TooltipDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Tooltip } from '@neoflo/atoms';`}</code>
+            <code>{`import { Tooltip } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

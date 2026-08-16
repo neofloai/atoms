@@ -11,7 +11,7 @@ For local development and the component API, see [`README.md`](./README.md).
 - [Architecture at a glance](#architecture-at-a-glance)
 - [Why a container](#why-a-container)
 - [Build pipeline](#build-pipeline)
-- [The library package (`@neoflo/atoms`)](#the-library-package-neofloatoms)
+- [The library package (`@neofloai/atoms`)](#the-library-package-neofloaiatoms)
 - [The Docker image](#the-docker-image)
 - [CI/CD overview](#cicd-overview)
 - [GitHub Actions (CI)](#github-actions-ci)
@@ -41,7 +41,7 @@ Because `/mcp` and `/api/health` require a live Node server (`runtime = 'nodejs'
 
 Deployment target: **AWS ECS (Fargate)** pulling from **Amazon ECR**. The image is built and shipped by **AWS CodeBuild** via [`buildspec.yml`](./buildspec.yml). Any other container runtime works with the same image.
 
-This repo also publishes a third output — the **`@neoflo/atoms` npm library** — consumed by other Neoflo projects over `git+ssh`. That build is independent of the service deployment (see [The library package](#the-library-package-neofloatoms)).
+This repo also publishes a third output — the **`@neofloai/atoms` npm library** — consumed by other Neoflo projects over `git+ssh`. That build is independent of the service deployment (see [The library package](#the-library-package-neofloaiatoms)).
 
 ---
 
@@ -71,7 +71,7 @@ npm run build
 
 ---
 
-## The library package (`@neoflo/atoms`)
+## The library package (`@neofloai/atoms`)
 
 Other Neoflo projects install the design system over SSH:
 
@@ -334,7 +334,7 @@ open http://localhost:3000
 | ------- | ------------ | --- |
 | CI fails at "Check generated data is up to date" | `data/*.json` not regenerated after a component/token change | `npm run generate` and commit the result |
 | Consumer install fails: `Cannot find module './dist/index.mjs'` | `prepare` did not run (e.g. `--ignore-scripts` on the consumer) or devDeps unavailable to build | Reinstall without `--ignore-scripts`; ensure tsup/typescript install so `prepare` can build `dist/` |
-| Consumer `import { X } from "@neoflo/atoms"` has no export | Component not re-exported from `src/index.ts`, or stale install | Add the export, then reinstall the package in the consumer |
+| Consumer `import { X } from "@neofloai/atoms"` has no export | Component not re-exported from `src/index.ts`, or stale install | Add the export, then reinstall the package in the consumer |
 | Docker build fails in `deps` stage running tsup | `prepare` fired without source present | Keep `npm ci --ignore-scripts` in the `deps` stage |
 | MCP returns data but `/api/health` shows `version: "unknown"` | Image built without `APP_VERSION` | Pass `--build-arg APP_VERSION=...` |
 | MCP endpoint accessible without a token in prod | `MCP_TOKEN` not set on the task definition | Set `MCP_TOKEN` env var on the ECS task definition |

@@ -88,7 +88,7 @@ export default function SkeletonDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Skeleton } from '@neoflo/atoms';`}</code>
+            <code>{`import { Skeleton } from '@neofloai/atoms';`}</code>
           </Typography>
         </Stack>
 

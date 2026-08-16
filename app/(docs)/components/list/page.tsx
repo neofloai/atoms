@@ -54,7 +54,7 @@ export default function ListDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, ListItemAvatar } from '@neoflo/atoms';`}
+              {`import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, ListItemAvatar } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl && (

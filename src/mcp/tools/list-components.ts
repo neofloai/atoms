@@ -5,7 +5,7 @@ import type { ComponentData } from '../types';
 
 function formatComponentList(components: ComponentData[]): string {
   if (components.length === 0) {
-    return 'No components published yet. The @neoflo/atoms component catalog is being built — check back soon.';
+    return 'No components published yet. The @neofloai/atoms component catalog is being built — check back soon.';
   }
 
   const byCategory = new Map<string, ComponentData[]>();
@@ -23,7 +23,7 @@ function formatComponentList(components: ComponentData[]): string {
         .join('\n')}`
   );
 
-  return `# @neoflo/atoms components\n\n${sections.join('\n\n')}\n\nCall \`get_component\` with a component name for the full spec.`;
+  return `# @neofloai/atoms components\n\n${sections.join('\n\n')}\n\nCall \`get_component\` with a component name for the full spec.`;
 }
 
 /**
@@ -36,7 +36,7 @@ export function registerListComponents(server: McpServer): void {
     {
       title: 'List components',
       description:
-        'Lists all @neoflo/atoms components grouped by category, with a one-line tagline each. Returns markdown. Always call this first to discover what exists before reaching for raw MUI.',
+        'Lists all @neofloai/atoms components grouped by category, with a one-line tagline each. Returns markdown. Always call this first to discover what exists before reaching for raw MUI.',
     },
     async () => {
       const manifest = await loadComponents();

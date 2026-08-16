@@ -53,7 +53,7 @@ export default function RadioDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Radio, RadioGroup } from '@neoflo/atoms';`}</code>
+            <code>{`import { Radio, RadioGroup } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

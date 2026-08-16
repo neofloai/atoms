@@ -54,7 +54,7 @@ export default function ProgressDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { CircularProgress, LinearProgress } from '@neoflo/atoms';`}
+              {`import { CircularProgress, LinearProgress } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl && (

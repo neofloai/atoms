@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { createAtomsMcpServer } from '@/src/mcp/server';
 
 /**
- * MCP HTTP endpoint for `@neoflo/atoms`.
+ * MCP HTTP endpoint for `@neofloai/atoms`.
  *
  * Serves the MCP server from `src/mcp/server.ts` over the Streamable
  * HTTP transport so AI editors (Cursor, Claude Code) can list

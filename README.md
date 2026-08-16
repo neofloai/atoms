@@ -10,7 +10,7 @@ A Next.js-based design system that wraps Material UI v9 with Neoflo's brand, exp
 
 Atoms is **three things in one repo**:
 
-1. **A React component library** — engineers install `@neoflo/atoms` in their projects
+1. **A React component library** — engineers install `@neofloai/atoms` in their projects
 2. **A documentation website** — [atoms.neoflo.ai](https://atoms.neoflo.ai) — designers and engineers browse components, tokens, and patterns
 3. **An MCP endpoint** — [atoms.neoflo.ai/mcp](https://atoms.neoflo.ai/mcp) — AI editors query the design system before generating code
 
@@ -256,7 +256,7 @@ To update a token (e.g., change brand color):
 1. Edit `src/tokens/colors.ts`
 2. The MUI theme automatically picks it up
 3. Run `npm run generate` to update MCP data
-4. Every product project using `@neoflo/atoms` gets the new color on next deploy
+4. Every product project using `@neofloai/atoms` gets the new color on next deploy
 
 ---
 

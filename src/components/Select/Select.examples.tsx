@@ -69,7 +69,7 @@ export const data: ComponentExamplesData = {
       title: 'Basic select',
       code: [
         "import { MenuItem } from '@mui/material';",
-        "import { Select } from '@neoflo/atoms';",
+        "import { Select } from '@neofloai/atoms';",
         '',
         '<Select label="Country" defaultValue="us">',
         '  <MenuItem value="us">United States</MenuItem>',

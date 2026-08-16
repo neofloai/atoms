@@ -1,13 +1,13 @@
 /**
  * Neoflo icon entrypoint.
  *
- * Consumers of `@neoflo/atoms` get the full Phosphor icon set via this
+ * Consumers of `@neofloai/atoms` get the full Phosphor icon set via this
  * subpath. The fact that we use Phosphor under the hood is an
  * implementation detail — consumers never install
  * `@phosphor-icons/react` themselves.
  *
  * @example
- * import { ShieldCheckIcon, ArrowRightIcon } from '@neoflo/atoms/icons';
+ * import { ShieldCheckIcon, ArrowRightIcon } from '@neofloai/atoms/icons';
  *
  * <ShieldCheckIcon />          // 24px regular, currentColor (Neoflo defaults)
  * <ArrowRightIcon size={16} /> // per-instance overrides still work

@@ -54,7 +54,7 @@ export default function StepperDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { Stepper, Step, StepLabel, StepContent } from '@neoflo/atoms';`}
+              {`import { Stepper, Step, StepLabel, StepContent } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl ? (

@@ -203,7 +203,7 @@ export default function ComponentsIndexPage() {
             radii from the design tokens, so a token change lands everywhere
             at once; the layout and motion primitives are re-exported
             unchanged, because they render nothing a designer could redline.
-            Import them all from <code>@neoflo/atoms</code>.
+            Import them all from <code>@neofloai/atoms</code>.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Need one that isn&apos;t here?{' '}
