@@ -17,7 +17,7 @@ import type { LinkProps } from 'next/link';
  * valid client function. This is the pattern recommended by Material
  * UI's official Next.js integration docs for MUI v9 + Next.js v16.
  *
- * Docs-site internal only — not part of the `@neoflo/atoms` public
+ * Docs-site internal only — not part of the `@neofloai/atoms` public
  * package.
  */
 export default NextLink;

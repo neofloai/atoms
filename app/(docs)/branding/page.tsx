@@ -153,7 +153,7 @@ export default function BrandingDocsPage() {
               overflowX: 'auto',
             }}
           >
-            {`import { NeofloLogo } from '@neoflo/atoms';\n\n<NeofloLogo />                          // icon mark, 24px\n<NeofloLogo variant="full" size={28} /> // mark + wordmark`}
+            {`import { NeofloLogo } from '@neofloai/atoms';\n\n<NeofloLogo />                          // icon mark, 24px\n<NeofloLogo variant="full" size={28} /> // mark + wordmark`}
           </Paper>
           <Typography variant="body2" color="text.secondary">
             The mark is monochrome and inherits <code>currentColor</code>, so
@@ -263,7 +263,7 @@ export default function BrandingDocsPage() {
               overflowX: 'auto',
             }}
           >
-            {`import { NeofloThemeProvider } from '@neoflo/atoms';\n\n<NeofloThemeProvider>{children}</NeofloThemeProvider>\n// pin a scheme: <NeofloThemeProvider defaultMode="light">`}
+            {`import { NeofloThemeProvider } from '@neofloai/atoms';\n\n<NeofloThemeProvider>{children}</NeofloThemeProvider>\n// pin a scheme: <NeofloThemeProvider defaultMode="light">`}
           </Paper>
           <Typography variant="body2" color="text.secondary">
             That one wrapper is the whole setup. It applies the theme, mounts{' '}
@@ -289,7 +289,7 @@ export default function BrandingDocsPage() {
               overflowX: 'auto',
             }}
           >
-            {`<Button color="primary">Save</Button>\n<Box sx={{ bgcolor: 'background.paper', color: 'text.secondary' }} />\n\n// and where you need a raw scale value, import the token —\n// never paste a hex literal\nimport { colors } from '@neoflo/atoms/tokens';`}
+            {`<Button color="primary">Save</Button>\n<Box sx={{ bgcolor: 'background.paper', color: 'text.secondary' }} />\n\n// and where you need a raw scale value, import the token —\n// never paste a hex literal\nimport { colors } from '@neofloai/atoms/tokens';`}
           </Paper>
         </Stack>
       </Stack>

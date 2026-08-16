@@ -53,7 +53,7 @@ export default function ChipDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Chip } from '@neoflo/atoms';`}</code>
+            <code>{`import { Chip } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

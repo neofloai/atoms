@@ -53,7 +53,7 @@ export default function SwitchDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Switch } from '@neoflo/atoms';`}</code>
+            <code>{`import { Switch } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

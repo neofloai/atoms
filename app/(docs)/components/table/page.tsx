@@ -35,7 +35,7 @@ export default function TableDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { Table, TableHead, TableBody, TableRow, TableCell } from '@neoflo/atoms';`}
+              {`import { Table, TableHead, TableBody, TableRow, TableCell } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl && (

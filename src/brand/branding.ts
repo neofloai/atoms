@@ -45,7 +45,7 @@ export const branding: BrandGuide = {
       body: [
         'Neoflo is a calm, precise, product-first brand. The system leans on a neutral greyscale foundation so content and data stay the focus, with one confident blue accent reserved for primary actions and emphasis.',
         '',
-        'Atoms is the design system that ships the brand. Everything visual — colour, type, spacing, elevation, the logo — flows through the Atoms theme, so any product built on @neoflo/atoms is on-brand by construction. Do not introduce off-theme colours, fonts, or a restyled logo.',
+        'Atoms is the design system that ships the brand. Everything visual — colour, type, spacing, elevation, the logo — flows through the Atoms theme, so any product built on @neofloai/atoms is on-brand by construction. Do not introduce off-theme colours, fonts, or a restyled logo.',
       ].join('\n'),
     },
     {
@@ -59,7 +59,7 @@ export const branding: BrandGuide = {
         '',
         'Ship it with the NeofloLogo component, never a re-drawn copy:',
         '',
-        "  import { NeofloLogo } from '@neoflo/atoms';",
+        "  import { NeofloLogo } from '@neofloai/atoms';",
         '',
         '  <NeofloLogo />                          // icon mark, 24px',
         '  <NeofloLogo variant="full" size={28} /> // mark + wordmark',
@@ -191,7 +191,7 @@ export const branding: BrandGuide = {
       body: [
         'The brand is delivered as one MUI v9 theme built entirely from tokens. Wrap your app once in NeofloThemeProvider and every Atoms component is themed and on-brand:',
         '',
-        "  import { NeofloThemeProvider } from '@neoflo/atoms';",
+        "  import { NeofloThemeProvider } from '@neofloai/atoms';",
         '',
         '  <NeofloThemeProvider>{children}</NeofloThemeProvider>',
         '',

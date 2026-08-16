@@ -204,7 +204,7 @@ export default function MenuDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {menuData.tagline} Import with{' '}
-            <code>{`import { Menu, MenuItem } from '@neoflo/atoms';`}</code>
+            <code>{`import { Menu, MenuItem } from '@neofloai/atoms';`}</code>
           </Typography>
           {menuData.figmaUrl && (
             <Link

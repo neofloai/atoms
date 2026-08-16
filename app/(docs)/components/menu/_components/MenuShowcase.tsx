@@ -33,7 +33,7 @@ import type { MenuProps } from '@/src/components/Menu';
  * is also the only honest way to show a state that has no prop.
  *
  * Previews import from `@/src/components/*`, so the page exercises the
- * same export path a consumer of `@neoflo/atoms` would take.
+ * same export path a consumer of `@neofloai/atoms` would take.
  */
 
 function PreviewCard({

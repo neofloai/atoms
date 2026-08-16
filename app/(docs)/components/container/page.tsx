@@ -145,7 +145,7 @@ export default function ContainerDocsPage() {
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="import">Import</SectionHeading>
-          <CodeBlock>{`import { Container } from '@neoflo/atoms';`}</CodeBlock>
+          <CodeBlock>{`import { Container } from '@neofloai/atoms';`}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
             Container carries MUI&apos;s own{' '}
             <code>&apos;use client&apos;</code> boundary, so it renders straight

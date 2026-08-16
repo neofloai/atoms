@@ -53,7 +53,7 @@ export default function AlertDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Alert } from '@neoflo/atoms';`}</code>
+            <code>{`import { Alert } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

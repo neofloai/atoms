@@ -54,7 +54,7 @@ export default function ToggleButtonDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { ToggleButton, ToggleButtonGroup } from '@neoflo/atoms';`}
+              {`import { ToggleButton, ToggleButtonGroup } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl && (

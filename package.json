@@ -1,7 +1,9 @@
 {
-  "name": "@neoflo/atoms",
+  "name": "@neofloai/atoms",
   "version": "1.0.0",
-  "private": true,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "sideEffects": [
     "**/*.css",
     "**/fonts.ts"

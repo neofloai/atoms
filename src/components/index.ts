@@ -3,7 +3,7 @@
  *
  * Re-exported from `src/index.ts` for public consumption. Add each new
  * component here, then surface it from `src/index.ts` so consumers of
- * `@neoflo/atoms` see it.
+ * `@neofloai/atoms` see it.
  */
 
 export {};

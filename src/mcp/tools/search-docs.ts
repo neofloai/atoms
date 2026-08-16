@@ -34,7 +34,7 @@ export function registerSearchDocs(server: McpServer): void {
     {
       title: 'Search docs',
       description:
-        'Searches across @neoflo/atoms components, patterns, token categories, and Neoflo brand guidelines (logo, brand colours, fonts, theme) by keyword. Returns a markdown list of hits; brand hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
+        'Searches across @neofloai/atoms components, patterns, token categories, and Neoflo brand guidelines (logo, brand colours, fonts, theme) by keyword. Returns a markdown list of hits; brand hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
       inputSchema: {
         query: z
           .string()

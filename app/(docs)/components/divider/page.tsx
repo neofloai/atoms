@@ -92,7 +92,7 @@ export default function DividerDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Divider } from '@neoflo/atoms';`}</code>
+            <code>{`import { Divider } from '@neofloai/atoms';`}</code>
           </Typography>
         </Stack>
 

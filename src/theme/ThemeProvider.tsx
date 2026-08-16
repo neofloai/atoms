@@ -51,7 +51,7 @@ const NEOFLO_ICON_DEFAULTS = {
  *
  * Framework-agnostic: applies the Neoflo MUI theme, `CssBaseline`, and the
  * Phosphor `IconContext` defaults so every icon imported from
- * `@neoflo/atoms/icons` inherits Neoflo defaults without per-call props.
+ * `@neofloai/atoms/icons` inherits Neoflo defaults without per-call props.
  * Works in any React host (Vite, CRA, Next, etc.).
  *
  * SSR Emotion cache wiring is intentionally NOT included here so the library

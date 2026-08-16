@@ -53,7 +53,7 @@ export default function LinkDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Link } from '@neoflo/atoms';`}</code>
+            <code>{`import { Link } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl ? (
             <MuiLink

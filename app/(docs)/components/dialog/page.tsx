@@ -54,7 +54,7 @@ export default function DialogDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { Dialog, DialogTitle, DialogContent, DialogActions } from '@neoflo/atoms';`}
+              {`import { Dialog, DialogTitle, DialogContent, DialogActions } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl ? (

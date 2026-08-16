@@ -50,7 +50,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Primary action',
       code: [
-        "import { HeartIcon } from '@neoflo/atoms/icons';",
+        "import { HeartIcon } from '@neofloai/atoms/icons';",
         '',
         '<IconButton aria-label="Save to favourites">',
         '  <HeartIcon />',
@@ -83,7 +83,7 @@ export const data: ComponentExamplesData = {
     },
   ],
   dos: [
-    'Use icons from `@neoflo/atoms/icons` so size and weight defaults apply',
+    'Use icons from `@neofloai/atoms/icons` so size and weight defaults apply',
     'Use `appearance="text"` for toolbar and inline actions',
     'Match the `variant` to the action semantics (e.g. `error` for delete)',
   ],

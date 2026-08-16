@@ -17,7 +17,7 @@ import { demoFactory } from '../../../_components/demoPairing';
  *
  * These previews import from `@/src/components/*` rather than
  * `@mui/material`, so the page exercises the same export path a
- * consumer of `@neoflo/atoms` would take.
+ * consumer of `@neofloai/atoms` would take.
  */
 
 /** Filler styling, declared in the snippets as `tile`. */

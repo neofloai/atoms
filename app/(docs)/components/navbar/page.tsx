@@ -33,7 +33,7 @@ export default function NavbarDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Navbar, NavbarTitle } from '@neoflo/atoms';`}</code>
+            <code>{`import { Navbar, NavbarTitle } from '@neofloai/atoms';`}</code>
           </Typography>
           <Typography variant="body2" color="text.secondary">
             No Figma source — the bar takes the shared container surface, and

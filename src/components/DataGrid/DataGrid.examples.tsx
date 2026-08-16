@@ -87,7 +87,7 @@ export const data: ComponentExamplesData = {
       title: 'A grid of records',
       description:
         'The grid needs a height: MUI’s root is `height: 100%`, so give it a sized box or pass `autoHeight`.',
-      code: `import { DataGrid } from '@neoflo/atoms';
+      code: `import { DataGrid } from '@neofloai/atoms';
 import Box from '@mui/material/Box';
 
 const columns = [

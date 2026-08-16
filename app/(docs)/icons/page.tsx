@@ -8,7 +8,7 @@ import { IconBrowser } from './_components/IconBrowser';
 export const metadata = {
   title: 'Icons — Atoms',
   description:
-    'Browse and copy any of the ~9,000 Phosphor icons shipped with @neoflo/atoms. Each icon supports six weights matching the Figma design system.',
+    'Browse and copy any of the ~9,000 Phosphor icons shipped with @neofloai/atoms. Each icon supports six weights matching the Figma design system.',
 };
 
 export default function IconsPage() {
@@ -25,8 +25,8 @@ export default function IconsPage() {
           <Typography variant="body1" color="text.secondary">
             Atoms ships the full <strong>Phosphor</strong> icon library
             (~9,000 icons, 6 weights). Consumers of{' '}
-            <code>@neoflo/atoms</code> install nothing extra — every icon
-            is importable from the <code>@neoflo/atoms/icons</code>{' '}
+            <code>@neofloai/atoms</code> install nothing extra — every icon
+            is importable from the <code>@neofloai/atoms/icons</code>{' '}
             subpath and tree-shaken at build time so the bundle stays
             small.
           </Typography>
@@ -57,7 +57,7 @@ export default function IconsPage() {
               overflowX: 'auto',
             }}
           >
-{`import { ShieldCheckIcon, ArrowRightIcon } from '@neoflo/atoms/icons';
+{`import { ShieldCheckIcon, ArrowRightIcon } from '@neofloai/atoms/icons';
 
 <ShieldCheckIcon />                       // 24px, regular, currentColor
 <ArrowRightIcon size={16} weight="bold" /> // per-instance overrides

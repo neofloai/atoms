@@ -53,7 +53,7 @@ export default function ButtonDocsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Button } from '@neoflo/atoms';`}</code>
+            <code>{`import { Button } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link

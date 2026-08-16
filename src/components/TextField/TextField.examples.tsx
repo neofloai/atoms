@@ -120,7 +120,7 @@ export const data: ComponentExamplesData = {
         'Wrap non-interactive icons in MUI’s `InputAdornment` so they pick up the correct colour and spacing.',
       code: [
         "import InputAdornment from '@mui/material/InputAdornment';",
-        "import { MagnifyingGlassIcon } from '@neoflo/atoms/icons';",
+        "import { MagnifyingGlassIcon } from '@neofloai/atoms/icons';",
         '',
         '<TextField',
         '  label="Search"',
@@ -136,7 +136,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Clearable field (end icon button)',
       code: [
-        "import { XIcon } from '@neoflo/atoms/icons';",
+        "import { XIcon } from '@neofloai/atoms/icons';",
         '',
         '<TextField',
         '  label="Search"',
@@ -154,7 +154,7 @@ export const data: ComponentExamplesData = {
         'Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.',
       code: [
         "import InputAdornment from '@mui/material/InputAdornment';",
-        "import { EyeIcon, LockIcon } from '@neoflo/atoms/icons';",
+        "import { EyeIcon, LockIcon } from '@neofloai/atoms/icons';",
         '',
         '<TextField',
         '  label="Password"',

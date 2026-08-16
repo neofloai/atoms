@@ -39,7 +39,7 @@ import type { SlideDirection } from '@/src/components/Slide';
  *     made and never checked.
  *
  * Previews import from `@/src/components/*`, so the page exercises the
- * same export path a consumer of `@neoflo/atoms` would take.
+ * same export path a consumer of `@neofloai/atoms` would take.
  */
 
 function PreviewCard({

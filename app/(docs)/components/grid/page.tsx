@@ -144,7 +144,7 @@ export default function GridDocsPage() {
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <SectionHeading id="import">Import</SectionHeading>
-          <CodeBlock>{`import { Grid } from '@neoflo/atoms';`}</CodeBlock>
+          <CodeBlock>{`import { Grid } from '@neofloai/atoms';`}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
             Grid carries MUI&apos;s own <code>&apos;use client&apos;</code>{' '}
             boundary, so it renders straight from a React Server Component —

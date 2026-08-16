@@ -86,7 +86,7 @@ export const data: ComponentExamplesData = {
       description:
         'The default. A horizontal rule edge to edge, rendered as a real `<hr>`, with the space around it set by the layout rather than by the divider.',
       code: [
-        "import { Divider, Stack, Typography } from '@neoflo/atoms';",
+        "import { Divider, Stack, Typography } from '@neofloai/atoms';",
         '',
         '<Stack spacing={3}>',
         '  <Typography variant="body2">Account details</Typography>',
@@ -100,7 +100,7 @@ export const data: ComponentExamplesData = {
       description:
         '`flexItem` is what makes this work. A vertical divider is a flex child with no intrinsic height, so without it the rule computes to `0px` and nothing appears.',
       code: [
-        "import { Divider, Stack, Typography } from '@neoflo/atoms';",
+        "import { Divider, Stack, Typography } from '@neofloai/atoms';",
         '',
         '<Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>',
         '  <Typography variant="body2">Drafts</Typography>',
@@ -116,7 +116,7 @@ export const data: ComponentExamplesData = {
       description:
         'Children split the rule into two segments around the text. `textAlign="left"` reads as a section heading with a rule trailing off it, which is usually what a list of grouped items wants.',
       code: [
-        "import { Divider } from '@neoflo/atoms';",
+        "import { Divider } from '@neofloai/atoms';",
         '',
         '<Divider textAlign="left">Archived</Divider>',
       ].join('\n'),
@@ -126,7 +126,7 @@ export const data: ComponentExamplesData = {
       description:
         'A bare `<hr>` is not valid between `<li>` elements. `component="li"` keeps the markup legal, and MUI still supplies `role="separator"`.',
       code: [
-        "import { Divider, Stack, Typography } from '@neoflo/atoms';",
+        "import { Divider, Stack, Typography } from '@neofloai/atoms';",
         '',
         '<Stack component="ul" spacing={1} sx={{ listStyle: "none", p: 0, m: 0 }}>',
         '  <Typography component="li" variant="body2">Rename</Typography>',
@@ -141,7 +141,7 @@ export const data: ComponentExamplesData = {
       description:
         'Inside a `Menu`, the rule is recoloured to the panel’s own border token so it agrees with `<MenuItem divider />`. Nothing to pass — the menu does it.',
       code: [
-        "import { Divider, Menu, MenuItem } from '@neoflo/atoms';",
+        "import { Divider, Menu, MenuItem } from '@neofloai/atoms';",
         '',
         '<Menu anchorEl={anchorEl} open={open} onClose={close}>',
         '  <MenuItem onClick={close}>Rename</MenuItem>',
@@ -156,7 +156,7 @@ export const data: ComponentExamplesData = {
       description:
         '`Stack`’s `divider` prop inserts an element between every child and none at the ends, so the count stays right as the list changes length. Pass the component itself, not an element per gap.',
       code: [
-        "import { Divider, Stack, Typography } from '@neoflo/atoms';",
+        "import { Divider, Stack, Typography } from '@neofloai/atoms';",
         '',
         '<Stack',
         '  direction="row"',

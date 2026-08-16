@@ -54,7 +54,7 @@ export default function CardDocsPage() {
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
             <code>
-              {`import { Card, CardHeader, CardContent, CardMedia, CardActions } from '@neoflo/atoms';`}
+              {`import { Card, CardHeader, CardContent, CardMedia, CardActions } from '@neofloai/atoms';`}
             </code>
           </Typography>
           {data.figmaUrl && (

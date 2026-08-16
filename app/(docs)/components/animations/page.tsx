@@ -210,7 +210,7 @@ function TransitionSection({
           {data.tagline}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          <code>{`import { ${data.name} } from '@neoflo/atoms';`}</code>
+          <code>{`import { ${data.name} } from '@neofloai/atoms';`}</code>
         </Typography>
       </Stack>
 
@@ -273,7 +273,7 @@ export default function AnimationsDocsPage() {
             <code>Zoom</code>, <code>Slide</code>, and{' '}
             <code>Collapse</code> — for showing and hiding things without
             them appearing out of nowhere. All five import from{' '}
-            <code>@neoflo/atoms</code>.
+            <code>@neofloai/atoms</code>.
           </Typography>
         </Stack>
 

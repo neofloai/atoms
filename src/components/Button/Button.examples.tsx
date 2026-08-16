@@ -44,7 +44,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'Icon before / after the label. Use icons from @neoflo/atoms/icons.',
+        'Icon before / after the label. Use icons from @neofloai/atoms/icons.',
     },
     {
       name: 'disabled',
@@ -83,7 +83,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'With icons',
       code: [
-        "import { HeartIcon, ArrowRightIcon } from '@neoflo/atoms/icons';",
+        "import { HeartIcon, ArrowRightIcon } from '@neofloai/atoms/icons';",
         '',
         '<Button startIcon={<HeartIcon />} endIcon={<ArrowRightIcon />}>',
         '  Save to favourites',

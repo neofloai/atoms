@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T11:10:35.854Z",
+  "generatedAt": "2026-08-16T12:48:00.382Z",
   "components": [
     {
       "name": "Accordion",
@@ -597,7 +597,7 @@
           "name": "startIcon / endIcon",
           "type": "ReactNode",
           "default": "—",
-          "description": "Icon before / after the label. Use icons from @neoflo/atoms/icons."
+          "description": "Icon before / after the label. Use icons from @neofloai/atoms/icons."
         },
         {
           "name": "disabled",
@@ -631,7 +631,7 @@
         },
         {
           "title": "With icons",
-          "code": "import { HeartIcon, ArrowRightIcon } from '@neoflo/atoms/icons';\n\n<Button startIcon={<HeartIcon />} endIcon={<ArrowRightIcon />}>\n  Save to favourites\n</Button>"
+          "code": "import { HeartIcon, ArrowRightIcon } from '@neofloai/atoms/icons';\n\n<Button startIcon={<HeartIcon />} endIcon={<ArrowRightIcon />}>\n  Save to favourites\n</Button>"
         },
         {
           "title": "Loading state",
@@ -731,42 +731,42 @@
         {
           "title": "A card with a title, a description, and actions",
           "description": "Figma’s `text` header over its action row. Nothing sets the 16px inset or the 16px gap between them — the regions bring their own padding, and a region that follows another padded region drops its top padding so the two share one gutter.",
-          "code": "import { Button, Card, CardActions, CardHeader } from '@neoflo/atoms';\n\n<Card component=\"article\" sx={{ maxWidth: 400 }}>\n  <CardHeader\n    title=\"Lizards\"\n    subheader=\"A widespread group of squamate reptiles, with over 6,000 species.\"\n  />\n  <CardActions>\n    <Button appearance=\"outline\" variant=\"secondary\" size=\"sm\">Share</Button>\n    <Button size=\"sm\">Learn more</Button>\n  </CardActions>\n</Card>"
+          "code": "import { Button, Card, CardActions, CardHeader } from '@neofloai/atoms';\n\n<Card component=\"article\" sx={{ maxWidth: 400 }}>\n  <CardHeader\n    title=\"Lizards\"\n    subheader=\"A widespread group of squamate reptiles, with over 6,000 species.\"\n  />\n  <CardActions>\n    <Button appearance=\"outline\" variant=\"secondary\" size=\"sm\">Share</Button>\n    <Button size=\"sm\">Learn more</Button>\n  </CardActions>\n</Card>"
         },
         {
           "title": "Media running edge to edge",
           "description": "The media region sits outside the padded box, so it reaches the card’s edges and is clipped to its corners. The height is a content dimension rather than a token — Figma uses 124px here and 132px on the metric card, so the caller sets it.",
-          "code": "import { Card, CardHeader, CardMedia } from '@neoflo/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardHeader title=\"Lizards\" subheader=\"Recorded in Queensland, 2026.\" />\n  <CardMedia\n    component=\"img\"\n    src=\"/lizard.jpg\"\n    alt=\"A saltwater crocodile resting in shallow water\"\n    sx={{ height: 124 }}\n  />\n</Card>"
+          "code": "import { Card, CardHeader, CardMedia } from '@neofloai/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardHeader title=\"Lizards\" subheader=\"Recorded in Queensland, 2026.\" />\n  <CardMedia\n    component=\"img\"\n    src=\"/lizard.jpg\"\n    alt=\"A saltwater crocodile resting in shallow water\"\n    sx={{ height: 124 }}\n  />\n</Card>"
         },
         {
           "title": "Metric card",
           "description": "Figma’s `info` header, built as a composition rather than a `CardHeader`. The badge sits directly beside the number, 8px away — `CardHeader`’s `action` slot would push it to the far edge of the card instead, because MUI stretches the title block to fill the row.",
-          "code": "import { ArrowUpRightIcon } from '@neoflo/atoms/icons';\nimport { Card, CardContent, Chip, IconButton, Stack, Typography } from '@neoflo/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardContent>\n    <Stack direction=\"row\" spacing={1} sx={{ alignItems: \"center\" }}>\n      <Typography variant=\"h4\">420%</Typography>\n      <IconButton variant=\"success\" size=\"sm\" aria-label=\"Trending up\">\n        <ArrowUpRightIcon />\n      </IconButton>\n    </Stack>\n    <Typography variant=\"body1\" color=\"text.secondary\">Increase in fat</Typography>\n    <Stack direction=\"row\" spacing={0.5} sx={{ alignItems: \"center\", mt: 2 }}>\n      <Chip size=\"sm\" variant=\"success\" icon={<ArrowUpRightIcon />} label=\"5%\" />\n      <Typography variant=\"body2\" color=\"text.secondary\">vs prev 30d</Typography>\n    </Stack>\n  </CardContent>\n</Card>"
+          "code": "import { ArrowUpRightIcon } from '@neofloai/atoms/icons';\nimport { Card, CardContent, Chip, IconButton, Stack, Typography } from '@neofloai/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardContent>\n    <Stack direction=\"row\" spacing={1} sx={{ alignItems: \"center\" }}>\n      <Typography variant=\"h4\">420%</Typography>\n      <IconButton variant=\"success\" size=\"sm\" aria-label=\"Trending up\">\n        <ArrowUpRightIcon />\n      </IconButton>\n    </Stack>\n    <Typography variant=\"body1\" color=\"text.secondary\">Increase in fat</Typography>\n    <Stack direction=\"row\" spacing={0.5} sx={{ alignItems: \"center\", mt: 2 }}>\n      <Chip size=\"sm\" variant=\"success\" icon={<ArrowUpRightIcon />} label=\"5%\" />\n      <Typography variant=\"body2\" color=\"text.secondary\">vs prev 30d</Typography>\n    </Stack>\n  </CardContent>\n</Card>"
         },
         {
           "title": "Body content that is not a header",
           "description": "`CardContent` is the padded region for anything else. MUI pads its last child’s bottom to 24px; this one is symmetric at 16, so a card of pure text does not measure 8px taller than the same card with actions after it.",
-          "code": "import { Card, CardContent, CardHeader, Typography } from '@neoflo/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardHeader title=\"Storage\" />\n  <CardContent>\n    <Typography variant=\"body1\">42.1 GB of 100 GB used</Typography>\n  </CardContent>\n</Card>"
+          "code": "import { Card, CardContent, CardHeader, Typography } from '@neofloai/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardHeader title=\"Storage\" />\n  <CardContent>\n    <Typography variant=\"body1\">42.1 GB of 100 GB used</Typography>\n  </CardContent>\n</Card>"
         },
         {
           "title": "A list inside a card",
           "description": "Rows go after the padded box so they reach both edges, and each row brings its own 16px inset. The rule between rows is drawn from `border.default.default` rather than the card’s own border token — `border.layers.card1` on `surface.layers.card1` is a 1.05:1 hairline, which is invisible.",
-          "code": "import { Avatar, Card, CardHeader, Divider, Stack, Typography } from '@neoflo/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardHeader title=\"Reviewers\" />\n  <Stack component=\"ul\" sx={{ listStyle: \"none\", p: 0, m: 0 }} divider={<Divider component=\"li\" />}>\n    {reviewers.map((person) => (\n      <Stack\n        key={person.id}\n        component=\"li\"\n        direction=\"row\"\n        spacing={1}\n        sx={{ alignItems: \"center\", p: 2 }}\n      >\n        <Avatar size=\"md\">{person.initials}</Avatar>\n        <Stack>\n          <Typography variant=\"body1\">{person.name}</Typography>\n          <Typography variant=\"body2\" color=\"text.secondary\">{person.role}</Typography>\n        </Stack>\n      </Stack>\n    ))}\n  </Stack>\n</Card>"
+          "code": "import { Avatar, Card, CardHeader, Divider, Stack, Typography } from '@neofloai/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardHeader title=\"Reviewers\" />\n  <Stack component=\"ul\" sx={{ listStyle: \"none\", p: 0, m: 0 }} divider={<Divider component=\"li\" />}>\n    {reviewers.map((person) => (\n      <Stack\n        key={person.id}\n        component=\"li\"\n        direction=\"row\"\n        spacing={1}\n        sx={{ alignItems: \"center\", p: 2 }}\n      >\n        <Avatar size=\"md\">{person.initials}</Avatar>\n        <Stack>\n          <Typography variant=\"body1\">{person.name}</Typography>\n          <Typography variant=\"body2\" color=\"text.secondary\">{person.role}</Typography>\n        </Stack>\n      </Stack>\n    ))}\n  </Stack>\n</Card>"
         },
         {
           "title": "Promoting the title to a real heading",
           "description": "The title renders as a `<span>` by default, so a page of cards has no headings in it. Give the card a semantic root and promote the title to a real heading at the level the surrounding page uses.",
-          "code": "import { Card, CardHeader } from '@neoflo/atoms';\n\n<Card component=\"section\" aria-labelledby=\"usage-title\">\n  <CardHeader\n    component=\"header\"\n    title=\"Usage\"\n    subheader=\"Billing period to date\"\n    slotProps={{ title: { id: \"usage-title\", component: \"h2\" } }}\n  />\n</Card>"
+          "code": "import { Card, CardHeader } from '@neofloai/atoms';\n\n<Card component=\"section\" aria-labelledby=\"usage-title\">\n  <CardHeader\n    component=\"header\"\n    title=\"Usage\"\n    subheader=\"Billing period to date\"\n    slotProps={{ title: { id: \"usage-title\", component: \"h2\" } }}\n  />\n</Card>"
         },
         {
           "title": "One action per edge",
           "description": "The action row is right-aligned, which is what the design draws. A card that needs an action at each edge is not a case Figma covers, so there is no prop for it — reach for `sx` rather than a wrapper.",
-          "code": "import { Button, Card, CardActions, CardHeader } from '@neoflo/atoms';\n\n<Card>\n  <CardHeader title=\"Trial ending\" subheader=\"3 days left on the Pro plan.\" />\n  <CardActions sx={{ justifyContent: \"space-between\" }}>\n    <Button appearance=\"text\" size=\"sm\">Compare plans</Button>\n    <Button size=\"sm\">Upgrade</Button>\n  </CardActions>\n</Card>"
+          "code": "import { Button, Card, CardActions, CardHeader } from '@neofloai/atoms';\n\n<Card>\n  <CardHeader title=\"Trial ending\" subheader=\"3 days left on the Pro plan.\" />\n  <CardActions sx={{ justifyContent: \"space-between\" }}>\n    <Button appearance=\"text\" size=\"sm\">Compare plans</Button>\n    <Button size=\"sm\">Upgrade</Button>\n  </CardActions>\n</Card>"
         },
         {
           "title": "A grid of cards",
           "description": "Cards have no width of their own — they fill what they are given. `Grid` sets the column count and the gutter, and every card in a row matches height because a grid item stretches by default.",
-          "code": "import { Card, CardHeader, Grid } from '@neoflo/atoms';\n\n<Grid container spacing={3}>\n  {metrics.map((metric) => (\n    <Grid key={metric.id} size={{ xs: 12, sm: 6, md: 4 }}>\n      <Card component=\"article\" sx={{ height: \"100%\" }}>\n        <CardHeader title={metric.value} subheader={metric.label} />\n      </Card>\n    </Grid>\n  ))}\n</Grid>"
+          "code": "import { Card, CardHeader, Grid } from '@neofloai/atoms';\n\n<Grid container spacing={3}>\n  {metrics.map((metric) => (\n    <Grid key={metric.id} size={{ xs: 12, sm: 6, md: 4 }}>\n      <Card component=\"article\" sx={{ height: \"100%\" }}>\n        <CardHeader title={metric.value} subheader={metric.label} />\n      </Card>\n    </Grid>\n  ))}\n</Grid>"
         }
       ],
       "dos": [
@@ -1300,7 +1300,7 @@
         {
           "title": "A grid of records",
           "description": "The grid needs a height: MUI’s root is `height: 100%`, so give it a sized box or pass `autoHeight`.",
-          "code": "import { DataGrid } from '@neoflo/atoms';\nimport Box from '@mui/material/Box';\n\nconst columns = [\n  { field: 'reference', headerName: 'Invoice', width: 160 },\n  { field: 'vendor', headerName: 'Vendor', flex: 1 },\n  { field: 'amount', headerName: 'Amount', type: 'number', width: 140 },\n];\n\n<Box sx={{ height: 420 }}>\n  <DataGrid rows={invoices} columns={columns} size=\"sm\" rowNoun=\"invoices\" />\n</Box>"
+          "code": "import { DataGrid } from '@neofloai/atoms';\nimport Box from '@mui/material/Box';\n\nconst columns = [\n  { field: 'reference', headerName: 'Invoice', width: 160 },\n  { field: 'vendor', headerName: 'Vendor', flex: 1 },\n  { field: 'amount', headerName: 'Amount', type: 'number', width: 140 },\n];\n\n<Box sx={{ height: 420 }}>\n  <DataGrid rows={invoices} columns={columns} size=\"sm\" rowNoun=\"invoices\" />\n</Box>"
         },
         {
           "title": "Paginated, selectable, sorted on arrival",
@@ -1788,32 +1788,32 @@
         {
           "title": "Between sections",
           "description": "The default. A horizontal rule edge to edge, rendered as a real `<hr>`, with the space around it set by the layout rather than by the divider.",
-          "code": "import { Divider, Stack, Typography } from '@neoflo/atoms';\n\n<Stack spacing={3}>\n  <Typography variant=\"body2\">Account details</Typography>\n  <Divider />\n  <Typography variant=\"body2\">Billing</Typography>\n</Stack>"
+          "code": "import { Divider, Stack, Typography } from '@neofloai/atoms';\n\n<Stack spacing={3}>\n  <Typography variant=\"body2\">Account details</Typography>\n  <Divider />\n  <Typography variant=\"body2\">Billing</Typography>\n</Stack>"
         },
         {
           "title": "Between items in a row",
           "description": "`flexItem` is what makes this work. A vertical divider is a flex child with no intrinsic height, so without it the rule computes to `0px` and nothing appears.",
-          "code": "import { Divider, Stack, Typography } from '@neoflo/atoms';\n\n<Stack direction=\"row\" spacing={2} sx={{ alignItems: \"center\" }}>\n  <Typography variant=\"body2\">Drafts</Typography>\n  <Divider orientation=\"vertical\" flexItem />\n  <Typography variant=\"body2\">Sent</Typography>\n  <Divider orientation=\"vertical\" flexItem />\n  <Typography variant=\"body2\">Archived</Typography>\n</Stack>"
+          "code": "import { Divider, Stack, Typography } from '@neofloai/atoms';\n\n<Stack direction=\"row\" spacing={2} sx={{ alignItems: \"center\" }}>\n  <Typography variant=\"body2\">Drafts</Typography>\n  <Divider orientation=\"vertical\" flexItem />\n  <Typography variant=\"body2\">Sent</Typography>\n  <Divider orientation=\"vertical\" flexItem />\n  <Typography variant=\"body2\">Archived</Typography>\n</Stack>"
         },
         {
           "title": "Labelled, to name the group that follows",
           "description": "Children split the rule into two segments around the text. `textAlign=\"left\"` reads as a section heading with a rule trailing off it, which is usually what a list of grouped items wants.",
-          "code": "import { Divider } from '@neoflo/atoms';\n\n<Divider textAlign=\"left\">Archived</Divider>"
+          "code": "import { Divider } from '@neofloai/atoms';\n\n<Divider textAlign=\"left\">Archived</Divider>"
         },
         {
           "title": "Inside a list",
           "description": "A bare `<hr>` is not valid between `<li>` elements. `component=\"li\"` keeps the markup legal, and MUI still supplies `role=\"separator\"`.",
-          "code": "import { Divider, Stack, Typography } from '@neoflo/atoms';\n\n<Stack component=\"ul\" spacing={1} sx={{ listStyle: \"none\", p: 0, m: 0 }}>\n  <Typography component=\"li\" variant=\"body2\">Rename</Typography>\n  <Typography component=\"li\" variant=\"body2\">Duplicate</Typography>\n  <Divider component=\"li\" />\n  <Typography component=\"li\" variant=\"body2\">Delete</Typography>\n</Stack>"
+          "code": "import { Divider, Stack, Typography } from '@neofloai/atoms';\n\n<Stack component=\"ul\" spacing={1} sx={{ listStyle: \"none\", p: 0, m: 0 }}>\n  <Typography component=\"li\" variant=\"body2\">Rename</Typography>\n  <Typography component=\"li\" variant=\"body2\">Duplicate</Typography>\n  <Divider component=\"li\" />\n  <Typography component=\"li\" variant=\"body2\">Delete</Typography>\n</Stack>"
         },
         {
           "title": "Separating menu groups",
           "description": "Inside a `Menu`, the rule is recoloured to the panel’s own border token so it agrees with `<MenuItem divider />`. Nothing to pass — the menu does it.",
-          "code": "import { Divider, Menu, MenuItem } from '@neoflo/atoms';\n\n<Menu anchorEl={anchorEl} open={open} onClose={close}>\n  <MenuItem onClick={close}>Rename</MenuItem>\n  <MenuItem onClick={close}>Duplicate</MenuItem>\n  <Divider />\n  <MenuItem onClick={close}>Delete</MenuItem>\n</Menu>"
+          "code": "import { Divider, Menu, MenuItem } from '@neofloai/atoms';\n\n<Menu anchorEl={anchorEl} open={open} onClose={close}>\n  <MenuItem onClick={close}>Rename</MenuItem>\n  <MenuItem onClick={close}>Duplicate</MenuItem>\n  <Divider />\n  <MenuItem onClick={close}>Delete</MenuItem>\n</Menu>"
         },
         {
           "title": "As a Stack separator",
           "description": "`Stack`’s `divider` prop inserts an element between every child and none at the ends, so the count stays right as the list changes length. Pass the component itself, not an element per gap.",
-          "code": "import { Divider, Stack, Typography } from '@neoflo/atoms';\n\n<Stack\n  direction=\"row\"\n  spacing={2}\n  divider={<Divider orientation=\"vertical\" flexItem />}\n>\n  <Typography variant=\"body2\">12 open</Typography>\n  <Typography variant=\"body2\">4 closed</Typography>\n  <Typography variant=\"body2\">1 blocked</Typography>\n</Stack>"
+          "code": "import { Divider, Stack, Typography } from '@neofloai/atoms';\n\n<Stack\n  direction=\"row\"\n  spacing={2}\n  divider={<Divider orientation=\"vertical\" flexItem />}\n>\n  <Typography variant=\"body2\">12 open</Typography>\n  <Typography variant=\"body2\">4 closed</Typography>\n  <Typography variant=\"body2\">1 blocked</Typography>\n</Stack>"
         }
       ],
       "dos": [
@@ -2347,7 +2347,7 @@
       "examples": [
         {
           "title": "Primary action",
-          "code": "import { HeartIcon } from '@neoflo/atoms/icons';\n\n<IconButton aria-label=\"Save to favourites\">\n  <HeartIcon />\n</IconButton>"
+          "code": "import { HeartIcon } from '@neofloai/atoms/icons';\n\n<IconButton aria-label=\"Save to favourites\">\n  <HeartIcon />\n</IconButton>"
         },
         {
           "title": "Outline emphasis",
@@ -2363,7 +2363,7 @@
         }
       ],
       "dos": [
-        "Use icons from `@neoflo/atoms/icons` so size and weight defaults apply",
+        "Use icons from `@neofloai/atoms/icons` so size and weight defaults apply",
         "Use `appearance=\"text\"` for toolbar and inline actions",
         "Match the `variant` to the action semantics (e.g. `error` for delete)"
       ],
@@ -3311,7 +3311,7 @@
       "examples": [
         {
           "title": "Basic select",
-          "code": "import { MenuItem } from '@mui/material';\nimport { Select } from '@neoflo/atoms';\n\n<Select label=\"Country\" defaultValue=\"us\">\n  <MenuItem value=\"us\">United States</MenuItem>\n  <MenuItem value=\"ca\">Canada</MenuItem>\n  <MenuItem value=\"mx\">Mexico</MenuItem>\n</Select>"
+          "code": "import { MenuItem } from '@mui/material';\nimport { Select } from '@neofloai/atoms';\n\n<Select label=\"Country\" defaultValue=\"us\">\n  <MenuItem value=\"us\">United States</MenuItem>\n  <MenuItem value=\"ca\">Canada</MenuItem>\n  <MenuItem value=\"mx\">Mexico</MenuItem>\n</Select>"
         },
         {
           "title": "With helper text",
@@ -4414,16 +4414,16 @@
         {
           "title": "Start icon (decorative)",
           "description": "Wrap non-interactive icons in MUI’s `InputAdornment` so they pick up the correct colour and spacing.",
-          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { MagnifyingGlassIcon } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  placeholder=\"Search anything\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <MagnifyingGlassIcon size={16} />\n    </InputAdornment>\n  }\n/>"
+          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { MagnifyingGlassIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  placeholder=\"Search anything\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <MagnifyingGlassIcon size={16} />\n    </InputAdornment>\n  }\n/>"
         },
         {
           "title": "Clearable field (end icon button)",
-          "code": "import { XIcon } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Clear\" onClick={handleClear}>\n      <XIcon />\n    </IconButton>\n  }\n/>"
+          "code": "import { XIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Clear\" onClick={handleClear}>\n      <XIcon />\n    </IconButton>\n  }\n/>"
         },
         {
           "title": "Start + end adornments",
           "description": "Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.",
-          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { EyeIcon, LockIcon } from '@neoflo/atoms/icons';\n\n<TextField\n  label=\"Password\"\n  placeholder=\"Enter password\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <LockIcon size={16} />\n    </InputAdornment>\n  }\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Show password\" onClick={handleToggleVisibility}>\n      <EyeIcon />\n    </IconButton>\n  }\n/>"
+          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { EyeIcon, LockIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Password\"\n  placeholder=\"Enter password\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <LockIcon size={16} />\n    </InputAdornment>\n  }\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Show password\" onClick={handleToggleVisibility}>\n      <EyeIcon />\n    </IconButton>\n  }\n/>"
         },
         {
           "title": "Multi-line: grows with content",
@@ -4781,7 +4781,7 @@
         {
           "title": "A floating toolbar",
           "description": "The composition from the design file: `appearance=\"text\"` on a surface that already has the edge and the shadow, with a `Divider` between the two groups. One group per decision, so alignment and formatting keep separate selections. The 1px padding is the frame's 2px `Scale/50` with the border taken out of it, the same subtraction the components make.",
-          "code": "import { border, elevation, radius, spacing, surface } from '@neoflo/atoms/tokens';\n\n<Box\n  sx={(theme) => ({\n    display: 'inline-flex',\n    alignItems: 'center',\n    gap: `${spacing.component.xxs}px`,\n    padding: '1px',\n    borderRadius: `${radius.sm}px`,\n    border: '1px solid',\n    boxShadow: elevation.small,\n    backgroundColor: surface.layers.card1.light,\n    borderColor: border.layers.card1.light,\n    ...theme.applyStyles('dark', {\n      backgroundColor: surface.layers.card1.dark,\n      borderColor: border.layers.card1.dark,\n    }),\n  })}\n>\n  <ToggleButtonGroup\n    exclusive\n    size=\"sm\"\n    appearance=\"text\"\n    value={align}\n    onChange={(_, next) => next && setAlign(next)}\n    aria-label=\"Text alignment\"\n  >\n    <ToggleButton value=\"left\" aria-label=\"Align left\"><TextAlignLeftIcon /></ToggleButton>\n    <ToggleButton value=\"center\" aria-label=\"Align centre\"><TextAlignCenterIcon /></ToggleButton>\n    <ToggleButton value=\"right\" aria-label=\"Align right\"><TextAlignRightIcon /></ToggleButton>\n  </ToggleButtonGroup>\n\n  <Divider orientation=\"vertical\" flexItem sx={{ my: 0.5 }} />\n\n  <ToggleButtonGroup\n    size=\"sm\"\n    appearance=\"text\"\n    value={marks}\n    onChange={(_, next) => setMarks(next)}\n    aria-label=\"Text formatting\"\n  >\n    <ToggleButton value=\"bold\" aria-label=\"Bold\"><TextBIcon /></ToggleButton>\n    <ToggleButton value=\"italic\" aria-label=\"Italic\"><TextItalicIcon /></ToggleButton>\n    <ToggleButton value=\"underline\" aria-label=\"Underline\"><TextUnderlineIcon /></ToggleButton>\n  </ToggleButtonGroup>\n</Box>"
+          "code": "import { border, elevation, radius, spacing, surface } from '@neofloai/atoms/tokens';\n\n<Box\n  sx={(theme) => ({\n    display: 'inline-flex',\n    alignItems: 'center',\n    gap: `${spacing.component.xxs}px`,\n    padding: '1px',\n    borderRadius: `${radius.sm}px`,\n    border: '1px solid',\n    boxShadow: elevation.small,\n    backgroundColor: surface.layers.card1.light,\n    borderColor: border.layers.card1.light,\n    ...theme.applyStyles('dark', {\n      backgroundColor: surface.layers.card1.dark,\n      borderColor: border.layers.card1.dark,\n    }),\n  })}\n>\n  <ToggleButtonGroup\n    exclusive\n    size=\"sm\"\n    appearance=\"text\"\n    value={align}\n    onChange={(_, next) => next && setAlign(next)}\n    aria-label=\"Text alignment\"\n  >\n    <ToggleButton value=\"left\" aria-label=\"Align left\"><TextAlignLeftIcon /></ToggleButton>\n    <ToggleButton value=\"center\" aria-label=\"Align centre\"><TextAlignCenterIcon /></ToggleButton>\n    <ToggleButton value=\"right\" aria-label=\"Align right\"><TextAlignRightIcon /></ToggleButton>\n  </ToggleButtonGroup>\n\n  <Divider orientation=\"vertical\" flexItem sx={{ my: 0.5 }} />\n\n  <ToggleButtonGroup\n    size=\"sm\"\n    appearance=\"text\"\n    value={marks}\n    onChange={(_, next) => setMarks(next)}\n    aria-label=\"Text formatting\"\n  >\n    <ToggleButton value=\"bold\" aria-label=\"Bold\"><TextBIcon /></ToggleButton>\n    <ToggleButton value=\"italic\" aria-label=\"Italic\"><TextItalicIcon /></ToggleButton>\n    <ToggleButton value=\"underline\" aria-label=\"Underline\"><TextUnderlineIcon /></ToggleButton>\n  </ToggleButtonGroup>\n</Box>"
         },
         {
           "title": "Filling its container",
