@@ -19,6 +19,30 @@ export const metadata: Metadata = {
   title: 'Atoms — Neoflo Design System',
   description:
     'Neoflo Atoms: branded React components, design tokens, and an MCP endpoint for AI editors.',
+  // Atoms is internal, so every page opts out of indexing. This repeats
+  // the `X-Robots-Tag` header set in `next.config.ts` on purpose: the
+  // header is the one that covers assets and API responses, and this tag
+  // is the one that survives the HTML being saved, proxied, or mirrored
+  // somewhere the header is not. Whichever a crawler reads, it gets the
+  // same answer. Page-level `metadata` exports only set title and
+  // description, so nothing overrides this.
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+    noimageindex: true,
+    nocache: true,
+    notranslate: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      'max-snippet': 0,
+      'max-image-preview': 'none',
+      'max-video-preview': 0,
+    },
+  },
   // One icon, not a `media` pair. The off-white disc is the only mark
   // that survives both backgrounds: its black N stays legible on light
   // browser chrome, and the disc itself carries it on dark. The dark

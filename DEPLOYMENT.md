@@ -19,6 +19,7 @@ For local development and the component API, see [`README.md`](./README.md).
 - [First-time AWS setup](#first-time-aws-setup)
 - [Runtime environment variables](#runtime-environment-variables)
 - [DNS & TLS for atoms.neoflo.ai](#dns--tls-for-atomsneofloai)
+- [Keeping the site unlisted](#keeping-the-site-unlisted)
 - [Deploying](#deploying)
 - [Rollback](#rollback)
 - [Health checks & observability](#health-checks--observability)
@@ -236,6 +237,51 @@ MCP clients then authenticate with `Authorization: Bearer <MCP_TOKEN>`.
 | CloudFront | Alias A/AAAA → distribution domain |
 
 Minimum in the zone is usually one ACM validation `CNAME` plus one routing record.
+
+---
+
+## Keeping the site unlisted
+
+Atoms is internal. It should not turn up in a search result, an AI answer, or a training set. Three things in this repo say so, and they are all the app can do:
+
+| Where | What it sends | Covers |
+| ----- | ------------- | ------ |
+| [`app/robots.ts`](./app/robots.ts) | `Disallow: /` for `*` and for ~40 named AI, answer-engine, and SEO crawlers | Bots that ask before fetching |
+| [`next.config.ts`](./next.config.ts) | `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex, nocache, notranslate, noai, noimageai` on every response | Bots that fetch anyway — including assets, `/api/*`, and `/mcp`, where no meta tag can exist |
+| [`app/layout.tsx`](./app/layout.tsx) | The same directives as `<meta name="robots">` and `<meta name="googlebot">` | HTML that gets saved, proxied, or mirrored past the header |
+
+There is deliberately **no `sitemap.xml`**, and nothing should add one.
+
+Verify after a deploy:
+
+```bash
+curl -s  https://atoms.neoflo.ai/robots.txt | head
+curl -sI https://atoms.neoflo.ai/           | grep -i x-robots-tag
+curl -sI https://atoms.neoflo.ai/favicon.ico | grep -i x-robots-tag
+```
+
+### What this does not do
+
+**None of it is access control.** Anyone with the URL still gets the whole site, and a scraper that ignores `robots.txt` is not breaking anything it has to obey. To make the site actually private, close these at the infrastructure layer:
+
+1. **Set `MCP_TOKEN`.** With it unset, `/mcp` serves the entire component and token catalogue to any unauthenticated caller — a bigger exposure than crawling, and the only item on this list that is already wired up in code.
+2. **Put auth in front of the origin.** For ECS behind an ALB, an `authenticate-oidc` listener rule against Google Workspace is the least-effort option, with higher-priority path rules exempting `/api/health` (the target group's own probe) and `/mcp` (which carries its own bearer token, and whose clients cannot complete a browser login).
+3. **Or restrict by network** — security group or WAF IP set limited to the office and VPN ranges, if the audience never leaves them.
+
+### If a page ever does surface
+
+As of 2026-08-16 a `site:atoms.neoflo.ai` query returns nothing, so the blocks above are prevention, not cleanup. That ordering matters: **`Disallow: /` and `noindex` work against each other on a URL that is already indexed.** A crawler that is refused the page never sees the `noindex` telling it to drop the page, so a URL discovered from an external link can sit in the index as a bare title indefinitely.
+
+If that happens, do not simply tighten `robots.txt`. Instead:
+
+1. Use **Search Console → Removals** for the immediate takedown (temporary, ~6 months).
+2. Temporarily allow crawling of the affected paths so the `X-Robots-Tag: noindex` is actually read, and only re-block once the URL has dropped out.
+
+### Discovery paths robots.txt cannot close
+
+- **Certificate Transparency.** ACM publishes `atoms.neoflo.ai` to public CT logs at issuance, and subdomain enumeration tools read those logs. A wildcard `*.neoflo.ai` cert keeps the specific hostname out of them.
+- **Referrer leakage.** Following a link off the docs would put the hostname in a third party's analytics. The `Referrer-Policy: no-referrer` header set alongside `X-Robots-Tag` closes this one.
+- **Inbound links.** A single public link — a ticket, a post, a public repo README — is enough for a crawler to learn the URL exists. The GitHub repo is private and its homepage field is empty; keep both that way.
 
 ---
 
