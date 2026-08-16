@@ -20,7 +20,7 @@ import {
   TABLE_SORT_TINT_RADIUS_PX,
 } from '../Table/tableTokens';
 import {
-  DATA_GRID_CHECKBOX_HALO_PADDING_PX,
+  DATA_GRID_CHECKBOX_INSET_PULL_PX,
   DATA_GRID_EDGE_INSET_CALC,
   DATA_GRID_FOOTER_HEIGHT_PX,
   dataGridCaptionType,
@@ -132,8 +132,10 @@ export function dataGridStyles(theme: Theme): CSSObject {
 
     // A selection column reads from its inset edge rather than from the
     // middle of a 50px box, so the control is pulled back onto that edge
-    // by the padding it keeps — see `DATA_GRID_CHECKBOX_HALO_PADDING_PX`
-    // for why it is 4 rather than MUI's 9 or the 0 this started at.
+    // by the padding it carries — see `DATA_GRID_CHECKBOX_INSET_PULL_PX`.
+    // The halo itself is the control's own: `Checkbox` ships a 32px
+    // target, which is the header's height exactly, so there is no
+    // padding to set here any more.
     //
     // The control is reached by its own class rather than as a direct
     // child: in a body cell it is one, but a header cell wraps it in the
@@ -144,15 +146,14 @@ export function dataGridStyles(theme: Theme): CSSObject {
     // end of this object, not here.
     [`& .${c.columnHeaderCheckbox} .${checkboxClasses.root},
       & .${c.cellCheckbox} .${checkboxClasses.root}`]: {
-      padding: DATA_GRID_CHECKBOX_HALO_PADDING_PX,
-      marginInlineStart: -DATA_GRID_CHECKBOX_HALO_PADDING_PX,
+      marginInlineStart: -DATA_GRID_CHECKBOX_INSET_PULL_PX,
     },
 
     // And nothing in that column clips. A grid cell hides its overflow so
-    // a long label ends in an ellipsis, but the halo is 32 in a 26px gap
-    // by design — hidden here would slice the ring off at both sides,
-    // which is the bracket again in a rounder shape. Scoped to the
-    // selection column, so every other cell keeps its ellipsis.
+    // a long label ends in an ellipsis, but the pull above puts 8px of
+    // the halo back over the inset, outside the cell's content box —
+    // hidden here would slice that side of the ring off flat. Scoped to
+    // the selection column, so every other cell keeps its ellipsis.
     [`& .${c.columnHeaderCheckbox}, & .${c.cellCheckbox},
       & .${c.columnHeaderCheckbox} .${c.columnHeaderDraggableContainer},
       & .${c.columnHeaderCheckbox} .${c.columnHeaderTitleContainer},
@@ -324,23 +325,19 @@ export function dataGridStyles(theme: Theme): CSSObject {
     [`& .${c['columnHeader--last']}`]: { paddingInlineEnd: inset },
     [`& .${c.cell}:has(+ .${c.cellEmpty})`]: { paddingInlineEnd: inset },
 
-    // And the selection column gives its trailing 8 back, last of all.
-    // A grid column is a hard width with `overflow: hidden` behind it, so
-    // 24 of inset plus a 24px control plus 8 is 56 in the 50px box the
-    // grid reserves — six pixels of checkbox sliced off its right edge,
-    // which reads as a bracket rather than a square. A table cell would
-    // simply have grown.
+    // And the selection column reads from its leading edge, last of all.
+    // Without this the control is centred in the 50px box the grid
+    // reserves and sits a couple of pixels off the column of cells below
+    // it; the pull above only works from a known starting point.
     //
     // It has to be here, below the header rule, which sets the
-    // `padding-inline` shorthand on every header at the same specificity
-    // and would otherwise put the 8 straight back. And it has to be the
-    // column's only entry in this object: a second one under the same key
-    // would look later but is not — a repeated key keeps the position of
-    // the first and only replaces its value, which is how the header sat
-    // clipped while the body cell was fine.
+    // `padding-inline` shorthand on every header at the same specificity.
+    // And it has to be the column's only entry in this object: a second
+    // one under the same key would look later but is not — a repeated key
+    // keeps the position of the first and only replaces its value, which
+    // is how the header once sat clipped while the body cell was fine.
     [`& .${c.columnHeaderCheckbox}, & .${c.cellCheckbox}`]: {
       justifyContent: 'flex-start',
-      paddingInlineEnd: 0,
     },
 
     // The grid marks that header `align: center`, which would split the

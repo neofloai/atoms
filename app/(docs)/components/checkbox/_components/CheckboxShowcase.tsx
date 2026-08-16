@@ -28,9 +28,9 @@ function PreviewCard({
 PreviewCard.displayName = 'PreviewCard';
 
 /**
- * Live rendering of the Checkbox states from the Figma selector set:
- * unchecked / checked / indeterminate, with and without labels, and
- * the disabled combinations.
+ * Live rendering of the Checkbox states from the Figma `checkbox` set
+ * (node 3205:121943): unchecked / checked / indeterminate, both sizes,
+ * with and without labels, and the disabled combinations.
  */
 export function CheckboxShowcase() {
   const [parentDemo, setParentDemo] = React.useState([true, false]);
@@ -66,6 +66,31 @@ export function CheckboxShowcase() {
           <Checkbox label="Indeterminate" indeterminate />
           <Checkbox label="Disabled" disabled />
           <Checkbox label="Disabled checked" disabled defaultChecked />
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard title="Two sizes">
+        <Stack spacing={2} sx={{ alignItems: 'flex-start' }}>
+          <Stack spacing={0.5}>
+            <Typography variant="caption" color="text.secondary">
+              md — a 16px box
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <Checkbox label="Unchecked" />
+              <Checkbox label="Checked" defaultChecked />
+              <Checkbox label="Indeterminate" indeterminate />
+            </Stack>
+          </Stack>
+          <Stack spacing={0.5}>
+            <Typography variant="caption" color="text.secondary">
+              sm — a 12px box, in the same 32px target
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <Checkbox size="sm" label="Unchecked" />
+              <Checkbox size="sm" label="Checked" defaultChecked />
+              <Checkbox size="sm" label="Indeterminate" indeterminate />
+            </Stack>
+          </Stack>
         </Stack>
       </PreviewCard>
 
