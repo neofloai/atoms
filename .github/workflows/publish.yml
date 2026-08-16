@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   publish:
@@ -34,7 +33,10 @@ jobs:
       - name: Build library
         run: npm run build:lib
 
+      # This org's Actions policy caps GITHUB_TOKEN at read-only for
+      # packages, so publishing uses a separately-scoped PAT instead
+      # (classic token, write:packages scope) stored as a repo secret.
       - name: Publish to GitHub Packages
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_PUBLISH_TOKEN }}
