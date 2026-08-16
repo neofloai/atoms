@@ -28,13 +28,14 @@ function PreviewCard({
 PreviewCard.displayName = 'PreviewCard';
 
 /**
- * Live rendering of the Radio states from the Figma selector set:
- * unselected / selected, grouped selection, horizontal layout, and
- * the disabled combinations.
+ * Live rendering of the Radio states from the Figma `radio-button` set
+ * (node 3653:28080): unselected / selected, both sizes, grouped
+ * selection, horizontal layout, and the disabled combinations.
  */
 export function RadioShowcase() {
   const [plan, setPlan] = React.useState('starter');
   const [size, setSize] = React.useState('md');
+  const [density, setDensity] = React.useState('compact');
 
   function handlePlanChange(event: React.ChangeEvent<HTMLInputElement>) {
     setPlan(event.target.value);
@@ -42,6 +43,10 @@ export function RadioShowcase() {
 
   function handleSizeChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSize(event.target.value);
+  }
+
+  function handleDensityChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setDensity(event.target.value);
   }
 
   return (
@@ -61,6 +66,29 @@ export function RadioShowcase() {
           <Radio value="pro" label="Pro" />
           <Radio value="enterprise" label="Enterprise" />
         </RadioGroup>
+      </PreviewCard>
+
+      <PreviewCard title="Two sizes">
+        <Stack spacing={2} sx={{ alignItems: 'flex-start' }}>
+          <Stack spacing={0.5}>
+            <Typography variant="caption" color="text.secondary">
+              md — a 16px ring
+            </Typography>
+            <RadioGroup row value={density} onChange={handleDensityChange}>
+              <Radio value="compact" label="Compact" />
+              <Radio value="cosy" label="Cosy" />
+            </RadioGroup>
+          </Stack>
+          <Stack spacing={0.5}>
+            <Typography variant="caption" color="text.secondary">
+              sm — a 12px ring, in the same 32px target
+            </Typography>
+            <RadioGroup row value={density} onChange={handleDensityChange}>
+              <Radio size="sm" value="compact" label="Compact" />
+              <Radio size="sm" value="cosy" label="Cosy" />
+            </RadioGroup>
+          </Stack>
+        </Stack>
       </PreviewCard>
 
       <PreviewCard title="Horizontal group">

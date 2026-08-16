@@ -6,6 +6,7 @@ import {
   typography,
 } from '@/src/tokens';
 
+import { selectorInsetPx } from '../_shared/selectorStyles';
 import {
   TABLE_CELL_PADDING_INLINE_PX,
   TABLE_EDGE_INSET_PX,
@@ -128,18 +129,20 @@ export const DATA_GRID_FOOTER_LABEL_GAP_PX = spacing.component.xs;
 export const DATA_GRID_FOOTER_HEIGHT_PX = 48;
 
 /**
- * What the selection checkbox keeps of its own padding: `Scale/100`, a
- * quarter of MUI's 9.
+ * How far the selection checkbox is pulled back onto the edge inset — 8,
+ * which is the padding the control carries around its own 16px box.
  *
- * The control's padding is its hover halo — MUI rounds the whole button,
- * so the padding is the ring you see behind the glyph, and at 0 the ring
- * is the glyph and reads as a smudge. Full padding is not available
- * either: 9 makes a 42px control, and the header strip is 32 tall.
+ * `Checkbox` ships a 32px round target (`SELECTOR_TARGET_SIZE_PX`), the
+ * same box as the `sm` `IconButton` in the footer and exactly the height
+ * of the header strip, so the grid has nothing to say about the halo any
+ * more — it used to set the padding itself, back when the control was a
+ * 24px glyph with MUI's 9 around it.
  *
- * 4 makes it `24 + 4 + 4 = 32` — exactly the header's height, and the
- * same box as the `sm` `IconButton` the footer uses, so every round
- * target in the grid is one size. The 4 is given back as a negative
- * inline margin so the glyph still starts on the 24px edge inset rather
- * than 4 inside it.
+ * What is still the grid's business is where the *glyph* starts. Left
+ * alone, the control's box would begin at the 24px inset and the box
+ * inside it 8 further in; pulling the whole control back by its own
+ * padding lands the glyph on the inset instead, in line with the column
+ * of cells below it. Derived rather than written down, so it follows the
+ * control if either number moves.
  */
-export const DATA_GRID_CHECKBOX_HALO_PADDING_PX = spacing.component.xxs;
+export const DATA_GRID_CHECKBOX_INSET_PULL_PX = selectorInsetPx('md');

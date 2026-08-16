@@ -8,16 +8,22 @@ export const data: ComponentExamplesData = {
   name: 'Radio',
   category: 'Inputs',
   tagline:
-    'Single-selection control for mutually exclusive options, with an optional clickable label and a RadioGroup wrapper.',
+    'Single-selection control for mutually exclusive options, in two sizes, with an optional clickable label and a RadioGroup wrapper.',
   figmaUrl:
-    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=2080-23677',
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3653-28080',
   props: [
     {
       name: 'label',
       type: 'ReactNode',
       default: '—',
+      description: 'Visible label beside the control.',
+    },
+    {
+      name: 'size',
+      type: "'sm' | 'md'",
+      default: "'md'",
       description:
-        'Visible label beside the control.',
+        'Control diameter — `md` is 16px, `sm` is 12px. Both sit in the same 32px round target, so the two sizes line up in a column and the hover halo stays put.',
     },
     {
       name: 'value',
@@ -69,6 +75,17 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
+      title: 'The smaller control',
+      description:
+        'Same ring, 12px instead of 16 — for a dense row where a full-size control would crowd the text beside it.',
+      code: [
+        '<RadioGroup row value={density} onChange={handleDensityChange}>',
+        '  <Radio size="sm" value="compact" label="Compact" />',
+        '  <Radio size="sm" value="cosy" label="Cosy" />',
+        '</RadioGroup>',
+      ].join('\n'),
+    },
+    {
       title: 'Disabled options',
       code: [
         '<RadioGroup value={tier} onChange={handleTierChange}>',
@@ -93,6 +110,7 @@ export const data: ComponentExamplesData = {
     'Wrap radios in a `RadioGroup` so selection and keyboard navigation work',
     'Use the `label` prop so the text is part of the click target',
     'Use radios for 2–5 mutually exclusive options that should all be visible',
+    'Keep one `size` across a group — the ring is the thing the eye scans down',
   ],
   donts: [
     "Don't use a Radio for independent options — that's a Checkbox",

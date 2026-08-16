@@ -170,10 +170,14 @@ export type {
 } from './components/TimePicker';
 
 export { Checkbox } from './components/Checkbox';
-export type { CheckboxProps } from './components/Checkbox';
+export type { CheckboxProps, CheckboxSize } from './components/Checkbox';
 
 export { Radio, RadioGroup } from './components/Radio';
-export type { RadioGroupProps, RadioProps } from './components/Radio';
+export type {
+  RadioGroupProps,
+  RadioProps,
+  RadioSize,
+} from './components/Radio';
 
 export { Switch } from './components/Switch';
 export type { SwitchProps } from './components/Switch';

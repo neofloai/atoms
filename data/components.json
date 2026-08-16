@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T07:20:52.331Z",
+  "generatedAt": "2026-08-16T08:08:45.122Z",
   "components": [
     {
       "name": "Accordion",
@@ -799,14 +799,20 @@
     {
       "name": "Checkbox",
       "category": "Inputs",
-      "tagline": "Selection control with an optional clickable label, checked, indeterminate, and disabled states.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=2080-23677",
+      "tagline": "Selection control in two sizes, with an optional clickable label, checked, indeterminate, and disabled states.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3205-121943",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "default": "—",
           "description": "Visible label beside the control."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "default": "'md'",
+          "description": "Control size — `md` is a 16px box, `sm` is 12px. The same ramp `Radio` takes, and both sit in the same 32px target, so a form mixing the two controls still lines up."
         },
         {
           "name": "checked",
@@ -853,6 +859,11 @@
           "code": "<Checkbox\n  label=\"Select all\"\n  checked={allSelected}\n  indeterminate={someSelected && !allSelected}\n  onChange={handleSelectAll}\n/>"
         },
         {
+          "title": "The smaller control",
+          "description": "Same box, 12px instead of 16 — for a dense row where a full-size control would crowd the text beside it.",
+          "code": "<Checkbox size=\"sm\" label=\"Include archived\" defaultChecked />"
+        },
+        {
           "title": "Disabled states",
           "code": "<Checkbox label=\"Unavailable\" disabled />\n<Checkbox label=\"Locked on\" disabled defaultChecked />"
         }
@@ -860,7 +871,8 @@
       "dos": [
         "Use the `label` prop so the text is part of the click target",
         "Use `indeterminate` on a parent checkbox over a partially-selected group",
-        "Use checkboxes for independent options — any number can be selected"
+        "Use checkboxes for independent options — any number can be selected",
+        "Keep one `size` across a form, and match it to any `Radio` beside it"
       ],
       "donts": [
         "Don't use a Checkbox for mutually exclusive options — that's a radio group",
@@ -3030,14 +3042,20 @@
     {
       "name": "Radio",
       "category": "Inputs",
-      "tagline": "Single-selection control for mutually exclusive options, with an optional clickable label and a RadioGroup wrapper.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=2080-23677",
+      "tagline": "Single-selection control for mutually exclusive options, in two sizes, with an optional clickable label and a RadioGroup wrapper.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3653-28080",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "default": "—",
           "description": "Visible label beside the control."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "default": "'md'",
+          "description": "Control diameter — `md` is 16px, `sm` is 12px. Both sit in the same 32px round target, so the two sizes line up in a column and the hover halo stays put."
         },
         {
           "name": "value",
@@ -3074,6 +3092,11 @@
           "code": "<RadioGroup row value={size} onChange={handleSizeChange}>\n  <Radio value=\"sm\" label=\"Small\" />\n  <Radio value=\"md\" label=\"Medium\" />\n  <Radio value=\"lg\" label=\"Large\" />\n</RadioGroup>"
         },
         {
+          "title": "The smaller control",
+          "description": "Same ring, 12px instead of 16 — for a dense row where a full-size control would crowd the text beside it.",
+          "code": "<RadioGroup row value={density} onChange={handleDensityChange}>\n  <Radio size=\"sm\" value=\"compact\" label=\"Compact\" />\n  <Radio size=\"sm\" value=\"cosy\" label=\"Cosy\" />\n</RadioGroup>"
+        },
+        {
           "title": "Disabled options",
           "code": "<RadioGroup value={tier} onChange={handleTierChange}>\n  <Radio value=\"free\" label=\"Free\" />\n  <Radio value=\"paid\" label=\"Paid\" disabled />\n</RadioGroup>"
         },
@@ -3085,7 +3108,8 @@
       "dos": [
         "Wrap radios in a `RadioGroup` so selection and keyboard navigation work",
         "Use the `label` prop so the text is part of the click target",
-        "Use radios for 2–5 mutually exclusive options that should all be visible"
+        "Use radios for 2–5 mutually exclusive options that should all be visible",
+        "Keep one `size` across a group — the ring is the thing the eye scans down"
       ],
       "donts": [
         "Don't use a Radio for independent options — that's a Checkbox",

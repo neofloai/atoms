@@ -96,12 +96,18 @@ DataGridSkeletonBar.displayName = 'DataGridSkeletonBar';
  * hatch for Material-specific props, `density` and `fullWidth` belong to
  * the columns-management panel's own layout, and its input attributes
  * arrive under `htmlInput` where Material calls the slot `input`.
+ *
+ * `size` is a fourth, and a name collision rather than an extra: the
+ * grid speaks MUI's `small` / `medium`, the house checkbox speaks
+ * `sm` / `md`. It is declared in the grid's own words below and dropped.
  */
-interface DataGridCheckboxProps extends Omit<CheckboxProps, 'slotProps'> {
+interface DataGridCheckboxProps
+  extends Omit<CheckboxProps, 'slotProps' | 'size'> {
   slotProps?: { htmlInput?: React.InputHTMLAttributes<HTMLInputElement> };
-  material?: Omit<CheckboxProps, 'slotProps'>;
+  material?: Omit<CheckboxProps, 'slotProps' | 'size'>;
   density?: 'compact' | 'standard';
   fullWidth?: boolean;
+  size?: 'small' | 'medium';
 }
 
 /**
@@ -109,15 +115,16 @@ interface DataGridCheckboxProps extends Omit<CheckboxProps, 'slotProps'> {
  *
  * `label` passes straight through, because the house checkbox takes one —
  * which is what keeps the column names in the columns-management panel
- * from disappearing. `density` and `fullWidth` are dropped: the design
- * has one checkbox size.
+ * from disappearing. `density`, `fullWidth` and the grid's own `size`
+ * are dropped: a grid draws one checkbox, the 16px `md`, whose 32px
+ * target is the header strip's height exactly.
  */
 const DataGridCheckbox = React.forwardRef<
   HTMLButtonElement,
   DataGridCheckboxProps
 >(function DataGridCheckbox(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- drop the two panel-layout props so they never reach the DOM
-  { slotProps, material, density, fullWidth, ...rest },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- drop the panel-layout props and the grid's own size axis so none reach the DOM
+  { slotProps, material, density, fullWidth, size, ...rest },
   ref
 ) {
   return (
