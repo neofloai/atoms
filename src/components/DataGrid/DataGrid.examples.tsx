@@ -65,7 +65,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Grow with the rows instead of filling the parent. Worth knowing because MUI’s grid is `height: 100%`, so one in a parent with no height of its own would otherwise collapse; there is a 320px floor to keep that from happening silently, but a grid should still be told which of the two it is.',
+        'Grow with the rows instead of filling the parent. One of the two has to be true: MUI’s grid is `height: 100%`, so a grid in a parent with no height of its own collapses. Size the container when the rows scroll inside a fixed area, and set this when the rows decide how tall the block is.',
     },
     {
       name: 'sortingOrder',

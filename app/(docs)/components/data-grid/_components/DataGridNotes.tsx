@@ -49,10 +49,9 @@ export function DataGridNotes() {
           goes wrong: a grid needs a <em>height</em>. MUI&apos;s root is{' '}
           <code>height: 100%</code>, which resolves to nothing in a parent that
           has none of its own, and a grid that renders as a 1px line is almost
-          always this. There is a 320px floor here — a header and six{' '}
-          <code>sm</code> rows — so it never happens silently. Say which you
-          mean anyway: a sized box, or <code>autoHeight</code> to grow with the
-          rows.
+          always this. Say which of the two you mean: a sized box, and the rows
+          scroll inside it, or <code>autoHeight</code>, and the rows decide how
+          tall the block is.
         </Typography>
         <Typography variant="body2" color="text.secondary">
           The rules are drawn differently too, and only one consequence escapes.
