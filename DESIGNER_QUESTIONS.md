@@ -94,18 +94,36 @@ Heads-up: this is an *engineering* abstraction. If the designer later names sema
 
 ---
 
-### 10. Elevation / shadow scale — RESOLVED (2026-07-29 token sync)
-The Figma `styles.effectStyles` export confirms all three semantic shadow levels (each two stacked drop shadows):
+### 10. Elevation / shadow scale — RESOLVED, but `large` keeps moving (re-synced 2026-08-16)
+Re-read from the `shadows` sheet (section 2080:23678, swatches 953:3033-3035). All three semantic levels are two stacked drop shadows of one ink, `#161614`, written contact-layer first:
 
 | Token | Intended usage (per Figma description) | Value |
 |---|---|---|
 | `elevation.small` | Buttons, input focus, slight elevation. | `0px 1px 2px rgba(22,22,20,0.08), 0px 2px 4px rgba(22,22,20,0.04)` |
 | `elevation.medium` | Dropdowns, tooltips, floating elements. | `0px 2px 4px rgba(22,22,20,0.08), 0px 4px 8px rgba(22,22,20,0.04)` |
-| `elevation.large` | Modals, dialogs, popovers. | `0px 2px 8px rgba(22,22,20,0.08), 0px 16px 16px rgba(22,22,20,0.04)` |
+| `elevation.large` | Modals, dialogs, popovers. | `0px 2px 4px rgba(22,22,20,0.16), 0px 8px 4px rgba(22,22,20,0.04)` |
 
-Note the `large` value changed from the previous node-953:3035-derived spec (`0px 4px 8px rgba(...,0.16), 0px 8px 16px rgba(...,0.08)`) — the fresh export supersedes it.
+`small` and `medium` are unchanged and have never moved across any sync. `large` has now been three different values in three reads of the same sheet:
+
+| Read | `large` |
+|---|---|
+| original, node 953:3035 | `0px 4px 8px rgba(…,0.16), 0px 8px 16px rgba(…,0.08)` |
+| 2026-07-29 `styles.effectStyles` | `0px 2px 8px rgba(…,0.08), 0px 16px 16px rgba(…,0.04)` |
+| 2026-08-16 (current) | `0px 2px 4px rgba(…,0.16), 0px 8px 4px rgba(…,0.04)` |
+
+**Two things to confirm.**
+
+1. **Is the current `large` settled?** It is the only rung that moves, and it is the one that lands on modals and dialogs — the largest surfaces on screen, where a change is most visible. Three revisions with no note attached suggests it is still being tuned. If so, say the word and we will hold the July value until it lands.
+
+2. **`large` is deliberately not a continuation of the ladder — confirm that is intended.** `small` → `medium` doubles perfectly: every offset and every radius twice the last, both alphas held. `large` breaks it. It keeps `medium`'s contact geometry and doubles that layer's ink instead (0.08 → 0.16), then drops the ambient layer lower (y4 → y8) while *tightening* it (r8 → r4).
+
+   The consequence is that `large`'s widest blur is 4px where `medium`'s is 8px, so the biggest shadow in the system is the least diffuse one. The swatch bears this out — `large` renders as a darker, more grounded edge, not a bigger cloud — so the rungs climb in contact rather than in diffusion, which is a defensible choice and reads well at the 202px swatch size. The question is whether it still reads as "further off the page" at dialog scale (~600px wide), where a 4px blur under a 8px offset is a very short throw. A geometric third rung would have been `0px 4px 8px rgba(…,0.08), 0px 8px 16px rgba(…,0.04)`.
+
+   Implemented as drawn, with a comment in `src/tokens/elevation.ts` warning that the small blur is intentional, since it reads as a transposed digit.
 
 The names are wired into `src/tokens/elevation.ts` and mapped across MUI's 25 shadow slots (`elevation=1` → small, `2-8` → medium, `9-24` → large).
+
+**Still open: there is no dark-mode shadow.** All three styles are a single value, and `#161614` is the near-black ink that works on a light surface. On the dark canvas the same shadow is invisible — it is dark ink on a darker ground. Every other colour token in this system is a `{light, dark}` pair; elevation is the sole exception. Dark UIs usually solve this by lifting the surface a rung rather than by shadowing it, which the layer tokens (`card 1` → `card 2`) already support, but that is a decision, not a default. Ask: should elevation gain a dark half, or should dark mode carry elevation through surface only?
 
 ---
 
