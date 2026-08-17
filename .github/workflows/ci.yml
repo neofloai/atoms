@@ -46,7 +46,7 @@ jobs:
         run: npm run typecheck
 
       # Build the consumable npm package (tsup -> dist/). This is what
-      # downstream projects install via git+ssh, so a broken library build
+      # downstream projects install straight from this repo, so a broken build
       # must fail the PR.
       - name: Build library
         run: npm run build:lib
