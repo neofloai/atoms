@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T06:26:57.573Z",
+  "generatedAt": "2026-08-17T14:12:56.924Z",
   "components": [
     {
       "name": "Accordion",
@@ -1900,7 +1900,7 @@
         },
         {
           "title": "A permanent nav rail",
-          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge.",
+          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. The nav rows are `ToggleButton`s, not a `List` — that is what carries the selected tint and survives the collapse to icons. For the whole screen — rail, bar and content together — start from the Dashboard pattern.",
           "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer\n    variant=\"permanent\"\n    size=\"sm\"\n    slotProps={{ paper: { sx: { py: 2.5 } } }}\n  >\n    <Stack sx={{ px: 2, gap: 2, pb: 2 }}>\n      <NeofloLogo variant=\"full\" size={20} />\n      <Button\n        variant=\"secondary\"\n        appearance=\"outline\"\n        size=\"sm\"\n        fullWidth\n        startIcon={<SuitcaseSimpleIcon size={16} />}\n        endIcon={<CaretUpDownIcon size={14} />}\n        onClick={openWorkspaceMenu}\n      >\n        Non Trade AP DB\n      </Button>\n    </Stack>\n\n    <Divider />\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <Stack sx={{ flex: 1, px: 2, py: 2, gap: 1 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ToggleButton\n          key={key}\n          value={key}\n          selected={active === key}\n          onChange={() => setActive(key)}\n          appearance=\"text\"\n          size=\"sm\"\n          sx={{ gap: 1, justifyContent: \"flex-start\", textTransform: \"none\" }}\n        >\n          <Icon size={20} />\n          {label}\n        </ToggleButton>\n      ))}\n    </Stack>\n\n    <Divider />\n\n    <Stack sx={{ px: 2, pt: 2.5 }}>\n      <Button\n        variant=\"secondary\"\n        appearance=\"text\"\n        fullWidth\n        endIcon={<CaretDownIcon size={16} />}\n        onClick={openUserMenu}\n        sx={{ justifyContent: \"space-between\", textTransform: \"none\" }}\n      >\n        <Avatar size=\"sm\">AV</Avatar>\n      </Button>\n    </Stack>\n  </Drawer>\n\n  <Box sx={{ flex: 1, p: 3 }}>{children}</Box>\n</Stack>"
         },
         {
@@ -1943,7 +1943,8 @@
         "Dialog",
         "Card",
         "Menu",
-        "Slide"
+        "Slide",
+        "ToggleButton"
       ]
     },
     {
@@ -2674,7 +2675,7 @@
     {
       "name": "List",
       "category": "Layout",
-      "tagline": "A vertical index of rows — a settings panel, a navigation rail, a stack of people. Each row is a band with 16px inside it and a hairline underneath.",
+      "tagline": "A vertical index of rows inside a page — a settings panel, a stack of people, a set of records with a control each. Each row is a band with 16px inside it and a hairline underneath. Not the app navigation rail: that is `ToggleButton` inside a `permanent` Drawer — see the Dashboard pattern.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3648-25970&m=dev",
       "props": [
         {
@@ -2763,8 +2764,8 @@
           "code": "<List>\n  <ListItem secondaryAction={<Switch defaultChecked />}>\n    <ListItemText primary=\"Email digest\" secondary=\"Every Monday at 9am\" />\n  </ListItem>\n  <ListItem secondaryAction={<Switch />}>\n    <ListItemText primary=\"Desktop alerts\" secondary=\"Off while presenting\" />\n  </ListItem>\n</List>"
         },
         {
-          "title": "A navigation list",
-          "description": "Rows that respond. `selected` marks the current one; a row with an `href` is a link.",
+          "title": "Navigation inside a page",
+          "description": "Rows that respond. `selected` marks the current one; a row with an `href` is a link. This is in-page navigation — a settings sub-nav, a table of contents, a folder tree. The app-level rail down the side of the screen is a different construct: `ToggleButton` rows inside a `permanent` Drawer, which is what the Dashboard pattern uses.",
           "code": "<List component=\"nav\">\n  <ListItemButton selected>\n    <ListItemIcon>\n      <FolderIcon size={16} />\n    </ListItemIcon>\n    <ListItemText primary=\"Invoices\" />\n  </ListItemButton>\n  <ListItemButton component=\"a\" href=\"/reports\">\n    <ListItemIcon>\n      <ChartBarIcon size={16} />\n    </ListItemIcon>\n    <ListItemText primary=\"Reports\" />\n  </ListItemButton>\n</List>"
         },
         {
@@ -2793,13 +2794,16 @@
         "Don't nest an `IconButton` or a `Switch` inside a `ListItemButton` — put it in the item's `secondaryAction`, where it is a separate target",
         "Don't add a bottom border to a row; every row already ends on one, and it turns primary on focus and grey when disabled",
         "Don't wrap a row in a `Card` for a surface — the row paints `card 1` itself",
-        "Don't use a list for tabular data with more than one column of values; that is `Table`, or `DataGrid` when the table is the screen's work"
+        "Don't use a list for tabular data with more than one column of values; that is `Table`, or `DataGrid` when the table is the screen's work",
+        "Don't build the app's primary navigation rail out of `List`/`ListItemButton` — the rail is `ToggleButton` rows inside a `permanent` Drawer, which is what carries the selected tint, the icon-only collapsed width, and the tooltips that appear when the labels drop out. Start from the Dashboard pattern rather than writing a shell from scratch"
       ],
       "relatedComponents": [
         "Menu",
         "MenuItem",
         "Table",
-        "Accordion"
+        "Accordion",
+        "ToggleButton",
+        "Drawer"
       ]
     },
     {
@@ -3153,9 +3157,9 @@
           "code": "<Navbar>\n  <Typography variant=\"subtitle1\" sx={{ fontWeight: 600 }}>\n    Query log\n  </Typography>\n  <Box sx={{ flex: 1 }} />\n  <IconButton variant=\"secondary\" appearance=\"text\" size=\"sm\" aria-label=\"Search\">\n    <MagnifyingGlassIcon />\n  </IconButton>\n  <IconButton variant=\"secondary\" appearance=\"text\" size=\"sm\" aria-label=\"Notifications\">\n    <BellIcon />\n  </IconButton>\n  <Avatar size=\"sm\">AV</Avatar>\n</Navbar>"
         },
         {
-          "title": "The shell: a bar above, a rail beside",
-          "description": "Navbar and Drawer are painted from the same surface and the same edge token, so they meet at the corner without a seam. The bar sits above the row that holds the rail, which is what puts the sidebar toggle in the bar and lets the rail collapse under it.",
-          "code": "<Stack sx={{ minHeight: \"100vh\" }}>\n  <Navbar>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label=\"Collapse sidebar\"\n      onClick={() => setCollapsed((open) => !open)}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n  </Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, minHeight: 0 }}>\n    <Drawer variant=\"permanent\" size=\"sm\">\n      <NavOfYourOwn collapsed={collapsed} />\n    </Drawer>\n    <Box sx={{ flex: 1, p: 3, overflowY: \"auto\" }}>{children}</Box>\n  </Stack>\n</Stack>"
+          "title": "The shell: a full-height rail, the bar beside it",
+          "description": "Navbar and Drawer are painted from the same surface and the same edge token, so they meet at the corner without a seam. The arrangement is the part to get right, and it is easy to get backwards: the rail runs the full height of the app and the bar starts where the rail ends, so the outer box is a **row** — rail, then a column — not a bar with a row under it. Two things follow. The brand mark is the top-left corner of the screen, and the bar cannot hold anything that has to line up with the rail, which is why the collapse toggle sits at its leading edge: it is the one control whose position does not move when the rail folds. The toggle drives the rail through `size`, so the panel and the space it reserves fold together. This is the shell of the Dashboard pattern, which is where to start for a whole screen rather than assembling one from here.",
+          "code": "<Stack direction=\"row\" sx={{ height: \"100vh\" }}>\n  <Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n    <NavOfYourOwn collapsed={collapsed} />\n  </Drawer>\n\n  <Stack sx={{ flex: 1, minWidth: 0 }}>\n    <Navbar>\n      <IconButton\n        variant=\"secondary\"\n        appearance=\"text\"\n        size=\"sm\"\n        aria-label={collapsed ? \"Expand sidebar\" : \"Collapse sidebar\"}\n        onClick={() => setCollapsed((previous) => !previous)}\n      >\n        <SidebarSimpleIcon />\n      </IconButton>\n    </Navbar>\n\n    <Box sx={{ flex: 1, minHeight: 0, overflowY: \"auto\", p: 3 }}>\n      {children}\n    </Box>\n  </Stack>\n</Stack>"
         },
         {
           "title": "A page header, with the record and its actions",
@@ -3184,7 +3188,7 @@
         "Put the record’s facts in `meta` rather than in the title — a title that reads \"Matching #345 · Nike Sales\" cannot truncate gracefully",
         "Put one `Box sx={{ flex: 1 }}` between the leading group and the trailing one, so the bar has a single split point",
         "Use `appearance=\"text\"` icon buttons in the bar — the bar is already a surface, so contained buttons read as a second layer on it",
-        "Pair it with a `permanent` Drawer for the standard shell; the two share their surface and edge tokens",
+        "Pair it with a `permanent` Drawer for the standard shell — the rail runs the full height and the bar starts where the rail ends, so the outer box is a row (rail, then a column) and the two share their surface and edge tokens",
         "Name the row with `slotProps={{ toolbar: { component: \"nav\" } }}` when the bar carries the page’s navigation"
       ],
       "donts": [
@@ -3193,7 +3197,8 @@
         "Don't add a shadow to a `static` bar — the bottom rule is the separation, and a shadow on a bar that cannot scroll under anything is decoration",
         "Don't stack rows inside a `sm` bar to fit a title and its context — that is what `size=\"md\"` and `NavbarTitle` are, and a third row belongs in a `Tabs` bar beneath the header",
         "Don't put a page's actions inside `NavbarTitle` — it owns the title and its context, and the roles of the buttons beside it are decisions about the page",
-        "Don't put more than one primary action in the bar — it is the screen's chrome, not its call to action"
+        "Don't put more than one primary action in the bar — it is the screen's chrome, not its call to action",
+        "Don't run the bar across the top of the whole window with the rail underneath it — at `sm` the rail owns the full height and the bar spans the content column only, so the brand mark is the app's top-left corner. `size=\"md\"` is the one place the bar spans the top, and that is a different screen rather than a second band on this one"
       ],
       "relatedComponents": [
         "Drawer",
@@ -4952,7 +4957,8 @@
         "Use one group per decision. Two groups side by side in one toolbar is right; one group holding both is not",
         "Pass `appearance=\"text\"` when the toggles sit on a surface that already has a border and a shadow, so the row does not draw a second box inside the first",
         "Reach for `Checkbox` instead when the choice belongs in a form and will be submitted with it, and for `Tabs` when the choice swaps a whole panel of content",
-        "Keep the glyphs in a group from one family and one weight, since they are compared against each other at 20px"
+        "Keep the glyphs in a group from one family and one weight, since they are compared against each other at 20px",
+        "Use it for the rows of an app navigation rail — a stacked group inside a `permanent` Drawer, one row per destination, `selected` on the current one. It is the rail in the Dashboard pattern because it already carries the selected tint and survives the fold to icons; `List` is for navigation inside a page"
       ],
       "donts": [
         "Don't use a toggle for something that happens once — a control that stays pressed is a promise that it has state. `Button` or `IconButton` is what fires an action",
@@ -4966,7 +4972,8 @@
         "IconButton",
         "Chip",
         "Checkbox",
-        "Divider"
+        "Divider",
+        "Drawer"
       ]
     },
     {

@@ -12,6 +12,7 @@ import { colors, fontFamilies } from '@/src/tokens';
 import { BrandAccentSection } from './_components/BrandAccentSection';
 import { FaviconSection } from './_components/FaviconSection';
 import { PaletteSection } from './_components/PaletteSection';
+import { ThemeSection } from './_components/ThemeSection';
 
 export const metadata = {
   title: 'Branding — Atoms',
@@ -244,54 +245,7 @@ export default function BrandingDocsPage() {
 
         <Divider />
 
-        <Stack spacing={2} id="theme">
-          <Typography variant="h5" sx={{ fontWeight: 700 }}>
-            Theme &amp; colour modes
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {sectionSummary('theme')}
-          </Typography>
-          <Paper
-            variant="outlined"
-            sx={{
-              p: 2,
-              borderRadius: 1.5,
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 13,
-              bgcolor: 'action.hover',
-              whiteSpace: 'pre',
-              overflowX: 'auto',
-            }}
-          >
-            {`import { NeofloThemeProvider } from '@neofloai/atoms';\n\n<NeofloThemeProvider>{children}</NeofloThemeProvider>\n// pin a scheme: <NeofloThemeProvider defaultMode="light">`}
-          </Paper>
-          <Typography variant="body2" color="text.secondary">
-            That one wrapper is the whole setup. It applies the theme, mounts{' '}
-            <code>CssBaseline</code>, self-hosts DM Sans and Instrument Serif,
-            and sets the Phosphor icon defaults — no font links, no CSS
-            imports, no per-component theming. It defaults to the system
-            colour scheme and both schemes are first-class, so every value in
-            the table above resolves correctly in either.
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            From there, reference colour by <em>name</em> rather than value —
-            that is what keeps a product on-brand when the tokens change:
-          </Typography>
-          <Paper
-            variant="outlined"
-            sx={{
-              p: 2,
-              borderRadius: 1.5,
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 13,
-              bgcolor: 'action.hover',
-              whiteSpace: 'pre',
-              overflowX: 'auto',
-            }}
-          >
-            {`<Button color="primary">Save</Button>\n<Box sx={{ bgcolor: 'background.paper', color: 'text.secondary' }} />\n\n// and where you need a raw scale value, import the token —\n// never paste a hex literal\nimport { colors } from '@neofloai/atoms/tokens';`}
-          </Paper>
-        </Stack>
+        <ThemeSection summary={sectionSummary('theme')} />
       </Stack>
     </Container>
   );

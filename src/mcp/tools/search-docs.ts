@@ -4,13 +4,14 @@ import {
   loadBrand,
   loadComponents,
   loadPatterns,
+  loadProject,
   loadTokens,
 } from '../data-loader';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 interface SearchHit {
-  kind: 'component' | 'pattern' | 'token category' | 'brand';
+  kind: 'component' | 'pattern' | 'token category' | 'brand' | 'guide';
   name: string;
   summary: string;
   /**
@@ -34,7 +35,7 @@ export function registerSearchDocs(server: McpServer): void {
     {
       title: 'Search docs',
       description:
-        'Searches across @neofloai/atoms components, patterns, token categories, and Neoflo brand guidelines (logo, brand colours, fonts, theme) by keyword. Returns a markdown list of hits; brand hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
+        'Searches across @neofloai/atoms components, patterns, token categories, Neoflo brand guidelines (logo, brand colours, fonts, theme), and the project intake guide by keyword. Returns a markdown list of hits; brand and guide hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
       inputSchema: {
         query: z
           .string()
@@ -45,15 +46,38 @@ export function registerSearchDocs(server: McpServer): void {
       },
     },
     async ({ query }) => {
-      const [components, patterns, tokens, brand] = await Promise.all([
+      const [components, patterns, tokens, brand, project] = await Promise.all([
         loadComponents(),
         loadPatterns(),
         loadTokens(),
         loadBrand(),
+        loadProject(),
       ]);
 
       const q = query.toLowerCase();
       const hits: SearchHit[] = [];
+
+      // The intake goes first when it matches at all: someone asking how
+      // to start something is asking the question that has to be answered
+      // before any component is the right answer. Matched against its own
+      // keywords rather than the interview text, because the questions
+      // mention tables and columns in passing and a search for `table`
+      // wants a component.
+      const projectText = [
+        'starting a project',
+        ...project.keywords,
+        ...project.targets.map((target) => target.label),
+      ].join(' ');
+      if (matches(projectText, q)) {
+        hits.push({
+          kind: 'guide',
+          name: 'Starting a project',
+          summary:
+            'What to find out before building anything, and which framework the answers resolve to.',
+          details:
+            'Call `start_project` with no arguments to get the questions to ask, then again with the answers to get the build plan. Do not scaffold or write components before that plan exists. `scaffold_app` then creates the project in the user\'s Desktop folder with Atoms, the theme and the brand already wired.',
+        });
+      }
 
       for (const section of brand.brand.sections) {
         const text = [
@@ -134,7 +158,7 @@ export function registerSearchDocs(server: McpServer): void {
         content: [
           {
             type: 'text',
-            text: `# Search results for "${query}"\n\n${lines.join('\n\n')}\n\nNext step: brand hits are answered inline; for components/patterns/tokens call get_component, get_pattern, or get_tokens.`,
+            text: `# Search results for "${query}"\n\n${lines.join('\n\n')}\n\nNext step: brand and guide hits are answered inline; for components/patterns/tokens call get_component, get_pattern, or get_tokens.`,
           },
         ],
       };

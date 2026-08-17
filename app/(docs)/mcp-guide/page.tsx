@@ -1,5 +1,6 @@
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -23,13 +24,24 @@ interface McpTool {
 
 const tools: readonly McpTool[] = [
   {
+    name: 'start_project',
+    purpose:
+      'The questions to answer before anything is built, then the resolved build plan: framework, location on disk, and the calls to make in order',
+  },
+  {
+    name: 'scaffold_app',
+    purpose:
+      'The ordered commands to create a new app in your Desktop folder with Atoms, the theme and the brand already wired',
+  },
+  {
     name: 'list_components',
-    purpose: 'Lists all components grouped by category',
+    purpose:
+      'Lists all components grouped by category, led by the published patterns',
   },
   {
     name: 'get_component',
     purpose:
-      "Full spec for a named component: props, types, examples, do's and don'ts",
+      "Full spec for a named component: props, types, examples, do's and don'ts, related components, and the patterns it appears in",
   },
   {
     name: 'get_tokens',
@@ -166,8 +178,11 @@ export default function McpGuidePage() {
               Available tools
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              The server exposes exactly six tools. Responses are markdown,
-              structured for AI consumption.
+              The server exposes exactly eight tools. Responses are markdown,
+              structured for AI consumption. They are listed in the order an
+              editor should reach for them — asking what to build comes before
+              building it, which is what{' '}
+              <Link href="/start-a-project">Start a project</Link> covers.
             </Typography>
           </Stack>
           <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 1.5 }}>

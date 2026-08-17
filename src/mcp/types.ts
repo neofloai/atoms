@@ -6,6 +6,7 @@
 
 import type { BrandGuide } from '@/src/brand/branding';
 import type { InstallationGuide } from '@/src/install';
+import type { ProjectGuide } from '@/src/project/types';
 
 export interface ComponentProp {
   name: string;
@@ -28,6 +29,16 @@ export interface ComponentData {
   examples: ComponentExample[];
   dos: string[];
   donts: string[];
+  /**
+   * Components worth comparing before committing to this one. Optional
+   * because the docs contract makes it optional, though every published
+   * component sets it.
+   *
+   * Served by `get_component` rather than held back for the docs site:
+   * picking the wrong component is a decision made before the props are
+   * read, so the alternatives have to travel with the spec.
+   */
+  relatedComponents?: string[];
 }
 
 export interface PatternData {
@@ -57,6 +68,10 @@ export interface PatternManifest {
 }
 
 export type InstallationManifest = InstallationGuide & {
+  generatedAt: string;
+};
+
+export type ProjectManifest = ProjectGuide & {
   generatedAt: string;
 };
 

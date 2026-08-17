@@ -9,18 +9,28 @@ The MCP (Model Context Protocol) server exposes the design system to AI editors.
 
 ## Available tools
 
-The MCP server exposes exactly these six tools — no more, no less:
+The MCP server exposes exactly these eight tools — no more, no less:
 
 | Tool | Purpose |
 |------|---------|
-| `list_components` | Lists all components grouped by category |
-| `get_component` | Returns full spec for a named component |
+| `start_project` | Returns the brief to gather, then the resolved build plan. Withholds the plan until the required answers arrive |
+| `scaffold_app` | Returns the ordered commands to create a new app on the user's own disk, brand wired |
+| `list_components` | Lists all components grouped by category, led by the published patterns |
+| `get_component` | Returns full spec for a named component, plus its related components and the patterns it appears in |
 | `get_tokens` | Returns design tokens for a category |
 | `get_pattern` | Returns full page layout code |
 | `search_docs` | Searches across components, patterns, guidelines |
 | `get_installation` | Returns framework-specific setup steps (nextjs, react) |
 
 If you need to add a tool, get approval first — every tool added is a new prompt-time API surface.
+
+## Server instructions
+
+`createAtomsMcpServer` passes `instructions` to the `McpServer` constructor. That string is the only guidance a client reads *before* deciding which tool to call, which makes it the only place the order of operations can live — a tool description is read once the tool is already being considered, and by then an agent that decided to write a dashboard from scratch has already stopped looking for one.
+
+Keep it short and ordered. Anything that only matters once a specific tool is in play belongs in that tool's `description` instead.
+
+Bump the server version when the tool surface changes; a client may report it.
 
 ## Tool implementation pattern
 

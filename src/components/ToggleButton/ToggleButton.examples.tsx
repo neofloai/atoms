@@ -291,6 +291,7 @@ export const data: ComponentExamplesData = {
     'Pass `appearance="text"` when the toggles sit on a surface that already has a border and a shadow, so the row does not draw a second box inside the first',
     'Reach for `Checkbox` instead when the choice belongs in a form and will be submitted with it, and for `Tabs` when the choice swaps a whole panel of content',
     'Keep the glyphs in a group from one family and one weight, since they are compared against each other at 20px',
+    'Use it for the rows of an app navigation rail — a stacked group inside a `permanent` Drawer, one row per destination, `selected` on the current one. It is the rail in the Dashboard pattern because it already carries the selected tint and survives the fold to icons; `List` is for navigation inside a page',
   ],
   donts: [
     "Don't use a toggle for something that happens once — a control that stays pressed is a promise that it has state. `Button` or `IconButton` is what fires an action",
@@ -300,5 +301,5 @@ export const data: ComponentExamplesData = {
     "Don't mix `size` within a group; the shared borders assume the buttons are the same height",
     "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control",
   ],
-  relatedComponents: ['IconButton', 'Chip', 'Checkbox', 'Divider'],
+  relatedComponents: ['IconButton', 'Chip', 'Checkbox', 'Divider', 'Drawer'],
 };

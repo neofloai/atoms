@@ -4,6 +4,7 @@ import path from 'node:path';
 import { branding } from '../src/brand/branding';
 import { installation } from '../src/install';
 import { patterns as patternData } from '../src/patterns';
+import { projectGuide } from '../src/project';
 import {
   border,
   colors,
@@ -36,7 +37,8 @@ import type {
  * from `src/tokens/`. Patterns come from the explicit array exported by
  * `src/patterns/index.ts` rather than from a directory scan — one screen
  * is one line there, and a half-written pattern stays out of the manifest
- * until it is added on purpose.
+ * until it is added on purpose. The installation, brand and project
+ * guides are hand-written modules serialized as they are.
  */
 
 const ROOT = path.resolve(__dirname, '..');
@@ -156,6 +158,7 @@ async function main(): Promise<void> {
     writeManifest('patterns.json', patterns),
     writeManifest('installation.json', { ...installation }),
     writeManifest('brand.json', { brand: branding }),
+    writeManifest('project.json', { ...projectGuide }),
   ]);
 }
 

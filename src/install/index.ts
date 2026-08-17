@@ -13,7 +13,7 @@
 
 export type InstallFramework = 'nextjs' | 'react';
 
-export type CodeLanguage = 'bash' | 'ts' | 'tsx' | 'json';
+export type CodeLanguage = 'bash' | 'ts' | 'tsx' | 'json' | 'html';
 
 export interface InstallStep {
   title: string;
@@ -181,6 +181,7 @@ export const installation: InstallationGuide = {
     'The package ships compiled JavaScript (dist/), so no transpilePackages or bundler transpile config is required.',
     'Brand fonts (DM Sans and Instrument Serif) are self-hosted and loaded automatically by NeofloThemeProvider -- you do not need to add Google Fonts links or next/font wiring.',
     'Color scheme follows the OS by default. Pin it with NeofloThemeProvider\'s defaultMode prop ("light", "dark", or "system") when your UI is designed for a single scheme.',
+    'For a switch the user can operate, import useColorScheme from @neofloai/atoms -- it returns { mode, setMode } and the provider persists the choice. You do not need @mui/material for this. Note that mode is undefined on the first render, before the stored preference has been read, so render the space rather than a guess or the control flips after hydration.',
     'Do not call MUI\'s createTheme() or mount a second theme provider -- NeofloThemeProvider is the only theme. Style through tokens (@neofloai/atoms/tokens) or the sx prop\'s theme-aware keys (e.g. color: "primary.main"), never hardcoded hex or pixel values.',
     'Missing a variant or prop? Open a component-request or bug issue against the Atoms repo instead of locally wrapping or style-overriding the component -- local overrides drift between projects and stop tracking design system changes.',
     'Atoms is pre-1.0.0 and under active construction. Until v1.0.0 is tagged, a bare install tracks the default branch and can change without warning -- pin to a commit SHA for anything you need to reproduce.',
