@@ -40,60 +40,33 @@ export interface InstallationGuide {
   notes: string[];
 }
 
-const INSTALL_COMMAND = 'npm install @neofloai/atoms@^1.0.0';
+const INSTALL_COMMAND = 'npm install github:neofloai/atoms';
 
 const SHARED_STEPS: InstallStep[] = [
   {
-    title: 'Point the @neofloai scope at GitHub Packages',
-    body: '@neofloai/atoms is published to GitHub Packages, not the public npm registry. Add this to your project\'s .npmrc (safe to commit -- it has no token in it):',
-    code: '@neofloai:registry=https://npm.pkg.github.com',
-    language: 'bash',
-  },
-  {
-    title: 'Authenticate once, on this machine, ever',
-    body: 'This is a Neoflo-internal package: only engineers in the neofloai GitHub org with read access granted on the package can install it. If you have the gh CLI authenticated (you likely already do), this covers every @neofloai package forever -- no token to create by hand:',
-    code: `gh auth refresh -h github.com -s read:packages
-npm config set //npm.pkg.github.com/:_authToken "$(gh auth token)" --location=global`,
-    language: 'bash',
-  },
-  {
-    title: "Don't have the gh CLI?",
-    body: 'Create a classic personal access token scoped to read:packages only (github.com/settings/tokens/new?scopes=read:packages), then run:',
-    code: 'npm config set //npm.pkg.github.com/:_authToken YOUR_TOKEN --location=global',
-    language: 'bash',
-  },
-  {
-    title: 'Install the package',
-    body: 'Use a semver range so patch and minor releases apply on your next install. The committed package-lock.json still pins the exact resolved version for reproducible builds.',
+    title: 'Install from the public GitHub repo',
+    body: 'neofloai/atoms is a public repository, so this needs no registry, no token, and no .npmrc. Anyone can install it:',
     code: INSTALL_COMMAND,
     language: 'bash',
   },
   {
+    title: 'Pin what you install',
+    body: 'A bare install tracks the default branch, so the code can change under you between installs. v1.0.0 has not been tagged yet -- until it ships, pin to an exact commit for anything you need to reproduce. Once v1.0.0 is out, switch to a semver range and npm will resolve it against the release tags.',
+    code: `# Today (pre-1.0.0) -- pin to an exact commit
+npm install github:neofloai/atoms#1a2b3c4
+
+# Once v1.0.0 is tagged -- real semver ranges
+npm install github:neofloai/atoms#semver:^1.0.0`,
+    language: 'bash',
+  },
+  {
     title: 'CI and Docker builds',
-    body: 'CI runners and Docker containers cannot read your ~/.npmrc, so the same read:packages token from the earlier step has to be handed to them a different way: as one environment variable, NODE_AUTH_TOKEN. That name is the only thing that matters -- every environment below just gets that one value into that one variable by a different route. Commit the .npmrc once; ${NODE_AUTH_TOKEN} in it is a placeholder, not a value. In GitHub Actions inside the neofloai org, the job\'s built-in GITHUB_TOKEN already has read access -- route it into NODE_AUTH_TOKEN via the step\'s env: block (grant the job permissions: packages: read), no personal token needed. In a Dockerfile, the value has to cross one more boundary into an isolated build container without ever being written into an image layer -- that is what the secret mount does. "npm_token" there is NOT the token; it is just BuildKit\'s internal label connecting --secret id= to --mount=...,id=. Never bake the real value into a committed .npmrc, an ARG, or an ENV -- those persist in the image\'s layer history. If deploying via AWS CodeBuild (this org\'s usual pattern -- CodeBuild building a Docker image for ECS/Fargate): store the token in AWS Secrets Manager, grant the CodeBuild service role secretsmanager:GetSecretValue on that secret, and add it as a SECRETS_MANAGER-type environment variable named NODE_AUTH_TOKEN on the CodeBuild project -- same name as above, so nothing needs renaming between CodeBuild and the Dockerfile. The running ECS/Fargate task needs none of this; by the time the image exists, @neofloai/atoms is already installed -- this is a build-time-only concern.',
-    code: `# .npmrc (commit this)
-@neofloai:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}
+    body: 'No tokens or secrets are involved, but a git install builds the library on whatever machine installs it, and that needs two things your build image may not have. First, a git binary: node:*-alpine and node:*-slim do not ship one, so install it. Second, npm ci must run WITHOUT --ignore-scripts -- the prepare script is what builds dist/, and skipping it produces "Cannot find module ./dist/index.mjs" at runtime. Both work fine on a developer laptop, which is why they are easy to miss until CI fails. Budget build time too: the install pulls the full dependency tree and runs a tsup build.',
+    code: `# Alpine- and slim-based images have no git binary
+RUN apk add --no-cache git
 
-# .github/workflows/*.yml -- job needs: permissions: { packages: read }
-- run: npm ci
-  env:
-    NODE_AUTH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
-
-# Dockerfile
-COPY package.json package-lock.json .npmrc ./
-RUN --mount=type=secret,id=npm_token \\
-  NODE_AUTH_TOKEN=$(cat /run/secrets/npm_token) npm ci --ignore-scripts
-
-# Build with -- NODE_AUTH_TOKEN is your own read:packages token,
-# exported in whatever shell/CI job runs this command:
-export NODE_AUTH_TOKEN=YOUR_TOKEN
-docker build --secret id=npm_token,env=NODE_AUTH_TOKEN .
-
-# buildspec.yml (build phase) -- AWS CodeBuild -> ECS/Fargate pattern.
-# CodeBuild project needs: privileged mode on, and NODE_AUTH_TOKEN
-# added as a Secrets Manager-type environment variable.
-- DOCKER_BUILDKIT=1 docker build --secret id=npm_token,env=NODE_AUTH_TOKEN -t $REPOSITORY_URI:latest .`,
+# Do NOT add --ignore-scripts here -- it skips the library build
+RUN npm ci`,
     language: 'bash',
   },
 ];
@@ -210,7 +183,8 @@ export const installation: InstallationGuide = {
     'Color scheme follows the OS by default. Pin it with NeofloThemeProvider\'s defaultMode prop ("light", "dark", or "system") when your UI is designed for a single scheme.',
     'Do not call MUI\'s createTheme() or mount a second theme provider -- NeofloThemeProvider is the only theme. Style through tokens (@neofloai/atoms/tokens) or the sx prop\'s theme-aware keys (e.g. color: "primary.main"), never hardcoded hex or pixel values.',
     'Missing a variant or prop? Open a component-request or bug issue against the Atoms repo instead of locally wrapping or style-overriding the component -- local overrides drift between projects and stop tracking design system changes.',
-    'npm update @neofloai/atoms (or a fresh npm install) pulls the latest version matching your semver range -- patch and minor releases apply automatically. Crossing a major version (e.g. ^1.0.0 -> ^2.0.0) is a deliberate package.json edit, since majors may contain breaking changes.',
+    'Atoms is pre-1.0.0 and under active construction. Until v1.0.0 is tagged, a bare install tracks the default branch and can change without warning -- pin to a commit SHA for anything you need to reproduce.',
+    'Once v1.0.0 ships, npm update @neofloai/atoms advances a #semver: range automatically for patch and minor releases; crossing a major (^1.0.0 -> ^2.0.0) stays a deliberate package.json edit. A commit-pinned or branch-tracking install only moves when you change the ref yourself.',
   ],
 };
 

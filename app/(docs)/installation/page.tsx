@@ -10,26 +10,24 @@ import { CodeBlock } from '../_components/CodeBlock';
 
 /**
  * Deliberately short — just enough to install and use Atoms in a project.
- * The full reference (CI/CD, Docker, AWS deployment, every import/theming
- * rule, update semantics) lives in src/install/index.ts, served through
- * the MCP endpoint for AI editors. This page and that source are not meant
- * to match line-for-line: this one is the quick-start, that one is the
- * exhaustive one.
+ * The full reference (every import/theming rule, update semantics, the
+ * pre-1.0.0 caveats) lives in src/install/index.ts, served through the MCP
+ * endpoint for AI editors. This page is the quick-start; that source is the
+ * exhaustive one. They are not meant to match line-for-line.
  */
 export const metadata = {
   title: 'Installation — Atoms',
   description:
-    'Install @neofloai/atoms from GitHub Packages and set up the theme provider in a Next.js or React app.',
+    'Install @neofloai/atoms straight from its public GitHub repo and set up the theme provider in a Next.js or React app.',
 };
 
-const npmrcSnippet = `@neofloai:registry=https://npm.pkg.github.com`;
+const installCommand = `npm install github:neofloai/atoms`;
 
-const ghAuthSnippet = `gh auth refresh -h github.com -s read:packages
-npm config set //npm.pkg.github.com/:_authToken "$(gh auth token)" --location=global`;
+const pinCommand = `# Today (pre-1.0.0) — pin to an exact commit
+npm install github:neofloai/atoms#1a2b3c4
 
-const tokenSnippet = `npm config set //npm.pkg.github.com/:_authToken YOUR_TOKEN --location=global`;
-
-const installCommand = `npm install @neofloai/atoms@^1.0.0`;
+# Once v1.0.0 is tagged — real semver ranges
+npm install github:neofloai/atoms#semver:^1.0.0`;
 
 const nextProviderSetup = `// app/layout.tsx
 import { NeofloThemeProvider } from '@neofloai/atoms';
@@ -66,19 +64,11 @@ const usageExample = `import { Button } from '@neofloai/atoms';
 import { spacing, colors } from '@neofloai/atoms/tokens';
 import { ShieldCheckIcon } from '@neofloai/atoms/icons';`;
 
-const deploymentNpmrc = `@neofloai:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}`;
+const deploymentDocker = `# Alpine- and slim-based images have no git binary
+RUN apk add --no-cache git
 
-const deploymentGhActions = `# job needs: permissions: { packages: read }
-env:
-  NODE_AUTH_TOKEN: \${{ secrets.GITHUB_TOKEN }}`;
-
-const deploymentDocker = `RUN --mount=type=secret,id=npm_token \\
-  NODE_AUTH_TOKEN=$(cat /run/secrets/npm_token) npm ci --ignore-scripts`;
-
-const deploymentCodeBuild = `# store NODE_AUTH_TOKEN in Secrets Manager; grant the service role
-# secretsmanager:GetSecretValue
-DOCKER_BUILDKIT=1 docker build --secret id=npm_token,env=NODE_AUTH_TOKEN -t $REPOSITORY_URI:latest .`;
+# Do NOT add --ignore-scripts here — it skips the library build
+RUN npm ci`;
 
 export default function InstallationPage() {
   return (
@@ -92,12 +82,9 @@ export default function InstallationPage() {
             Installation
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            <code>@neofloai/atoms</code> is published to{' '}
-            <strong>GitHub Packages</strong> — a private registry. This is a
-            Neoflo-internal package: only engineers in the{' '}
-            <code>neofloai</code> GitHub org with read access granted on the
-            package can install it. Works in any React 18 or 19 app —
-            Next.js, Vite, or CRA.
+            <code>@neofloai/atoms</code> installs straight from its public
+            GitHub repo — no registry, no token, no <code>.npmrc</code>. Works
+            in any React 18 or 19 app: Next.js, Vite, or CRA.
           </Typography>
         </Stack>
 
@@ -106,48 +93,18 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              1. Authenticate
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Add this to your project&apos;s <code>.npmrc</code> (safe to
-              commit — no token in it):
-            </Typography>
-          </Stack>
-          <CodeBlock>{npmrcSnippet}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            Then, <strong>once per machine, ever</strong> — covers every{' '}
-            <code>@neofloai</code> package, not just this one. If you have
-            the{' '}
-            <Link href="https://cli.github.com/" target="_blank" rel="noreferrer">
-              gh CLI
-            </Link>{' '}
-            authenticated already, there&apos;s no token to create by hand:
-          </Typography>
-          <CodeBlock>{ghAuthSnippet}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            No <code>gh</code> CLI? Create a token scoped to{' '}
-            <code>read:packages</code> only (
-            <Link
-              href="https://github.com/settings/tokens/new?scopes=read:packages&description=neofloai-npm"
-              target="_blank"
-              rel="noreferrer"
-            >
-              github.com/settings/tokens/new
-            </Link>
-            ), then:
-          </Typography>
-          <CodeBlock>{tokenSnippet}</CodeBlock>
-        </Stack>
-
-        <Divider />
-
-        <Stack spacing={3} sx={{ maxWidth: 720 }}>
-          <Stack spacing={0.5}>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              2. Install
+              1. Install
             </Typography>
           </Stack>
           <CodeBlock>{installCommand}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            That tracks the default branch, so the code can change under you
+            between installs. Atoms is <strong>pre-1.0.0 and under active
+            construction</strong> — pin to an exact commit for anything you
+            need to reproduce. Once <code>v1.0.0</code> is tagged, you can use
+            a semver range and npm will resolve it against the release tags:
+          </Typography>
+          <CodeBlock>{pinCommand}</CodeBlock>
         </Stack>
 
         <Divider />
@@ -155,7 +112,7 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              3. Wrap your app in the theme provider
+              2. Wrap your app in the theme provider
             </Typography>
             <Typography variant="body2" color="text.secondary">
               <code>NeofloThemeProvider</code> applies the Neoflo MUI theme,
@@ -178,7 +135,7 @@ export default function InstallationPage() {
         <Stack spacing={3} sx={{ maxWidth: 720 }}>
           <Stack spacing={0.5}>
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              4. Import and use
+              3. Import and use
             </Typography>
           </Stack>
           <CodeBlock>{usageExample}</CodeBlock>
@@ -197,42 +154,21 @@ export default function InstallationPage() {
               Deployment
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Two things to add to your project so your CI/CD and Docker
-              builds can install <code>@neofloai/atoms</code> too.
+              No tokens or secrets are involved. But a git install builds the
+              library on whatever machine installs it, so your build image
+              needs two things it may not have:
             </Typography>
           </Stack>
-
-          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-            1. Add a <code>.npmrc</code> file to your project root, and
-            commit it
-          </Typography>
-          <CodeBlock>{deploymentNpmrc}</CodeBlock>
-
-          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-            2. Give your build the token — pick whichever you use
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            <strong>GitHub Actions</strong>: add this to the workflow step
-            that runs <code>npm ci</code>:
-          </Typography>
-          <CodeBlock>{deploymentGhActions}</CodeBlock>
-          <Typography variant="body2" color="text.secondary">
-            <strong>Dockerfile</strong>: add this line where you currently
-            run <code>npm ci</code>:
-          </Typography>
           <CodeBlock>{deploymentDocker}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
-            <strong>AWS CodeBuild</strong>: add this to{' '}
-            <code>buildspec.yml</code> (needs a one-time setup: store the
-            token in Secrets Manager, grant the CodeBuild role{' '}
-            <code>secretsmanager:GetSecretValue</code>):
-          </Typography>
-          <CodeBlock>{deploymentCodeBuild}</CodeBlock>
-
-          <Typography variant="body2" color="text.secondary">
-            That&apos;s it — nothing else changes. The running container
-            itself needs none of this; by the time it exists,{' '}
-            <code>@neofloai/atoms</code> is already installed.
+            Both of these work fine on a developer laptop, which is why
+            they&apos;re easy to miss until CI fails.{' '}
+            <code>node:*-alpine</code> and <code>node:*-slim</code> ship no
+            git binary, and <code>--ignore-scripts</code> skips the{' '}
+            <code>prepare</code> script that builds <code>dist/</code> —
+            producing <code>Cannot find module &apos;./dist/index.mjs&apos;</code>{' '}
+            at runtime. Budget build time too: the install pulls a full
+            dependency tree and runs a build.
           </Typography>
         </Stack>
 
@@ -243,9 +179,9 @@ export default function InstallationPage() {
             Need more?
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Updating to a new version and the full rule set (import
-            boundaries, theming, escape hatches) live in the MCP reference —
-            connect your AI editor to it (see the{' '}
+            The full rule set — import boundaries, theming, escape hatches,
+            update semantics — lives in the MCP reference. Connect your AI
+            editor to it (see the{' '}
             <Link component={NextLink} href="/mcp-guide">
               MCP guide
             </Link>

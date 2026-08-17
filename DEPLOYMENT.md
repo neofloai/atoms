@@ -41,7 +41,7 @@ Because `/mcp` and `/api/health` require a live Node server (`runtime = 'nodejs'
 
 Deployment target: **AWS ECS (Fargate)** pulling from **Amazon ECR**. The image is built and shipped by **AWS CodeBuild** via [`buildspec.yml`](./buildspec.yml). Any other container runtime works with the same image.
 
-This repo also publishes a third output — the **`@neofloai/atoms` npm library** — consumed by other Neoflo projects over `git+ssh`. That build is independent of the service deployment (see [The library package](#the-library-package-neofloaiatoms)).
+This repo also publishes a third output — the **`@neofloai/atoms` npm library** — installed by other projects straight from this public GitHub repo. That build is independent of the service deployment (see [The library package](#the-library-package-neofloaiatoms)).
 
 ---
 
@@ -73,17 +73,23 @@ npm run build
 
 ## The library package (`@neofloai/atoms`)
 
-Other Neoflo projects install the design system over SSH:
+`neofloai/atoms` is a public repository, so projects install the design
+system straight from git — no registry, no token, no `.npmrc`:
 
 ```bash
-npm install git+ssh://git@github.com-neoflo:neofloai/atoms.git
+npm install github:neofloai/atoms
 ```
+
+Pre-`v1.0.0` a bare install tracks the default branch; pin to a commit SHA
+for reproducible builds. Once `v1.0.0` is tagged, `#semver:^1.0.0` resolves
+against the release tags. See
+[atoms.neoflo.ai/installation](https://atoms.neoflo.ai/installation).
 
 How it builds:
 
 - `npm run build:lib` runs **tsup** (`tsup.config.ts`), compiling `src/` into `dist/` as ESM (`.mjs`) + CJS (`.js`) + type declarations (`.d.ts`), with four entry points: the root barrel, `./icons`, `./tokens`, and `./theme`. `tsup` type generation uses `tsconfig.lib.json` (a build-only tsconfig without the Next.js plugin / `incremental` flag).
 - `package.json` `exports` point at `./dist/*`, and `files` ships only `dist`.
-- A **`prepare`** lifecycle script runs `build:lib` automatically. Because npm runs `prepare` when installing a `git+ssh` dependency (after installing devDeps), consumers always get a freshly built `dist/` that matches the committed source. **`dist/` is gitignored** — never committed.
+- A **`prepare`** lifecycle script runs `build:lib` automatically. Because npm runs `prepare` when installing a git dependency (after installing devDeps), consumers always get a freshly built `dist/` that matches the committed source. **`dist/` is gitignored** — never committed. This is also why a consumer's build image needs a `git` binary and must not pass `--ignore-scripts` to `npm ci`.
 
 > The `prepare` script is also why the Dockerfile's `deps` stage uses `npm ci --ignore-scripts`: that layer copies only `package.json`/lockfile (no `src/`), so the library build must not fire there. The docs-site image does not need `dist/`.
 
