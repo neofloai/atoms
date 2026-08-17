@@ -42,13 +42,21 @@ export function registerGetPattern(server: McpServer): void {
         };
       }
 
+      // The guidance goes with the code rather than being left on the
+      // docs page: a caller reaching for a whole screen is the caller
+      // most likely to paste it verbatim, and the do/don't lines are
+      // where the layout rules that are easy to get backwards live.
+      const sections = [
+        `# ${pattern.name}`,
+        pattern.description,
+        `Built from: ${pattern.components.join(', ')}. Call \`get_component\` for any of them.`,
+        `\`\`\`tsx\n${pattern.code}\n\`\`\``,
+        `## Do\n\n${pattern.dos.map((item) => `- ${item}`).join('\n')}`,
+        `## Don't\n\n${pattern.donts.map((item) => `- ${item}`).join('\n')}`,
+      ];
+
       return {
-        content: [
-          {
-            type: 'text',
-            text: `# ${pattern.name}\n\n${pattern.description}\n\n\`\`\`tsx\n${pattern.code}\n\`\`\``,
-          },
-        ],
+        content: [{ type: 'text', text: sections.join('\n\n') }],
       };
     }
   );

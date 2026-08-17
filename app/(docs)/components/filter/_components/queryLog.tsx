@@ -12,10 +12,12 @@ import {
   STATUSES,
   TYPES,
   VENDORS,
+  groups,
   optionKey,
   statusMeta,
 } from './sampleData';
 
+import type { FilterValue } from '@/src/components/Filter';
 import type { GridColDef } from '@mui/x-data-grid';
 
 /**
@@ -263,10 +265,7 @@ export const QUERY_COLUMNS: GridColDef<QueryRecord>[] = [
 ];
 
 /** The facet each column filters on, as the selection spells it. */
-export function rowFacetValue(
-  row: QueryRecord,
-  groupId: string
-): string | null {
+function rowFacetValue(row: QueryRecord, groupId: string): string | null {
   switch (groupId) {
     case 'status':
       return row.status;
@@ -282,7 +281,7 @@ export function rowFacetValue(
 }
 
 /** Everything the toolbar's search box reads on a row. */
-export function rowSearchText(row: QueryRecord): string {
+function rowSearchText(row: QueryRecord): string {
   return [
     row.reference,
     row.vendor,
@@ -294,4 +293,45 @@ export function rowSearchText(row: QueryRecord): string {
   ]
     .join(' ')
     .toLowerCase();
+}
+
+/**
+ * A group with nothing selected constrains nothing. A row that has no
+ * value for the facet at all — an unassigned query against an
+ * `Assignee` selection — is excluded rather than kept, which is what a
+ * reader picking two names expects to see.
+ */
+function matchesFacet(
+  row: QueryRecord,
+  groupId: string,
+  selected: readonly string[]
+): boolean {
+  if (selected.length === 0) {
+    return true;
+  }
+  const value = rowFacetValue(row, groupId);
+  return value !== null && selected.includes(value);
+}
+
+/**
+ * The rows a search box and a filter panel leave between them.
+ *
+ * One function rather than one per screen, because this is the whole
+ * claim the pattern makes — the box asks "does this row mention it", the
+ * panel asks "is this row one of these", and a row survives only if it
+ * answers both. Two screens showing the same table from two copies of
+ * this would eventually disagree about what "filtered" means.
+ */
+export function filterQueryRows(
+  search: string,
+  selection: FilterValue
+): QueryRecord[] {
+  const query = search.trim().toLowerCase();
+  return QUERY_ROWS.filter(
+    (row) =>
+      (query === '' || rowSearchText(row).includes(query)) &&
+      groups.every((group) =>
+        matchesFacet(row, group.id, selection[group.id] ?? [])
+      )
+  );
 }

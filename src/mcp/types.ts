@@ -35,6 +35,10 @@ export interface PatternData {
   slug: string;
   description: string;
   code: string;
+  /** Atoms components the pattern is built from. */
+  components: string[];
+  dos: string[];
+  donts: string[];
 }
 
 export interface ComponentManifest {

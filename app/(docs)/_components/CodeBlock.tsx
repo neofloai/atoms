@@ -11,7 +11,18 @@ import { CopyButton } from './CopyButton';
  * component itself; CopyButton is the client leaf that needs the browser
  * clipboard API.
  */
-export function CodeBlock({ children }: { children: string }) {
+export function CodeBlock({
+  children,
+  maxHeight,
+}: {
+  children: string;
+  /**
+   * Scroll the block past this height instead of running the whole
+   * snippet down the page. For a pattern, whose snippet is a file rather
+   * than a few lines — a reader should be able to reach what is under it.
+   */
+  maxHeight?: number;
+}) {
   return (
     <Box sx={{ position: 'relative' }}>
       <Paper
@@ -26,6 +37,8 @@ export function CodeBlock({ children }: { children: string }) {
           bgcolor: 'action.hover',
           whiteSpace: 'pre',
           overflowX: 'auto',
+          maxHeight,
+          overflowY: maxHeight === undefined ? undefined : 'auto',
         }}
       >
         {children}

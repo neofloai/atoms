@@ -11,16 +11,10 @@ import { Filter, countActiveFilters } from '@/src/components/Filter';
 import { TextField } from '@/src/components/TextField';
 import { FadersHorizontalIcon, MagnifyingGlassIcon } from '@/src/icons';
 
-import {
-  QUERY_COLUMNS,
-  QUERY_ROWS,
-  rowFacetValue,
-  rowSearchText,
-} from './queryLog';
+import { QUERY_COLUMNS, filterQueryRows } from './queryLog';
 import { groups } from './sampleData';
 
 import type { FilterValue } from '@/src/components/Filter';
-import type { QueryRecord } from './queryLog';
 
 const EMPTY: FilterValue = {};
 
@@ -29,24 +23,6 @@ const HEADER_PX = 32;
 const ROW_PX = 48;
 const FOOTER_PX = 48;
 const VISIBLE_ROWS = 6;
-
-/**
- * A group with nothing selected constrains nothing. A row that has no
- * value for the facet at all — an unassigned query against an
- * `Assignee` selection — is excluded rather than kept, which is what a
- * reader picking two names expects to see.
- */
-function matchesFacet(
-  row: QueryRecord,
-  groupId: string,
-  selected: readonly string[]
-): boolean {
-  if (selected.length === 0) {
-    return true;
-  }
-  const value = rowFacetValue(row, groupId);
-  return value !== null && selected.includes(value);
-}
 
 /**
  * The whole pattern: a search box and a filter trigger over a
@@ -70,14 +46,7 @@ export function QueryLogPreview(): React.JSX.Element {
   const activeCount = countActiveFilters(groups, selection);
   const isFiltered = activeCount > 0 || search.trim() !== '';
 
-  const query = search.trim().toLowerCase();
-  const rows = QUERY_ROWS.filter(
-    (row) =>
-      (query === '' || rowSearchText(row).includes(query)) &&
-      groups.every((group) =>
-        matchesFacet(row, group.id, selection[group.id] ?? [])
-      )
-  );
+  const rows = filterQueryRows(search, selection);
 
   function handleClearFilters(): void {
     setSelection(EMPTY);
