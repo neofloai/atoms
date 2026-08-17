@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import { branding } from '../src/brand/branding';
 import { installation } from '../src/install';
+import { patterns as patternData } from '../src/patterns';
 import {
   border,
   colors,
@@ -18,7 +19,10 @@ import {
   typography,
 } from '../src/tokens';
 
-import type { ComponentExamplesData } from '../src/types/docs';
+import type {
+  ComponentExamplesData,
+  PatternExamplesData,
+} from '../src/types/docs';
 
 /**
  * Generates the JSON payloads consumed by the MCP server and docs site.
@@ -29,7 +33,10 @@ import type { ComponentExamplesData } from '../src/types/docs';
  *
  * Components are collected from `src/components/<Name>/<Name>.examples.tsx`
  * (each must export `data: ComponentExamplesData`). Tokens are emitted
- * from `src/tokens/`. Pattern extraction lands when patterns are added.
+ * from `src/tokens/`. Patterns come from the explicit array exported by
+ * `src/patterns/index.ts` rather than from a directory scan — one screen
+ * is one line there, and a half-written pattern stays out of the manifest
+ * until it is added on purpose.
  */
 
 const ROOT = path.resolve(__dirname, '..');
@@ -48,7 +55,7 @@ interface TokenManifest {
 
 interface PatternManifest {
   generatedAt: string;
-  patterns: unknown[];
+  patterns: PatternExamplesData[];
 }
 
 async function collectComponents(): Promise<ComponentExamplesData[]> {
@@ -139,7 +146,9 @@ async function main(): Promise<void> {
       radius,
     },
   };
-  const patterns: Omit<PatternManifest, 'generatedAt'> = { patterns: [] };
+  const patterns: Omit<PatternManifest, 'generatedAt'> = {
+    patterns: [...patternData].sort((a, b) => a.slug.localeCompare(b.slug)),
+  };
 
   await Promise.all([
     writeManifest('components.json', components),
