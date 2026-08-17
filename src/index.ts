@@ -172,6 +172,32 @@ export type {
 export { Checkbox } from './components/Checkbox';
 export type { CheckboxProps, CheckboxSize } from './components/Checkbox';
 
+/**
+ * The one component here that wraps no single MUI component, because
+ * MUI has no faceted filter to wrap. It is a composition of four that it
+ * does have — `Chip`, `Checkbox`, `TextField`, `Button` — held in a
+ * `Paper` and optionally a `Popover`, and it earns its place by the same
+ * test as the rest: the rail, the badge, the pane and the two bulk
+ * actions are a shape a designer redlines, so the design system owns
+ * them rather than each product re-deriving them.
+ */
+export { Filter } from './components/Filter';
+/**
+ * The count a trigger button carries, summed the same way the rail sums
+ * its own badges so the two cannot disagree. Exported alongside the
+ * component because the button that opens the panel is the caller's,
+ * and hand-summing `value` misses any group that declares its own
+ * `count`.
+ */
+export { countActiveFilters } from './components/Filter';
+export type {
+  FilterGroup,
+  FilterLabels,
+  FilterOption,
+  FilterProps,
+  FilterValue,
+} from './components/Filter';
+
 export { Radio, RadioGroup } from './components/Radio';
 export type {
   RadioGroupProps,
