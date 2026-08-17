@@ -6,6 +6,7 @@ import type {
   ComponentManifest,
   InstallationManifest,
   PatternManifest,
+  ProjectManifest,
   TokenManifest,
 } from './types';
 
@@ -31,6 +32,7 @@ export const dataPaths = {
   patterns: 'patterns.json',
   installation: 'installation.json',
   brand: 'brand.json',
+  project: 'project.json',
 } as const;
 
 /** Loads the generated component manifest from `data/components.json`. */
@@ -56,4 +58,9 @@ export async function loadInstallation(): Promise<InstallationManifest> {
 /** Loads the generated brand guide from `data/brand.json`. */
 export async function loadBrand(): Promise<BrandManifest> {
   return readJsonFile<BrandManifest>(dataPaths.brand);
+}
+
+/** Loads the generated project intake guide from `data/project.json`. */
+export async function loadProject(): Promise<ProjectManifest> {
+  return readJsonFile<ProjectManifest>(dataPaths.project);
 }

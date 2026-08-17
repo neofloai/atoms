@@ -1,22 +1,10 @@
 import { z } from 'zod';
 
 import { loadInstallation } from '../data-loader';
+import { renderSteps } from '../format';
 
-import type { InstallStep } from '@/src/install';
 import type { InstallationManifest } from '../types';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-
-function renderSteps(steps: InstallStep[], startIndex: number): string {
-  return steps
-    .map((step, offset) => {
-      const heading = `### ${startIndex + offset}. ${step.title}`;
-      const code = step.code
-        ? `\n\n\`\`\`${step.language ?? ''}\n${step.code}\n\`\`\``
-        : '';
-      return `${heading}\n\n${step.body}${code}`;
-    })
-    .join('\n\n');
-}
 
 function renderFramework(
   guide: InstallationManifest,

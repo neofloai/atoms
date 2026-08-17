@@ -44,10 +44,18 @@
  *     `theme.transitions` at render time — so a re-export is already
  *     themed, while a wrapper with baked-in timings would be *less*
  *     themed. See `src/components/Fade/Fade.tsx`.
+ *
+ * `useColorScheme` is the same carve-out applied to a hook. It renders
+ * nothing, its concept is the colour scheme rather than anything
+ * Material, and the alternative is worse: without it, every app that
+ * wants a light/dark switch has to import from `@mui/material` and step
+ * outside the design system to get one. See
+ * `src/theme/useColorScheme.ts`.
  */
 
 export { NeofloThemeProvider } from './theme/ThemeProvider';
 export type { NeofloColorMode } from './theme/ThemeProvider';
+export { useColorScheme } from './theme/useColorScheme';
 export { neofloTheme } from './theme';
 
 export { NeofloLogo } from './brand';

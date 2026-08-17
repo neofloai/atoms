@@ -12,7 +12,7 @@ export const data: ComponentExamplesData = {
   name: 'List',
   category: 'Layout',
   tagline:
-    'A vertical index of rows — a settings panel, a navigation rail, a stack of people. Each row is a band with 16px inside it and a hairline underneath.',
+    'A vertical index of rows inside a page — a settings panel, a stack of people, a set of records with a control each. Each row is a band with 16px inside it and a hairline underneath. Not the app navigation rail: that is `ToggleButton` inside a `permanent` Drawer — see the Dashboard pattern.',
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3648-25970&m=dev',
   props: [
@@ -123,9 +123,9 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
-      title: 'A navigation list',
+      title: 'Navigation inside a page',
       description:
-        'Rows that respond. `selected` marks the current one; a row with an `href` is a link.',
+        'Rows that respond. `selected` marks the current one; a row with an `href` is a link. This is in-page navigation — a settings sub-nav, a table of contents, a folder tree. The app-level rail down the side of the screen is a different construct: `ToggleButton` rows inside a `permanent` Drawer, which is what the Dashboard pattern uses.',
       code: [
         '<List component="nav">',
         '  <ListItemButton selected>',
@@ -202,6 +202,17 @@ export const data: ComponentExamplesData = {
     "Don't add a bottom border to a row; every row already ends on one, and it turns primary on focus and grey when disabled",
     "Don't wrap a row in a `Card` for a surface — the row paints `card 1` itself",
     "Don't use a list for tabular data with more than one column of values; that is `Table`, or `DataGrid` when the table is the screen's work",
+    "Don't build the app's primary navigation rail out of `List`/`ListItemButton` — the rail is `ToggleButton` rows inside a `permanent` Drawer, which is what carries the selected tint, the icon-only collapsed width, and the tooltips that appear when the labels drop out. Start from the Dashboard pattern rather than writing a shell from scratch",
   ],
-  relatedComponents: ['Menu', 'MenuItem', 'Table', 'Accordion'],
+  relatedComponents: [
+    'Menu',
+    'MenuItem',
+    'Table',
+    'Accordion',
+    // The two a reader lands here looking for by mistake. `List` and an
+    // app rail look alike in a screenshot and are different constructs,
+    // so the comparison is one call away rather than a rediscovery.
+    'ToggleButton',
+    'Drawer',
+  ],
 };

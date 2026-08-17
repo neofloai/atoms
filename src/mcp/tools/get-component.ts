@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-import { loadComponents } from '../data-loader';
+import { loadComponents, loadPatterns } from '../data-loader';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ComponentData } from '../types';
+import type { ComponentData, PatternData } from '../types';
 
 /**
  * Escapes a value for a markdown table cell.
@@ -18,7 +18,23 @@ function cell(value: string): string {
   return value.replace(/\|/g, '\\|');
 }
 
-function formatComponentResponse(comp: ComponentData): string {
+/**
+ * The published patterns a component appears in.
+ *
+ * Named on the component's own spec because the mistake this prevents
+ * happens before any prop is read: an agent that opens six component
+ * docs and assembles a screen from them will get the arrangement wrong,
+ * where the pattern would have handed it over whole. The pointer has to
+ * be where the reader already is.
+ */
+function patternsUsing(name: string, patterns: PatternData[]): PatternData[] {
+  return patterns.filter((pattern) => pattern.components.includes(name));
+}
+
+function formatComponentResponse(
+  comp: ComponentData,
+  patterns: PatternData[]
+): string {
   const propsTable =
     comp.props.length > 0
       ? [
@@ -38,6 +54,25 @@ function formatComponentResponse(comp: ComponentData): string {
           .join('\n\n')
       : '_No examples documented._';
 
+  const inPatterns = patternsUsing(comp.name, patterns);
+  const patternLine =
+    inPatterns.length > 0
+      ? [
+          '',
+          `**Used in patterns:** ${inPatterns.map((p) => p.slug).join(', ')}. If you are building a whole screen, call \`get_pattern\` first — the pattern is the arrangement, and the arrangement is what gets re-derived wrong.`,
+        ]
+      : [];
+
+  const related =
+    comp.relatedComponents && comp.relatedComponents.length > 0
+      ? [
+          '',
+          '## Related',
+          '',
+          `Compare these before committing to ${comp.name}: ${comp.relatedComponents.join(', ')}. Call \`get_component\` for any of them.`,
+        ]
+      : [];
+
   return [
     `# ${comp.name}`,
     '',
@@ -45,6 +80,7 @@ function formatComponentResponse(comp: ComponentData): string {
     '',
     `**Import:** \`import { ${comp.name} } from '@neofloai/atoms';\``,
     ...(comp.figmaUrl ? ['', `**Figma:** ${comp.figmaUrl}`] : []),
+    ...patternLine,
     '',
     '## Props',
     '',
@@ -59,6 +95,7 @@ function formatComponentResponse(comp: ComponentData): string {
     '',
     "## Don't",
     comp.donts.map((d) => `- ${d}`).join('\n') || '_None documented._',
+    ...related,
   ].join('\n');
 }
 
@@ -72,7 +109,7 @@ export function registerGetComponent(server: McpServer): void {
     {
       title: 'Get component spec',
       description:
-        "Get full details for a specific component: props with TypeScript types, defaults, code examples, do's and don'ts. Returns markdown. Always call this before using a component to get the correct API.",
+        "Get full details for a specific component: props with TypeScript types, defaults, code examples, do's and don'ts, the patterns it appears in, and the related components worth comparing against it first. Returns markdown. Always call this before using a component to get the correct API — and read the Related section before committing, since several components look alike in a screenshot and are meant for different contexts.",
       inputSchema: {
         name: z
           .string()
@@ -80,7 +117,10 @@ export function registerGetComponent(server: McpServer): void {
       },
     },
     async ({ name }) => {
-      const manifest = await loadComponents();
+      const [manifest, patterns] = await Promise.all([
+        loadComponents(),
+        loadPatterns(),
+      ]);
       const component = manifest.components.find((c) => c.name === name);
 
       if (!component) {
@@ -98,7 +138,12 @@ export function registerGetComponent(server: McpServer): void {
       }
 
       return {
-        content: [{ type: 'text', text: formatComponentResponse(component) }],
+        content: [
+          {
+            type: 'text',
+            text: formatComponentResponse(component, patterns.patterns),
+          },
+        ],
       };
     }
   );

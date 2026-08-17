@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T12:48:00.382Z",
+  "generatedAt": "2026-08-17T16:51:13.041Z",
   "brand": {
     "name": "Neoflo",
     "tagline": "The Neoflo brand: one monochrome mark, a single blue accent, and a two-typeface system, all expressed through the Atoms theme.",
@@ -94,7 +94,7 @@
           "defaultMode"
         ],
         "summary": "One MUI-based theme drives the brand. Wrap apps in NeofloThemeProvider; light and dark are both first-class, defaulting to the system scheme.",
-        "body": "The brand is delivered as one MUI v9 theme built entirely from tokens. Wrap your app once in NeofloThemeProvider and every Atoms component is themed and on-brand:\n\n  import { NeofloThemeProvider } from '@neofloai/atoms';\n\n  <NeofloThemeProvider>{children}</NeofloThemeProvider>\n\nLight and dark are both first-class — every semantic token carries a light and a dark value. The provider defaults to the system colour scheme; pass defaultMode=\"light\" or \"dark\" to pin a single scheme. Do not theme components individually or override brand colours; change the tokens/theme instead."
+        "body": "The brand is delivered as one MUI v9 theme built entirely from tokens. Wrap your app once in NeofloThemeProvider and every Atoms component is themed and on-brand:\n\n  import { NeofloThemeProvider } from '@neofloai/atoms';\n\n  <NeofloThemeProvider>{children}</NeofloThemeProvider>\n\nLight and dark are both first-class — every semantic token carries a light and a dark value. The provider defaults to the system colour scheme; pass defaultMode=\"light\" or \"dark\" to pin a single scheme. Do not theme components individually or override brand colours; change the tokens/theme instead.\n\ndefaultMode is the scheme the app starts in. For one the person using it can change, reach for the useColorScheme hook:\n\n  import { useColorScheme } from '@neofloai/atoms';\n\n  const { mode, setMode } = useColorScheme();\n\nIt is exported from Atoms precisely so a colour-scheme switch needs no @mui/material import. The provider persists the choice, so it survives a reload. One catch: mode is undefined on the first render, before the stored preference has been read — render the space rather than a guess, or the control flips after hydration."
       }
     ]
   }

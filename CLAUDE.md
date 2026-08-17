@@ -6,6 +6,7 @@ Project rules are shared with Cursor and live in `.cursor/rules/` — that folde
 
 @.cursor/rules/00-core.mdc
 @.cursor/rules/70-code-style.mdc
+@.cursor/rules/80-project-intake.mdc
 
 ## Path-scoped rules — open the matching file before working in that area
 

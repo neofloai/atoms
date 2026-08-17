@@ -27,6 +27,7 @@ export const navigation: readonly NavSection[] = [
     items: [
       { label: 'Introduction', href: '/' },
       { label: 'Installation', href: '/installation' },
+      { label: 'Start a project', href: '/start-a-project' },
       { label: 'MCP endpoint', href: '/mcp-guide' },
       { label: 'Help', href: '/help' },
     ],

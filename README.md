@@ -55,7 +55,9 @@ atoms/
 │   │   ├── tokens/               # Design tokens reference
 │   │   ├── icons/                # Icon browser
 │   │   ├── installation/         # Installation guide
+│   │   ├── start-a-project/      # The brief to gather before building
 │   │   ├── mcp-guide/            # MCP endpoint guide
+│   │   ├── patterns/             # Whole-screen patterns (dashboard)
 │   │   ├── layout.tsx            # Docs layout (sidebar + shell)
 │   │   └── page.tsx              # Home — component gallery
 │   ├── api/health/route.ts       # Liveness/readiness probe
@@ -87,11 +89,13 @@ atoms/
 │   │   ├── shadows.ts            # Elevation -> MUI shadows
 │   │   └── ThemeProvider.tsx     # NeofloThemeProvider (framework-agnostic)
 │   │
-│   ├── patterns/                 # Page layout recipes (index.ts; none published yet)
+│   ├── patterns/                 # Whole-screen recipes (dashboard/)
 │   │
 │   ├── mcp/                      # MCP server logic
 │   │   ├── server.ts             # MCP server instance
 │   │   ├── tools/                # One file per tool
+│   │   │   ├── start-project.ts
+│   │   │   ├── scaffold-app.ts
 │   │   │   ├── list-components.ts
 │   │   │   ├── get-component.ts
 │   │   │   ├── get-tokens.ts
@@ -99,10 +103,16 @@ atoms/
 │   │   │   ├── search-docs.ts
 │   │   │   └── get-installation.ts
 │   │   ├── data-loader.ts        # Loads JSON from data/ directory
+│   │   ├── format.ts             # Markdown shared by more than one tool
 │   │   └── types.ts              # Generated-manifest shapes
 │   │
 │   ├── install/                  # Install/setup instructions (source of truth)
 │   │   └── index.ts              # Framework-aware setup steps (Next.js, React)
+│   │
+│   ├── project/                  # Project intake (source of truth)
+│   │   ├── questions.ts          # The brief to gather before building
+│   │   ├── targets.ts            # Scaffold recipes + where projects go
+│   │   └── index.ts              # Target resolution + completeness checks
 │   │
 │   ├── types/                    # Shared TypeScript types
 │   └── index.ts                  # Public package exports (built to dist/)
@@ -114,11 +124,13 @@ atoms/
 │   ├── components.json
 │   ├── tokens.json
 │   ├── patterns.json
-│   └── installation.json
+│   ├── installation.json
+│   ├── brand.json
+│   └── project.json
 │
 ├── .cursor/
 │   ├── mcp.json                  # MCP config for this repo
-│   └── rules/                    # Cursor AI guardrails (00-core … 70-code-style)
+│   └── rules/                    # Cursor AI guardrails (00-core … 80-project-intake)
 │
 ├── .github/workflows/ci.yml      # CI: lint, typecheck, build, docker validate
 ├── buildspec.yml                 # AWS CodeBuild -> ECR -> ECS (deploy)
@@ -271,6 +283,18 @@ This repo is built **AI-first**. The Cursor rules in `.cursor/rules/` are loaded
 
 See `CLAUDE.md` for Claude Code specific guidelines.
 
+### Building something with Atoms from another project
+
+An editor connected to the MCP endpoint is handed the order of operations at connect time, so it applies without anyone pasting a prompt:
+
+1. **`start_project` before any code.** Called with nothing it returns ten questions; called again with the answers it returns the build plan — framework, location on disk, and the calls to make in order. It withholds the plan until the required answers are in (four to seven of the ten, depending on what is being built), because the expensive mistakes in this work are decisions made on the user's behalf rather than typos.
+
+   The first question is the fork: a **prototype** (always React + Vite, sample data, no backend and no stored state), the frontend of a **new project** (asked React or Next, React recommended), or Atoms going into a **project that already exists** (an install, nothing created).
+2. **`scaffold_app` to create it**, in the user's Desktop folder — never the agent's working directory, which is a sandbox. Atoms, the theme, the favicon and the mark are all wired by the returned commands.
+3. **`get_pattern`** before composing a screen, **`get_component`** before using one (including its Related section), **`get_tokens`** before writing any colour or spacing value.
+
+The questions, and why each one is asked: [atoms.neoflo.ai/start-a-project](https://atoms.neoflo.ai/start-a-project).
+
 ---
 
 ## Scripts
@@ -281,7 +305,7 @@ See `CLAUDE.md` for Claude Code specific guidelines.
 | `npm run build`    | Production build of docs website                   |
 | `npm run start`    | Start production server                            |
 | `npm run lint`     | Run ESLint                                         |
-| `npm run generate` | Generate `data/*.json` from `src/components/`      |
+| `npm run generate` | Generate `data/*.json` from `src/`                  |
 
 ---
 

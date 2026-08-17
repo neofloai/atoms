@@ -98,7 +98,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A permanent nav rail',
       description:
-        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge.',
+        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. The nav rows are `ToggleButton`s, not a `List` — that is what carries the selected tint and survives the collapse to icons. For the whole screen — rail, bar and content together — start from the Dashboard pattern.',
       code: [
         '<Stack direction="row" sx={{ minHeight: "100vh" }}>',
         '  <Drawer',
@@ -230,5 +230,15 @@ export const data: ComponentExamplesData = {
     "Don't put a `permanent` drawer inside a container without `position: \"relative\"` on the paper — it will pin itself to the window instead",
     "Don't add a shadow to a `temporary` drawer that still has its backdrop; the scrim is already doing that job",
   ],
-  relatedComponents: ['Navbar', 'Dialog', 'Card', 'Menu', 'Slide'],
+  relatedComponents: [
+    'Navbar',
+    'Dialog',
+    'Card',
+    'Menu',
+    'Slide',
+    // What the rows inside a nav rail are made of. Named here because a
+    // rail is the most common thing built in a Drawer and the wrong
+    // answer for it — a `List` — looks identical in a screenshot.
+    'ToggleButton',
+  ],
 };

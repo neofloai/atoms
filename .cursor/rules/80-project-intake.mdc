@@ -1,0 +1,66 @@
+---
+description: Gather the brief before building anything with Atoms, and where new projects go
+alwaysApply: true
+---
+
+# Project Intake Rules
+
+Applies whenever someone asks for something to be **built** with Atoms — a prototype, a demo, an app, a screen, or a feature in an app that already exists.
+
+## Ask before you build
+
+Call `start_project` on the Atoms MCP endpoint first, with no arguments. It returns the questions to ask. Ask them all in one pass, in your own words, then call it again with the answers to get the build plan.
+
+There are ten questions and between four and seven of them block, depending on the purpose. Do not scaffold, install, or write a component before that plan exists. The expensive mistakes in this work are not typos — they are decisions made on the user's behalf:
+
+- a table built against invented columns, which has to be re-measured against the real ones
+- a shell assembled the wrong way round (the rail runs full height; the bar starts where the rail ends)
+- half the interactions wired, with nobody having said which half mattered
+- the whole thing left in a directory the user cannot find again
+
+Each one costs a rebuild and is prevented by a question.
+
+## Where a new project goes
+
+`~/Desktop/<project-name>`.
+
+Never your own working directory, never a temp path, never inside the Atoms repo. If a folder of that name is already there, **stop and ask** — do not write into or over it. If `~/Desktop` does not exist on the machine, ask where the project should go rather than guessing.
+
+`scaffold_app` returns the ordered commands: create, install, wire `NeofloThemeProvider`, pin the colour scheme if one was asked for, download the favicon set, declare it, put `NeofloLogo` in the rail, run it.
+
+## Which framework
+
+Atoms is used for three things, and `purpose` is the fork the whole brief hangs off:
+
+| Purpose | Target |
+|---------|--------|
+| `prototype` | React + Vite, always. Sample data in the app, no backend |
+| `new-project` | Ask: React or Next. **React is the recommended default** — Next is not more capable for the UI, only for what sits behind it (auth, a reload that has to persist, API routes, a secret) |
+| `existing-project` | Nothing is created. `get_installation` for that app's framework, and reconcile any theme provider it already mounts |
+
+Asked, not inferred. A prototype never gets asked which framework it wants, and an existing project never gets asked what its screens are.
+
+## Prototypes hold no stored state
+
+Keep it in React state. Do not add `localStorage`, `sessionStorage`, cookies or a database so a change survives a reload — a prototype that remembers what the last person did cannot be reset before the next demo, and stale state read back at the wrong moment reads as a bug in the design. If persistence is wanted, the user will ask.
+
+The one exception is the colour scheme, which the theme provider persists itself: that is a preference about the app rather than data inside it.
+
+## Colour scheme
+
+Light unless there is a reason otherwise. Pin it with `NeofloThemeProvider`'s `defaultMode`; for a switch the viewer can operate, use the `useColorScheme` hook exported from `@neofloai/atoms` — `mode` is `undefined` on the first render, so render the space rather than a guess.
+
+## Then, in order
+
+1. `get_pattern` before composing a screen — a pattern is a reviewed arrangement, and the arrangement is what gets re-derived wrong
+2. `get_component` before using a component, including its Related section
+3. `get_tokens` before writing any colour, spacing, radius or type value
+
+## Maintaining the intake
+
+The questions, targets, and rules live in `src/project/` and are serialized to `data/project.json` by `npm run generate`. The docs page at `/start-a-project` and the `start_project` tool both render those same objects, so they cannot drift.
+
+- A question earns `required: true` only if getting it wrong costs a rebuild rather than an edit. Everything else is reported back as unanswered, never silently defaulted.
+- `why` on a question is not decoration: the agent asking it will be asked why it wants to know.
+- Target resolution is code (`resolveTarget` in `src/project/index.ts`); the prose explaining each target is data (`chooseWhen`). Keep them in step.
+- Never write `data/*.json` by hand.
