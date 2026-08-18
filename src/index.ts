@@ -64,6 +64,35 @@ export type { NeofloLogoProps, NeofloLogoVariant } from './brand';
 export { Alert } from './components/Alert';
 export type { AlertProps, AlertSeverity } from './components/Alert';
 
+/**
+ * The Snackbar family — the same `Alert`, floating in the corner of the
+ * page instead of sitting in it.
+ *
+ * Three exports rather than one because a toast has two halves and MUI
+ * only ships the first. `Snackbar` is the controlled surface: an `Alert`
+ * anchored top right, sliding in from that edge, closing itself after
+ * five seconds. `SnackbarProvider` and `useSnackbar` are the part MUI
+ * leaves to the application and every application then writes
+ * differently — the queue that holds one message on screen and promotes
+ * the next when it leaves, and the handle that fires into it from an
+ * event handler with no state at the call site.
+ *
+ * Without the second half, every screen that reports anything grows a
+ * `useState` pair and its own `<Snackbar>`, and two of them firing at
+ * once means one covers the other.
+ */
+export { Snackbar, SnackbarProvider, useSnackbar } from './components/Snackbar';
+export type {
+  SnackbarApi,
+  SnackbarCloseReason,
+  SnackbarContent,
+  SnackbarMessage,
+  SnackbarOptions,
+  SnackbarOrigin,
+  SnackbarProps,
+  SnackbarProviderProps,
+} from './components/Snackbar';
+
 export { Avatar } from './components/Avatar';
 export type {
   AvatarBadgeColor,
