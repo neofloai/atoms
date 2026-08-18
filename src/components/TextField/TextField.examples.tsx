@@ -44,7 +44,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'Element rendered at the start of the input, e.g. a search icon. Wrap decorative icons in MUI’s `InputAdornment` for the correct colour/spacing; interactive controls like `IconButton` can be passed directly.',
+        'Element rendered at the start of the input, e.g. a search icon. Wrap decorative icons in `InputAdornment` for the correct colour/spacing; interactive controls like `IconButton` can be passed directly.',
     },
     {
       name: 'endAdornment',
@@ -117,9 +117,9 @@ export const data: ComponentExamplesData = {
     {
       title: 'Start icon (decorative)',
       description:
-        'Wrap non-interactive icons in MUI’s `InputAdornment` so they pick up the correct colour and spacing.',
+        'Wrap non-interactive icons in `InputAdornment` so they pick up the correct colour and spacing. It is exported from Atoms — there is no reason to reach into `@mui/material` for it.',
       code: [
-        "import InputAdornment from '@mui/material/InputAdornment';",
+        "import { InputAdornment, TextField } from '@neofloai/atoms';",
         "import { MagnifyingGlassIcon } from '@neofloai/atoms/icons';",
         '',
         '<TextField',
@@ -153,7 +153,7 @@ export const data: ComponentExamplesData = {
       description:
         'Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.',
       code: [
-        "import InputAdornment from '@mui/material/InputAdornment';",
+        "import { IconButton, InputAdornment, TextField } from '@neofloai/atoms';",
         "import { EyeIcon, LockIcon } from '@neofloai/atoms/icons';",
         '',
         '<TextField',

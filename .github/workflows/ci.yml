@@ -39,6 +39,12 @@ jobs:
             exit 1
           fi
 
+      # Snippets in examples data and patterns are copied into real
+      # screens, so an @mui import in one is an instruction to leave the
+      # design system. See scripts/check-docs-imports.mjs.
+      - name: Check docs snippets import from Atoms
+        run: npm run check:imports
+
       - name: Lint
         run: npm run lint
 

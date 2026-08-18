@@ -24,7 +24,7 @@
  * decisions. Anything with a visual identity — anything a designer
  * could redline — gets wrapped.
  *
- * Three cases qualify today:
+ * Four cases qualify today:
  *
  *   - **Layout primitives** — `Box`, `Stack`, `Grid`, `Container`. Each
  *     records the system-level defaults it deliberately leaves to the
@@ -44,6 +44,13 @@
  *     `theme.transitions` at render time — so a re-export is already
  *     themed, while a wrapper with baked-in timings would be *less*
  *     themed. See `src/components/Fade/Fade.tsx`.
+ *   - **`InputAdornment`** — the slot a decorative icon or unit goes in
+ *     inside a field's border. It renders a positioning box and no
+ *     visual value of its own: the field paints
+ *     `.MuiInputAdornment-root` and resets MUI's box, so a wrapper would
+ *     have to render MUI's component and keep its class anyway. Its
+ *     props name DOM and layout concepts (`position` is `'start' |
+ *     'end'`). See `src/components/TextField/InputAdornment.tsx`.
  *
  * `useColorScheme` is the same carve-out applied to a hook. It renders
  * nothing, its concept is the colour scheme rather than anything
@@ -60,6 +67,29 @@ export { neofloTheme } from './theme';
 
 export { NeofloLogo } from './brand';
 export type { NeofloLogoProps, NeofloLogoVariant } from './brand';
+
+/**
+ * Text, and the one component almost every screen needs before it needs
+ * any other.
+ *
+ * It is a wrapper rather than one of the re-exports described above,
+ * because it is almost nothing but house values — and because the theme
+ * styling MUI's `Typography` correctly for *most* variants is what makes
+ * importing it from `@mui/material` look safe. `subtitle1`, `subtitle2`,
+ * `button` and `overline` are not mapped to the type scale and fall
+ * through to Material's own metrics, silently and with no visible tell.
+ * This narrows `variant` to the rungs the scale defines, and adds
+ * `weight` for the second cut of each rung, which is what a "subtitle"
+ * is here.
+ */
+export { Typography } from './components/Typography';
+export type {
+  TypographyOwnProps,
+  TypographyProps,
+  TypographyTypeMap,
+  TypographyVariant,
+  TypographyWeight,
+} from './components/Typography';
 
 export { Alert } from './components/Alert';
 export type { AlertProps, AlertSeverity } from './components/Alert';
@@ -164,8 +194,19 @@ export type {
   LinkUnderline,
 } from './components/Link';
 
-export { TextField } from './components/TextField';
-export type { TextFieldProps, TextFieldStatus } from './components/TextField';
+/**
+ * `InputAdornment` ships alongside `TextField` because it is what fills
+ * the field's own `startAdornment` / `endAdornment` slots. It takes the
+ * unstyled-primitive carve-out — the field supplies every visual value
+ * it renders — so it is a re-export; see
+ * `src/components/TextField/InputAdornment.tsx`.
+ */
+export { InputAdornment, TextField } from './components/TextField';
+export type {
+  InputAdornmentProps,
+  TextFieldProps,
+  TextFieldStatus,
+} from './components/TextField';
 
 export { Select } from './components/Select';
 export type { SelectProps, SelectStatus } from './components/Select';

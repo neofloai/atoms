@@ -38,7 +38,7 @@ export const navigation: readonly NavSection[] = [
       { label: 'Brand', href: '/branding' },
       { label: 'Favicon', href: '/branding#favicon' },
       { label: 'Tokens', href: '/tokens' },
-      { label: 'Typography', href: '/tokens#typography' },
+      { label: 'Type scale', href: '/tokens#typography' },
       { label: 'Spacing', href: '/tokens#spacing' },
       { label: 'Responsive', href: '/tokens#responsive' },
       { label: 'Elevation', href: '/tokens#elevation' },
@@ -49,6 +49,7 @@ export const navigation: readonly NavSection[] = [
   {
     title: 'Components',
     items: [
+      { label: 'Typography', href: '/components/typography' },
       { label: 'Alert', href: '/components/alert' },
       { label: 'Snackbar', href: '/components/snackbar' },
       { label: 'Avatar', href: '/components/avatar' },

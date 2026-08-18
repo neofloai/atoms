@@ -1,5 +1,16 @@
 import type * as React from 'react';
-import type { TextFieldProps as MuiTextFieldProps } from '@mui/material';
+import type {
+  InputAdornmentProps as MuiInputAdornmentProps,
+  TextFieldProps as MuiTextFieldProps,
+} from '@mui/material';
+
+/**
+ * Props for `InputAdornment` — MUI's, unchanged, re-exported so a
+ * consumer typing an adornment of their own never has to import from
+ * `@mui/material` either. See `InputAdornment.tsx` for why the component
+ * is a re-export rather than a wrapper.
+ */
+export type InputAdornmentProps = MuiInputAdornmentProps;
 
 /**
  * Validation status of the field, mapped from the Figma `type` axis
