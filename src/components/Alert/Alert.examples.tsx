@@ -9,7 +9,7 @@ export const data: ComponentExamplesData = {
   name: 'Alert',
   category: 'Feedback',
   tagline:
-    'Inline, non-blocking message for status and feedback across four severities, with an optional floating (toast) treatment.',
+    'Non-blocking message across four severities: an icon, a title, the message under it, and room for an action. Flat and full-bleed by default, or floating as a card.',
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=973-3010',
   props: [
@@ -18,26 +18,35 @@ export const data: ComponentExamplesData = {
       type: "'error' | 'warning' | 'success' | 'info'",
       default: "'info'",
       description:
-        'Semantic state. Drives the colour and the default icon. Colours resolve from the token-built theme palette.',
+        'Semantic state. Drives the surface, the border, both text colours and the icon colour. All four resolve from tokens, so each is correct in light and dark.',
+    },
+    {
+      name: 'title',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        'The first line: what happened. Optional, but the design is built around it — omit it and the message takes the title type slot instead of rendering as a lone small line.',
+    },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        'The message under the title: what it means. One or two lines.',
     },
     {
       name: 'floating',
       type: 'boolean',
       default: 'false',
       description:
-        'Renders as a tinted, bordered, rounded surface with no default icon — for Alert used as a toast (e.g. inside `Snackbar`) rather than inline in the page.',
+        'Render as a card — tinted surface, a border in the severity colour, and an 8px corner — instead of the flat, square, full-bleed fill. Use it for anything sitting on top of the page rather than inside it; `Snackbar` uses it for toasts.',
     },
     {
-      name: 'title',
+      name: 'action',
       type: 'ReactNode',
       default: '—',
-      description: 'Optional bold title rendered above the message.',
-    },
-    {
-      name: 'children',
-      type: 'ReactNode',
-      default: '—',
-      description: 'The alert message body. Inherited from MUI.',
+      description:
+        'Element after the message, justified to the end — typically a Button. Replaces the default close button. Inherited from MUI.',
     },
     {
       name: 'onClose',
@@ -45,13 +54,6 @@ export const data: ComponentExamplesData = {
       default: '—',
       description:
         'When provided (and no `action`), renders a close button that fires on click. Inherited from MUI.',
-    },
-    {
-      name: 'action',
-      type: 'ReactNode',
-      default: '—',
-      description:
-        'Element rendered after the message, justified to the end — e.g. a Button. Replaces the default close button. Inherited from MUI.',
     },
     {
       name: 'icon',
@@ -63,72 +65,102 @@ export const data: ComponentExamplesData = {
     {
       name: 'iconMapping',
       type: '{ error?, warning?, success?, info? }',
-      default: 'Phosphor icons',
+      default: 'the alert glyph',
       description:
-        'Override the per-severity icon. Defaults to the Neoflo Phosphor set.',
+        'Override the per-severity icon. Every severity defaults to the same glyph, coloured by the severity.',
     },
   ],
   examples: [
     {
       title: 'Severities',
       description:
-        'The `severity` prop sets the colour and icon. All four resolve from the theme palette.',
+        'The `severity` prop sets the surface, both text colours and the icon colour. The two lines are separated by size and colour rather than weight.',
       code: [
-        '<Alert severity="error">Something went wrong.</Alert>',
-        '<Alert severity="warning">Your trial ends soon.</Alert>',
-        '<Alert severity="success">Changes saved.</Alert>',
-        '<Alert severity="info">A new version is available.</Alert>',
+        '<Alert severity="error" title="Payment failed">',
+        '  We could not charge the card on file.',
+        '</Alert>',
+        '',
+        '<Alert severity="warning" title="Trial ending">',
+        '  Three days left, then the workspace goes read-only.',
+        '</Alert>',
+        '',
+        '<Alert severity="success" title="Changes saved">',
+        '  Your edits are live for everyone on the team.',
+        '</Alert>',
+        '',
+        '<Alert severity="info" title="New version available">',
+        '  Reload to pick up the latest release.',
+        '</Alert>',
       ].join('\n'),
     },
     {
-      title: 'With title',
+      title: 'Flat or floating',
+      description:
+        'The default is flat, square and full-bleed — it belongs to the region it sits at the top of. `floating` makes it a card with a border and a corner, for anything sitting on top of the page instead of inside it.',
       code: [
-        '<Alert severity="error" title="Payment failed">',
-        '  We could not charge your card. Update your billing details.',
+        '<Alert severity="info" title="Read-only" floating>',
+        '  You are viewing a published snapshot.',
+        '</Alert>',
+      ].join('\n'),
+    },
+    {
+      title: 'With an action',
+      description:
+        'The action is justified to the end of the row and replaces the close button.',
+      code: [
+        '<Alert',
+        '  severity="error"',
+        '  title="Payment failed"',
+        '  action={',
+        '    <Button variant="secondary" size="sm">',
+        '      Update card',
+        '    </Button>',
+        '  }',
+        '>',
+        '  We could not charge the card on file.',
         '</Alert>',
       ].join('\n'),
     },
     {
       title: 'Dismissible',
-      description:
-        'Pass `onClose` to render an on-brand close button.',
-      code: '<Alert severity="info" onClose={handleDismiss}>Heads up.</Alert>',
-    },
-    {
-      title: 'With an action',
+      description: 'Pass `onClose` to render an on-brand close button.',
       code: [
-        '<Alert',
-        '  severity="warning"',
-        '  action={<Button variant="secondary" size="sm">Undo</Button>}',
-        '>',
-        '  Item moved to trash.',
+        '<Alert severity="info" title="Maintenance tonight" onClose={handleDismiss}>',
+        '  Expect a short interruption around 02:00 UTC.',
         '</Alert>',
       ].join('\n'),
     },
     {
-      title: 'Floating (toast)',
+      title: 'Message only',
       description:
-        'Pair `floating` with MUI\'s `Snackbar` to present Alert as a toast. The tinted, bordered, rounded surface reads well over arbitrary page content, so the default icon is suppressed to keep it compact.',
+        'A title is what the design is built around, but it can be left off. The message then takes the title type slot rather than rendering as a lone small line.',
+      code: '<Alert severity="success">Copied to your clipboard.</Alert>',
+    },
+    {
+      title: 'As a toast',
+      description:
+        'Reach for `Snackbar` rather than composing this yourself — it holds the floating Alert, the corner, the slide and the queue.',
       code: [
-        '<Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>',
-        '  <Alert severity="success" floating onClose={handleClose}>',
-        '    Changes saved.',
-        '  </Alert>',
-        '</Snackbar>',
+        "import { useSnackbar } from '@neofloai/atoms';",
+        '',
+        'const { success } = useSnackbar();',
+        "success('Your edits are live for everyone on the team.');",
       ].join('\n'),
     },
   ],
   dos: [
+    'Give it a title that names what happened, and a message that says what it means',
     'Match the `severity` to the meaning (success for confirmations, error for failures)',
-    'Keep messages short and actionable; add a `title` only when the body needs framing',
+    'Use `floating` for an alert on top of the page, flat for one inside it',
     'Use `onClose` for dismissible, low-urgency alerts',
-    'Reserve `floating` for Alert used as a toast (e.g. inside `Snackbar`), not inline in the page',
+    'Use `action` when there is somewhere for the reader to go',
   ],
   donts: [
     "Don't use an Alert to block the user — use a Dialog for responses you must collect",
-    "Don't rely on colour alone — the text must carry the meaning",
+    "Don't repeat the title in the message; they are two different sentences",
     "Don't hardcode background, border, or text colours — the severity covers both colour schemes",
     "Don't stack many alerts at once; surface the single most important message",
+    "Don't build a toast out of a floating Alert by hand — that is what Snackbar is",
   ],
-  relatedComponents: ['Button', 'IconButton'],
+  relatedComponents: ['Snackbar', 'Button', 'IconButton'],
 };

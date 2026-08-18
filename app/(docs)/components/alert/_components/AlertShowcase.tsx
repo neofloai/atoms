@@ -18,18 +18,37 @@ const severities: readonly AlertSeverity[] = [
   'info',
 ];
 
-const messageFor: Record<AlertSeverity, string> = {
-  error: 'Something went wrong while saving.',
-  warning: 'Your trial ends in 3 days.',
-  success: 'Your changes are now live.',
-  info: 'A new version is available.',
+interface Copy {
+  title: string;
+  message: string;
+}
+
+const copyFor: Record<AlertSeverity, Copy> = {
+  error: {
+    title: 'Payment failed',
+    message: 'We could not charge the card on file.',
+  },
+  warning: {
+    title: 'Trial ending',
+    message: 'Three days left, then the workspace goes read-only.',
+  },
+  success: {
+    title: 'Changes saved',
+    message: 'Your edits are live for everyone on the team.',
+  },
+  info: {
+    title: 'New version available',
+    message: 'Reload to pick up the latest release.',
+  },
 };
 
 function PreviewCard({
   title,
+  description,
   children,
 }: {
   title: string;
+  description?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -37,6 +56,11 @@ function PreviewCard({
       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
         {title}
       </Typography>
+      {description && (
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
+      )}
       <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
         {children}
       </Paper>
@@ -71,65 +95,136 @@ function PreviewGrid({ children }: { children: React.ReactNode }) {
 
 PreviewGrid.displayName = 'PreviewGrid';
 
+/**
+ * The flat style has to be previewed against an edge, not inside padding
+ * — square corners and a full-bleed fill say nothing in the middle of a
+ * padded box. So this draws the container the alert belongs to instead:
+ * the alert flush at the top, the region under it.
+ *
+ * The unpadded Paper is the point. Cancelling a padded one with negative
+ * margins instead leaves the alert's square corners hanging outside the
+ * card's rounded, unclipped ones, and strands the bottom inset below it as
+ * an empty strip. `overflow: hidden` is what clips the corners, and it is
+ * also what a real panel does to an alert sitting at the top of it.
+ */
+function RegionCard({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Stack spacing={1.5}>
+      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+        {title}
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        {description}
+      </Typography>
+      <Paper variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
+        {children}
+        <Box sx={{ p: 3 }}>
+          <Typography variant="body2" color="text.secondary">
+            The region the alert is reporting on.
+          </Typography>
+        </Box>
+      </Paper>
+    </Stack>
+  );
+}
+
+RegionCard.displayName = 'RegionCard';
+
 function handleNoop(): void {
   // Demo-only handler so the close affordance renders.
 }
 
 /**
- * Live rendering of the Alert from the Figma component set: the four
- * severities, the title and dismissible patterns, a trailing action,
- * and the `floating` (toast) treatment.
+ * Live rendering of the Alert from the resynced Figma component set: the
+ * four severities in both styles, the flat one full-bleed as it is drawn,
+ * plus the action, dismissible and message-only compositions.
  */
 export function AlertShowcase() {
   return (
     <Stack spacing={4}>
-      <PreviewCard title="Severities">
+      <PreviewCard
+        title="Severities"
+        description="Icon, title, message. The two lines differ by size and colour, not weight."
+      >
         <PreviewGrid>
           {severities.map((severity) => (
-            <Alert key={severity} severity={severity}>
-              {messageFor[severity]}
+            <Alert
+              key={severity}
+              severity={severity}
+              title={copyFor[severity].title}
+            >
+              {copyFor[severity].message}
             </Alert>
           ))}
         </PreviewGrid>
       </PreviewCard>
 
-      <PreviewCard title="With a title">
+      <RegionCard
+        title="Flat, full-bleed"
+        description="The default style is square and borderless, drawn edge to edge so it belongs to the region below it rather than to itself."
+      >
+        <Alert severity="warning" title="Import finished with skips">
+          Two rows were skipped because their dates would not parse.
+        </Alert>
+      </RegionCard>
+
+      <PreviewCard
+        title="Floating"
+        description="A card instead: tinted surface, a border in the severity colour, and a corner. For anything sitting on top of the page."
+      >
         <PreviewGrid>
-          <Alert severity="error" title="Payment failed">
-            We could not charge your card. Update your billing details to keep
-            your subscription active.
-          </Alert>
-          <Alert severity="success" title="Deployed">
-            Your project is live at the production URL.
-          </Alert>
+          {severities.map((severity) => (
+            <Alert
+              key={severity}
+              severity={severity}
+              floating
+              title={copyFor[severity].title}
+            >
+              {copyFor[severity].message}
+            </Alert>
+          ))}
         </PreviewGrid>
       </PreviewCard>
 
-      <PreviewCard title="Dismissible and actions">
+      <PreviewCard
+        title="Actions, dismissal, and message only"
+        description="An action is justified to the end of the row and takes the close button's place. Without a title, the message moves up into the title's type slot."
+      >
         <PreviewGrid>
-          <Alert severity="info" onClose={handleNoop}>
-            Heads up — maintenance is scheduled for tonight.
-          </Alert>
           <Alert
-            severity="warning"
+            severity="error"
+            floating
+            title="Payment failed"
             action={
               <Button variant="secondary" size="sm">
-                Undo
+                Update card
               </Button>
             }
           >
-            Item moved to trash.
+            We could not charge the card on file.
           </Alert>
-        </PreviewGrid>
-      </PreviewCard>
-
-      <PreviewCard title="Floating (toast)">
-        <PreviewGrid>
-          {severities.map((severity) => (
-            <Alert key={severity} severity={severity} floating onClose={handleNoop}>
-              {messageFor[severity]}
-            </Alert>
-          ))}
+          <Alert
+            severity="info"
+            floating
+            title="Maintenance tonight"
+            onClose={handleNoop}
+          >
+            Expect a short interruption around 02:00 UTC.
+          </Alert>
+          <Alert severity="success" floating>
+            Copied to your clipboard.
+          </Alert>
+          <Alert severity="warning" floating onClose={handleNoop}>
+            Two rows were skipped during the import.
+          </Alert>
         </PreviewGrid>
       </PreviewCard>
     </Stack>

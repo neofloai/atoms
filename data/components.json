@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T14:12:56.924Z",
+  "generatedAt": "2026-08-18T10:13:52.795Z",
   "components": [
     {
       "name": "Accordion",
@@ -160,44 +160,44 @@
     {
       "name": "Alert",
       "category": "Feedback",
-      "tagline": "Inline, non-blocking message for status and feedback across four severities, with an optional floating (toast) treatment.",
+      "tagline": "Non-blocking message across four severities: an icon, a title, the message under it, and room for an action. Flat and full-bleed by default, or floating as a card.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=973-3010",
       "props": [
         {
           "name": "severity",
           "type": "'error' | 'warning' | 'success' | 'info'",
           "default": "'info'",
-          "description": "Semantic state. Drives the colour and the default icon. Colours resolve from the token-built theme palette."
-        },
-        {
-          "name": "floating",
-          "type": "boolean",
-          "default": "false",
-          "description": "Renders as a tinted, bordered, rounded surface with no default icon — for Alert used as a toast (e.g. inside `Snackbar`) rather than inline in the page."
+          "description": "Semantic state. Drives the surface, the border, both text colours and the icon colour. All four resolve from tokens, so each is correct in light and dark."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "default": "—",
-          "description": "Optional bold title rendered above the message."
+          "description": "The first line: what happened. Optional, but the design is built around it — omit it and the message takes the title type slot instead of rendering as a lone small line."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The alert message body. Inherited from MUI."
+          "description": "The message under the title: what it means. One or two lines."
+        },
+        {
+          "name": "floating",
+          "type": "boolean",
+          "default": "false",
+          "description": "Render as a card — tinted surface, a border in the severity colour, and an 8px corner — instead of the flat, square, full-bleed fill. Use it for anything sitting on top of the page rather than inside it; `Snackbar` uses it for toasts."
+        },
+        {
+          "name": "action",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "Element after the message, justified to the end — typically a Button. Replaces the default close button. Inherited from MUI."
         },
         {
           "name": "onClose",
           "type": "(event) => void",
           "default": "—",
           "description": "When provided (and no `action`), renders a close button that fires on click. Inherited from MUI."
-        },
-        {
-          "name": "action",
-          "type": "ReactNode",
-          "default": "—",
-          "description": "Element rendered after the message, justified to the end — e.g. a Button. Replaces the default close button. Inherited from MUI."
         },
         {
           "name": "icon",
@@ -208,48 +208,58 @@
         {
           "name": "iconMapping",
           "type": "{ error?, warning?, success?, info? }",
-          "default": "Phosphor icons",
-          "description": "Override the per-severity icon. Defaults to the Neoflo Phosphor set."
+          "default": "the alert glyph",
+          "description": "Override the per-severity icon. Every severity defaults to the same glyph, coloured by the severity."
         }
       ],
       "examples": [
         {
           "title": "Severities",
-          "description": "The `severity` prop sets the colour and icon. All four resolve from the theme palette.",
-          "code": "<Alert severity=\"error\">Something went wrong.</Alert>\n<Alert severity=\"warning\">Your trial ends soon.</Alert>\n<Alert severity=\"success\">Changes saved.</Alert>\n<Alert severity=\"info\">A new version is available.</Alert>"
+          "description": "The `severity` prop sets the surface, both text colours and the icon colour. The two lines are separated by size and colour rather than weight.",
+          "code": "<Alert severity=\"error\" title=\"Payment failed\">\n  We could not charge the card on file.\n</Alert>\n\n<Alert severity=\"warning\" title=\"Trial ending\">\n  Three days left, then the workspace goes read-only.\n</Alert>\n\n<Alert severity=\"success\" title=\"Changes saved\">\n  Your edits are live for everyone on the team.\n</Alert>\n\n<Alert severity=\"info\" title=\"New version available\">\n  Reload to pick up the latest release.\n</Alert>"
         },
         {
-          "title": "With title",
-          "code": "<Alert severity=\"error\" title=\"Payment failed\">\n  We could not charge your card. Update your billing details.\n</Alert>"
+          "title": "Flat or floating",
+          "description": "The default is flat, square and full-bleed — it belongs to the region it sits at the top of. `floating` makes it a card with a border and a corner, for anything sitting on top of the page instead of inside it.",
+          "code": "<Alert severity=\"info\" title=\"Read-only\" floating>\n  You are viewing a published snapshot.\n</Alert>"
+        },
+        {
+          "title": "With an action",
+          "description": "The action is justified to the end of the row and replaces the close button.",
+          "code": "<Alert\n  severity=\"error\"\n  title=\"Payment failed\"\n  action={\n    <Button variant=\"secondary\" size=\"sm\">\n      Update card\n    </Button>\n  }\n>\n  We could not charge the card on file.\n</Alert>"
         },
         {
           "title": "Dismissible",
           "description": "Pass `onClose` to render an on-brand close button.",
-          "code": "<Alert severity=\"info\" onClose={handleDismiss}>Heads up.</Alert>"
+          "code": "<Alert severity=\"info\" title=\"Maintenance tonight\" onClose={handleDismiss}>\n  Expect a short interruption around 02:00 UTC.\n</Alert>"
         },
         {
-          "title": "With an action",
-          "code": "<Alert\n  severity=\"warning\"\n  action={<Button variant=\"secondary\" size=\"sm\">Undo</Button>}\n>\n  Item moved to trash.\n</Alert>"
+          "title": "Message only",
+          "description": "A title is what the design is built around, but it can be left off. The message then takes the title type slot rather than rendering as a lone small line.",
+          "code": "<Alert severity=\"success\">Copied to your clipboard.</Alert>"
         },
         {
-          "title": "Floating (toast)",
-          "description": "Pair `floating` with MUI's `Snackbar` to present Alert as a toast. The tinted, bordered, rounded surface reads well over arbitrary page content, so the default icon is suppressed to keep it compact.",
-          "code": "<Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>\n  <Alert severity=\"success\" floating onClose={handleClose}>\n    Changes saved.\n  </Alert>\n</Snackbar>"
+          "title": "As a toast",
+          "description": "Reach for `Snackbar` rather than composing this yourself — it holds the floating Alert, the corner, the slide and the queue.",
+          "code": "import { useSnackbar } from '@neofloai/atoms';\n\nconst { success } = useSnackbar();\nsuccess('Your edits are live for everyone on the team.');"
         }
       ],
       "dos": [
+        "Give it a title that names what happened, and a message that says what it means",
         "Match the `severity` to the meaning (success for confirmations, error for failures)",
-        "Keep messages short and actionable; add a `title` only when the body needs framing",
+        "Use `floating` for an alert on top of the page, flat for one inside it",
         "Use `onClose` for dismissible, low-urgency alerts",
-        "Reserve `floating` for Alert used as a toast (e.g. inside `Snackbar`), not inline in the page"
+        "Use `action` when there is somewhere for the reader to go"
       ],
       "donts": [
         "Don't use an Alert to block the user — use a Dialog for responses you must collect",
-        "Don't rely on colour alone — the text must carry the meaning",
+        "Don't repeat the title in the message; they are two different sentences",
         "Don't hardcode background, border, or text colours — the severity covers both colour schemes",
-        "Don't stack many alerts at once; surface the single most important message"
+        "Don't stack many alerts at once; surface the single most important message",
+        "Don't build a toast out of a floating Alert by hand — that is what Snackbar is"
       ],
       "relatedComponents": [
+        "Snackbar",
         "Button",
         "IconButton"
       ]
@@ -3838,6 +3848,120 @@
       "relatedComponents": [
         "Switch",
         "TextField"
+      ]
+    },
+    {
+      "name": "Snackbar",
+      "category": "Feedback",
+      "tagline": "Transient feedback in the corner of the page — an Alert with its icon, title, message and action, sliding in from the top right and dismissing itself without interrupting what comes next.",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "default": "false",
+          "description": "Whether the snackbar is shown. Only for the controlled form — `SnackbarProvider` owns this when you use the hook."
+        },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "default": "the severity",
+          "description": "The first line, in bold: what happened. Falls back to the severity's own word — `Success`, `Error`, `Warning`, `Heads up` — so every toast is a titled alert without every call site writing two strings. Pass `null` for the rare one that wants a single line."
+        },
+        {
+          "name": "message",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The second line: what the outcome means. One sentence — a toast is not a place to explain."
+        },
+        {
+          "name": "severity",
+          "type": "'error' | 'warning' | 'success' | 'info'",
+          "default": "'info'",
+          "description": "Passed through to the Alert inside. Sets the colour, the icon and the fallback title, and with them whether the message reads as a confirmation or a failure."
+        },
+        {
+          "name": "autoHideDuration",
+          "type": "number | null",
+          "default": "5000",
+          "description": "Milliseconds on screen before it closes itself. `null` keeps it up until something takes it down — worth passing for an error carrying a recovery step nobody reads in five seconds."
+        },
+        {
+          "name": "anchorOrigin",
+          "type": "{ vertical, horizontal }",
+          "default": "{ vertical: 'top', horizontal: 'right' }",
+          "description": "Which corner it appears in. The slide direction follows it automatically — in from the nearest edge, back out the same way."
+        },
+        {
+          "name": "action",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "Element after the message, typically an Undo button. Rendered beside the close button rather than in place of it."
+        },
+        {
+          "name": "dismissible",
+          "type": "boolean",
+          "default": "true",
+          "description": "Render a close button on the alert, beside `action` when there is one. Ignored when there is no `onClose` to call."
+        },
+        {
+          "name": "onClose",
+          "type": "(event, reason) => void",
+          "default": "—",
+          "description": "Fired when it asks to be closed. `reason` is `'timeout'`, `'clickaway'`, `'escapeKeyDown'` or `'dismiss'` (the close button). Ignore `clickaway` — a click elsewhere on the page is not a decision about the toast."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Provider and hook",
+          "description": "The form to reach for. Mount the provider once, inside `NeofloThemeProvider`, then fire messages from event handlers — no state at the call site. The provider queues, so two messages fired at once arrive one after the other rather than covering each other.",
+          "code": "import { NeofloThemeProvider, SnackbarProvider } from '@neofloai/atoms';\n\nfunction App() {\n  return (\n    <NeofloThemeProvider>\n      <SnackbarProvider>\n        <Dashboard />\n      </SnackbarProvider>\n    </NeofloThemeProvider>\n  );\n}"
+        },
+        {
+          "title": "Firing a message",
+          "description": "One line per outcome. `success`, `error`, `warning` and `info` take the message and nothing else — the icon and the title come from the severity, so a single argument still renders as a titled two-line alert.",
+          "code": "import { useSnackbar } from '@neofloai/atoms';\n\nfunction SaveButton({ draft }) {\n  const { success, error } = useSnackbar();\n\n  async function handleSave() {\n    try {\n      await save(draft);\n      success('Your edits are live for everyone on the team.');\n    } catch (cause) {\n      console.error('Save failed:', cause);\n      error('Nothing was lost — try again in a moment.');\n    }\n  }\n\n  return <Button variant=\"primary\" onClick={handleSave}>Save</Button>;\n}"
+        },
+        {
+          "title": "Writing the title yourself",
+          "description": "The fallback title names the severity; a real title names the event. Worth writing for anything a user might have to act on, which is most errors — pass it as the second argument to a shorthand, or use `notify`.",
+          "code": "const { error } = useSnackbar();\n\nerror('The file was larger than the 25 MB limit.', {\n  title: 'Upload failed',\n  // Says what to do next, so it waits to be read rather than\n  // expiring halfway through.\n  autoHideDuration: null,\n});"
+        },
+        {
+          "title": "Icon, title, message and an action",
+          "description": "The full composition. The action sits beside the close button rather than replacing it, so an Undo toast can still be put away early.",
+          "code": "const { notify } = useSnackbar();\n\nnotify({\n  severity: 'info',\n  title: 'Item moved to trash',\n  message: 'It stays recoverable for 30 days.',\n  action: (\n    <Button variant=\"secondary\" size=\"sm\" onClick={handleUndo}>\n      Undo\n    </Button>\n  ),\n});"
+        },
+        {
+          "title": "Controlled, without the provider",
+          "description": "The primitive, for the one screen that needs to own `open` itself. Everything the provider does is on top of this.",
+          "code": "const [open, setOpen] = React.useState(false);\n\n<Snackbar\n  open={open}\n  severity=\"success\"\n  title=\"Changes saved\"\n  message=\"Your edits are live for everyone on the team.\"\n  onClose={() => setOpen(false)}\n/>"
+        },
+        {
+          "title": "Somewhere other than the top right",
+          "description": "The slide follows the anchor, so a bottom-left toast enters from the left rather than still coming in from the right.",
+          "code": "<SnackbarProvider\n  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}\n  autoHideDuration={8000}\n>\n  <App />\n</SnackbarProvider>"
+        }
+      ],
+      "dos": [
+        "Use it for the outcome of something the user just did — saved, deleted, failed, copied",
+        "Write a `title` that names the event rather than leaving the severity to stand in, wherever the event has a name",
+        "Keep the message to one sentence, and say what it means rather than that something happened",
+        "Pass `autoHideDuration: null` for an error whose message carries a recovery step",
+        "Mount one `SnackbarProvider` for the whole app and fire through `useSnackbar`",
+        "Ignore the `clickaway` reason if you wire `onClose` yourself"
+      ],
+      "donts": [
+        "Don't use it for anything the user has to act on — a Dialog is for decisions you need collected",
+        "Don't repeat the title in the message; the two lines are what happened and what it means, not the same sentence twice",
+        "Don't stack toasts; the provider queues them for a reason, and a column of them in one corner buries the message that mattered",
+        "Don't put a form, a list, or more than one action in one — it is two lines and at most an Undo",
+        "Don't use it for state that persists, like a failed connection that is still failing; that is an inline Alert on the screen it affects",
+        "Don't mount a second provider inside the first — the inner one wins for its subtree and the queues no longer see each other"
+      ],
+      "relatedComponents": [
+        "Alert",
+        "Dialog",
+        "Button"
       ]
     },
     {
