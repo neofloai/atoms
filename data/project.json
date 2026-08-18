@@ -1,20 +1,12 @@
 {
-  "generatedAt": "2026-08-17T16:51:13.041Z",
+  "generatedAt": "2026-08-18T08:45:45.265Z",
   "questions": [
     {
       "id": "purpose",
       "section": "What this is",
-      "ask": "Is this a prototype to show people, the frontend of a new project, or Atoms going into a project that already exists?",
-      "why": "The fork everything else follows from. A prototype is React with sample data and no backend. A new project gets its stack chosen. An existing project gets an install and nothing created.",
+      "ask": "What do you want to create — a working prototype with no database behind it, the frontend of a new project, or Atoms going into a project you already have?",
+      "why": "The fork everything else follows from, and the only question about the work that has to be asked outright. A prototype is React with sample data and no backend. A new project gets its stack chosen. An existing project gets an install and nothing created.",
       "accepts": "prototype | new-project | existing-project",
-      "required": true
-    },
-    {
-      "id": "audience",
-      "section": "What this is",
-      "ask": "Who is going to open it — a designer, someone non-technical showing it on, or an engineer?",
-      "why": "It decides how much has to be genuinely wired and how the thing is handed over. A designer needs every screen reachable and the sample data editable in one file; an engineer needs the seams where real data will arrive to be obvious.",
-      "accepts": "designer | manager | engineer",
       "required": true
     },
     {
@@ -200,36 +192,39 @@
       ]
     }
   ],
-  "audienceNotes": {
-    "designer": [
+  "purposeNotes": {
+    "prototype": [
       "Every screen has to be reachable by clicking. No sign-in gate, no route that can only be reached by editing the URL.",
-      "Put the sample data in one file with an obvious name. What is on screen changes far more often than the components do, and a designer should not have to open a component to change a vendor name.",
-      "Nothing half-styled. A control that is not wired yet still has to look finished, because in a design review it will be read as the design rather than as a placeholder.",
-      "Start from a published pattern when one matches. The arrangement is the first thing a design review notices, and it is the part that gets re-derived wrong.",
-      "Put the two commands to run it at the top of the README, with the URL: `npm install`, `npm run dev`."
+      "Assume it gets shown to other people, live. Every click has to land somewhere — a dead control in front of a room is the only thing anyone remembers.",
+      "Put the sample data in one file with an obvious name. What is on screen changes far more often than the components do, and nobody should have to open a component to change a vendor name.",
+      "Nothing half-styled. A control that is not wired yet still has to look finished, because in a review it will be read as the design rather than as a placeholder.",
+      "Nothing that needs a network. If the room has no wifi it still has to run.",
+      "One obvious path through the screens, and the two commands that start it at the top of the README: `npm install`, `npm run dev`. Anything more than that will not survive being handed on."
     ],
-    "manager": [
-      "Assume it will be shown on a screen to other people, live. Every click has to land somewhere — a dead control in front of an audience is the only thing they will remember.",
-      "One obvious path through the screens, in the order it would be presented. Say what that path is in the README.",
-      "No setup beyond `npm install` and `npm run dev`. Anything else will not survive being handed on.",
-      "Nothing that needs a network. If the room has no wifi it still has to run."
-    ],
-    "engineer": [
+    "new-project": [
       "Keep the sample data behind the function signature the real source will have, so swapping it later is one file rather than a search.",
       "Type the records properly. A table built on loose rows is a table that will not survive the real ones.",
       "Mark the seams where real data will arrive with a comment saying what is expected, rather than spreading a mock through the components.",
       "Pin the Atoms install to a commit for anything that has to reproduce; a bare install tracks the default branch.",
       "Do not wrap or restyle an Atoms component locally to get a variant that does not exist. Open an issue on the Atoms repo — a local override stops tracking the design system the day it is written."
+    ],
+    "existing-project": [
+      "Pin the Atoms install to a commit. A bare install tracks the default branch, and an app already in front of users does not want its buttons changing on someone else's merge.",
+      "Introduce it on one screen first. A single screen and a whole-app migration are the same install and very different reviews.",
+      "Leave the app's own components where they are. Atoms sits alongside them; replacing what already works is separate work with its own approval.",
+      "Do not wrap or restyle an Atoms component locally to get a variant that does not exist. Open an issue on the Atoms repo — a local override stops tracking the design system the day it is written."
     ]
   },
   "rules": [
-    "Create the project in ~/Desktop/<project-name>. Not a temp directory, not inside the Atoms repo, not whatever directory this conversation started in — a prototype nobody can find again was not delivered. If that folder does not exist, ask where it should go rather than guessing.",
-    "If a folder of that name is already there, stop and ask. Never scaffold into or over an existing directory.",
     "Do not scaffold, install, or write a component until every required answer is in hand. Ask the questions in one pass rather than one at a time, and ask the follow-ups for anything that came back vague.",
     "Hold state in React state. Do not add `localStorage`, `sessionStorage`, cookies or a database to make something survive a reload unless the user asks for it — a prototype that remembers the last person who used it cannot be reset before the next demo.",
     "Call `get_pattern` before composing a screen, `get_component` before using a component, and `get_tokens` before writing any colour, spacing or type value. Never hardcode a hex or a pixel value that a token already carries.",
     "Import only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Importing from `@mui/material` resolves and bypasses the design system.",
-    "When it runs, tell the user the folder path and the command that starts it. Then say which interactions are real and which are only drawn."
+    "When it runs, say how to see it — the folder and the command for something new, the route for a screen inside an app that already runs. Then say which interactions are real and which are only drawn."
+  ],
+  "creationRules": [
+    "Create the project in ~/Desktop/<project-name>. Not a temp directory, not inside the Atoms repo, not whatever directory this conversation started in — a prototype nobody can find again was not delivered. If that folder does not exist, ask where it should go rather than guessing.",
+    "If a folder of that name is already there, stop and ask. Never scaffold into or over an existing directory."
   ],
   "keywords": [
     "start a project",

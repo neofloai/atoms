@@ -287,9 +287,9 @@ See `CLAUDE.md` for Claude Code specific guidelines.
 
 An editor connected to the MCP endpoint is handed the order of operations at connect time, so it applies without anyone pasting a prompt:
 
-1. **`start_project` before any code.** Called with nothing it returns ten questions; called again with the answers it returns the build plan — framework, location on disk, and the calls to make in order. It withholds the plan until the required answers are in (four to seven of the ten, depending on what is being built), because the expensive mistakes in this work are decisions made on the user's behalf rather than typos.
+1. **`start_project` before any code.** Called with nothing it returns nine questions; called again with the answers it returns the build plan — framework, location on disk, and the calls to make in order. It withholds the plan until the required answers are in (three to six of the nine, depending on what is being built), because the expensive mistakes in this work are decisions made on the user's behalf rather than typos.
 
-   The first question is the fork: a **prototype** (always React + Vite, sample data, no backend and no stored state), the frontend of a **new project** (asked React or Next, React recommended), or Atoms going into a **project that already exists** (an install, nothing created).
+   The first question asks what you want to create, and it is the fork the rest hangs off: a **prototype** (always React + Vite, sample data, no backend and no stored state), the frontend of a **new project** (asked React or Next, React recommended), or Atoms going into a **project that already exists** (an install, nothing created). Nobody is asked who they are — the same three answers cover a designer, a manager and an engineer.
 2. **`scaffold_app` to create it**, in the user's Desktop folder — never the agent's working directory, which is a sandbox. Atoms, the theme, the favicon and the mark are all wired by the returned commands.
 3. **`get_pattern`** before composing a screen, **`get_component`** before using one (including its Related section), **`get_tokens`** before writing any colour or spacing value.
 

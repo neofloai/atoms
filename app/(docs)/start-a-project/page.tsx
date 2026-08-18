@@ -26,7 +26,6 @@ const firstCall = `start_project`;
 const secondCall = `start_project {
   brief: {
     purpose: "prototype",
-    audience: "designer",
     screens: [
       "Query log — scan and filter incoming queries",
       "Query detail — read one and route it"
@@ -70,11 +69,14 @@ export default function StartAProjectPage() {
             with a question and expensive to undo afterwards.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            There are ten, and between four and seven of them block —
+            There are nine, and between three and six of them block —
             depending on the first answer, which scopes the rest. It stays
             short because <code>purpose</code> settles most of it: a prototype
             is React with sample data and no backend, so there is nothing left
-            to ask about sign-ins, databases or where the rows come from.
+            to ask about sign-ins, databases or where the rows come from. None
+            of them asks who you are, either — a designer, a manager and an
+            engineer reach for Atoms for the same three reasons, and which of
+            the three it is says everything a job title would have.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             So <code>start_project</code> withholds its build plan until the
@@ -182,6 +184,22 @@ export default function StartAProjectPage() {
           </Typography>
           <Stack component="ul" spacing={1} sx={{ pl: 2.5, m: 0 }}>
             {projectGuide.rules.map((rule) => (
+              <Typography
+                key={rule}
+                component="li"
+                variant="body2"
+                color="text.secondary"
+              >
+                {rule}
+              </Typography>
+            ))}
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            And two more when something is being created, which a plan for an
+            app that already exists leaves out — it has no folder to make:
+          </Typography>
+          <Stack component="ul" spacing={1} sx={{ pl: 2.5, m: 0 }}>
+            {projectGuide.creationRules.map((rule) => (
               <Typography
                 key={rule}
                 component="li"

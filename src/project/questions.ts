@@ -1,17 +1,23 @@
 import type { BriefQuestion } from './types';
 
 /**
- * The interview: ten questions, of which four to seven block.
+ * The interview: nine questions, of which three to six block.
  *
  * How many depends on the first answer, because `purpose` scopes the
- * rest — six for a prototype, seven for a new project (which is also
- * asked its stack), four for a project that already exists (which is
+ * rest — five for a prototype, six for a new project (which is also
+ * asked its stack), three for a project that already exists (which is
  * asked nothing about screens, since it has its own).
  *
  * Deliberately short. Atoms is used for three things, and once which one
  * is known, most of what an intake would otherwise ask is already
  * settled: a prototype is static with no database, so there is nothing
  * to ask about sign-ins, persistence, or where the rows come from.
+ *
+ * Nothing here asks who the user is. A designer, a manager and an
+ * engineer reach for Atoms for the same three reasons, and which of the
+ * three it is says everything their job title would have — so the first
+ * question is about the thing being made, not about the person making
+ * it.
  *
  * What is left is what cannot be inferred: what is on screen, whether
  * there is a shell around it, and what it is called.
@@ -20,17 +26,9 @@ export const BRIEF_QUESTIONS: readonly BriefQuestion[] = [
   {
     id: 'purpose',
     section: 'What this is',
-    ask: 'Is this a prototype to show people, the frontend of a new project, or Atoms going into a project that already exists?',
-    why: 'The fork everything else follows from. A prototype is React with sample data and no backend. A new project gets its stack chosen. An existing project gets an install and nothing created.',
+    ask: 'What do you want to create — a working prototype with no database behind it, the frontend of a new project, or Atoms going into a project you already have?',
+    why: 'The fork everything else follows from, and the only question about the work that has to be asked outright. A prototype is React with sample data and no backend. A new project gets its stack chosen. An existing project gets an install and nothing created.',
     accepts: 'prototype | new-project | existing-project',
-    required: true,
-  },
-  {
-    id: 'audience',
-    section: 'What this is',
-    ask: 'Who is going to open it — a designer, someone non-technical showing it on, or an engineer?',
-    why: 'It decides how much has to be genuinely wired and how the thing is handed over. A designer needs every screen reachable and the sample data editable in one file; an engineer needs the seams where real data will arrive to be obvious.',
-    accepts: 'designer | manager | engineer',
     required: true,
   },
   {

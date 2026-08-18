@@ -7,7 +7,7 @@
  * from six component docs, in a sandbox directory, from invented data.
  * Every question in `BRIEF_QUESTIONS` exists because getting it wrong
  * costs a rebuild rather than an edit, which is also why there are only
- * ten of them.
+ * nine of them.
  *
  * Serialized to `data/project.json` by `scripts/generate.ts`. The two
  * decision functions stay here rather than in the manifest, because a
@@ -25,9 +25,9 @@ import {
 
 import type {
   BriefQuestion,
-  ProjectAudience,
   ProjectBrief,
   ProjectGuide,
+  ProjectPurpose,
   ProjectTarget,
 } from './types';
 
@@ -48,37 +48,51 @@ export interface TargetDecision {
   trigger: string;
 }
 
-const AUDIENCE_NOTES: Record<ProjectAudience, readonly string[]> = {
-  designer: [
+/**
+ * Rules that follow from what is being built.
+ *
+ * Keyed on purpose rather than on who is at the keyboard. The three
+ * lists used to be three job titles, which meant asking the user to
+ * classify themselves before anything could be built — and the answer
+ * only ever mattered because of what it implied about the work. A
+ * prototype is a prototype whether a designer or an engineer asked for
+ * it, and it has the same things to get right either way.
+ */
+const PURPOSE_NOTES: Record<ProjectPurpose, readonly string[]> = {
+  prototype: [
     'Every screen has to be reachable by clicking. No sign-in gate, no route that can only be reached by editing the URL.',
-    'Put the sample data in one file with an obvious name. What is on screen changes far more often than the components do, and a designer should not have to open a component to change a vendor name.',
-    'Nothing half-styled. A control that is not wired yet still has to look finished, because in a design review it will be read as the design rather than as a placeholder.',
-    'Start from a published pattern when one matches. The arrangement is the first thing a design review notices, and it is the part that gets re-derived wrong.',
-    'Put the two commands to run it at the top of the README, with the URL: `npm install`, `npm run dev`.',
-  ],
-  manager: [
-    'Assume it will be shown on a screen to other people, live. Every click has to land somewhere — a dead control in front of an audience is the only thing they will remember.',
-    'One obvious path through the screens, in the order it would be presented. Say what that path is in the README.',
-    'No setup beyond `npm install` and `npm run dev`. Anything else will not survive being handed on.',
+    'Assume it gets shown to other people, live. Every click has to land somewhere — a dead control in front of a room is the only thing anyone remembers.',
+    'Put the sample data in one file with an obvious name. What is on screen changes far more often than the components do, and nobody should have to open a component to change a vendor name.',
+    'Nothing half-styled. A control that is not wired yet still has to look finished, because in a review it will be read as the design rather than as a placeholder.',
     'Nothing that needs a network. If the room has no wifi it still has to run.',
+    'One obvious path through the screens, and the two commands that start it at the top of the README: `npm install`, `npm run dev`. Anything more than that will not survive being handed on.',
   ],
-  engineer: [
+  'new-project': [
     'Keep the sample data behind the function signature the real source will have, so swapping it later is one file rather than a search.',
     'Type the records properly. A table built on loose rows is a table that will not survive the real ones.',
     'Mark the seams where real data will arrive with a comment saying what is expected, rather than spreading a mock through the components.',
     'Pin the Atoms install to a commit for anything that has to reproduce; a bare install tracks the default branch.',
     'Do not wrap or restyle an Atoms component locally to get a variant that does not exist. Open an issue on the Atoms repo — a local override stops tracking the design system the day it is written.',
   ],
+  'existing-project': [
+    'Pin the Atoms install to a commit. A bare install tracks the default branch, and an app already in front of users does not want its buttons changing on someone else\'s merge.',
+    'Introduce it on one screen first. A single screen and a whole-app migration are the same install and very different reviews.',
+    'Leave the app\'s own components where they are. Atoms sits alongside them; replacing what already works is separate work with its own approval.',
+    'Do not wrap or restyle an Atoms component locally to get a variant that does not exist. Open an issue on the Atoms repo — a local override stops tracking the design system the day it is written.',
+  ],
 };
 
 const PROJECT_RULES: readonly string[] = [
-  `Create the project in ${PROJECT_PARENT_DIR}/<project-name>. Not a temp directory, not inside the Atoms repo, not whatever directory this conversation started in — a prototype nobody can find again was not delivered. If that folder does not exist, ask where it should go rather than guessing.`,
-  'If a folder of that name is already there, stop and ask. Never scaffold into or over an existing directory.',
   'Do not scaffold, install, or write a component until every required answer is in hand. Ask the questions in one pass rather than one at a time, and ask the follow-ups for anything that came back vague.',
   'Hold state in React state. Do not add `localStorage`, `sessionStorage`, cookies or a database to make something survive a reload unless the user asks for it — a prototype that remembers the last person who used it cannot be reset before the next demo.',
   'Call `get_pattern` before composing a screen, `get_component` before using a component, and `get_tokens` before writing any colour, spacing or type value. Never hardcode a hex or a pixel value that a token already carries.',
   'Import only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Importing from `@mui/material` resolves and bypasses the design system.',
-  'When it runs, tell the user the folder path and the command that starts it. Then say which interactions are real and which are only drawn.',
+  'When it runs, say how to see it — the folder and the command for something new, the route for a screen inside an app that already runs. Then say which interactions are real and which are only drawn.',
+];
+
+const CREATION_RULES: readonly string[] = [
+  `Create the project in ${PROJECT_PARENT_DIR}/<project-name>. Not a temp directory, not inside the Atoms repo, not whatever directory this conversation started in — a prototype nobody can find again was not delivered. If that folder does not exist, ask where it should go rather than guessing.`,
+  'If a folder of that name is already there, stop and ask. Never scaffold into or over an existing directory.',
 ];
 
 const SEARCH_KEYWORDS: readonly string[] = [
@@ -109,8 +123,9 @@ const SEARCH_KEYWORDS: readonly string[] = [
 export const projectGuide: ProjectGuide = {
   questions: BRIEF_QUESTIONS,
   targets: PROJECT_TARGETS,
-  audienceNotes: AUDIENCE_NOTES,
+  purposeNotes: PURPOSE_NOTES,
   rules: PROJECT_RULES,
+  creationRules: CREATION_RULES,
   keywords: SEARCH_KEYWORDS,
   parentDir: PROJECT_PARENT_DIR,
   brandOrigin: BRAND_ORIGIN,

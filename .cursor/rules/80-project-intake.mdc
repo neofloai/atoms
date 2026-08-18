@@ -11,7 +11,7 @@ Applies whenever someone asks for something to be **built** with Atoms — a pro
 
 Call `start_project` on the Atoms MCP endpoint first, with no arguments. It returns the questions to ask. Ask them all in one pass, in your own words, then call it again with the answers to get the build plan.
 
-There are ten questions and between four and seven of them block, depending on the purpose. Do not scaffold, install, or write a component before that plan exists. The expensive mistakes in this work are not typos — they are decisions made on the user's behalf:
+There are nine questions and between three and six of them block, depending on the purpose. Ask what the user wants to create, never who they are — the same three purposes cover a designer, a manager and an engineer, and the purpose already implies everything a job title would have. Do not scaffold, install, or write a component before that plan exists. The expensive mistakes in this work are not typos — they are decisions made on the user's behalf:
 
 - a table built against invented columns, which has to be re-measured against the real ones
 - a shell assembled the wrong way round (the rail runs full height; the bar starts where the rail ends)
