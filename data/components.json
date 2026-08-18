@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T10:13:52.795Z",
+  "generatedAt": "2026-08-18T14:02:11.463Z",
   "components": [
     {
       "name": "Accordion",
@@ -1310,7 +1310,7 @@
         {
           "title": "A grid of records",
           "description": "The grid needs a height: MUI’s root is `height: 100%`, so give it a sized box or pass `autoHeight`.",
-          "code": "import { DataGrid } from '@neofloai/atoms';\nimport Box from '@mui/material/Box';\n\nconst columns = [\n  { field: 'reference', headerName: 'Invoice', width: 160 },\n  { field: 'vendor', headerName: 'Vendor', flex: 1 },\n  { field: 'amount', headerName: 'Amount', type: 'number', width: 140 },\n];\n\n<Box sx={{ height: 420 }}>\n  <DataGrid rows={invoices} columns={columns} size=\"sm\" rowNoun=\"invoices\" />\n</Box>"
+          "code": "import { Box, DataGrid } from '@neofloai/atoms';\n\nconst columns = [\n  { field: 'reference', headerName: 'Invoice', width: 160 },\n  { field: 'vendor', headerName: 'Vendor', flex: 1 },\n  { field: 'amount', headerName: 'Amount', type: 'number', width: 140 },\n];\n\n<Box sx={{ height: 420 }}>\n  <DataGrid rows={invoices} columns={columns} size=\"sm\" rowNoun=\"invoices\" />\n</Box>"
         },
         {
           "title": "Paginated, selectable, sorted on arrival",
@@ -3483,7 +3483,7 @@
       "examples": [
         {
           "title": "Basic select",
-          "code": "import { MenuItem } from '@mui/material';\nimport { Select } from '@neofloai/atoms';\n\n<Select label=\"Country\" defaultValue=\"us\">\n  <MenuItem value=\"us\">United States</MenuItem>\n  <MenuItem value=\"ca\">Canada</MenuItem>\n  <MenuItem value=\"mx\">Mexico</MenuItem>\n</Select>"
+          "code": "import { MenuItem, Select } from '@neofloai/atoms';\n\n<Select label=\"Country\" defaultValue=\"us\">\n  <MenuItem value=\"us\">United States</MenuItem>\n  <MenuItem value=\"ca\">Canada</MenuItem>\n  <MenuItem value=\"mx\">Mexico</MenuItem>\n</Select>"
         },
         {
           "title": "With helper text",
@@ -4643,7 +4643,7 @@
           "name": "startAdornment",
           "type": "ReactNode",
           "default": "—",
-          "description": "Element rendered at the start of the input, e.g. a search icon. Wrap decorative icons in MUI’s `InputAdornment` for the correct colour/spacing; interactive controls like `IconButton` can be passed directly."
+          "description": "Element rendered at the start of the input, e.g. a search icon. Wrap decorative icons in `InputAdornment` for the correct colour/spacing; interactive controls like `IconButton` can be passed directly."
         },
         {
           "name": "endAdornment",
@@ -4699,8 +4699,8 @@
         },
         {
           "title": "Start icon (decorative)",
-          "description": "Wrap non-interactive icons in MUI’s `InputAdornment` so they pick up the correct colour and spacing.",
-          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { MagnifyingGlassIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  placeholder=\"Search anything\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <MagnifyingGlassIcon size={16} />\n    </InputAdornment>\n  }\n/>"
+          "description": "Wrap non-interactive icons in `InputAdornment` so they pick up the correct colour and spacing. It is exported from Atoms — there is no reason to reach into `@mui/material` for it.",
+          "code": "import { InputAdornment, TextField } from '@neofloai/atoms';\nimport { MagnifyingGlassIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  placeholder=\"Search anything\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <MagnifyingGlassIcon size={16} />\n    </InputAdornment>\n  }\n/>"
         },
         {
           "title": "Clearable field (end icon button)",
@@ -4709,7 +4709,7 @@
         {
           "title": "Start + end adornments",
           "description": "Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.",
-          "code": "import InputAdornment from '@mui/material/InputAdornment';\nimport { EyeIcon, LockIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Password\"\n  placeholder=\"Enter password\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <LockIcon size={16} />\n    </InputAdornment>\n  }\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Show password\" onClick={handleToggleVisibility}>\n      <EyeIcon />\n    </IconButton>\n  }\n/>"
+          "code": "import { IconButton, InputAdornment, TextField } from '@neofloai/atoms';\nimport { EyeIcon, LockIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Password\"\n  placeholder=\"Enter password\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <LockIcon size={16} />\n    </InputAdornment>\n  }\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Show password\" onClick={handleToggleVisibility}>\n      <EyeIcon />\n    </IconButton>\n  }\n/>"
         },
         {
           "title": "Multi-line: grows with content",
@@ -5245,6 +5245,106 @@
       "relatedComponents": [
         "IconButton",
         "Menu",
+        "Alert"
+      ]
+    },
+    {
+      "name": "Typography",
+      "category": "Data Display",
+      "tagline": "Text on the type scale. Ten rungs, two weight cuts each, and the element kept separate from the size — so a page title can be an h1 without being 80px tall.",
+      "props": [
+        {
+          "name": "variant",
+          "type": "'h1'–'h6' | 'body1' | 'body2' | 'caption' | 'inherit'",
+          "default": "'body1'",
+          "description": "Which rung of the type scale to set. Size, leading and letter-spacing all resolve from the typography tokens. Narrower than MUI’s list: `subtitle1`, `subtitle2`, `button` and `overline` are not offered, because the scale does not define them — see the migration example below for what to write instead."
+        },
+        {
+          "name": "weight",
+          "type": "'regular' | 'medium' | 'semibold'",
+          "default": "—",
+          "description": "Which cut of the rung. Every rung ships a Medium and a Regular with the same size and leading, and the variant picks one — Medium for headings, Regular for body and caption. This reaches the other. Omit it to take the variant’s own cut."
+        },
+        {
+          "name": "component",
+          "type": "ElementType",
+          "default": "per variant",
+          "description": "The element to render. Defaults to the variant’s natural match (`h5` renders an `<h5>`, `body1` a `<p>`, `caption` a `<span>`). Set it when the size and the document level are different decisions."
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "default": "'inherit'",
+          "description": "Text colour, resolved from the palette — `text.primary`, `text.secondary`, `error.main`. Inherited from MUI, and already on-brand because the palette is built from tokens."
+        },
+        {
+          "name": "align",
+          "type": "'inherit' | 'left' | 'center' | 'right' | 'justify'",
+          "default": "'inherit'",
+          "description": "Text alignment. Inherited from MUI."
+        },
+        {
+          "name": "noWrap",
+          "type": "boolean",
+          "default": "false",
+          "description": "Truncate to a single line with an ellipsis instead of wrapping. Needs a width to overflow, so the element has to be block or inline-block. Inherited from MUI."
+        },
+        {
+          "name": "gutterBottom",
+          "type": "boolean",
+          "default": "false",
+          "description": "Adds a bottom margin. Prefer the gap on a parent `Stack` — one source of spacing per layout reads better than margins on the items."
+        }
+      ],
+      "examples": [
+        {
+          "title": "The scale",
+          "description": "Ten rungs. The six headings run 80px down to 16px, the two body sizes are 13px and 12px, and the caption is 10px.",
+          "code": "<Typography variant=\"h3\">Query Log</Typography>\n<Typography variant=\"h5\">Sign in</Typography>\n<Typography variant=\"body1\">The default. Most copy sits here.</Typography>\n<Typography variant=\"body2\">One rung down, for supporting lines.</Typography>\n<Typography variant=\"caption\">Labels and metadata.</Typography>"
+        },
+        {
+          "title": "The size and the element are separate",
+          "description": "A page needs one `h1` for its document structure, and rarely wants it set at 80px. `variant` picks the size, `component` picks the element.",
+          "code": "<Typography variant=\"h5\" component=\"h1\">\n  Sign in\n</Typography>"
+        },
+        {
+          "title": "Coming from MUI’s variants",
+          "description": "A subtitle in this scale is not its own rung — it is a body rung in its Medium cut. That is what `weight` is for, and it is why there is no `subtitle1` or `subtitle2` to reach for.",
+          "code": "// Instead of variant=\"subtitle1\" or sx={{ fontWeight: 600 }}:\n<Typography variant=\"body1\" weight=\"medium\">\n  Billing\n</Typography>\n\n// A heading that needs to sit back rather than lead:\n<Typography variant=\"h6\" weight=\"regular\">\n  Recent activity\n</Typography>"
+        },
+        {
+          "title": "A title with a line under it",
+          "description": "The pair most screens open with. The gap comes from the `Stack`, not from a margin on either line.",
+          "code": "<Stack spacing={0.5}>\n  <Typography variant=\"h5\" component=\"h1\">\n    Sign in\n  </Typography>\n  <Typography variant=\"body2\" color=\"text.secondary\">\n    Enter your email and password to continue.\n  </Typography>\n</Stack>"
+        },
+        {
+          "title": "Truncating to one line",
+          "description": "For a cell or a row where the text is longer than the space and wrapping would change the row height.",
+          "code": "<Typography variant=\"body2\" noWrap sx={{ maxWidth: 240 }}>\n  {invoice.reference}\n</Typography>"
+        },
+        {
+          "title": "Inheriting the surrounding type",
+          "description": "`inherit` sets no size of its own — use it for text inside a control or a cell that has already been sized.",
+          "code": "<Typography variant=\"inherit\" weight=\"medium\">\n  {row.total}\n</Typography>"
+        }
+      ],
+      "dos": [
+        "Use `variant` for every piece of text, so the size comes from the scale rather than from `sx`",
+        "Set `component` when the document level and the visual size differ",
+        "Reach for `weight` instead of `sx={{ fontWeight }}` — it can only produce the cuts the font ships",
+        "Use `color=\"text.secondary\"` for supporting copy rather than a literal colour",
+        "Space stacked text with the parent’s `gap` rather than `gutterBottom`"
+      ],
+      "donts": [
+        "Don’t import `Typography` from `@mui/material` — its `subtitle1`, `subtitle2`, `button` and `overline` variants carry Material’s metrics, not this scale’s",
+        "Don’t set `fontSize`, `lineHeight` or `letterSpacing` by hand; if no rung fits, the scale is the thing to change",
+        "Don’t use `fontWeight: 700` — DM Sans has no Bold cut, so the browser synthesises one. `weight=\"semibold\"` is the top of the ladder",
+        "Don’t pick a heading variant for its size alone on a page that then has no `h1`",
+        "Don’t use a heading rung as body copy to make it look emphatic — that is what `weight` is for"
+      ],
+      "relatedComponents": [
+        "Link",
+        "Stack",
         "Alert"
       ]
     },

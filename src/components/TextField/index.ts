@@ -1,2 +1,7 @@
 export { TextField } from './TextField';
-export type { TextFieldProps, TextFieldStatus } from './TextField.types';
+export { InputAdornment } from './InputAdornment';
+export type {
+  InputAdornmentProps,
+  TextFieldProps,
+  TextFieldStatus,
+} from './TextField.types';

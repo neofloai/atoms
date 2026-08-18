@@ -15,7 +15,6 @@
 export const dashboardCode = `'use client';
 
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
 import {
   Box,
   Button,
@@ -31,6 +30,7 @@ import {
   TextField,
   ToggleButton,
   Tooltip,
+  Typography,
   countActiveFilters,
 } from '@neofloai/atoms';
 import {
