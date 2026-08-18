@@ -14,11 +14,14 @@ import type { InstallStep } from '@/src/install';
 /**
  * What is being made. This is the fork the whole brief turns on, which
  * is why it is asked first and answered before anything else matters.
+ *
+ * It is asked as what the user wants to create rather than as who they
+ * are. The same three answers cover both: a designer and a manager both
+ * want a working prototype with no database behind it, and asking them
+ * to classify themselves first is a question about them rather than
+ * about the thing being built.
  */
 export type ProjectPurpose = 'prototype' | 'new-project' | 'existing-project';
-
-/** Who is going to open it, which decides how much of it is real. */
-export type ProjectAudience = 'designer' | 'manager' | 'engineer';
 
 /** Framework for a new project. Asked rather than inferred. */
 export type ProjectTechStack = 'react' | 'nextjs';
@@ -89,7 +92,6 @@ export interface ExistingAppFacts {
  */
 export interface ProjectBrief {
   purpose?: ProjectPurpose;
-  audience?: ProjectAudience;
   techStack?: ProjectTechStack;
   existingApp?: ExistingAppFacts;
   projectName?: string;
@@ -142,10 +144,26 @@ export interface BrandAsset {
 export interface ProjectGuide {
   questions: readonly BriefQuestion[];
   targets: readonly ProjectTargetRecipe[];
-  /** Extra rules that apply per audience once the target is known. */
-  audienceNotes: Readonly<Record<ProjectAudience, readonly string[]>>;
+  /**
+   * Extra rules that hang off the purpose rather than off the target.
+   *
+   * Keyed on purpose because that is the only thing asked about the
+   * work: what a prototype has to get right (everything reachable,
+   * nothing half-styled) is not what a project that will be maintained
+   * has to get right (typed records, visible seams for real data).
+   */
+  purposeNotes: Readonly<Record<ProjectPurpose, readonly string[]>>;
   /** Rules that hold for every project, reported with every plan. */
   rules: readonly string[];
+  /**
+   * Rules that apply only when something is being created.
+   *
+   * Held apart from `rules` so an integration plan does not carry
+   * instructions about where to put a folder it will never make. A plan
+   * that says nothing is created and then says where to create it can be
+   * followed either way, which makes it worse than no rule at all.
+   */
+  creationRules: readonly string[];
   /**
    * Search terms that should surface the intake.
    *

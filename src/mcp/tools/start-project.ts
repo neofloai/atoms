@@ -10,9 +10,9 @@ import { renderQuestion, renderQuestionSections } from '../format';
 
 import type {
   BriefQuestion,
-  ProjectAudience,
   ProjectBrief,
   ProjectGuide,
+  ProjectPurpose,
 } from '@/src/project/types';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { PatternData } from '../types';
@@ -31,7 +31,6 @@ const briefSchema = z
     purpose: z
       .enum(['prototype', 'new-project', 'existing-project'])
       .optional(),
-    audience: z.enum(['designer', 'manager', 'engineer']).optional(),
     techStack: z.enum(['react', 'nextjs']).optional(),
     existingApp: z
       .object({
@@ -49,11 +48,11 @@ const briefSchema = z
   })
   .optional();
 
-/** How the plan names who it is for, in a sentence that reads. */
-const AUDIENCE_HEADINGS: Record<ProjectAudience, string> = {
-  designer: 'a designer',
-  manager: 'someone showing it on rather than building it',
-  engineer: 'an engineer',
+/** How the plan names what is being built, in a sentence that reads. */
+const PURPOSE_HEADINGS: Record<ProjectPurpose, string> = {
+  prototype: 'a prototype rather than a product',
+  'new-project': 'a new project that will be maintained',
+  'existing-project': 'code going into an app that already runs',
 };
 
 /** The interview, for a call that arrived with nothing. */
@@ -80,7 +79,9 @@ function renderInterview(guide: ProjectGuide): string {
     '',
     '## Rules that hold whatever the answers are',
     '',
-    guide.rules.map((rule) => `- ${rule}`).join('\n'),
+    [...guide.rules, ...guide.creationRules]
+      .map((rule) => `- ${rule}`)
+      .join('\n'),
   ].join('\n');
 }
 
@@ -140,8 +141,16 @@ function renderPlan(
   const recipe = guide.targets.find((t) => t.id === decision.target);
   const name = brief.projectName ?? 'the-project';
   const stillOpen = unansweredRecommended(guide.questions, brief);
-  const audienceNotes = brief.audience
-    ? guide.audienceNotes[brief.audience]
+
+  // `purpose` is required, so a rendered plan always has one — the guard
+  // is what makes that provable rather than asserted.
+  const purposeSection = brief.purpose
+    ? [
+        '',
+        `## Because this is ${PURPOSE_HEADINGS[brief.purpose]}`,
+        '',
+        guide.purposeNotes[brief.purpose].map((note) => `- ${note}`).join('\n'),
+      ]
     : [];
 
   const location =
@@ -191,18 +200,19 @@ function renderPlan(
     '## Order of operations',
     '',
     nextCalls.join('\n'),
-    ...(audienceNotes.length > 0 && brief.audience
-      ? [
-          '',
-          `## Because this is for ${AUDIENCE_HEADINGS[brief.audience]}`,
-          '',
-          audienceNotes.map((note) => `- ${note}`).join('\n'),
-        ]
-      : []),
+    ...purposeSection,
     '',
     '## Rules',
     '',
-    guide.rules.map((rule) => `- ${rule}`).join('\n'),
+    // The location rules are dropped for an integration: there is no
+    // folder to make, and a plan that says both is one an agent can obey
+    // either way.
+    (decision.target === 'existing'
+      ? guide.rules
+      : [...guide.rules, ...guide.creationRules]
+    )
+      .map((rule) => `- ${rule}`)
+      .join('\n'),
     ...(stillOpen.length > 0
       ? [
           '',
@@ -232,7 +242,7 @@ export function registerStartProject(server: McpServer): void {
     {
       title: 'Start a project',
       description:
-        'ALWAYS call this first when the user wants something built with @neofloai/atoms — a prototype, the frontend of a new project, or Atoms added to a project that already exists. Call it with no arguments to get the ten questions to ask the user; call it again with `brief` once you have the answers to get the resolved build plan: which framework, where on disk, which patterns and components, and the tool calls to make in order. Four to seven answers are required depending on the purpose, and it withholds the plan until they are in, so do not scaffold, install, or write components before calling it.',
+        'ALWAYS call this first when the user wants something built with @neofloai/atoms — a prototype, the frontend of a new project, or Atoms added to a project that already exists. Call it with no arguments to get the nine questions to ask the user; call it again with `brief` once you have the answers to get the resolved build plan: which framework, where on disk, which patterns and components, and the tool calls to make in order. Three to six answers are required depending on the purpose, and it withholds the plan until they are in, so do not scaffold, install, or write components before calling it.',
       inputSchema: {
         brief: briefSchema.describe(
           'The answers gathered so far. Omit entirely on the first call to get the questions.'
