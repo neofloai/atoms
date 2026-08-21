@@ -98,6 +98,7 @@ export const navigation: readonly NavSection[] = [
       { label: 'Extraction', href: '/patterns/extraction' },
       { label: 'Matching', href: '/patterns/matching' },
       { label: 'ERP Posting', href: '/patterns/erp-posting' },
+      { label: 'Reporting', href: '/patterns/reporting' },
       { label: 'Settings', href: '/patterns/settings', disabled: true },
       { label: 'Auth', href: '/patterns/auth', disabled: true },
     ],

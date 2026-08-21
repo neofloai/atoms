@@ -15,7 +15,11 @@ import {
 } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
-import { adornmentBox, adornmentButton } from '../_shared/fieldStyles';
+import {
+  ASTERISK_GAP_PX,
+  adornmentBox,
+  adornmentButton,
+} from '../_shared/fieldStyles';
 
 import type { CSSObject } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
@@ -86,7 +90,15 @@ const StyledTextField = styled(MuiTextField, {
       width: '100%',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      // Packed from the start, with the counter claiming the slack
+      // below. `space-between` was the obvious way to push the counter
+      // right and it is wrong here, because MUI renders the required
+      // asterisk as a *sibling* of the label text rather than inside
+      // it: on a required field with no counter the asterisk became
+      // the second flex item and got thrown to the far edge, so `PO
+      // Number *` on a 244px field put its mark 228px from the word it
+      // belongs to — closer to the next column's label than its own.
+      justifyContent: 'flex-start',
       padding: `0 ${FIELD_PADDING_PX}px`,
       marginBottom: spacing.component.xxs,
       ...labelFont,
@@ -96,7 +108,14 @@ const StyledTextField = styled(MuiTextField, {
       // a status is set (handled separately below).
       '&.Mui-focused': paired(theme, { color: text.default.placeholder }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
+      // MUI's asterisk node is the string " *", and that leading space
+      // sits at the start of a flex item's line box, where it
+      // collapses. This is the space put back.
+      '& .MuiFormLabel-asterisk': { marginLeft: ASTERISK_GAP_PX },
       '& .Neoflo-TextField-counter': {
+        // What `space-between` used to do, asked for by the one element
+        // that actually wants it.
+        marginLeft: 'auto',
         ...helperFont,
         ...paired(theme, { color: text.default.placeholder }),
       },

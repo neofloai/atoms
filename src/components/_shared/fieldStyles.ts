@@ -35,6 +35,22 @@ export const FIELD_HEIGHT_PX =
   FIELD_CONTENT_HEIGHT_PX + 2 * FIELD_PADDING_PX;
 
 /**
+ * Gap between a label and its required asterisk.
+ *
+ * MUI renders the mark as a sibling node whose text is the string `" *"`,
+ * relying on that leading space for the gap. The label is a flex row (so the
+ * character counter can sit at the far end of it), which makes the mark a
+ * flex item — and a space at the start of a flex item's line box collapses.
+ * This is that space, as a margin, so the mark sits beside the word it
+ * qualifies in every field in the library.
+ *
+ * Not on the spacing scale on purpose: it is not spacing between two
+ * elements, it is the width of one space character at `B1`, and the next
+ * rung up (`Scale/100`, 4px) reads as a gap rather than as punctuation.
+ */
+export const ASTERISK_GAP_PX = 2;
+
+/**
  * The glyph inside a field's adornment button. 16px against the
  * `IconContext` default of 24 that `NeofloThemeProvider` sets — a control
  * inside a 36px field reads as chrome at 16 and crowds it at 24.
