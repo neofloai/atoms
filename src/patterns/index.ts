@@ -15,9 +15,13 @@
  */
 
 import { dashboard } from './dashboard';
+import { invoiceDashboard } from './invoiceDashboard';
 
 import type { PatternExamplesData } from '@/src/types/docs';
 
-export const patterns: readonly PatternExamplesData[] = [dashboard];
+export const patterns: readonly PatternExamplesData[] = [
+  dashboard,
+  invoiceDashboard,
+];
 
-export { dashboard };
+export { dashboard, invoiceDashboard };

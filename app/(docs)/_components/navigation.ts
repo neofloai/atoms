@@ -94,6 +94,7 @@ export const navigation: readonly NavSection[] = [
     title: 'Patterns',
     items: [
       { label: 'Dashboard', href: '/patterns/dashboard' },
+      { label: 'Invoice Dashboard', href: '/patterns/invoice-dashboard' },
       { label: 'Settings', href: '/patterns/settings', disabled: true },
       { label: 'Auth', href: '/patterns/auth', disabled: true },
     ],
