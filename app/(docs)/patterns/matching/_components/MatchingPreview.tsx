@@ -931,7 +931,7 @@ export function MatchingPreview() {
           >
             Ask Neo
           </Button>
-          <Button variant="error" appearance="outline" size="sm">
+          <Button variant="error" appearance="contained" size="sm">
             Reject
           </Button>
           <Tooltip

@@ -1240,7 +1240,7 @@ export default function MatchingPage() {
           >
             Ask Neo
           </Button>
-          <Button variant="error" appearance="outline" size="sm">
+          <Button variant="error" appearance="contained" size="sm">
             Reject
           </Button>
           {/* Disabled until both halves agree. The label never changes and the
