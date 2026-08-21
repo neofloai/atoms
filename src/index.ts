@@ -672,6 +672,14 @@ export type {
   DataGridRowState,
   DataGridSize,
 } from './components/DataGrid';
+/**
+ * The column type, re-exported because `columns` is the one prop a grid
+ * cannot be used without and it is deliberately MUI's shape. Without this
+ * a consumer typing their own column list has to import from
+ * `@mui/x-data-grid` — the exact reach into MUI the rest of this file
+ * exists to make unnecessary.
+ */
+export type { GridColDef } from '@mui/x-data-grid';
 
 /**
  * Motion primitives — MUI's five transitions, re-exported under the

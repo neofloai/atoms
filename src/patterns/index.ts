@@ -15,9 +15,22 @@
  */
 
 import { dashboard } from './dashboard';
+import { erpPosting } from './erpPosting';
+import { invoiceDashboard } from './invoiceDashboard';
+import { matching } from './matching';
 
 import type { PatternExamplesData } from '@/src/types/docs';
 
-export const patterns: readonly PatternExamplesData[] = [dashboard];
+/**
+ * Ordered as the invoice processing workflow runs, not alphabetically: the
+ * queue, then the stages a record moves through. `get_pattern` serves them
+ * in this order too, so an agent reading the list sees the sequence.
+ */
+export const patterns: readonly PatternExamplesData[] = [
+  dashboard,
+  invoiceDashboard,
+  matching,
+  erpPosting,
+];
 
-export { dashboard };
+export { dashboard, erpPosting, invoiceDashboard, matching };
