@@ -17,6 +17,7 @@ import {
 import { CaretDownIcon } from '@/src/icons';
 
 import { paired } from '../_shared/actionStyles';
+import { ASTERISK_GAP_PX } from '../_shared/fieldStyles';
 
 import type { CSSObject } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
@@ -85,13 +86,20 @@ const StyledSelect = styled(MuiTextField, {
       width: '100%',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      // Packed from the start. `TextField` spreads its label row so the
+      // character counter can sit at the far end; a `Select` has no
+      // counter, so copying that left the required asterisk — which MUI
+      // renders as a sibling of the label text, not inside it — as the
+      // only other flex item, thrown to the opposite edge of the field.
+      justifyContent: 'flex-start',
       padding: `0 ${FIELD_PADDING_PX}px`,
       marginBottom: spacing.component.xxs,
       ...labelFont,
       ...paired(theme, { color: text.default.placeholder }),
       '&.Mui-focused': paired(theme, { color: text.default.placeholder }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
+      // The space in MUI's " *" collapses at the start of a flex item.
+      '& .MuiFormLabel-asterisk': { marginLeft: ASTERISK_GAP_PX },
     },
     '& .MuiOutlinedInput-root': {
       borderRadius: radius.sm,

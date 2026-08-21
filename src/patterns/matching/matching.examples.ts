@@ -41,7 +41,7 @@ export const data: PatternExamplesData = {
     'Gate `Validate` on decisions rather than on the numbers agreeing, and name the tab that is still open in the tooltip — the user is one click from the work, not one guess from it',
   ],
   donts: [
-    "Don't invent a row fill for a state the row component does not model. `TableRowState` is `default | error | success` because the design's own row set draws those three and no warning, so a probable line takes its glyph and its subtotal row rather than an amber tint mixed at the call site",
+    "Don't invent a row fill for a state the row component does not model. `TableRowState` is `default | error | success` and carries no warning, so a probable line takes its glyph and its subtotal row rather than an amber tint mixed at the call site",
     "Don't let this screen edit the invoice. The amount is extraction's to fix, and a matching screen that can rewrite the document it is checking has stopped being a check",
     "Don't store the status on the line: it goes stale the moment a receipt is allocated, and the row then disagrees with the numbers printed inside it",
     "Don't match on quantity alone. Two receipts can come to exactly the right quantity at two different unit prices, and the invoice is then over by the difference with every quantity on the page agreeing",

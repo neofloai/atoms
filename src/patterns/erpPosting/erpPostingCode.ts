@@ -556,7 +556,7 @@ export default function ErpPostingPage() {
         <Box sx={{ flex: 1 }} />
 
         <Stack direction="row" sx={{ gap: ACTION_GAP, flexShrink: 0 }}>
-          <Button variant="error" appearance="outline" size="sm">
+          <Button variant="error" appearance="contained" size="sm">
             Reject
           </Button>
           <Button
