@@ -175,7 +175,6 @@ interface Maintainer {
   readonly name: string;
   readonly area: string;
   readonly email: string;
-  readonly owns: string;
 }
 
 const maintainers: readonly Maintainer[] = [
@@ -183,13 +182,16 @@ const maintainers: readonly Maintainer[] = [
     name: 'Ankit Verma',
     area: 'Engineering',
     email: 'ankit.v@neoflo.ai',
-    owns: 'Component APIs, the theme, the package build, the MCP endpoint',
   },
   {
     name: 'Dhruva Vijayaraghavan',
     area: 'Design',
     email: 'dhruva.v@neoflo.ai',
-    owns: 'Tokens, component specs, and sign-off on anything new',
+  },
+  {
+    name: 'Ruma',
+    area: 'Design',
+    email: 'ruma.c@neoflo.ai',
   },
 ];
 
@@ -364,7 +366,6 @@ export default function HelpPage() {
                 <TableRow>
                   <TableCell sx={{ fontWeight: 700 }}>Name</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Area</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Looks after</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -386,9 +387,6 @@ export default function HelpPage() {
                     </TableCell>
                     <TableCell sx={{ whiteSpace: 'nowrap' }}>
                       {person.area}
-                    </TableCell>
-                    <TableCell sx={{ color: 'text.secondary' }}>
-                      {person.owns}
                     </TableCell>
                   </TableRow>
                 ))}
