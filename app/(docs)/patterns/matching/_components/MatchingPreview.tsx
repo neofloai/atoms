@@ -87,6 +87,7 @@ import {
 } from './matchingRecord';
 
 import type { Theme } from '@mui/material/styles';
+import type { TableRowState } from '@/src/components/Table';
 import type { ModeToken } from '@/src/tokens';
 import type {
   GrnReceipt,
@@ -123,28 +124,47 @@ const GRN_TABLE_MIN_PX = 520;
  */
 const TABLE_LAYOUT = { tableLayout: 'fixed' } as const;
 
+/**
+ * The two column sets, at the widths the design sets them.
+ *
+ * The invoice panel's checkbox cell is 64 and holds two 16px glyphs — the match
+ * status and the row's own checkbox — which is why it is wider than a checkbox
+ * column normally is.
+ *
+ * The last two money columns are flex in both panels rather than the 156 the
+ * GRN header fixes them at: 776px of fixed columns will not fit a panel that is
+ * half of a docs page, and the design's own subtotal row leaves those same two
+ * columns flexible, so it is not consistent about it either.
+ */
 const INVOICE_COLS = {
-  status: 44,
-  line: 104,
-  qty: 52,
-  unit: 80,
-  total: 92,
-  // Wide enough for the one control it ever holds. A narrower column clips a
-  // `Button` rather than shrinking it.
-  action: 104,
+  check: 64,
+  itemNo: 80,
+  description: 150,
+  qty: 70,
 } as const;
 
 const GRN_COLS = {
-  check: 44,
-  line: 92,
-  po: 108,
-  qty: 52,
-  unit: 80,
-  total: 92,
+  check: 64,
+  poNo: 100,
+  grnNo: 80,
+  description: 150,
+  qty: 70,
 } as const;
 
 /** Clip rather than wrap, per `TableCell`'s own note on long text. */
 const truncate = { overflow: 'hidden', textOverflow: 'ellipsis' } as const;
+
+/**
+ * The description column, which is the one column here that is prose.
+ *
+ * `TableCell` is `white-space: nowrap` by default and its own JSDoc names the
+ * two ways out: truncate, or say so — `sx={{ whiteSpace: 'normal' }}` paired
+ * with a width. The design wraps these to two and three lines inside 150px, so
+ * this takes the second way out. Rows then vary in height, which is what the
+ * design draws and what the row height being a floor rather than a ceiling
+ * allows.
+ */
+const wrap = { whiteSpace: 'normal' } as const;
 
 const DETAILS_TABLE_MIN_PX = 720;
 
@@ -222,45 +242,54 @@ const STATUS_ICON_PX = 16;
  */
 const STATUS_MARKS: Record<
   MatchStatus,
-  { icon: React.ReactNode; tone: ModeToken; label: string; help: string }
+  {
+    icon: React.ReactNode;
+    tone: ModeToken;
+    label: string;
+    help: string;
+    row: TableRowState;
+  }
 > = {
   matched: {
     icon: <CheckCircleIcon weight="fill" size={STATUS_ICON_PX} />,
     tone: icon.success.onColorHover,
     label: 'Matched',
     help: 'Quantity and amount both agree with the receipts allocated to this line',
+    row: 'success',
   },
   probable: {
     icon: <QuestionIcon weight="fill" size={STATUS_ICON_PX} />,
     tone: icon.warning.accent,
     label: 'Probable',
     help: 'Receipts found for this item, but they do not add up to the line',
+    // No fill. The design's own State axis on `table-rows` has six values and
+    // none of them is a warning, so a tint here would be a rung invented at a
+    // call site — the glyph and the group's own subtotal carry it instead.
+    row: 'default',
   },
   'no-match': {
     icon: <XCircleIcon weight="fill" size={STATUS_ICON_PX} />,
     tone: icon.error.onColorHover,
     label: 'No match',
     help: 'No goods receipt exists for this line',
+    row: 'error',
   },
   accepted: {
     icon: <SealCheckIcon weight="fill" size={STATUS_ICON_PX} />,
     tone: icon.information.onColorHover,
     label: 'Accepted',
     help: 'Someone decided this line is payable without a receipt',
+    // Resolved, but not matched: a person overrode the check rather than the
+    // check passing, and `success` would say the second thing.
+    row: 'default',
   },
 };
 
-/** The four buckets the invoice panel filters by, in severity order. */
-const STATUS_FILTERS: readonly {
-  key: MatchStatus | 'all';
-  label: string;
-  variant: 'secondary' | 'success' | 'warning' | 'error';
-}[] = [
-  { key: 'all', label: 'All', variant: 'secondary' },
-  { key: 'matched', label: 'Matched', variant: 'success' },
-  { key: 'probable', label: 'Probable', variant: 'warning' },
-  { key: 'no-match', label: 'No match', variant: 'error' },
-];
+/**
+ * The design's own placeholder for an item number a line does not have — the
+ * freight line, which is a service and has no catalogue code.
+ */
+const EMPTY_ITEM_NO = '—';
 
 /**
  * The status glyph on a row.
@@ -331,7 +360,10 @@ function PanelHeader({
         />
       ) : (
         <>
-          <Typography variant="caption" color="text.secondary">
+          {/* The design sets this at 14px in the body ink — full strength,
+              because it names which document the panel is. 14 is not a rung in
+              this scale, so it takes the 13px one above it in its Medium cut. */}
+          <Typography variant="body1" weight="medium">
             {title}
           </Typography>
           <Box sx={{ flex: 1 }} />
@@ -513,40 +545,78 @@ function InvoiceDetailsTab({
 
 /* -------------------------------------------------------------- line items */
 
-/** One invoice line, and the one action a line can carry. */
+/**
+ * One invoice line.
+ *
+ * The leading cell holds two 16px glyphs, as the design draws it: the match
+ * status, then the row's own checkbox. The checkbox is the decision — it opens
+ * ticked on a line that matched and clear on one that did not, so ticking an
+ * unmatched line is a person saying it is payable anyway. That is why there is
+ * no separate Accept button: the design's own control already asks the
+ * question.
+ */
 function InvoiceRow({
   line,
   status,
   selected,
   onSelect,
-  onAccept,
+  onToggleAccept,
 }: {
   line: InvoiceLine;
   status: MatchStatus;
   selected: boolean;
   onSelect: () => void;
-  onAccept: () => void;
+  onToggleAccept: () => void;
 }) {
-  // Accept is offered only where there is nothing left to allocate. A line
-  // with candidate receipts can still be matched, and accepting it would file
-  // the difference away rather than resolve it.
-  const canAccept =
-    status === 'no-match' && candidatesFor(GRN_RECEIPTS, line.id).length === 0;
+  const matched = status === 'matched';
+  const accepted = status === 'accepted';
 
   return (
-    <TableRow hover selected={selected} onClick={onSelect}>
-      <TableCell padding="checkbox">
-        <StatusMark status={status} />
+    <TableRow
+      hover
+      selected={selected}
+      state={STATUS_MARKS[status].row}
+      onClick={onSelect}
+    >
+      <TableCell sx={{ width: INVOICE_COLS.check }} align="right">
+        <Stack
+          direction="row"
+          sx={{ alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}
+        >
+          <StatusMark status={status} />
+          <Tooltip
+            title={
+              matched
+                ? 'Matched, and included'
+                : accepted
+                  ? 'Included without a matching receipt'
+                  : 'Include this line without a matching receipt'
+            }
+          >
+            {/* A matched line is ticked and stays ticked: unticking it would
+                mean excluding a line that agrees, which is not a decision this
+                screen is for. */}
+            <Checkbox
+              checked={matched || accepted}
+              disabled={matched}
+              onChange={onToggleAccept}
+              onClick={(event) => event.stopPropagation()}
+              aria-label={'Include line ' + line.id}
+            />
+          </Tooltip>
+        </Stack>
       </TableCell>
-      {/* Both identifiers in one cell: the line id is the join with the panel
-          beside this one, and the item number is what the vendor calls it. */}
-      <TableCell secondary={line.itemNo}>
+      <TableCell sx={{ width: INVOICE_COLS.itemNo }}>
         <Index>{line.id}</Index>
       </TableCell>
-      <TableCell title={line.description} sx={truncate}>
-        {line.description}
+      {/* The item code and the description in one string, separated by a
+          middot, as the design writes it. */}
+      <TableCell sx={{ width: INVOICE_COLS.description, ...wrap }}>
+        {line.itemNo === EMPTY_ITEM_NO
+          ? line.description
+          : line.itemNo + ' · ' + line.description}
       </TableCell>
-      <TableCell align="right">
+      <TableCell sx={{ width: INVOICE_COLS.qty }}>
         <Digits>{line.quantity}</Digits>
       </TableCell>
       <TableCell align="right">
@@ -554,26 +624,6 @@ function InvoiceRow({
       </TableCell>
       <TableCell align="right">
         <Money>{formatAmount(line.lineTotal)}</Money>
-      </TableCell>
-      {/* Nothing here once the line is accepted: the status glyph already
-          carries that, and a chip repeating it would be the same fact twice in
-          one row. */}
-      <TableCell align="right">
-        {canAccept ? (
-          <Tooltip title="No goods receipt can exist for a service line. Accepting it records that decision against your name and lets the invoice move on.">
-            <Button
-              variant="secondary"
-              appearance="outline"
-              size="sm"
-              onClick={(event) => {
-                event.stopPropagation();
-                onAccept();
-              }}
-            >
-              Accept
-            </Button>
-          </Tooltip>
-        ) : null}
       </TableCell>
     </TableRow>
   );
@@ -593,21 +643,26 @@ function ReceiptRow({
 }) {
   return (
     <TableRow selected={selected}>
-      <TableCell padding="checkbox">
+      <TableCell sx={{ width: GRN_COLS.check }} align="right">
         <Checkbox
           checked={allocated}
           onChange={onToggle}
           aria-label={'Allocate ' + receipt.grnNo + ' to ' + receipt.lineId}
         />
       </TableCell>
-      <TableCell>
-        <Index>{receipt.lineId}</Index>
+      {/* A tag, as the design draws the purchase order reference — it is the
+          one value on the row that names a document rather than describing
+          this one. */}
+      <TableCell sx={{ width: GRN_COLS.poNo }}>
+        <Chip size="sm" variant="secondary" label={receipt.poNo} />
       </TableCell>
-      <TableCell secondary={receipt.grnNo}>{receipt.poNo}</TableCell>
-      <TableCell title={receipt.description} sx={truncate}>
+      <TableCell sx={{ width: GRN_COLS.grnNo }}>
+        <Index>{receipt.grnNo}</Index>
+      </TableCell>
+      <TableCell sx={{ width: GRN_COLS.description, ...wrap }}>
         {receipt.description}
       </TableCell>
-      <TableCell align="right">
+      <TableCell sx={{ width: GRN_COLS.qty }}>
         <Digits>{receipt.quantity}</Digits>
       </TableCell>
       <TableCell align="right">
@@ -640,42 +695,30 @@ function GroupTotalRow({
 
   return (
     <TableRow state={balanced ? 'success' : 'error'}>
-      <TableCell padding="checkbox" />
-      <TableCell>
-        <Index>{line.id}</Index>
-      </TableCell>
       <TableCell />
-      <TableCell>
-        <Stack
-          direction="row"
-          sx={{ alignItems: 'center', gap: 1, flexWrap: 'wrap' }}
-        >
-          <Typography variant="body2" weight="semibold">
-            Allocated
-          </Typography>
-          {gap.quantity !== 0 && (
-            <Chip
-              size="sm"
-              variant="warning"
-              label={formatQuantityGap(gap.quantity)}
-            />
-          )}
-          {gap.amount !== 0 && (
-            <Chip
-              size="sm"
-              variant={gap.amount > 0 ? 'error' : 'orange'}
-              label={formatAmountGap(gap.amount)}
-            />
-          )}
-        </Stack>
+      <TableCell />
+      <TableCell />
+      {/* "Total" in the description column, where the design puts it, with the
+          invoice line it totals against beside it — the design leaves that
+          implicit and relies on the row's position in the group. */}
+      <TableCell sx={wrap} secondary={'against ' + line.id}>
+        <Typography variant="body2" weight="semibold">
+          Total
+        </Typography>
       </TableCell>
-      <TableCell align="right">
+      {/* The two gaps stack under the figures they are about, as the design
+          places them: the quantity delta under the quantity, the money delta
+          under the money. `secondary` is `TableCell`'s own second line. */}
+      <TableCell secondary={formatQuantityGap(gap.quantity) || undefined}>
         <Typography variant="body2" weight="semibold">
           <Digits>{sumQuantity(allocatedRows)}</Digits>
         </Typography>
       </TableCell>
       <TableCell />
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        secondary={formatAmountGap(gap.amount) || undefined}
+      >
         <Typography variant="body2" weight="semibold">
           <Money>{formatMoney(sumTotal(allocatedRows))}</Money>
         </Typography>
@@ -743,9 +786,6 @@ export function MatchingPreview() {
   const [selectedLineId, setSelectedLineId] = React.useState(
     INVOICE_LINES[0].id
   );
-  const [statusFilter, setStatusFilter] = React.useState<MatchStatus | 'all'>(
-    'all'
-  );
   const [invoiceQuery, setInvoiceQuery] = React.useState('');
   const [grnQuery, setGrnQuery] = React.useState('');
   const [allocatedOnly, setAllocatedOnly] = React.useState(false);
@@ -769,8 +809,24 @@ export function MatchingPreview() {
     return next;
   }
 
-  // Every status, recomputed from the allocation. The panels, the filter
-  // counts, the tab counts and the gate below all read this one list.
+  /**
+   * Include a line that did not match, or take it back out.
+   *
+   * The row checkbox and this are the same thing: the design's leading cell
+   * opens ticked where the line matched, so ticking one that did not is the
+   * person saying it is payable anyway.
+   */
+  function toggleAccepted(id: string) {
+    setAccepted((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  // Every status, recomputed from the allocation. The panels, the tab counts
+  // and the gate below all read this one list.
   const statuses = INVOICE_LINES.map((line) => ({
     line,
     status: statusFor(
@@ -785,18 +841,11 @@ export function MatchingPreview() {
     (field) => !metaFieldResolved(field, acknowledged)
   );
 
-  const countFor = (key: MatchStatus | 'all') =>
-    key === 'all'
-      ? statuses.length
-      : statuses.filter((entry) => entry.status === key).length;
-
-  const visibleLines = statuses.filter(
-    (entry) =>
-      (statusFilter === 'all' || entry.status === statusFilter) &&
-      matchesQuery(
-        [entry.line.id, entry.line.itemNo, entry.line.description],
-        invoiceQuery
-      )
+  const visibleLines = statuses.filter((entry) =>
+    matchesQuery(
+      [entry.line.id, entry.line.itemNo, entry.line.description],
+      invoiceQuery
+    )
   );
 
   const groups = INVOICE_LINES.map((line) => ({
@@ -979,23 +1028,6 @@ export function MatchingPreview() {
                   searchLabel="Search invoice lines"
                 />
 
-                <Stack
-                  direction="row"
-                  sx={{ gap: 1, px: 2, pb: 1.5, flexWrap: 'wrap' }}
-                >
-                  {STATUS_FILTERS.map((filter) => (
-                    <Chip
-                      key={filter.key}
-                      dense
-                      variant={filter.variant}
-                      appearance="outline"
-                      selected={statusFilter === filter.key}
-                      onClick={() => setStatusFilter(filter.key)}
-                      label={filter.label + ' ' + countFor(filter.key)}
-                    />
-                  ))}
-                </Stack>
-
                 <TableContainer sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
                   <Table
                     size="sm"
@@ -1004,36 +1036,28 @@ export function MatchingPreview() {
                     <TableHead>
                       <TableRow>
                         <TableCell
-                          padding="checkbox"
-                          sx={{ width: INVOICE_COLS.status }}
+                          sx={[labelCell, { width: INVOICE_COLS.check }]}
                         />
-                        <TableCell sx={{ width: INVOICE_COLS.line }}>
-                          Line
-                        </TableCell>
-                        <TableCell>Description</TableCell>
                         <TableCell
-                          align="right"
-                          sx={{ width: INVOICE_COLS.qty }}
+                          sx={[labelCell, { width: INVOICE_COLS.itemNo }]}
+                        >
+                          Item No.
+                        </TableCell>
+                        <TableCell
+                          sx={[labelCell, { width: INVOICE_COLS.description }]}
+                        >
+                          Description
+                        </TableCell>
+                        <TableCell
+                          sx={[labelCell, { width: INVOICE_COLS.qty }]}
                         >
                           Qty
                         </TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{ width: INVOICE_COLS.unit }}
-                        >
-                          Price ($)
+                        <TableCell align="right" sx={labelCell}>
+                          Unit Price ($)
                         </TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{ width: INVOICE_COLS.total }}
-                        >
-                          Total ($)
-                        </TableCell>
-                        <TableCell
-                          align="right"
-                          sx={{ width: INVOICE_COLS.action }}
-                        >
-                          Action
+                        <TableCell align="right" sx={labelCell}>
+                          Line Total ($)
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -1045,33 +1069,28 @@ export function MatchingPreview() {
                           status={entry.status}
                           selected={entry.line.id === selectedLineId}
                           onSelect={() => setSelectedLineId(entry.line.id)}
-                          onAccept={() =>
-                            setAccepted((previous) =>
-                              addTo(previous, entry.line.id)
-                            )
-                          }
+                          onToggleAccept={() => toggleAccepted(entry.line.id)}
                         />
                       ))}
                       <TableRow>
-                        <TableCell padding="checkbox" />
-                        <TableCell />
-                        <TableCell>
+                        <TableCell sx={labelCell} />
+                        <TableCell sx={labelCell} />
+                        <TableCell sx={labelCell}>
                           <Typography variant="body2" weight="semibold">
-                            Invoice total
+                            Invoice Total
                           </Typography>
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell sx={labelCell}>
                           <Typography variant="body2" weight="semibold">
                             <Digits>{invoiceQuantity(INVOICE_LINES)}</Digits>
                           </Typography>
                         </TableCell>
-                        <TableCell />
-                        <TableCell align="right">
+                        <TableCell sx={labelCell} />
+                        <TableCell align="right" sx={labelCell}>
                           <Typography variant="body2" weight="semibold">
                             <Money>{formatMoney(billed)}</Money>
                           </Typography>
                         </TableCell>
-                        <TableCell />
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -1080,8 +1099,7 @@ export function MatchingPreview() {
                 <Divider />
                 <Box sx={{ px: 2, py: 1 }}>
                   <Typography variant="caption" color="text.secondary">
-                    {visibleLines.length + ' of ' + INVOICE_LINES.length +
-                      ' lines'}
+                    {'Total Line items: ' + INVOICE_LINES.length}
                   </Typography>
                 </Box>
               </Stack>
@@ -1127,23 +1145,26 @@ export function MatchingPreview() {
                   >
                     <TableHead>
                       <TableRow>
-                        <TableCell
-                          padding="checkbox"
-                          sx={{ width: GRN_COLS.check }}
-                        />
-                        <TableCell sx={{ width: GRN_COLS.line }}>Line</TableCell>
-                        <TableCell sx={{ width: GRN_COLS.po }}>
-                          PO / GRN
+                        <TableCell sx={[labelCell, { width: GRN_COLS.check }]} />
+                        <TableCell sx={[labelCell, { width: GRN_COLS.poNo }]}>
+                          PO No.
                         </TableCell>
-                        <TableCell>Description</TableCell>
-                        <TableCell align="right" sx={{ width: GRN_COLS.qty }}>
+                        <TableCell sx={[labelCell, { width: GRN_COLS.grnNo }]}>
+                          GRN No.
+                        </TableCell>
+                        <TableCell
+                          sx={[labelCell, { width: GRN_COLS.description }]}
+                        >
+                          Description
+                        </TableCell>
+                        <TableCell sx={[labelCell, { width: GRN_COLS.qty }]}>
                           Qty
                         </TableCell>
-                        <TableCell align="right" sx={{ width: GRN_COLS.unit }}>
-                          Price ($)
+                        <TableCell align="right" sx={labelCell}>
+                          Unit Price ($)
                         </TableCell>
-                        <TableCell align="right" sx={{ width: GRN_COLS.total }}>
-                          Total ($)
+                        <TableCell align="right" sx={labelCell}>
+                          Line Total ($)
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -1166,21 +1187,21 @@ export function MatchingPreview() {
                         </React.Fragment>
                       ))}
                       <TableRow>
-                        <TableCell padding="checkbox" />
-                        <TableCell />
-                        <TableCell />
-                        <TableCell>
+                        <TableCell sx={labelCell} />
+                        <TableCell sx={labelCell} />
+                        <TableCell sx={labelCell} />
+                        <TableCell sx={labelCell}>
                           <Typography variant="body2" weight="semibold">
-                            GRN total
+                            GRN Total
                           </Typography>
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell sx={labelCell}>
                           <Typography variant="body2" weight="semibold">
                             <Digits>{sumQuantity(allocatedReceipts)}</Digits>
                           </Typography>
                         </TableCell>
-                        <TableCell />
-                        <TableCell align="right">
+                        <TableCell sx={labelCell} />
+                        <TableCell align="right" sx={labelCell}>
                           <Typography variant="body2" weight="semibold">
                             <Money>{formatMoney(received)}</Money>
                           </Typography>
@@ -1193,10 +1214,11 @@ export function MatchingPreview() {
                 <Divider />
                 <Box sx={{ px: 2, py: 1 }}>
                   <Typography variant="caption" color="text.secondary">
-                    {allocatedReceipts.length +
-                      ' of ' +
+                    {'Total receipts: ' +
                       GRN_RECEIPTS.length +
-                      ' receipts allocated'}
+                      ' · ' +
+                      allocatedReceipts.length +
+                      ' allocated'}
                   </Typography>
                 </Box>
               </Stack>

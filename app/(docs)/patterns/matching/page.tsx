@@ -59,7 +59,7 @@ const STATUSES: readonly { title: string; what: string }[] = [
   },
   {
     title: 'Accepted',
-    what: 'Not a match — a person deciding the line is payable without one, recorded against their name. It reads differently on the row because it is a different kind of fact.',
+    what: 'Not a match — a person deciding the line is payable without one, by ticking the row. It reads differently on the row because it is a different kind of fact.',
   },
 ];
 
@@ -120,11 +120,21 @@ export default function MatchingPatternPage() {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             <strong>Line items</strong> is the invoice on the left and the goods
-            receipts on the right. The receipts are grouped by the invoice line
-            each one is a candidate for, and the checkbox in front of a receipt
-            is the allocation: tick it and it counts toward that line. Each
-            group is closed by a row stating what its allocation comes to, which
-            is where the two variances are named.
+            receipts on the right, six columns each. The receipts are grouped by
+            the invoice line each one is a candidate for, and the checkbox in
+            front of a receipt is the allocation: tick it and it counts toward
+            that line. Each group is closed by a row stating what its allocation
+            comes to, which is where the two variances are named.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            The invoice rows have a checkbox of their own, in the same cell as
+            the status glyph, and it opens ticked on a line that matched and
+            clear on one that did not. That makes it the decision as well as the
+            state: ticking a line that did not match is a person saying it is
+            payable anyway, which is what the freight line needs and why there
+            is no separate Accept button. A matched line&apos;s box is ticked and
+            locked — unticking it would mean excluding a line that agrees, and
+            that is not a decision this screen is for.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Both tabs carry a count of what is still open on them, and{' '}
@@ -158,7 +168,7 @@ export default function MatchingPatternPage() {
 
         <Stack spacing={2} sx={{ maxWidth: PROSE }}>
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Four statuses, one fill
+            Four statuses, two fills
           </Typography>
           <Stack
             component="ul"
@@ -189,14 +199,31 @@ export default function MatchingPatternPage() {
             rule is <em>the one that reads on the surface</em>.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            The status is carried by a glyph, not by a row tint. Three of the
-            four would want a colour, and{' '}
-            <Link href="/components/table">Table</Link> has two data states —
-            but the restraint is the right answer anyway: a page where matched
-            rows are green and probable rows are amber makes the red ones harder
-            to find. So a fill means <em>this row wants something</em>, and it
-            appears on an unresolved header mismatch and on a receipt group that
-            does not balance. Everything else stays quiet.
+            Two of the four also tint their row, through{' '}
+            <Link href="/components/table">Table</Link>&apos;s{' '}
+            <code>state</code>: <strong>matched</strong> takes{' '}
+            <code>success</code> and <strong>no match</strong> takes{' '}
+            <code>error</code>. Those are the two outcomes the row component
+            models, and they are the two the design system&apos;s own row set
+            draws.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            The other two stay untinted, for two different reasons.{' '}
+            <strong>Probable</strong> would want a warning fill, and there is no
+            warning rung to take — the design&apos;s <code>table-rows</code>{' '}
+            State axis has six values and none of them is one, so a tint here
+            would be a rung invented at a call site. Its glyph and its
+            group&apos;s own subtotal row carry it instead.{' '}
+            <strong>Accepted</strong> is untinted on purpose: a person overrode
+            the check rather than the check passing, and <code>success</code>{' '}
+            would say the second thing.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Selection outranks both. The row you are working on takes the
+            neutral selected fill and keeps its bracket, so a matched row loses
+            its green while it is the active one — which is the component&apos;s
+            own precedence, and the right way round: the data state is still
+            true when you look away, and the selection is not.
           </Typography>
         </Stack>
 
@@ -217,7 +244,7 @@ export default function MatchingPatternPage() {
             before&rdquo; beside the button is what tells the reader this click
             is the one that settles it; discovering that afterwards is not the
             same thing. In the preview, <strong>Vendor</strong> has been
-            acknowledged twice already and <strong>Ship to</strong> once.
+            acknowledged twice already and <strong>Vendor Code</strong> once.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             A difference in <em>what is owed</em> carries no such action. An
@@ -272,13 +299,20 @@ export default function MatchingPatternPage() {
               one element. A status card is a component to add.
             </Typography>
             <Typography component="li" variant="body2" color="text.secondary">
-              A probable line gets no row tint, because{' '}
-              <code>TableRowState</code> is{' '}
-              <code>default | error | success</code> and there is no warning
-              rung. Here that produced the better page, so the gap is logged
-              rather than worked around — but it is{' '}
-              <Link href="/components/table">Table</Link>&apos;s to close if a
-              third rung is ever wanted.
+              The line you are working on is marked with{' '}
+              <Link href="/components/table">Table</Link>&apos;s own selection —
+              a hairline bracket above and below — where the design draws a 4px
+              bar down the leading edge and a tinted row. That bracket is a
+              decision the component argues for at length in its own source, so
+              it stands and the difference is logged.
+            </Typography>
+            <Typography component="li" variant="body2" color="text.secondary">
+              A probable line gets no row tint. <code>TableRowState</code> is{' '}
+              <code>default | error | success</code> — which is not the
+              component falling short of the design, it is the design: the{' '}
+              <code>table-rows</code> State axis has six values and no warning
+              among them. A warning row is a rung for the design system to add,
+              not for a screen to invent.
             </Typography>
           </Stack>
         </Stack>
@@ -322,9 +356,10 @@ export default function MatchingPatternPage() {
               <code>GRN-1071</code> and tick <code>GRN-1068</code> — same
               quantity, twelve dollars cheaper, and the group balances. On{' '}
               <strong>ILI-0003</strong>, tick <code>GRN-1090</code> to cover the
-              twelve units it is short. Then <code>Accept</code> the freight
-              line, acknowledge the two header fields on the other tab, and the
-              variance reads <code>Balanced</code>.
+              twelve units it is short — both lines flip to matched and their
+              own checkboxes tick themselves and lock. Then tick the freight
+              line by hand, acknowledge the three header fields on the other
+              tab, and the variance reads <code>Balanced</code>.
             </Typography>
           </Stack>
           <Paper
