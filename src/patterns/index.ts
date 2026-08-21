@@ -17,6 +17,7 @@
 import { dashboard } from './dashboard';
 import { erpPosting } from './erpPosting';
 import { invoiceDashboard } from './invoiceDashboard';
+import { matching } from './matching';
 
 import type { PatternExamplesData } from '@/src/types/docs';
 
@@ -28,7 +29,8 @@ import type { PatternExamplesData } from '@/src/types/docs';
 export const patterns: readonly PatternExamplesData[] = [
   dashboard,
   invoiceDashboard,
+  matching,
   erpPosting,
 ];
 
-export { dashboard, erpPosting, invoiceDashboard };
+export { dashboard, erpPosting, invoiceDashboard, matching };
