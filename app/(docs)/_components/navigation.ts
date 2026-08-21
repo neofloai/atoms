@@ -95,6 +95,7 @@ export const navigation: readonly NavSection[] = [
     items: [
       { label: 'Dashboard', href: '/patterns/dashboard' },
       { label: 'Invoice Dashboard', href: '/patterns/invoice-dashboard' },
+      { label: 'ERP Posting', href: '/patterns/erp-posting' },
       { label: 'Settings', href: '/patterns/settings', disabled: true },
       { label: 'Auth', href: '/patterns/auth', disabled: true },
     ],
