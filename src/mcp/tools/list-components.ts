@@ -28,6 +28,31 @@ function formatPatternLead(patterns: PatternData[]): string {
   ].join('\n');
 }
 
+/**
+ * The two components a screen is framed in, called out by the words a
+ * reader would actually use for them.
+ *
+ * Both are filed under `Navigation` alongside `Tabs`, `Link` and
+ * `Breadcrumbs`, which says nothing about either being structural — so the
+ * catalogue alone gives no hint that these two come first and that the rest
+ * go inside them.
+ *
+ * Rendered only when both are published, so it never promises half a shell.
+ */
+function formatShellLead(components: ComponentData[]): string {
+  const names = new Set(components.map((c) => c.name));
+  if (!names.has('Drawer') || !names.has('Navbar')) {
+    return '';
+  }
+
+  return [
+    '## The app shell: build this first',
+    '',
+    'Most screens sit in a shell, and it is two components: **Drawer** is the sidebar / sidenav down the left — `variant="permanent" size="sm"` for the 220px rail — and **Navbar** is the topbar above the content. Lay the page out as a row, rail first: the rail owns the full height and the bar begins where the rail ends rather than running the full width above it. Getting that backwards is the single most common mistake, which is why the `dashboard` pattern already arranges it — start from that rather than composing the shell by hand.',
+    '',
+  ].join('\n');
+}
+
 function formatComponentList(
   components: ComponentData[],
   patterns: PatternData[]
@@ -55,6 +80,12 @@ function formatComponentList(
     '# @neofloai/atoms components',
     '',
     formatPatternLead(patterns),
+    // Named before the catalogue, because the shell is the one thing built
+    // first and the easiest to skip. `Drawer` is MUI's word for a sidebar
+    // and nobody's first guess for one, so a reader scanning categories for
+    // "the sidebar component" does not find it and builds a bare page
+    // instead. Two lines here cost less than a screen with no chrome.
+    formatShellLead(components),
     sections.join('\n\n'),
     '',
     'Call `get_component` with a component name for the full spec — props, examples, and the related components worth comparing it against. Taglines say what a component is for, not only what it looks like: two components can render the same shape and belong in different places, so read the spec before choosing between them.',

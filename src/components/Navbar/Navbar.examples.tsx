@@ -12,7 +12,30 @@ export const data: ComponentExamplesData = {
   name: 'Navbar',
   category: 'Navigation',
   tagline:
-    'The bar across the top of an app, in two heights — a 48px app bar or a 72px page header. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.',
+    'The topbar across the top of an app, in two heights — a 48px app bar or a 72px page header. With `Drawer` it is the shell every screen starts from: the rail owns the full height and this bar begins where the rail ends, so it never runs the full width above it. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.',
+  // `Navbar` is the house name; `topbar` and `header` are what people
+  // actually type, and neither reached this component before. See the same
+  // note on `Drawer` — these two are the pair a screen starts from, so
+  // being unsearchable costs more here than anywhere else.
+  keywords: [
+    'topbar',
+    'top bar',
+    'app bar',
+    'appbar',
+    'header',
+    'page header',
+    'top navigation',
+    'toolbar',
+    'masthead',
+    'app shell',
+    'page shell',
+    'shell',
+    'app layout',
+    'page layout',
+    'layout',
+    'title bar',
+    'breadcrumb bar',
+  ],
   props: [
     {
       name: 'children',

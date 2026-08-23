@@ -24,6 +24,13 @@ export interface ComponentData {
   name: string;
   category: string;
   tagline: string;
+  /**
+   * Extra search terms, so `search_docs` reaches a component through the
+   * everyday name for it rather than only the house one. Optional because
+   * the docs contract makes it optional; set where the house name is not
+   * what anyone would type — see `Drawer` and `Navbar`.
+   */
+  keywords?: readonly string[];
   figmaUrl?: string;
   props: ComponentProp[];
   examples: ComponentExample[];

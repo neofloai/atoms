@@ -102,6 +102,10 @@ export function registerSearchDocs(server: McpServer): void {
           component.name,
           component.category,
           component.tagline,
+          // The everyday names for the thing, which the tagline cannot
+          // carry and still read as a sentence. Without these, finding the
+          // app shell requires already knowing it is called `Drawer`.
+          ...(component.keywords ?? []),
           ...component.props.map((p) => `${p.name} ${p.description}`),
         ].join(' ');
         if (matches(text, q)) {
