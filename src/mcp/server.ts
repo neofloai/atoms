@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { registerCheckVersion } from './tools/check-version';
 import { registerGetComponent } from './tools/get-component';
 import { registerGetInstallation } from './tools/get-installation';
 import { registerGetPattern } from './tools/get-pattern';
@@ -27,13 +28,15 @@ Order of operations, and it matters:
 
 2. Never create a project inside your own working directory or a temp path. \`scaffold_app\` puts it in the user's Desktop folder, where they can find and open it again.
 
-3. Before composing a screen, call \`get_pattern\`. A pattern is a whole arrangement that has already been reviewed; a screen assembled from individual component docs gets the arrangement wrong in ways no single component doc can warn about. \`list_components\` names the published patterns first for this reason.
+3. Atoms code is version-specific, and this server cannot see the project. If Atoms is going into an app that already exists, resolve its installed version FIRST — \`npm ls @neofloai/atoms --depth=0\` in that project, not the dependency line in its package.json — and pass it as \`installedVersion\` to \`check_version\`, \`get_component\` and \`get_pattern\`. Those last two withhold their code examples until they have it. Nothing to resolve for a new project: \`scaffold_app\` installs the current release.
 
-4. Before using a component, call \`get_component\`. Read its Related section: several components render the same shape and belong in different contexts, and choosing between them is a decision made before any prop is read.
+4. Before composing a screen, call \`get_pattern\`. A pattern is a whole arrangement that has already been reviewed; a screen assembled from individual component docs gets the arrangement wrong in ways no single component doc can warn about. \`list_components\` names the published patterns first for this reason.
 
-5. Before writing any colour, spacing, radius or type value, call \`get_tokens\`. Never hardcode a hex or a pixel value the tokens already carry.
+5. Before using a component, call \`get_component\`. Read its Related section: several components render the same shape and belong in different contexts, and choosing between them is a decision made before any prop is read.
 
-6. Import only from \`@neofloai/atoms\`, \`@neofloai/atoms/icons\`, \`@neofloai/atoms/tokens\` and \`@neofloai/atoms/theme\`. Importing from \`@mui/material\` resolves and silently bypasses the design system.
+6. Before writing any colour, spacing, radius or type value, call \`get_tokens\`. Never hardcode a hex or a pixel value the tokens already carry.
+
+7. Import only from \`@neofloai/atoms\`, \`@neofloai/atoms/icons\`, \`@neofloai/atoms/tokens\` and \`@neofloai/atoms/theme\`. Importing from \`@mui/material\` resolves and silently bypasses the design system.
 
 Use \`search_docs\` when you are not sure which of these to reach for; it also answers brand questions inline.`;
 
@@ -47,12 +50,16 @@ export function createAtomsMcpServer(): McpServer {
   const server = new McpServer(
     {
       name: 'atoms',
-      version: '1.1.0',
+      // Minor: `check_version` added, and `installedVersion` added as an
+      // optional input on `get_component` and `get_pattern`. Nothing an
+      // existing client called stopped working, so this is not a major.
+      version: '1.2.0',
     },
     { instructions: INSTRUCTIONS }
   );
 
   registerStartProject(server);
+  registerCheckVersion(server);
   registerScaffoldApp(server);
   registerListComponents(server);
   registerGetComponent(server);

@@ -5,15 +5,17 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import NextLink from '@/app/_lib/Link';
+import { release } from '@/src/release';
 
 import { CodeBlock } from '../_components/CodeBlock';
 
 /**
  * Deliberately short — just enough to install and use Atoms in a project.
- * The full reference (every import/theming rule, update semantics, the
- * pre-1.0.0 caveats) lives in src/install/index.ts, served through the MCP
+ * The full reference (every import/theming rule, update semantics, what a
+ * CI image needs) lives in src/install/index.ts, served through the MCP
  * endpoint for AI editors. This page is the quick-start; that source is the
- * exhaustive one. They are not meant to match line-for-line.
+ * exhaustive one. They are not meant to match line-for-line. Version
+ * numbers come from src/release so this page cannot name a stale release.
  */
 export const metadata = {
   title: 'Installation — Atoms',
@@ -21,13 +23,18 @@ export const metadata = {
     'Install @neofloai/atoms straight from its public GitHub repo and set up the theme provider in a Next.js or React app.',
 };
 
-const installCommand = `npm install github:neofloai/atoms`;
+const installCommand = `npm install github:neofloai/atoms#semver:^${release.current}`;
 
-const pinCommand = `# Today (pre-1.0.0) — pin to an exact commit
-npm install github:neofloai/atoms#1a2b3c4
+const pinCommand = `# Recommended — resolves against release tags
+npm install github:neofloai/atoms#semver:^${release.current}
 
-# Once v1.0.0 is tagged — real semver ranges
-npm install github:neofloai/atoms#semver:^1.0.0`;
+# Exactly one release, nothing else
+npm install github:neofloai/atoms#semver:${release.current}
+
+# A specific commit — for reproducing a build, not for staying current
+npm install github:neofloai/atoms#1a2b3c4`;
+
+const versionCommand = `npm ls @neofloai/atoms --depth=0`;
 
 const nextProviderSetup = `// app/layout.tsx
 import { NeofloThemeProvider } from '@neofloai/atoms';
@@ -98,13 +105,27 @@ export default function InstallationPage() {
           </Stack>
           <CodeBlock>{installCommand}</CodeBlock>
           <Typography variant="body2" color="text.secondary">
-            That tracks the default branch, so the code can change under you
-            between installs. Atoms is <strong>pre-1.0.0 and under active
-            construction</strong> — pin to an exact commit for anything you
-            need to reproduce. Once <code>v1.0.0</code> is tagged, you can use
-            a semver range and npm will resolve it against the release tags:
+            <strong>{release.current}</strong> is the current release. The{' '}
+            <code>#semver:</code> range resolves against release tags, so the
+            version in your project has a name and{' '}
+            <code>npm update</code> can advance it. Installing bare —{' '}
+            <code>npm install github:neofloai/atoms</code> — tracks the default
+            branch instead, and the code can change under you between installs:
           </Typography>
           <CodeBlock>{pinCommand}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            To find out what a project actually has, ask the installed tree
+            rather than its own <code>package.json</code> — for a git install
+            that dependency line is a ref or a range, not a version:
+          </Typography>
+          <CodeBlock>{versionCommand}</CodeBlock>
+          <Typography variant="body2" color="text.secondary">
+            Every release and what changed in it is on the{' '}
+            <Link component={NextLink} href="/changelog">
+              changelog
+            </Link>
+            .
+          </Typography>
         </Stack>
 
         <Divider />

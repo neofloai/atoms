@@ -5,7 +5,8 @@ import {
   resolveTarget,
   unansweredRecommended,
 } from '@/src/project';
-import { loadPatterns, loadProject } from '../data-loader';
+import { checkVersion } from '@/src/release';
+import { loadPatterns, loadProject, loadRelease } from '../data-loader';
 import { renderQuestion, renderQuestionSections } from '../format';
 
 import type {
@@ -15,7 +16,7 @@ import type {
   ProjectPurpose,
 } from '@/src/project/types';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { PatternData } from '../types';
+import type { PatternData, ReleaseManifest } from '../types';
 
 /**
  * The brief, as the tool accepts it.
@@ -37,6 +38,12 @@ const briefSchema = z
         framework: z.string(),
         reactVersion: z.string(),
         usesMui: z.boolean(),
+        atomsVersion: z
+          .string()
+          .optional()
+          .describe(
+            'The Atoms version already in that app, as `npm ls @neofloai/atoms --depth=0` reports it. "none" if it is not installed. Omit only if nobody has looked yet.'
+          ),
       })
       .optional(),
     projectName: z.string().optional(),
@@ -143,6 +150,55 @@ function renderShellAdvice(brief: ProjectBrief): string {
   }
 }
 
+/**
+ * Which Atoms version this plan is written against, and whether the
+ * target project is on it.
+ *
+ * Only an integration can already be wrong about this: something created
+ * by `scaffold_app` installs the current release as its first act, so the
+ * two agree by construction. An app that installed Atoms at some point in
+ * the past is on whatever it installed, and every code block these tools
+ * serve is written against the release the server was built from.
+ */
+function renderVersionSection(
+  brief: ProjectBrief,
+  release: ReleaseManifest,
+  isExisting: boolean
+): string[] {
+  if (!isExisting) {
+    return [
+      '',
+      '## Version',
+      '',
+      `This plan is written against **${release.packageName} ${release.current}**, and \`scaffold_app\` installs exactly that — \`${release.commands.pin}\` — so nothing here can be out of step with what the project has. Tell the user which version went in, and note that \`check_version\` is how they find out later what has shipped since.`,
+    ];
+  }
+
+  const check = checkVersion(brief.existingApp?.atomsVersion, release);
+  const lead = `This plan is written against **${release.packageName} ${release.current}**. The app it is going into has whatever it installed, and the two are not the same question.`;
+
+  const verdict = (() => {
+    switch (check.status) {
+      case 'current':
+        return `The brief reports ${check.resolved}, which is the current release. Nothing to reconcile — pass \`installedVersion: "${check.resolved}"\` to \`get_component\` and \`get_pattern\` and their examples come back targeting exactly what is there.`;
+      case 'behind':
+        return `The brief reports ${check.resolved}, one or more releases behind ${release.current}. The served code still runs on it, but call \`check_version { installedVersion: "${check.resolved}" }\` before building and tell the user what they are missing.`;
+      case 'unsupported':
+        return `The brief reports ${check.resolved}, which is older than ${release.minimumSupported} — the served code will not run on it. Stop and put the upgrade to the user before writing anything: \`${release.commands.upgrade}\`.`;
+      case 'ahead':
+        return `The brief reports ${check.resolved}, which is ahead of the ${release.current} this server knows. Where the installed package's types disagree with what these tools describe, the installed types are right.`;
+      case 'not-installed':
+        return `The brief reports Atoms is not installed there yet, so the install is part of this work: \`${release.commands.pin}\`, then \`get_installation\` for the provider wiring. That lands ${release.current}, which is what every code block here targets.`;
+      case 'unresolved':
+        return `The brief reports \`${check.reported}\`, which is a ref or a path rather than a version. Resolve it with \`${release.commands.readInstalled}\` in that project before writing code.`;
+      case 'unknown':
+        return `The brief does not say which Atoms version is in that app. Find out before writing any code — \`${release.commands.readInstalled}\`, run in the project, not the \`${release.packageName}\` line in its \`package.json\` — then pass it to \`check_version\`. \`get_component\` and \`get_pattern\` withhold their code examples until they have it, so this is the first thing to resolve rather than a footnote.`;
+    }
+  })();
+
+  return ['', '## Version', '', lead, '', verdict];
+}
+
 /** The patterns worth starting from, given what the brief describes. */
 function renderPatternAdvice(
   brief: ProjectBrief,
@@ -162,7 +218,8 @@ function renderPatternAdvice(
 function renderPlan(
   brief: ProjectBrief,
   guide: ProjectGuide,
-  patterns: PatternData[]
+  patterns: PatternData[],
+  release: ReleaseManifest
 ): string {
   const decision = resolveTarget(brief);
   const recipe = guide.targets.find((t) => t.id === decision.target);
@@ -186,13 +243,21 @@ function renderPlan(
       : `\`${guide.parentDir}/${name}\` — create it there. Not a temp directory, not inside the Atoms repo, not whatever directory this conversation started in. If a folder of that name is already there, stop and ask.`;
 
   const mode = brief.colorMode ?? 'light';
+  // The version call leads for an integration, because the two calls
+  // after it withhold their code until it has been made. Ordering it
+  // anywhere else describes a sequence that stalls on step three.
+  const reportedVersion = brief.existingApp?.atomsVersion;
+  const versionArg = reportedVersion
+    ? `{ installedVersion: "${reportedVersion}" }`
+    : '{ installedVersion: "<what npm ls reports>" }';
   const nextCalls =
     decision.target === 'existing'
       ? [
-          `1. \`get_installation { framework: "${brief.existingApp?.framework.toLowerCase().includes('next') ? 'nextjs' : 'react'}" }\` — install and provider steps for that app`,
-          '2. `get_pattern` for any screen a published pattern covers',
-          '3. `get_component` for each component you are about to use',
-          '4. `get_tokens` before writing any colour, spacing or type value',
+          `1. \`check_version ${versionArg}\` — what that app is on, and whether the code below will run on it`,
+          `2. \`get_installation { framework: "${brief.existingApp?.framework.toLowerCase().includes('next') ? 'nextjs' : 'react'}" }\` — install and provider steps for that app`,
+          '3. `get_pattern` for any screen a published pattern covers — pass the same `installedVersion`',
+          '4. `get_component` for each component you are about to use — same again',
+          '5. `get_tokens` before writing any colour, spacing or type value',
         ]
       : [
           `1. \`scaffold_app { framework: "${decision.target}", projectName: "${name}", colorMode: "${mode}" }\` — the commands to create it, install Atoms, and wire the brand`,
@@ -227,6 +292,7 @@ function renderPlan(
     '## Order of operations',
     '',
     nextCalls.join('\n'),
+    ...renderVersionSection(brief, release, decision.target === 'existing'),
     ...purposeSection,
     '',
     '## Rules',
@@ -277,9 +343,10 @@ export function registerStartProject(server: McpServer): void {
       },
     },
     async ({ brief }) => {
-      const [manifest, patterns] = await Promise.all([
+      const [manifest, patterns, release] = await Promise.all([
         loadProject(),
         loadPatterns(),
+        loadRelease(),
       ]);
 
       if (!brief || Object.keys(brief).length === 0) {
@@ -304,7 +371,7 @@ export function registerStartProject(server: McpServer): void {
         content: [
           {
             type: 'text',
-            text: renderPlan(brief, manifest, patterns.patterns),
+            text: renderPlan(brief, manifest, patterns.patterns, release),
           },
         ],
       };

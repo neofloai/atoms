@@ -1,7 +1,7 @@
-import { loadComponents, loadPatterns } from '../data-loader';
+import { loadComponents, loadPatterns, loadRelease } from '../data-loader';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ComponentData, PatternData } from '../types';
+import type { ComponentData, PatternData, ReleaseManifest } from '../types';
 
 /**
  * The published patterns, offered before the component list rather than
@@ -53,9 +53,22 @@ function formatShellLead(components: ComponentData[]): string {
   ].join('\n');
 }
 
+/**
+ * Which release this catalogue is of.
+ *
+ * A list of components with no version on it reads as a list of what
+ * exists, when what it actually is is a list of what exists *in the
+ * current release*. A project on an older version has a different
+ * catalogue, and the difference is invisible until an import fails.
+ */
+function formatVersionStamp(release: ReleaseManifest): string {
+  return `**${release.packageName} ${release.current}** — this is the catalogue for the current release. If you are about to write code into a project that already exists, call \`check_version\` first: what is installed there may not be this.`;
+}
+
 function formatComponentList(
   components: ComponentData[],
-  patterns: PatternData[]
+  patterns: PatternData[],
+  release: ReleaseManifest
 ): string {
   if (components.length === 0) {
     return 'No components published yet. The @neofloai/atoms component catalog is being built — check back soon.';
@@ -78,6 +91,8 @@ function formatComponentList(
 
   return [
     '# @neofloai/atoms components',
+    '',
+    formatVersionStamp(release),
     '',
     formatPatternLead(patterns),
     // Named before the catalogue, because the shell is the one thing built
@@ -105,15 +120,20 @@ export function registerListComponents(server: McpServer): void {
         'Lists all @neofloai/atoms components grouped by category with a one-line tagline each, led by the published page patterns. Returns markdown. Always call this first to discover what exists before reaching for raw MUI — and prefer a listed pattern over composing a screen yourself.',
     },
     async () => {
-      const [manifest, patterns] = await Promise.all([
+      const [manifest, patterns, release] = await Promise.all([
         loadComponents(),
         loadPatterns(),
+        loadRelease(),
       ]);
       return {
         content: [
           {
             type: 'text',
-            text: formatComponentList(manifest.components, patterns.patterns),
+            text: formatComponentList(
+              manifest.components,
+              patterns.patterns,
+              release
+            ),
           },
         ],
       };

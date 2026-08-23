@@ -5,6 +5,8 @@ import { branding } from '../src/brand/branding';
 import { installation } from '../src/install';
 import { patterns as patternData } from '../src/patterns';
 import { projectGuide } from '../src/project';
+import { release } from '../src/release';
+import { ATOMS_VERSION } from '../src/release/version';
 import {
   border,
   colors,
@@ -130,7 +132,50 @@ async function writeManifest(
   console.log(`wrote ${path.relative(ROOT, target)}`);
 }
 
+/**
+ * Fails the build when the three places a version is written disagree.
+ *
+ * `package.json` is what npm installs, `ATOMS_VERSION` is what the
+ * package reports about itself at runtime, and the newest changelog entry
+ * is what the MCP tools compare a caller's install against. A release
+ * where those differ is worse than one with no version at all: every tool
+ * downstream states a version confidently, and one of them is lying.
+ *
+ * Checked here because this is the one script that has to run before
+ * anything ships -- `prebuild` calls it.
+ */
+async function assertVersionsAgree(): Promise<void> {
+  const packageJson = JSON.parse(
+    await fs.readFile(path.join(ROOT, 'package.json'), 'utf8')
+  ) as { version?: string };
+
+  const mismatches: string[] = [];
+  if (packageJson.version !== ATOMS_VERSION) {
+    mismatches.push(
+      `package.json version is ${packageJson.version}, src/release/version.ts ATOMS_VERSION is ${ATOMS_VERSION}`
+    );
+  }
+  if (release.current !== ATOMS_VERSION) {
+    mismatches.push(
+      `newest changelog entry is ${release.current}, ATOMS_VERSION is ${ATOMS_VERSION}`
+    );
+  }
+
+  if (mismatches.length > 0) {
+    throw new Error(
+      [
+        'version mismatch:',
+        ...mismatches.map((line) => `  - ${line}`),
+        'A release bumps all three together: package.json, ATOMS_VERSION,',
+        'and a new entry at the top of src/release/changelog.ts.',
+      ].join('\n')
+    );
+  }
+}
+
 async function main(): Promise<void> {
+  await assertVersionsAgree();
+
   const components: Omit<ComponentManifest, 'generatedAt'> = {
     components: await collectComponents(),
   };
@@ -159,6 +204,7 @@ async function main(): Promise<void> {
     writeManifest('installation.json', { ...installation }),
     writeManifest('brand.json', { brand: branding }),
     writeManifest('project.json', { ...projectGuide }),
+    writeManifest('release.json', { ...release }),
   ]);
 }
 

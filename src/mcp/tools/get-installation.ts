@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-import { loadInstallation } from '../data-loader';
+import { loadInstallation, loadRelease } from '../data-loader';
 import { renderSteps } from '../format';
 
-import type { InstallationManifest } from '../types';
+import type { InstallationManifest, ReleaseManifest } from '../types';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 function renderFramework(
@@ -33,6 +33,34 @@ function renderFramework(
 }
 
 /**
+ * Which version this installs, and how to find out later.
+ *
+ * Appended once rather than per framework: it is the same answer for
+ * both, and the thing it prevents is version-agnostic. An install with no
+ * version recorded anywhere is one nobody can check afterwards, and the
+ * check is what the code-serving tools need.
+ */
+function renderVersionSection(release: ReleaseManifest): string {
+  return [
+    `## Version`,
+    '',
+    `The current release is **${release.current}** (\`${release.currentTag}\`). Install it by range so npm resolves against release tags rather than tracking the default branch:`,
+    '',
+    '```bash',
+    release.commands.pin,
+    '```',
+    '',
+    'Afterwards, that project can be asked what it actually got:',
+    '',
+    '```bash',
+    release.commands.readInstalled,
+    '```',
+    '',
+    `Use that number, not the \`${release.packageName}\` line in \`package.json\` — for a git install that line is a ref or a range, not a version. Pass it to \`check_version\` to see what has shipped since, and to \`get_component\` and \`get_pattern\`, which withhold their code examples until they know what the project is on.`,
+  ].join('\n');
+}
+
+/**
  * Registers the `get_installation` tool: returns framework-specific setup
  * instructions for adding @neofloai/atoms to a project.
  */
@@ -53,16 +81,21 @@ export function registerGetInstallation(server: McpServer): void {
       },
     },
     async ({ framework }) => {
-      const guide = await loadInstallation();
+      const [guide, release] = await Promise.all([
+        loadInstallation(),
+        loadRelease(),
+      ]);
 
-      const text = framework
+      const steps = framework
         ? renderFramework(guide, framework)
         : guide.frameworks
             .map((f) => renderFramework(guide, f.id))
             .join('\n\n---\n\n');
 
       return {
-        content: [{ type: 'text', text }],
+        content: [
+          { type: 'text', text: `${steps}\n\n${renderVersionSection(release)}` },
+        ],
       };
     }
   );

@@ -81,6 +81,17 @@ export interface ExistingAppFacts {
   reactVersion: string;
   /** Whether the app already mounts MUI and a theme of its own. */
   usesMui: boolean;
+  /**
+   * The version of Atoms already in the app, as `npm ls @neofloai/atoms`
+   * reports it. Absent means nobody has looked yet, which is different
+   * from `"none"` — that one means it is genuinely not installed.
+   *
+   * Here rather than derived, because the served code is written against
+   * the current release and the app is on whatever it installed. An
+   * integration is the one purpose where those two can already disagree
+   * before a line is written.
+   */
+  atomsVersion?: string;
 }
 
 /**

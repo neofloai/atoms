@@ -9,20 +9,47 @@ The MCP (Model Context Protocol) server exposes the design system to AI editors.
 
 ## Available tools
 
-The MCP server exposes exactly these eight tools — no more, no less:
+The MCP server exposes exactly these nine tools — no more, no less:
 
 | Tool | Purpose |
 |------|---------|
 | `start_project` | Returns the brief to gather, then the resolved build plan. Withholds the plan until the required answers arrive |
+| `check_version` | Returns the current release, the changelog, and a verdict on a project's installed version |
 | `scaffold_app` | Returns the ordered commands to create a new app on the user's own disk, brand wired |
 | `list_components` | Lists all components grouped by category, led by the published patterns |
 | `get_component` | Returns full spec for a named component, plus its related components and the patterns it appears in |
 | `get_tokens` | Returns design tokens for a category |
 | `get_pattern` | Returns full page layout code |
-| `search_docs` | Searches across components, patterns, guidelines |
+| `search_docs` | Searches across components, patterns, guidelines, changelog |
 | `get_installation` | Returns framework-specific setup steps (nextjs, react) |
 
 If you need to add a tool, get approval first — every tool added is a new prompt-time API surface.
+
+## The version gate
+
+`src/mcp/version-gate.ts` decides whether a response is allowed to carry code. The server serves whatever the deployed site was built from; the project on the other end is on whatever it installed, and Atoms installs from a git ref so those routinely differ. When they do, an agent pastes an API the project does not have, the import fails, and the agent repairs its own mistake by inventing a plausible prop.
+
+One rule, and it is the whole design:
+
+> **The gate withholds pasteable code. It never withholds knowledge.**
+
+Props, taglines, do/don't lists, token values and related-component pointers go out regardless — reading them cannot break a build, and an agent refused everything stops asking and starts guessing. Code blocks are what get held, because a code block is an instruction to paste.
+
+- `get_component` and `get_pattern` take an optional `installedVersion` and withhold their code until it resolves. Optional, not required: a required argument turns every existing call into a validation error rather than a version warning.
+- Four of the seven statuses block, and only one is "too old". The other three are forms of not knowing, which is the common case for a git install.
+- A new code-serving tool must take `installedVersionSchema` and call `gateVersion`. Both are exported from `version-gate.ts` so no tool writes its own copy of the wording.
+
+## Releasing
+
+A release bumps three things in one commit, and `scripts/generate.ts` fails the build if they disagree:
+
+1. `package.json` `version`
+2. `ATOMS_VERSION` in `src/release/version.ts`
+3. A new entry at the top of `src/release/changelog.ts`
+
+Then tag it — `git tag v<version> && git push --tags` — or a `#semver:` install cannot resolve it. Set `scope` on any change that moves a component's API: that is what lets `check_version` tell a caller which of the things they are about to use changed, without a `since` field on every component.
+
+Bump `minimumSupported` in `src/release/index.ts` only when a release actually removes or renames something the served code uses. It is the oldest version that code still runs on, not the oldest version anyone should be on.
 
 ## Server instructions
 

@@ -5,13 +5,20 @@ import {
   loadComponents,
   loadPatterns,
   loadProject,
+  loadRelease,
   loadTokens,
 } from '../data-loader';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 interface SearchHit {
-  kind: 'component' | 'pattern' | 'token category' | 'brand' | 'guide';
+  kind:
+    | 'component'
+    | 'pattern'
+    | 'token category'
+    | 'brand'
+    | 'guide'
+    | 'release';
   name: string;
   summary: string;
   /**
@@ -35,7 +42,7 @@ export function registerSearchDocs(server: McpServer): void {
     {
       title: 'Search docs',
       description:
-        'Searches across @neofloai/atoms components, patterns, token categories, Neoflo brand guidelines (logo, brand colours, fonts, theme), and the project intake guide by keyword. Returns a markdown list of hits; brand and guide hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
+        'Searches across @neofloai/atoms components, patterns, token categories, Neoflo brand guidelines (logo, brand colours, fonts, theme), the release changelog, and the project intake guide by keyword. Returns a markdown list of hits; brand, guide and release hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
       inputSchema: {
         query: z
           .string()
@@ -46,16 +53,40 @@ export function registerSearchDocs(server: McpServer): void {
       },
     },
     async ({ query }) => {
-      const [components, patterns, tokens, brand, project] = await Promise.all([
-        loadComponents(),
-        loadPatterns(),
-        loadTokens(),
-        loadBrand(),
-        loadProject(),
-      ]);
+      const [components, patterns, tokens, brand, project, release] =
+        await Promise.all([
+          loadComponents(),
+          loadPatterns(),
+          loadTokens(),
+          loadBrand(),
+          loadProject(),
+          loadRelease(),
+        ]);
 
       const q = query.toLowerCase();
       const hits: SearchHit[] = [];
+
+      // The release record goes first when it matches, for the same
+      // reason the intake does: "which version am I on" has to be
+      // answered before the answer to anything else can be trusted.
+      // Matched against its own keywords and the release headlines, not
+      // the change summaries — those name components in passing, and a
+      // search for `Button` wants the component.
+      const releaseText = [
+        'changelog',
+        release.current,
+        release.currentTag,
+        ...release.keywords,
+        ...release.releases.map((entry) => `${entry.version} ${entry.headline}`),
+      ].join(' ');
+      if (matches(releaseText, q)) {
+        hits.push({
+          kind: 'release',
+          name: `Changelog (current: ${release.current})`,
+          summary: release.releases[0]?.headline ?? 'Release history.',
+          details: `Call \`check_version\` for the full notes and a verdict on a project's installed version — pass \`installedVersion\` from \`${release.commands.readInstalled}\`. To install or move onto the current release: \`${release.commands.upgrade}\`.`,
+        });
+      }
 
       // The intake goes first when it matches at all: someone asking how
       // to start something is asking the question that has to be answered
@@ -162,7 +193,7 @@ export function registerSearchDocs(server: McpServer): void {
         content: [
           {
             type: 'text',
-            text: `# Search results for "${query}"\n\n${lines.join('\n\n')}\n\nNext step: brand and guide hits are answered inline; for components/patterns/tokens call get_component, get_pattern, or get_tokens.`,
+            text: `# Search results for "${query}"\n\n${lines.join('\n\n')}\n\nNext step: brand, guide and release hits are answered inline; for components/patterns/tokens call get_component, get_pattern, or get_tokens.`,
           },
         ],
       };

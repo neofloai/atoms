@@ -7,6 +7,7 @@
 import type { BrandGuide } from '@/src/brand/branding';
 import type { InstallationGuide } from '@/src/install';
 import type { ProjectGuide } from '@/src/project/types';
+import type { ReleaseGuide } from '@/src/release/types';
 
 export interface ComponentProp {
   name: string;
@@ -79,6 +80,10 @@ export type InstallationManifest = InstallationGuide & {
 };
 
 export type ProjectManifest = ProjectGuide & {
+  generatedAt: string;
+};
+
+export type ReleaseManifest = ReleaseGuide & {
   generatedAt: string;
 };
 

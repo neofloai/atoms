@@ -11,6 +11,8 @@
  * React (Vite/CRA) apps, with a different provider wiring step for each.
  */
 
+import { ATOMS_VERSION } from '../release/version';
+
 export type InstallFramework = 'nextjs' | 'react';
 
 export type CodeLanguage = 'bash' | 'ts' | 'tsx' | 'json' | 'html';
@@ -40,23 +42,50 @@ export interface InstallationGuide {
   notes: string[];
 }
 
-const INSTALL_COMMAND = 'npm install github:neofloai/atoms';
+/**
+ * The install command, pinned to the current major.
+ *
+ * Pinned rather than bare because this string is what gets run: it is
+ * step one of the installation guide and `scaffold_app` interleaves the
+ * same step into every new project. A bare `npm install
+ * github:neofloai/atoms` tracks the default branch, which leaves the
+ * project on a version that has no name -- and a version with no name
+ * cannot be checked, compared, or reported to the MCP tools that ask for
+ * it. The alternatives are in the next step, for the cases that want
+ * them.
+ */
+const INSTALL_COMMAND = `npm install github:neofloai/atoms#semver:^${ATOMS_VERSION}`;
 
 const SHARED_STEPS: InstallStep[] = [
   {
     title: 'Install from the public GitHub repo',
-    body: 'neofloai/atoms is a public repository, so this needs no registry, no token, and no .npmrc. Anyone can install it:',
+    body: `neofloai/atoms is a public repository, so this needs no registry, no token, and no .npmrc. Anyone can install it. The #semver: range resolves against release tags -- ${ATOMS_VERSION} is current:`,
     code: INSTALL_COMMAND,
     language: 'bash',
   },
   {
     title: 'Pin what you install',
-    body: 'A bare install tracks the default branch, so the code can change under you between installs. v1.0.0 has not been tagged yet -- until it ships, pin to an exact commit for anything you need to reproduce. Once v1.0.0 is out, switch to a semver range and npm will resolve it against the release tags.',
-    code: `# Today (pre-1.0.0) -- pin to an exact commit
-npm install github:neofloai/atoms#1a2b3c4
+    body: `A bare install tracks the default branch, so the code can change under you between installs. Pin to a semver range instead and npm resolves it against the release tags. ${ATOMS_VERSION} is current; a range on the major picks up patches and minors without a package.json edit, and crossing a major stays deliberate.`,
+    code: `# Recommended -- resolves against release tags
+npm install github:neofloai/atoms#semver:^${ATOMS_VERSION}
 
-# Once v1.0.0 is tagged -- real semver ranges
-npm install github:neofloai/atoms#semver:^1.0.0`,
+# Exactly one release, nothing else
+npm install github:neofloai/atoms#semver:${ATOMS_VERSION}
+
+# A specific commit -- for reproducing a build, not for staying current
+npm install github:neofloai/atoms#1a2b3c4`,
+    language: 'bash',
+  },
+  {
+    title: 'Know which version you got',
+    body: 'Ask the installed tree, not your own package.json. Because this installs from a git ref, the dependency line in package.json is a ref or a range -- `github:neofloai/atoms#semver:^1.0.0`, or a bare commit SHA -- and neither is the version that ended up on disk. The number this returns is what the Atoms MCP tools want as `installedVersion`: `get_component` and `get_pattern` withhold their code examples until they know it, because code written against a version the project does not have fails at import. `check_version` compares it against the current release and lists what has shipped since.',
+    code: `npm ls @neofloai/atoms --depth=0
+
+# no npm on the path, or an unusual tree
+node -p "require('./node_modules/@neofloai/atoms/package.json').version"
+
+# or, from inside the app
+import { ATOMS_VERSION } from '@neofloai/atoms';`,
     language: 'bash',
   },
   {
@@ -184,8 +213,10 @@ export const installation: InstallationGuide = {
     'For a switch the user can operate, import useColorScheme from @neofloai/atoms -- it returns { mode, setMode } and the provider persists the choice. You do not need @mui/material for this. Note that mode is undefined on the first render, before the stored preference has been read, so render the space rather than a guess or the control flips after hydration.',
     'Do not call MUI\'s createTheme() or mount a second theme provider -- NeofloThemeProvider is the only theme. Style through tokens (@neofloai/atoms/tokens) or the sx prop\'s theme-aware keys (e.g. color: "primary.main"), never hardcoded hex or pixel values.',
     'Missing a variant or prop? Open a component-request or bug issue against the Atoms repo instead of locally wrapping or style-overriding the component -- local overrides drift between projects and stop tracking design system changes.',
-    'Atoms is pre-1.0.0 and under active construction. Until v1.0.0 is tagged, a bare install tracks the default branch and can change without warning -- pin to a commit SHA for anything you need to reproduce.',
-    'Once v1.0.0 ships, npm update @neofloai/atoms advances a #semver: range automatically for patch and minor releases; crossing a major (^1.0.0 -> ^2.0.0) stays a deliberate package.json edit. A commit-pinned or branch-tracking install only moves when you change the ref yourself.',
+    `Atoms ${ATOMS_VERSION} is the current release. Install by range (#semver:^${ATOMS_VERSION}) rather than bare -- a bare install tracks the default branch and can change between installs without a version to explain what moved.`,
+    'npm update @neofloai/atoms advances a #semver: range automatically for patch and minor releases; crossing a major (^1.0.0 -> ^2.0.0) stays a deliberate package.json edit. A commit-pinned or branch-tracking install only moves when you change the ref yourself.',
+    'Read the installed version with npm ls @neofloai/atoms --depth=0, or from ATOMS_VERSION exported by the package -- never from the dependency line in your own package.json, which for a git install is a ref or a range and not a version.',
+    'The changelog is on the docs site and served by the MCP check_version tool. Read it before taking a new major -- the release notes carry the migration steps, and there is nowhere else they are written down.',
   ],
 };
 

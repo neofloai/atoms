@@ -29,6 +29,11 @@ const tools: readonly McpTool[] = [
       'The questions to answer before anything is built, then the resolved build plan: framework, location on disk, and the calls to make in order',
   },
   {
+    name: 'check_version',
+    purpose:
+      'The current release, the changelog, and a verdict on the version a project has installed. get_component and get_pattern withhold their code examples until that version is known',
+  },
+  {
     name: 'scaffold_app',
     purpose:
       'The ordered commands to create a new app in your Desktop folder with Atoms, the theme and the brand already wired',
@@ -178,11 +183,14 @@ export default function McpGuidePage() {
               Available tools
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              The server exposes exactly eight tools. Responses are markdown,
-              structured for AI consumption. They are listed in the order an
-              editor should reach for them — asking what to build comes before
-              building it, which is what{' '}
-              <Link href="/start-a-project">Start a project</Link> covers.
+              The server exposes exactly {tools.length} tools. Responses are
+              markdown, structured for AI consumption. They are listed in the
+              order an editor should reach for them — asking what to build comes
+              before building it, which is what{' '}
+              <Link href="/start-a-project">Start a project</Link> covers, and
+              knowing which version a project is on comes before writing code
+              into it, which is what{' '}
+              <Link href="/changelog">the changelog</Link> covers.
             </Typography>
           </Stack>
           <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 1.5 }}>
