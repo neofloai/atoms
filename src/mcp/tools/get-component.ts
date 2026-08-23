@@ -1,9 +1,11 @@
 import { z } from 'zod';
 
 import { loadComponents, loadPatterns } from '../data-loader';
+import { gateVersion, installedVersionSchema } from '../version-gate';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ComponentData, PatternData } from '../types';
+import type { VersionGate } from '../version-gate';
 
 /**
  * Escapes a value for a markdown table cell.
@@ -33,7 +35,8 @@ function patternsUsing(name: string, patterns: PatternData[]): PatternData[] {
 
 function formatComponentResponse(
   comp: ComponentData,
-  patterns: PatternData[]
+  patterns: PatternData[],
+  gate: VersionGate
 ): string {
   const propsTable =
     comp.props.length > 0
@@ -47,8 +50,14 @@ function formatComponentResponse(
         ].join('\n')
       : '_No props documented._';
 
-  const examples =
-    comp.examples.length > 0
+  // The props table, the guidance and the related components go out
+  // whatever the version situation. Only the examples are held, because
+  // only the examples are pasted: a prop list read against the wrong
+  // version is a question, a code block pasted against the wrong version
+  // is a broken build that gets repaired by invention.
+  const examples = gate.blocked
+    ? gate.notice
+    : comp.examples.length > 0
       ? comp.examples
           .map((e) => `### ${e.title}\n\`\`\`tsx\n${e.code}\n\`\`\``)
           .join('\n\n')
@@ -73,6 +82,13 @@ function formatComponentResponse(
         ]
       : [];
 
+  // A banner only when there is something to say and the code went out
+  // anyway. When the code was withheld the notice is the Examples
+  // section, and saying it twice buries the props table between two
+  // copies of the same instruction.
+  const versionBanner =
+    !gate.blocked && gate.notice ? ['', gate.notice] : [];
+
   return [
     `# ${comp.name}`,
     '',
@@ -81,6 +97,7 @@ function formatComponentResponse(
     `**Import:** \`import { ${comp.name} } from '@neofloai/atoms';\``,
     ...(comp.figmaUrl ? ['', `**Figma:** ${comp.figmaUrl}`] : []),
     ...patternLine,
+    ...versionBanner,
     '',
     '## Props',
     '',
@@ -109,17 +126,19 @@ export function registerGetComponent(server: McpServer): void {
     {
       title: 'Get component spec',
       description:
-        "Get full details for a specific component: props with TypeScript types, defaults, code examples, do's and don'ts, the patterns it appears in, and the related components worth comparing against it first. Returns markdown. Always call this before using a component to get the correct API — and read the Related section before committing, since several components look alike in a screenshot and are meant for different contexts.",
+        "Get full details for a specific component: props with TypeScript types, defaults, code examples, do's and don'ts, the patterns it appears in, and the related components worth comparing against it first. Returns markdown. Always call this before using a component to get the correct API — and read the Related section before committing, since several components look alike in a screenshot and are meant for different contexts. Pass `installedVersion` with the version of @neofloai/atoms in the target project: the props and guidance are returned either way, but the code examples are withheld until it is known, since code written against a version the project does not have fails at import.",
       inputSchema: {
         name: z
           .string()
           .describe('Component name, e.g. "Button", "TextField". Case-sensitive.'),
+        installedVersion: installedVersionSchema,
       },
     },
-    async ({ name }) => {
-      const [manifest, patterns] = await Promise.all([
+    async ({ name, installedVersion }) => {
+      const [manifest, patterns, gate] = await Promise.all([
         loadComponents(),
         loadPatterns(),
+        gateVersion(installedVersion),
       ]);
       const component = manifest.components.find((c) => c.name === name);
 
@@ -141,7 +160,7 @@ export function registerGetComponent(server: McpServer): void {
         content: [
           {
             type: 'text',
-            text: formatComponentResponse(component, patterns.patterns),
+            text: formatComponentResponse(component, patterns.patterns, gate),
           },
         ],
       };

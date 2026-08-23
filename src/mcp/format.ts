@@ -10,6 +10,7 @@
 
 import type { InstallStep } from '@/src/install';
 import type { BriefQuestion } from '@/src/project/types';
+import type { ChangeEntry, ChangeKind, Release } from '@/src/release/types';
 
 /**
  * Install steps as numbered sections, continuing from `startIndex`.
@@ -54,6 +55,97 @@ export function renderQuestion(question: BriefQuestion): string {
     `  Answer shape: \`${question.accepts}\`${scope}`,
     followUps,
   ].join('\n');
+}
+
+/**
+ * How each kind of change is labelled in a release note.
+ *
+ * `Breaking` leads its own line rather than being a note on a `Changed`
+ * one, because it is the only kind that decides whether an upgrade is a
+ * version bump or a piece of work.
+ */
+const CHANGE_LABELS: Record<ChangeKind, string> = {
+  breaking: 'Breaking',
+  added: 'Added',
+  changed: 'Changed',
+  fixed: 'Fixed',
+  removed: 'Removed',
+};
+
+/** The order changes are listed in, worst news first. */
+const CHANGE_ORDER: readonly ChangeKind[] = [
+  'breaking',
+  'removed',
+  'changed',
+  'added',
+  'fixed',
+];
+
+/** One release's changes as bullets, breaking ones first. */
+export function renderChanges(changes: readonly ChangeEntry[]): string {
+  const sorted = [...changes].sort(
+    (a, b) => CHANGE_ORDER.indexOf(a.kind) - CHANGE_ORDER.indexOf(b.kind)
+  );
+  return sorted
+    .map((change) => {
+      const scope =
+        change.scope && change.scope.length > 0
+          ? ` (${change.scope.join(', ')})`
+          : '';
+      return `- **${CHANGE_LABELS[change.kind]}${scope}** — ${change.summary}`;
+    })
+    .join('\n');
+}
+
+/**
+ * One release, in full.
+ *
+ * The migration notes are part of the release rather than a separate
+ * section, because a reader deciding whether to take a version needs the
+ * cost of taking it in the same place as the reason to.
+ */
+export function renderRelease(entry: Release): string {
+  const migration =
+    entry.migration && entry.migration.length > 0
+      ? [
+          '',
+          '**To move onto it:**',
+          '',
+          entry.migration.map((note) => `- ${note}`).join('\n'),
+        ]
+      : [];
+
+  return [
+    `## ${entry.version} — ${entry.date}`,
+    '',
+    entry.summary,
+    '',
+    renderChanges(entry.changes),
+    ...migration,
+  ].join('\n');
+}
+
+/**
+ * The named things that moved across a span of releases.
+ *
+ * This is the line that matters most to an agent that is behind: not
+ * "there were three releases" but "the component you are about to write
+ * is one of the things that changed". Empty when no change in the span
+ * named a scope, which is the honest answer rather than a reassuring one.
+ */
+export function renderMovedScopes(releases: readonly Release[]): string {
+  const scopes = new Set<string>();
+  for (const entry of releases) {
+    for (const change of entry.changes) {
+      for (const scope of change.scope ?? []) {
+        scopes.add(scope);
+      }
+    }
+  }
+  if (scopes.size === 0) {
+    return '';
+  }
+  return [...scopes].sort().join(', ');
 }
 
 /** Questions grouped under their section headings, in order. */

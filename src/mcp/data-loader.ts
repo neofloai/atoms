@@ -7,6 +7,7 @@ import type {
   InstallationManifest,
   PatternManifest,
   ProjectManifest,
+  ReleaseManifest,
   TokenManifest,
 } from './types';
 
@@ -33,6 +34,7 @@ export const dataPaths = {
   installation: 'installation.json',
   brand: 'brand.json',
   project: 'project.json',
+  release: 'release.json',
 } as const;
 
 /** Loads the generated component manifest from `data/components.json`. */
@@ -63,4 +65,9 @@ export async function loadBrand(): Promise<BrandManifest> {
 /** Loads the generated project intake guide from `data/project.json`. */
 export async function loadProject(): Promise<ProjectManifest> {
   return readJsonFile<ProjectManifest>(dataPaths.project);
+}
+
+/** Loads the generated release record from `data/release.json`. */
+export async function loadRelease(): Promise<ReleaseManifest> {
+  return readJsonFile<ReleaseManifest>(dataPaths.release);
 }

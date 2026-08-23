@@ -12,6 +12,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import NextLink from '@/app/_lib/Link';
 import { NeofloLogo } from '@/src/brand';
+// The leaf module, not `@/src/release` — this renders on every page, and
+// the changelog data behind that barrel has no business in the client
+// bundle just to print one version string.
+import { ATOMS_VERSION } from '@/src/release/version';
 import { navigation, type NavItem } from './navigation';
 
 interface DocsSidebarProps {
@@ -159,10 +163,17 @@ export function DocsSidebar({ onItemClick }: DocsSidebarProps) {
               Neoflo Atoms
             </Typography>
             <Typography
+              component={NextLink}
+              href="/changelog"
               variant="caption"
-              sx={{ color: 'text.secondary', fontSize: 11 }}
+              sx={{
+                color: 'text.secondary',
+                fontSize: 11,
+                textDecoration: 'none',
+                '&:hover': { textDecoration: 'underline' },
+              }}
             >
-              v1.0.0 · design system
+              v{ATOMS_VERSION} · design system
             </Typography>
           </Stack>
         </Stack>

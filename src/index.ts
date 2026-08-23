@@ -65,6 +65,12 @@ export type { NeofloColorMode } from './theme/ThemeProvider';
 export { useColorScheme } from './theme/useColorScheme';
 export { neofloTheme } from './theme';
 
+// Which version of Atoms an app is actually running, readable from
+// inside the app rather than inferred from a lockfile. Imported from the
+// leaf module on purpose: `src/release/index.ts` pulls in the whole
+// changelog, and none of that belongs in a consumer's bundle.
+export { ATOMS_VERSION } from './release/version';
+
 export { NeofloLogo } from './brand';
 export type { NeofloLogoProps, NeofloLogoVariant } from './brand';
 

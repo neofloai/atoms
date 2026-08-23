@@ -43,14 +43,16 @@ export const BRIEF_QUESTIONS: readonly BriefQuestion[] = [
   {
     id: 'existingApp',
     section: 'What this is',
-    ask: 'What is the existing app — framework and version, which React version, and does it already use MUI?',
-    why: 'Atoms ships MUI and a theme inside it. An app that already mounts its own theme provider has to have that reconciled before anything renders correctly, and React 17 is not supported at all. Finding either out after installing is a rollback.',
-    accepts: 'framework + version, React major, whether MUI is already there',
+    ask: 'What is the existing app — framework and version, which React version, does it already use MUI, and is Atoms already installed?',
+    why: 'Atoms ships MUI and a theme inside it. An app that already mounts its own theme provider has to have that reconciled before anything renders correctly, and React 17 is not supported at all. Finding either out after installing is a rollback. The Atoms version matters for the same reason: the code these tools serve is written against the current release, and an app that installed months ago is on something else.',
+    accepts:
+      'framework + version, React major, whether MUI is already there, installed Atoms version (or "none")',
     required: true,
     purposes: ['existing-project'],
     followUps: [
       'Is there already a design system or component library in it?',
       'Does it already have a theme provider, and who owns it?',
+      'What does `npm ls @neofloai/atoms --depth=0` say in that project? Read it from there rather than from the package.json dependency line — a git install shows a commit or a range there, not a version. Answer "none" if it is not installed yet.',
     ],
   },
   {
