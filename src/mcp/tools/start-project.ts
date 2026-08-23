@@ -115,20 +115,47 @@ function renderEcho(brief: ProjectBrief): string {
     .join('\n');
 }
 
+/**
+ * What the screens are framed in, which is the first thing built and the
+ * easiest thing to leave out.
+ *
+ * `shell` is an optional answer, and the previous version of this note only
+ * fired on the one value `rail-and-bar` — so a brief that answered
+ * `bar-only`, or never reached the question at all, got a plan that never
+ * mentioned the shell. An agent reading that plan has no reason to reach for
+ * `Drawer` and `Navbar`, composes each screen as a bare page, and the app
+ * ends up with no chrome. Every branch now says something, including the
+ * unanswered one, because silence here is what gets read as "no shell".
+ *
+ * Named components rather than "the shell": `Drawer` is MUI's word for a
+ * sidebar and not what anyone would guess, so the plan has to say it.
+ */
+function renderShellAdvice(brief: ProjectBrief): string {
+  switch (brief.shell) {
+    case 'rail-and-bar':
+      return ' The brief asks for a rail and a bar — `Drawer variant="permanent" size="sm"` for the side navigation and `Navbar` for the bar above the page. That is exactly what the dashboard pattern already arranges, so start from it rather than composing the shell, because the arrangement is the part that comes out wrong: the page is a row, the rail owns the full height, and the bar begins where the rail ends rather than running the full width above it.';
+    case 'bar-only':
+      return ' The brief asks for a bar and no rail, so the shell is `Navbar` alone at the top of the page. Build it once in the layout rather than per screen, and take the dashboard pattern as the reference for everything below it.';
+    case 'none':
+      return ' The brief asks for no shell, so the screens are full-bleed and neither `Drawer` nor `Navbar` belongs in them. Say so in the layout, so a later screen does not quietly add one.';
+    default:
+      return ' The brief does not say what the screens sit in. Almost every app is a rail and a bar — `Drawer variant="permanent" size="sm"` for the side navigation, `Navbar` for the bar that begins where the rail ends — so assume that pair, build it once in the layout before the first screen, and confirm it with the user rather than composing screens with no chrome at all.';
+  }
+}
+
 /** The patterns worth starting from, given what the brief describes. */
 function renderPatternAdvice(
   brief: ProjectBrief,
   patterns: PatternData[]
 ): string {
   if (patterns.length === 0) {
-    return 'No patterns are published yet, so the screens are composed from components. Call `get_component` for each one before using it.';
+    // The shell advice belongs here too. With no pattern to crib the
+    // arrangement from, an agent composing every screen by hand is exactly
+    // the one most likely to leave the chrome out.
+    return `No patterns are published yet, so the screens are composed from components. Call \`get_component\` for each one before using it.${renderShellAdvice(brief)}`;
   }
   const list = patterns.map((p) => `\`${p.slug}\` (${p.description})`).join('; ');
-  const shellNote =
-    brief.shell === 'rail-and-bar'
-      ? ' The brief asks for a rail and a bar, which is exactly what the dashboard pattern already arranges — start from it rather than composing the shell, because the arrangement is the part that comes out wrong.'
-      : '';
-  return `Published patterns: ${list}. Call \`get_pattern\` for any that matches a screen in the brief before writing that screen.${shellNote}`;
+  return `Published patterns: ${list}. Call \`get_pattern\` for any that matches a screen in the brief before writing that screen.${renderShellAdvice(brief)}`;
 }
 
 /** The resolved plan, for a brief with every required answer in it. */

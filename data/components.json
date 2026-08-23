@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T14:02:11.463Z",
+  "generatedAt": "2026-08-23T10:03:00.155Z",
   "components": [
     {
       "name": "Accordion",
@@ -1851,7 +1851,36 @@
     {
       "name": "Drawer",
       "category": "Navigation",
-      "tagline": "A panel anchored to an edge of the viewport — a nav rail beside the page, or a sheet that slides over it. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.",
+      "tagline": "The side navigation an app shell is built from — the sidebar down the left, permanent, 220px, folding to a rail of icons — and the same panel used as a sheet that slides in over the page. With `Navbar` it is the shell every screen starts from: lay the page out as a row, rail first, and the bar begins where the rail ends. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.",
+      "keywords": [
+        "sidebar",
+        "sidenav",
+        "side nav",
+        "side navigation",
+        "side bar",
+        "left nav",
+        "left navigation",
+        "nav rail",
+        "navigation rail",
+        "app shell",
+        "page shell",
+        "shell",
+        "app layout",
+        "page layout",
+        "layout",
+        "main navigation",
+        "primary navigation",
+        "menu panel",
+        "flyout",
+        "off-canvas",
+        "slide-out",
+        "panel",
+        "sheet",
+        "bottom sheet",
+        "side panel",
+        "detail panel",
+        "collapsible sidebar"
+      ],
       "props": [
         {
           "name": "variant",
@@ -1914,6 +1943,11 @@
           "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer\n    variant=\"permanent\"\n    size=\"sm\"\n    slotProps={{ paper: { sx: { py: 2.5 } } }}\n  >\n    <Stack sx={{ px: 2, gap: 2, pb: 2 }}>\n      <NeofloLogo variant=\"full\" size={20} />\n      <Button\n        variant=\"secondary\"\n        appearance=\"outline\"\n        size=\"sm\"\n        fullWidth\n        startIcon={<SuitcaseSimpleIcon size={16} />}\n        endIcon={<CaretUpDownIcon size={14} />}\n        onClick={openWorkspaceMenu}\n      >\n        Non Trade AP DB\n      </Button>\n    </Stack>\n\n    <Divider />\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <Stack sx={{ flex: 1, px: 2, py: 2, gap: 1 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ToggleButton\n          key={key}\n          value={key}\n          selected={active === key}\n          onChange={() => setActive(key)}\n          appearance=\"text\"\n          size=\"sm\"\n          sx={{ gap: 1, justifyContent: \"flex-start\", textTransform: \"none\" }}\n        >\n          <Icon size={20} />\n          {label}\n        </ToggleButton>\n      ))}\n    </Stack>\n\n    <Divider />\n\n    <Stack sx={{ px: 2, pt: 2.5 }}>\n      <Button\n        variant=\"secondary\"\n        appearance=\"text\"\n        fullWidth\n        endIcon={<CaretDownIcon size={16} />}\n        onClick={openUserMenu}\n        sx={{ justifyContent: \"space-between\", textTransform: \"none\" }}\n      >\n        <Avatar size=\"sm\">AV</Avatar>\n      </Button>\n    </Stack>\n  </Drawer>\n\n  <Box sx={{ flex: 1, p: 3 }}>{children}</Box>\n</Stack>"
         },
         {
+          "title": "A nav rail with a second level",
+          "description": "One level of nesting, and it lands in two different places. Expanded, the children reflow in under the parent behind a hairline that stands between the parent’s glyph and theirs — that rule is what makes the indent read as descent rather than as a second list. Folded, there is no width to indent into, so the same children arrive in a flyout anchored to the parent’s glyph and headed with the parent’s name, because two rows hanging off a 16px icon say nothing about which branch they belong to. Note the three row states: the fill marks the one page you are on, and a parent whose child is that page takes the same ink and weight with no fill, which is what still says so when the group is shut. Stop at one level — a rail that needs three needs a different navigation model. For the whole screen, start from the Dashboard pattern.",
+          "code": "const [open, setOpen] = React.useState(true);\nconst [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);\nconst onBranch = SECTION.children.some((c) => c.key === active);\n\n<Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n  {/* The parent opens the level under it; it is not a page, so it\n      never takes the fill. Folded, the same click opens the flyout. */}\n  <NavRow\n    item={SECTION}\n    collapsed={collapsed}\n    onBranch={onBranch}\n    expanded={open}\n    onSelect={(event) =>\n      collapsed\n        ? setAnchorEl(event.currentTarget)\n        : setOpen((previous) => !previous)\n    }\n  />\n\n  {!collapsed && (\n    <Collapse in={open}>\n      <Stack\n        sx={(theme) => ({\n          gap: 0.5,\n          ml: \"16px\",\n          pl: \"15px\",\n          borderLeft: \"1px solid\",\n          borderColor: border.layers.card2.light,\n          ...theme.applyStyles(\"dark\", {\n            borderColor: border.layers.card2.dark,\n          }),\n        })}\n      >\n        {SECTION.children.map((child) => (\n          <NavRow\n            key={child.key}\n            item={child}\n            selected={active === child.key}\n            onSelect={() => setActive(child.key)}\n          />\n        ))}\n      </Stack>\n    </Collapse>\n  )}\n\n  {/* Folded, the second level has nowhere to go but beside the rail. */}\n  <Menu\n    anchorEl={anchorEl}\n    open={anchorEl !== null}\n    onClose={() => setAnchorEl(null)}\n    anchorOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n    transformOrigin={{ vertical: \"top\", horizontal: \"left\" }}\n  >\n    <Typography variant=\"body2\" sx={{ px: 1, pb: 1 }}>\n      {SECTION.label}\n    </Typography>\n    <Divider sx={{ mb: 0.5 }} />\n    {SECTION.children.map(({ key, label, Icon }) => (\n      <MenuItem key={key} selected={active === key} onClick={() => go(key)}>\n        <Icon size={16} />\n        {label}\n      </MenuItem>\n    ))}\n  </Menu>\n</Drawer>"
+        },
+        {
           "title": "A rail that collapses to icons",
           "description": "One rail, two widths. There is no collapsed rung on the scale, because a rail folding to a strip of icons is the same panel narrowed — so it is the same prop with a raw number. The width animates and the panel clips its own overflow, which is what lets the labels drop out without pushing the rail back open.",
           "code": "const [collapsed, setCollapsed] = React.useState(false);\n\n<Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n  <NavOfYourOwn collapsed={collapsed} />\n</Drawer>"
@@ -1939,14 +1973,19 @@
         "Use `permanent` for the app rail and `size=\"sm\"`, so every Neoflo shell has the same 220px column",
         "Mount a `temporary` drawer only while it has something to show, so its contents rebuild per record instead of holding the last one",
         "Match the `anchor` to what the panel is: a rail belongs on the left, a record on the right, a row of actions at the bottom",
-        "Drive a collapsing rail from `size` with a pixel number, so the panel and the space it reserves fold together and animate"
+        "Drive a collapsing rail from `size` with a pixel number, so the panel and the space it reserves fold together and animate",
+        "Stop a nav rail at one level of nesting, and put that level behind a `Collapse` with a hairline standing between the parent’s glyph and the children’s",
+        "Move a folded rail’s second level into a `Menu` anchored to the parent’s glyph, headed with the parent’s name — the labels are gone at 64px and the branch has to be named somewhere"
       ],
       "donts": [
         "Don't set the width with `sx` or `slotProps.paper` — `size` is the only place it reaches both the panel and the space a docked drawer reserves",
         "Don't use `persistent` for a sheet that is glanced at and closed — reflowing the page on every open is what makes it the wrong variant",
         "Don't expect `size` to do anything on a `top` or `bottom` anchor; give the content padding and let the sheet take its height",
         "Don't put a `permanent` drawer inside a container without `position: \"relative\"` on the paper — it will pin itself to the window instead",
-        "Don't add a shadow to a `temporary` drawer that still has its backdrop; the scrim is already doing that job"
+        "Don't add a shadow to a `temporary` drawer that still has its backdrop; the scrim is already doing that job",
+        "Don't let a parent row take the selected fill as well as its children — it opens a level rather than being a page, and two filled rows both claim to be where you are",
+        "Don't leave a nav row's selected fill to `ToggleButton`'s own: it is `card 2`, the same value this panel's paper takes, so the fill is invisible and only the ink shifts",
+        "Don't indent a second level in a folded rail; the labels are clipped at that width and what is left is a column of glyphs that cannot say which are children"
       ],
       "relatedComponents": [
         "Navbar",
@@ -1954,6 +1993,7 @@
         "Card",
         "Menu",
         "Slide",
+        "Collapse",
         "ToggleButton"
       ]
     },
@@ -3103,7 +3143,26 @@
     {
       "name": "Navbar",
       "category": "Navigation",
-      "tagline": "The bar across the top of an app, in two heights — a 48px app bar or a 72px page header. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.",
+      "tagline": "The topbar across the top of an app, in two heights — a 48px app bar or a 72px page header. With `Drawer` it is the shell every screen starts from: the rail owns the full height and this bar begins where the rail ends, so it never runs the full width above it. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.",
+      "keywords": [
+        "topbar",
+        "top bar",
+        "app bar",
+        "appbar",
+        "header",
+        "page header",
+        "top navigation",
+        "toolbar",
+        "masthead",
+        "app shell",
+        "page shell",
+        "shell",
+        "app layout",
+        "page layout",
+        "layout",
+        "title bar",
+        "breadcrumb bar"
+      ],
       "props": [
         {
           "name": "children",

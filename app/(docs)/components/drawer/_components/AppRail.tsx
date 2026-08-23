@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { NeofloLogo } from '@/src/brand';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
+import { Collapse } from '@/src/components/Collapse';
 import { Divider } from '@/src/components/Divider';
 import { Drawer } from '@/src/components/Drawer';
 import { IconButton } from '@/src/components/IconButton';
@@ -15,7 +16,14 @@ import { Menu } from '@/src/components/Menu';
 import { MenuItem } from '@/src/components/MenuItem';
 import { ToggleButton } from '@/src/components/ToggleButton';
 import { Tooltip } from '@/src/components/Tooltip';
-import { fontWeights, surface, text } from '@/src/tokens';
+import {
+  border,
+  elevation,
+  fontWeights,
+  radius,
+  surface,
+  text,
+} from '@/src/tokens';
 import {
   CaretDownIcon,
   CaretUpDownIcon,
@@ -58,6 +66,24 @@ import type { CSSObject, Theme } from '@mui/material/styles';
  * house control that stays pressed; the switcher and the user row are
  * `Button`s that open a `Menu`. Inventing a nav-row component for a demo
  * would put a treatment in the docs that no designer has drawn.
+ *
+ * ## The second level
+ *
+ * A row with `children` is a group rather than a destination: it opens and
+ * closes instead of navigating, and it never takes the selected fill. The
+ * branched sidenav frame (1262:78156) puts that level in two places, and
+ * both are built here — expanded, the children reflow in behind a branch
+ * rule at a 32px indent; folded, they arrive in a flyout anchored to the
+ * parent's glyph and headed with the parent's name, because at 64px there
+ * is no width to indent into and no label left to indent under.
+ *
+ * That frame also draws a third row state the rail did not have. The fill
+ * marks the one page you are on; a parent whose child is that page takes
+ * the same ink and weight with *no* fill. It is the only thing left saying
+ * where you are once a group is shut and its selected child is off screen.
+ *
+ * One level and no further — a third would need a row that is both a group
+ * and a destination, which nothing has drawn. See DESIGNER_QUESTIONS.md #55.
  */
 
 /** Rail widths — expanded on the `sm` rung, folded to a row's square. */
@@ -78,6 +104,82 @@ const RAIL_GUTTER_PX = 16;
  */
 const NAV_ROW_PX = 28;
 const NAV_GLYPH_PX = 20;
+
+/**
+ * The second level: where the branch rule stands, and where a child row
+ * starts. Both measured from the left edge of the nav block rather than
+ * of the rail, so the pair survives a change to the gutter.
+ *
+ * From the branched sidenav frame (1262:78156), which draws the rule at
+ * 16 and the child at 32. The rule lands between the parent's glyph and
+ * the child's, which is what makes the indent read as descent rather
+ * than as a second list starting.
+ *
+ * Folded there is no width to indent into, so neither number applies and
+ * the level moves into a flyout instead.
+ */
+const BRANCH_RULE_PX = 16;
+const BRANCH_INDENT_PX = 32;
+
+/**
+ * Gap between the rail's edge and a folded parent's flyout.
+ *
+ * The frame stands the panel off the rail rather than flush against it —
+ * its collapsed rail ends at 755 and the flyout starts at 763 — so the two
+ * read as a panel *beside* the rail rather than a widening of it. `Scale/200`.
+ */
+const FLYOUT_OFFSET_PX = 8;
+
+/**
+ * How far past its anchor the flyout has to start.
+ *
+ * It is anchored to the *row's* right edge but has to clear the *rail's*,
+ * and a folded row is a 28px square centred in a 64px panel — so the rail's
+ * edge is half the leftover width further out, and anchoring alone leaves
+ * the panel overlapping the rail by that much.
+ *
+ * Stepping over the remainder rather than anchoring to the rail itself,
+ * because the anchor is also what gives the panel its vertical position:
+ * it opens level with the row it belongs to, which a rail-wide anchor
+ * would lose.
+ */
+const FLYOUT_ANCHOR_STEP_PX =
+  (RAIL_COLLAPSED_PX - NAV_ROW_PX) / 2 + FLYOUT_OFFSET_PX;
+
+/**
+ * How long a folded parent's flyout survives the pointer leaving it.
+ *
+ * The panel stands 8px clear of the rail, so the pointer crosses ground
+ * that belongs to neither: `mouseleave` fires on the row and `mouseenter`
+ * on the panel only arrives after the gap. Nothing can be put in that gap
+ * to carry the hover — the rail's paper clips on the x-axis to fold its
+ * labels, and the flyout's paper clips to scroll a long list, so a bridge
+ * from either side is cut off at exactly the edge it needs to cross.
+ *
+ * A timer is what is left, and it has to be generous rather than tight:
+ * 8px is nothing to cross quickly and everything to cross while reading,
+ * and a reader who pauses mid-gap should not have the panel taken away.
+ * 300ms outlasts a deliberate move without leaving a panel hanging after
+ * the pointer has truly gone.
+ */
+const FLYOUT_GRACE_MS = 300;
+
+/**
+ * The flyout is its own surface rather than a `Menu` in `Menu`'s clothes.
+ *
+ * The frame draws it at 240px on 8px corners with an 8px inset. The house
+ * `Menu` is 16px corners on a 4px inset and takes its width from its widest
+ * item — which is what made the first build read as a dropdown that had
+ * wandered onto the rail rather than as a branch of it. `Menu` still does
+ * the anchoring, the dismissal and the keyboard handling; the surface is
+ * this.
+ *
+ * Colour and elevation stay tokenised where the frame left them unbound: it
+ * fills with raw `white` behind a shadow roughly four times `Shadow/medium`.
+ * `card 1` is the nearest rung above the `card 2` rail, and `medium` is the
+ * house token for a floating panel. See DESIGNER_QUESTIONS.md #55.
+ */
+const FLYOUT_WIDTH_PX = 240;
 
 /**
  * Brand mark height, and the lockup's wordmark scales from it.
@@ -132,6 +234,43 @@ function navRowStyles(theme: Theme): CSSObject {
   return { ...scheme('light'), ...theme.applyStyles('dark', scheme('dark')) };
 }
 
+/** The flyout's panel. See `FLYOUT_WIDTH_PX` for why it is not `Menu`'s. */
+function flyoutSurface(theme: Theme): CSSObject {
+  return {
+    width: FLYOUT_WIDTH_PX,
+    maxWidth: FLYOUT_WIDTH_PX,
+    borderRadius: `${radius.sm}px`,
+    padding: `${FLYOUT_OFFSET_PX}px`,
+    boxShadow: elevation.medium,
+    backgroundColor: surface.layers.card1.light,
+    borderColor: border.layers.card2.light,
+    ...theme.applyStyles('dark', {
+      backgroundColor: surface.layers.card1.dark,
+      borderColor: border.layers.card2.dark,
+    }),
+  };
+}
+
+/**
+ * A row inside the flyout, drawn as the rail's own row rather than as a
+ * menu item: a 28px pill on 4px corners, an 8px inset, an 8px glyph gap,
+ * and the same colour ladder.
+ *
+ * The frame instances the same row component in both places, which is the
+ * point — a child reached through the flyout and the same child reached in
+ * the open rail should be the same object, not two treatments of it.
+ */
+function flyoutRow(theme: Theme): CSSObject {
+  return {
+    minHeight: NAV_ROW_PX,
+    height: NAV_ROW_PX,
+    paddingInline: `${FLYOUT_OFFSET_PX}px`,
+    gap: `${FLYOUT_OFFSET_PX}px`,
+    borderRadius: `${radius.xs}px`,
+    ...navRowStyles(theme),
+  };
+}
+
 /**
  * The rail draws no rules at all.
  *
@@ -153,12 +292,30 @@ export interface RailItem {
   key: string;
   label: string;
   Icon: React.ComponentType<{ size?: number }>;
+  /**
+   * The level under this row, from the branched sidenav frame
+   * (1262:78156).
+   *
+   * One level deep and no further. A row with children is a group rather
+   * than a destination — it opens and closes instead of navigating — so
+   * nesting a third level would need a row that is both, which nothing
+   * has drawn.
+   */
+  children?: readonly RailItem[];
 }
 
 export const MAIN_NAV: readonly RailItem[] = [
   { key: 'dashboard', label: 'Dashboard', Icon: SquaresFourIcon },
   { key: 'analytics', label: 'Analytics', Icon: ChartLineIcon },
-  { key: 'configuration', label: 'Configuration', Icon: GearSixIcon },
+  {
+    key: 'configuration',
+    label: 'Configuration',
+    Icon: GearSixIcon,
+    children: [
+      { key: 'rules', label: 'Validation rules', Icon: ScrollIcon },
+      { key: 'documents', label: 'Document types', Icon: FileTextIcon },
+    ],
+  },
   { key: 'vendors', label: 'Vendor details', Icon: FolderUserIcon },
 ];
 
@@ -255,21 +412,56 @@ function NavRow({
   selected,
   collapsed,
   onSelect,
+  onBranch = false,
+  hasChildren = false,
+  expanded = false,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   label: string;
   Icon: React.ComponentType<{ size?: number }>;
   selected: boolean;
   collapsed: boolean;
-  onSelect: () => void;
+  onSelect: (event: React.MouseEvent<HTMLElement>) => void;
+  /**
+   * Pointer handlers, for the one row that has something to reveal on
+   * hover other than a tooltip: a folded parent, whose flyout opens the
+   * same way a folded leaf's tooltip does.
+   */
+  onMouseEnter?: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseLeave?: () => void;
+  /**
+   * This row is the parent of the page you are on.
+   *
+   * Drawn in the selected row's ink and weight but with no fill, which is
+   * the frame's own division of labour: the fill marks exactly one row,
+   * and this says the current screen is somewhere inside this group. It
+   * matters most when the group is shut and the selected child is not on
+   * screen at all.
+   */
+  onBranch?: boolean;
+  /** Carries a caret, and opens a level instead of navigating. */
+  hasChildren?: boolean;
+  expanded?: boolean;
 }) {
   return (
-    <Tooltip title={collapsed ? label : ''} placement="right">
+    /* A folded parent gets no tooltip: its flyout opens on the same hover
+       and already carries the name as a header, so a tooltip would be the
+       same word twice, in two panels, overlapping. */
+    <Tooltip title={collapsed && !hasChildren ? label : ''} placement="right">
       <ToggleButton
         value={label}
         selected={selected}
         onChange={onSelect}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         appearance="text"
         size="md"
+        // Every other folded row is named by its tooltip. This one has
+        // none, so the name is stated instead of lost — a folded parent is
+        // a bare glyph, and its flyout only exists once hovered.
+        aria-label={collapsed && hasChildren ? label : undefined}
+        aria-expanded={hasChildren && !collapsed ? expanded : undefined}
         sx={(theme) => ({
           ...navRowStyles(theme),
           height: NAV_ROW_PX,
@@ -281,7 +473,37 @@ function NavRow({
           justifyContent: collapsed ? 'center' : 'flex-start',
           px: collapsed ? 0 : 1,
           textTransform: 'none',
-          fontWeight: selected ? 500 : 400,
+          fontWeight: selected || onBranch ? 500 : 400,
+          ...(onBranch && {
+            color: text.default.body.light,
+            ...theme.applyStyles('dark', { color: text.default.body.dark }),
+          }),
+          // A folded parent's hover target runs to the rail's edge, not
+          // just to the pill's.
+          //
+          // The pill is a 28px square centred in a 64px rail, so 18px of
+          // bare rail sits between it and the panel it opens — and leaving
+          // the pill onto that strip reads to the DOM as leaving the row
+          // entirely. Without this the flyout starts closing while the
+          // pointer is still travelling towards it, over the rail, which is
+          // the one place it has every reason to be.
+          //
+          // Transparent, so the fill stays the 28px square the design
+          // draws. It stops at the rail's edge because the panel clips its
+          // own overflow to fold the labels; the 8px beyond that is what
+          // the grace period is for.
+          ...(collapsed &&
+            hasChildren && {
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: '100%',
+                width: `${(RAIL_COLLAPSED_PX - NAV_ROW_PX) / 2}px`,
+              },
+            }),
           // The panel is mid-animation for 200ms while this row is still
           // laid out at its old width, and flex resolves the overflow by
           // squeezing whatever will give: the glyph collapses towards zero
@@ -302,12 +524,249 @@ function NavRow({
             {label}
           </Box>
         )}
+        {/* A parent's caret is its only trailing part, so it takes the
+            slack rather than sitting in the label's gap. Folded there is
+            neither slack nor label — the glyph is the whole row, and the
+            level it opens arrives beside the rail instead. */}
+        {!collapsed && hasChildren && (
+          <Box
+            component="span"
+            sx={(theme) => ({
+              ml: 'auto',
+              display: 'flex',
+              transform: expanded ? 'none' : 'rotate(-90deg)',
+              transition: theme.transitions.create('transform'),
+            })}
+          >
+            <CaretDownIcon size={14} />
+          </Box>
+        )}
       </ToggleButton>
     </Tooltip>
   );
 }
 
 NavRow.displayName = 'NavRow';
+
+/**
+ * A parent row and the level under it.
+ *
+ * Expanded, the children reflow in beneath the parent behind the branch
+ * rule. Folded, there is no width to indent into, so the same children
+ * arrive in a flyout anchored to the parent's glyph — one level of
+ * nesting, two places to put it, which is what keeps a folded rail from
+ * dropping its second level on the floor.
+ *
+ * The flyout keeps the parent's name as a header, because the trigger at
+ * that width is a bare glyph and two rows hanging off it say nothing
+ * about which branch they belong to.
+ */
+function NavGroup({
+  item,
+  collapsed,
+  active,
+  onSelect,
+}: {
+  item: RailItem;
+  collapsed: boolean;
+  active: string;
+  onSelect: (key: string) => void;
+}) {
+  const children = item.children ?? [];
+  const onBranch = children.some((child) => child.key === active);
+  const [expanded, setExpanded] = React.useState(onBranch);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
+  // Arriving on the branch from anywhere else opens the group. Adjusted
+  // during render rather than in an effect: it is state derived from a
+  // change in `active`, so an effect would open the group a frame late and
+  // cost a second pass. Tracking the previous value is what keeps it to
+  // the transition — read directly, `onBranch` would force the group open
+  // again every render and a reader could never shut a group they are
+  // standing inside.
+  const [wasOnBranch, setWasOnBranch] = React.useState(onBranch);
+  if (onBranch !== wasOnBranch) {
+    setWasOnBranch(onBranch);
+    if (onBranch) setExpanded(true);
+  }
+
+  /**
+   * Hover, with a grace period for crossing the seam.
+   *
+   * Leaving the glyph and entering the flyout are two events with a gap
+   * between them, so closing on `mouseleave` alone would shut the panel
+   * before the pointer could reach it. The close is scheduled instead, and
+   * the panel's own `mouseenter` cancels it.
+   */
+  const closeTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const holdFlyout = React.useCallback(() => {
+    clearTimeout(closeTimer.current);
+  }, []);
+
+  const openFlyout = React.useCallback((element: HTMLElement) => {
+    clearTimeout(closeTimer.current);
+    setAnchorEl(element);
+  }, []);
+
+  const closeFlyout = React.useCallback(() => {
+    clearTimeout(closeTimer.current);
+    setAnchorEl(null);
+  }, []);
+
+  const closeFlyoutSoon = React.useCallback(() => {
+    clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setAnchorEl(null), FLYOUT_GRACE_MS);
+  }, []);
+
+  // A pending close outliving the component would call setState on it.
+  React.useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  return (
+    <>
+      <NavRow
+        label={item.label}
+        Icon={item.Icon}
+        collapsed={collapsed}
+        selected={false}
+        onBranch={onBranch}
+        hasChildren
+        expanded={expanded}
+        // Hover is how a folded rail reveals anything, so it is how the
+        // flyout opens. Click still works, because hover is not available
+        // to a touch screen or a keyboard.
+        onMouseEnter={
+          collapsed ? (event) => openFlyout(event.currentTarget) : undefined
+        }
+        onMouseLeave={collapsed ? closeFlyoutSoon : undefined}
+        onSelect={(event) => {
+          if (collapsed) openFlyout(event.currentTarget);
+          else setExpanded((previous) => !previous);
+        }}
+      />
+
+      {!collapsed && (
+        <Collapse in={expanded}>
+          <Stack
+            sx={(theme) => ({
+              gap: 1,
+              ml: `${BRANCH_RULE_PX}px`,
+              pl: `${BRANCH_INDENT_PX - BRANCH_RULE_PX - 1}px`,
+              borderLeft: '1px solid',
+              // The `default` ladder, not `layers` — the same correction
+              // #46 made for the selected row. The frame's rule is
+              // `border/layers/card 2`, which is a rung *off* the rail's own
+              // `card 2` fill and measures 1.06:1 against it: drawn on the
+              // canvas outside the rail, as this one was, that is never
+              // visible. A branch nobody can see is not a branch.
+              borderColor: border.default.default.light,
+              ...theme.applyStyles('dark', {
+                borderColor: border.default.default.dark,
+              }),
+            })}
+          >
+            {children.map(({ key, label, Icon }) => (
+              <NavRow
+                key={key}
+                label={label}
+                Icon={Icon}
+                collapsed={false}
+                selected={active === key}
+                onSelect={() => onSelect(key)}
+              />
+            ))}
+          </Stack>
+        </Collapse>
+      )}
+
+      <Menu
+        anchorEl={anchorEl}
+        // Gated on `collapsed` as well as the anchor, so expanding the rail
+        // dismisses the flyout on its own. The alternative is an effect
+        // clearing the anchor, which fires after the glyph it points at has
+        // already moved.
+        open={collapsed && Boolean(anchorEl)}
+        onClose={closeFlyout}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        // A hover panel must not take the pointer. The modal's backdrop
+        // covers the whole viewport, so left alone it would swallow the
+        // hover on every other glyph in the rail and the pointer could
+        // never leave this row. The panel itself takes it back.
+        sx={(theme) => ({
+          pointerEvents: 'none',
+          // The panel's own styles go here, not on `slotProps.paper`.
+          // `Menu` paints its paper through a descendant selector, which
+          // outranks the single class an `sx` on the paper generates — the
+          // same specificity trap `Drawer` documents for its width. Written
+          // as the same selector, so these actually land.
+          '& .MuiMenu-paper': {
+            pointerEvents: 'auto',
+            ml: `${FLYOUT_ANCHOR_STEP_PX}px`,
+            ...flyoutSurface(theme),
+          },
+        })}
+        // The flyout is not a menu the reader committed to opening, so it
+        // does not take focus off the rail on hover.
+        disableAutoFocusItem
+        disableRestoreFocus
+        slotProps={{
+          paper: {
+            onMouseEnter: holdFlyout,
+            onMouseLeave: closeFlyoutSoon,
+          },
+        }}
+      >
+        {/* The parent's name, then a rule, then the level. The frame heads
+            the panel this way because the trigger is a bare glyph: without
+            the name, two rows arrive from nowhere. */}
+        <Box
+          sx={(theme) => ({
+            pb: `${FLYOUT_OFFSET_PX}px`,
+            mb: `${FLYOUT_OFFSET_PX}px`,
+            borderBottom: '1px solid',
+            borderColor: border.layers.card2.light,
+            ...theme.applyStyles('dark', {
+              borderColor: border.layers.card2.dark,
+            }),
+          })}
+        >
+          <Typography
+            variant="body2"
+            noWrap
+            sx={(theme) => ({
+              fontWeight: fontWeights.medium,
+              color: text.default.placeholder.light,
+              ...theme.applyStyles('dark', {
+                color: text.default.placeholder.dark,
+              }),
+            })}
+          >
+            {item.label}
+          </Typography>
+        </Box>
+        <Stack sx={{ gap: `${radius.xs}px` }}>
+          {children.map(({ key, label, Icon }) => (
+            <MenuItem
+              key={key}
+              selected={active === key}
+              onClick={() => {
+                onSelect(key);
+                closeFlyout();
+              }}
+              sx={flyoutRow}
+            >
+              <Icon size={16} />
+              {label}
+            </MenuItem>
+          ))}
+        </Stack>
+      </Menu>
+    </>
+  );
+}
+
+NavGroup.displayName = 'NavGroup';
 
 /**
  * The rail. `collapsed` resolves to a `size` in pixels rather than a name
@@ -526,35 +985,61 @@ export function AppRail({
           pt: showBrand ? 2 : 0,
         }}
       >
-        {nav.map(({ key, label, Icon }) => (
-          <NavRow
-            key={key}
-            label={label}
-            Icon={Icon}
-            collapsed={collapsed}
-            selected={active === key}
-            onSelect={() => {
-              setActive(key);
-              onNavigate?.();
-            }}
-          />
-        ))}
+        {nav.map((item) =>
+          item.children ? (
+            <NavGroup
+              key={item.key}
+              item={item}
+              collapsed={collapsed}
+              active={active}
+              onSelect={(key) => {
+                setActive(key);
+                onNavigate?.();
+              }}
+            />
+          ) : (
+            <NavRow
+              key={item.key}
+              label={item.label}
+              Icon={item.Icon}
+              collapsed={collapsed}
+              selected={active === item.key}
+              onSelect={() => {
+                setActive(item.key);
+                onNavigate?.();
+              }}
+            />
+          )
+        )}
       </Stack>
 
       <Stack sx={{ ...block, gap: 1, pb: 2, flexShrink: 0 }}>
-        {secondaryNav.map(({ key, label, Icon }) => (
-          <NavRow
-            key={key}
-            label={label}
-            Icon={Icon}
-            collapsed={collapsed}
-            selected={active === key}
-            onSelect={() => {
-              setActive(key);
-              onNavigate?.();
-            }}
-          />
-        ))}
+        {secondaryNav.map((item) =>
+          item.children ? (
+            <NavGroup
+              key={item.key}
+              item={item}
+              collapsed={collapsed}
+              active={active}
+              onSelect={(key) => {
+                setActive(key);
+                onNavigate?.();
+              }}
+            />
+          ) : (
+            <NavRow
+              key={item.key}
+              label={item.label}
+              Icon={item.Icon}
+              collapsed={collapsed}
+              selected={active === item.key}
+              onSelect={() => {
+                setActive(item.key);
+                onNavigate?.();
+              }}
+            />
+          )
+        )}
       </Stack>
 
       {showUser && (

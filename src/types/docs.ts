@@ -25,6 +25,23 @@ export interface ComponentExamplesData {
   name: string;
   category: string;
   tagline: string;
+  /**
+   * Extra search terms that should surface this component, beyond the
+   * words already in its name, category, tagline and prop docs.
+   *
+   * For the everyday name of a thing, when the house name is not it. A
+   * tagline is written to say what a component is *for* and reads as prose;
+   * it cannot also carry every word someone might type. `search_docs`
+   * matches substrings, so a caller asking for a `sidenav` finds nothing
+   * unless that word exists somewhere — and the components most likely to
+   * be searched for by the wrong name are the ones a screen starts with.
+   *
+   * Curated rather than derived, for the same reason the intake's are
+   * (`src/project/types.ts`): a term is here because someone would plausibly
+   * search it, not because it appears in the prose. Same field, same job, as
+   * `BrandSection.keywords`.
+   */
+  keywords?: readonly string[];
   /** Source design in the Product Design System Figma file. */
   figmaUrl?: string;
   props: ComponentPropDoc[];
