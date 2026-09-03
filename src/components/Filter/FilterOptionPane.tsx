@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 
-import { MagnifyingGlassIcon } from '@/src/icons';
+import { MagnifyingGlassIcon } from '@/src/icons/glyphs';
 import { radius, surface, text } from '@/src/tokens';
 
 import { Checkbox } from '../Checkbox';

@@ -87,8 +87,16 @@ const SEARCH_KEYWORDS: readonly string[] = [
   'outdated',
   'compatibility',
   'compatible',
-  '1.0.0',
-  'v1.0.0',
+  // Deliberately no version numbers here. `search_docs` derives them from
+  // `releases`, so every published version and tag is searchable without
+  // anyone remembering to add two more strings to this list at release
+  // time.
+  //
+  // Nothing describing what a release *contains* belongs here either. The
+  // release hit is pushed above components and patterns, so a keyword
+  // like `icons` or `bundle size` would hand the changelog to every
+  // search for the icon set. Keep this to words that ask about versioning
+  // itself.
 ];
 
 /**
@@ -105,13 +113,16 @@ export const release: ReleaseGuide = {
   repo: 'neofloai/atoms',
   current: CURRENT.version,
   currentTag: CURRENT.tag,
-  // Equal to `current` while 1.0.0 is the only release: there is no
-  // earlier published version whose API the served code could also run
-  // against. When 1.1.0 ships this becomes 1.0.0 and stays there until a
-  // release actually removes something -- it is the oldest version the
-  // code in `get_component` and `get_pattern` still runs on, not the
-  // oldest version anyone is allowed to be on.
-  minimumSupported: CURRENT.version,
+  // Pinned rather than tracking `current`, which is the whole point of
+  // the field: 1.0.1 fixed how the package is bundled and moved no API,
+  // so every example `get_component` and `get_pattern` serve still runs
+  // unchanged on 1.0.0. A caller on 1.0.0 should be told there is an
+  // upgrade worth taking, not refused code that would work.
+  //
+  // This moves only when a release actually removes or renames something
+  // the served code uses -- it is the oldest version that code still runs
+  // on, not the oldest version anyone should be on.
+  minimumSupported: '1.0.0',
   releases: RELEASES,
   commands: COMMANDS,
   keywords: SEARCH_KEYWORDS,

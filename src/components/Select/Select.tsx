@@ -14,7 +14,7 @@ import {
   text,
   typography,
 } from '@/src/tokens';
-import { CaretDownIcon } from '@/src/icons';
+import { CaretDownIcon } from '@/src/icons/glyphs';
 
 import { paired } from '../_shared/actionStyles';
 import { ASTERISK_GAP_PX } from '../_shared/fieldStyles';

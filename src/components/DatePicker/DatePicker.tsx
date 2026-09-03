@@ -20,7 +20,7 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
   XIcon,
-} from '@/src/icons';
+} from '@/src/icons/glyphs';
 import { spacing } from '@/src/tokens';
 
 import { paired, pairedFocusRing } from '../_shared/actionStyles';

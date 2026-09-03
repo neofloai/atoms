@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Tabs as MuiTabs, tabClasses, tabsClasses } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { CaretLeftIcon, CaretRightIcon } from '@/src/icons';
+import { CaretLeftIcon, CaretRightIcon } from '@/src/icons/glyphs';
 
 import { paired } from '../_shared/actionStyles';
 
