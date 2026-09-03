@@ -69,15 +69,25 @@ export function registerSearchDocs(server: McpServer): void {
       // The release record goes first when it matches, for the same
       // reason the intake does: "which version am I on" has to be
       // answered before the answer to anything else can be trusted.
-      // Matched against its own keywords and the release headlines, not
-      // the change summaries — those name components in passing, and a
-      // search for `Button` wants the component.
+      //
+      // Matched against curated keywords and version strings only — no
+      // release prose, not the headlines and not the change summaries.
+      // Prose names components, tokens and patterns in passing, and
+      // because this block is pushed first, one word in a release note is
+      // enough to bury the thing a search was actually for. It is not
+      // hypothetical: the 1.0.0 headline reads "the component library,
+      // the tokens, the patterns…", which was quietly answering every
+      // search for `tokens` with the changelog.
+      //
+      // So a release becomes findable by adding a keyword in
+      // `src/release/index.ts`, deliberately, rather than by whatever
+      // words its summary happened to use.
       const releaseText = [
         'changelog',
         release.current,
         release.currentTag,
         ...release.keywords,
-        ...release.releases.map((entry) => `${entry.version} ${entry.headline}`),
+        ...release.releases.flatMap((entry) => [entry.version, entry.tag]),
       ].join(' ');
       if (matches(releaseText, q)) {
         hits.push({

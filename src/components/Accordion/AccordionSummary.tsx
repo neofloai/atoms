@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { CaretDownIcon } from '@/src/icons';
+import { CaretDownIcon } from '@/src/icons/glyphs';
 import { border, icon, surface, text } from '@/src/tokens';
 
 import { paired, pairedFocusRing } from '../_shared/actionStyles';

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ButtonBase, buttonBaseClasses } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { CaretDownIcon, CaretRightIcon } from '@/src/icons';
+import { CaretDownIcon, CaretRightIcon } from '@/src/icons/glyphs';
 import { border, radius, spacing } from '@/src/tokens';
 
 import { focusRing, paired } from '../_shared/actionStyles';

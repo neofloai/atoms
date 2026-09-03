@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { ArrowDownIcon, ArrowUpIcon, ArrowsDownUpIcon } from '@/src/icons';
+import { ArrowDownIcon, ArrowUpIcon, ArrowsDownUpIcon } from '@/src/icons/glyphs';
 import { surface, text } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';

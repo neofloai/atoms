@@ -12,7 +12,7 @@ import {
   DotsThreeVerticalIcon,
   EyeSlashIcon,
   FunnelIcon,
-} from '@/src/icons';
+} from '@/src/icons/glyphs';
 
 import { paired } from '../_shared/actionStyles';
 import { Checkbox } from '../Checkbox';
@@ -25,7 +25,7 @@ import {
   DATA_GRID_SKELETON_BAR_RADIUS_PX,
 } from './dataGridTokens';
 
-import type { Icon } from '@/src/icons';
+import type { Icon } from '@/src/icons/glyphs';
 import type { CheckboxProps } from '../Checkbox';
 import type { TooltipProps } from '../Tooltip';
 

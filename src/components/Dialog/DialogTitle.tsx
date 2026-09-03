@@ -4,7 +4,7 @@ import * as React from 'react';
 import { DialogTitle as MuiDialogTitle } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { XIcon } from '@/src/icons';
+import { XIcon } from '@/src/icons/glyphs';
 import {
   border,
   fontWeights,

@@ -8,7 +8,7 @@ import {
   useGridSelector,
 } from '@mui/x-data-grid';
 
-import { ArrowDownIcon, ArrowUpIcon, XIcon } from '@/src/icons';
+import { ArrowDownIcon, ArrowUpIcon, XIcon } from '@/src/icons/glyphs';
 
 import { MenuItem } from '../MenuItem';
 import { TABLE_SORT_ICON_PX } from '../Table/tableTokens';
