@@ -15,7 +15,7 @@ import {
   timeClockClasses,
 } from '@mui/x-date-pickers';
 
-import { CaretLeftIcon, CaretRightIcon, ClockIcon, XIcon } from '@/src/icons';
+import { CaretLeftIcon, CaretRightIcon, ClockIcon, XIcon } from '@/src/icons/glyphs';
 import { spacing } from '@/src/tokens';
 
 import { paired, pairedFocusRing } from '../_shared/actionStyles';

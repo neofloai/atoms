@@ -5,7 +5,7 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { IconContext } from '@phosphor-icons/react';
+import { IconContext } from '@/src/icons/glyphs';
 import { neofloTheme } from '@/src/theme';
 import './fonts';
 

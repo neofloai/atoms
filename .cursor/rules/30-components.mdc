@@ -152,7 +152,14 @@ The MCP server only knows about components exported from `src/index.ts`.
 - **Props interfaces:** `<ComponentName>Props` (`ButtonProps`, `TextFieldProps`)
 - **Variant names:** lowercase, semantic (`primary`, `destructive`, not `blue`, `red`)
 - **Size names:** abbreviated (`sm`, `md`, `lg`) — never `small`/`medium`/`large` in our API (MUI uses long form internally; we map)
-- **Icons:** import from `@/src/icons` (`@neoflo/atoms/icons` for consumers), never `@phosphor-icons/react` directly outside `src/icons`, and always use the `Icon`-suffixed export — `CaretDownIcon`, not `CaretDown`. Phosphor 2.1 deprecated every bare name; both still resolve, so the compiler will not stop you, only the editor's strikethrough. phosphoricons.com lists names unsuffixed: add `Icon` to what you find there.
+- **Icons:** never `@phosphor-icons/react` directly outside `src/icons`, and always use the `Icon`-suffixed export — `CaretDownIcon`, not `CaretDown`. Phosphor 2.1 deprecated every bare name; both still resolve, so the compiler will not stop you, only the editor's strikethrough. phosphoricons.com lists names unsuffixed: add `Icon` to what you find there.
+
+  Which module you import from depends on whether the code ships in the library bundle:
+
+  - **A component in `src/components/**`** imports from `@/src/icons/glyphs`, and adds the glyph to that file's export list if it is not there yet. `glyphs.ts` names every icon explicitly for a reason that is not style: Phosphor is `external` in `tsup.config.ts`, so a bundled `export *` compiles to a runtime namespace object and every consumer retains all 1,512 icons — about 5 MB in an app that imported one button. `src/icons/glyphs.ts` documents the mechanism in full.
+  - **Docs and app code (`app/**`)** keeps `@/src/icons`, which is the whole set. It stands in for the `@neofloai/atoms/icons` subpath a consumer writes, so demo code reads the way real code does, and Next resolves the star from source and shakes it. The docs site is not a published bundle.
+
+  `npm run check:icons` fails the build if the namespace object comes back. Do not silence it — the leak is invisible in the published output, which is why the check exists.
 
 ## Client vs Server components
 

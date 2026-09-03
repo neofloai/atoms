@@ -19,6 +19,31 @@ import type { Release } from './types';
  */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.0.1',
+    tag: 'v1.0.1',
+    date: '2026-09-03',
+    headline:
+      'Importing anything from the package root no longer pulls in the whole Phosphor icon set.',
+    summary:
+      'One fix, and it is worth upgrading for on its own: an app that imported a single component from `@neofloai/atoms` was retaining the entire Phosphor icon set -- about 5 MB of icons, in a bundle that asked for a button. Nothing about the API changed, so upgrading is an install and no edits. If you have been carrying an entry chunk you could not account for, this was very likely it.',
+    changes: [
+      {
+        kind: 'fixed',
+        summary:
+          'The package root no longer pins every Phosphor icon. `src/icons` re-exported the whole icon set with `export *`, and because Phosphor is an external dependency the bundler could not see through that star -- it built a namespace object at runtime and turned every icon reference inside the library into a property lookup. A consumer\'s bundler cannot prove which properties are read, so it had to keep all 1,512 icons. Measured on an app importing only `Button`: 6,265 KB before, 1,180 KB after -- the icon set alone was 5,085 KB of that. The library now imports the sixteen glyphs it actually draws by name.',
+      },
+      {
+        kind: 'fixed',
+        summary:
+          'The weight was invisible from the outside, which is why it survived to 1.0.0: the published bundle is ~250 KB either way, because the icons are external and only materialise once an app resolves them. `npm run check:icons` now fails the build if it comes back.',
+      },
+    ],
+    migration: [
+      'Reinstall to pick it up -- `npm install github:neofloai/atoms#semver:^1.0.1`. There is nothing to change in your own code, but you do have to take the upgrade: the fix is in how the package is built, so a project still resolved to 1.0.0 keeps the 6 MB.',
+      '`@neofloai/atoms/icons` behaved correctly before this and behaves the same now. If you were importing icons from that subpath to work around the size, you can keep doing exactly that -- it was never the leak.',
+    ],
+  },
+  {
     version: '1.0.0',
     tag: 'v1.0.0',
     date: '2026-08-23',

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { WarningDiamondIcon, XIcon } from '@phosphor-icons/react';
+import { WarningDiamondIcon, XIcon } from '@/src/icons/glyphs';
 
-import type { IconProps } from '@phosphor-icons/react';
+import type { IconProps } from '@/src/icons/glyphs';
 
 /**
  * The alert glyph and close affordance, shared by `Alert` and `Snackbar`.

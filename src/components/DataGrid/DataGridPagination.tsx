@@ -15,7 +15,7 @@ import {
   CaretDoubleLeftIcon,
   CaretLeftIcon,
   CaretRightIcon,
-} from '@/src/icons';
+} from '@/src/icons/glyphs';
 
 import { paired } from '../_shared/actionStyles';
 import { IconButton } from '../IconButton';
