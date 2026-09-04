@@ -215,7 +215,7 @@ const SubtitleLine = styled('p')(({ theme }) => ({
  * once, so a dialog does not have to rebuild it:
  *
  *   - **`children`** is the title, as in MUI. `Sans/H5/Medium` — 20/28 at
- *     weight 500 — in `text/default/heading`. MUI's `h6` resolves to 16px
+ *     weight 500 — in `text.default.heading`. MUI's `h6` resolves to 16px
  *     here, a rung short of the design.
  *   - **`subtitle`** is the 13px line under it, in `text/default/b1`.
  *     Named for the layer Figma names, rather than `CardHeader`'s

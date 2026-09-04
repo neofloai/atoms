@@ -112,7 +112,7 @@ const CollapseButton = styled(ButtonBase)(({ theme }) => ({
  * `Property 2` means `done` / `not-done` on the other eight cells. On
  * these two it encodes collapsed against expanded instead — `done` draws
  * "+ 3 more events" with a right caret, `not-done` draws "Collapse
- * events" with a down one. The ellipsis is `surface/primary/default` in
+ * events" with a down one. The ellipsis is `surface.primary.default` in
  * both, so unlike a dot, this indicator does not move with anything.
  *
  * @example

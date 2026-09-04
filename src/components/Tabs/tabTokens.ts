@@ -13,16 +13,16 @@ import type { ModeToken } from '@/src/tokens';
  *   ------------------------  ---------  ----------------------------
  *   text/default/b1           #31302e    text.default.body
  *   text/default/b3           #848280    text.default.placeholder
- *   text/disabled/default     #aeaba4    text.disabled.default
+ *   text.disabled.default     #aeaba4    text.disabled.default
  *   border/primary/3          #868fee    border.primary.focus
  *   border/disabled/default   #cccac6    border.disabled.default
- *   border/layers/card 1      #eeeeec    border.layers.card1
+ *   border.layers.card1      #eeeeec    border.layers.card1
  *   Scale/250                 12         spacing.component.sm
  *   Scale/25                  1          RULE_WIDTH_PX (below)
  *   Sans/B1/Regular           13/20      typography.body.b1
  *
- * The count chip's four values (`surface/primary/subtle`,
- * `text/primary/3`, `surface/layers/card 3`, `text/default/b2`) are not
+ * The count chip's four values (`surface.primary.subtle`,
+ * `text/primary/3`, `surface.layers.card3`, `text/default/b2`) are not
  * listed because nothing here reads them: that chip is an instance of
  * the `chip-small` component in Figma, and `Chip size="sm"` already
  * paints exactly those tokens for `variant="primary"` and
@@ -118,7 +118,7 @@ export const ink = {
   disabled: text.disabled.default,
 } as const satisfies Record<string, ModeToken>;
 
-/** The hairline under the whole bar (`border/layers/card 1`). */
+/** The hairline under the whole bar (`border.layers.card1`). */
 export const rule = border.layers.card1;
 
 /**

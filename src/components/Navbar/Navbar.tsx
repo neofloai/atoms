@@ -93,7 +93,7 @@ const NavbarToolbar = styled(Toolbar, {
  *
  * MUI's `AppBar` defaults to a saturated `primary` fill with white
  * content, which is Material's signature and not this design's. The bar
- * is `surface/layers/card 2` closed by a 1px `border/layers/card 2` rule
+ * is `surface.layers.card2` closed by a 1px `border.layers.card2` rule
  * along the bottom and nothing else — both read straight off the shell's
  * own bar frame.
  *

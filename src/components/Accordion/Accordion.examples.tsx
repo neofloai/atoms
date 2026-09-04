@@ -49,7 +49,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Makes the row inert: it cannot be opened, and the summary renders a real disabled `button`. The ink greys to `text/disabled/default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less.',
+        'Makes the row inert: it cannot be opened, and the summary renders a real disabled `button`. The ink greys to `text.disabled.default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less.',
     },
     {
       name: 'component',
@@ -77,7 +77,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'The title. Set at 13/20 regular in `text/default/b1`, so a plain string is already correct. It wraps rather than pushing the caret out of the row.',
+        'The title. Set at 13/20 regular in `text.default.body` (Figma `text/default/b1`), so a plain string is already correct. It wraps rather than pushing the caret out of the row.',
     },
     {
       name: 'AccordionSummary expandIcon',
@@ -91,7 +91,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'The body. Set at 13/20 regular in `text/default/b2`, so a plain string needs no `Typography` around it; anything nested keeps its own colour.',
+        'The body. Set at 13/20 regular in `text.default.caption` (Figma `text/default/b2`), so a plain string needs no `Typography` around it; anything nested keeps its own colour.',
     },
     {
       name: 'AccordionActions children',

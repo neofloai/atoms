@@ -129,7 +129,7 @@ export type TableBodyProps = MuiTableBodyProps;
 export interface TableRowProps extends MuiTableRowProps {
   /**
    * A validation outcome carried by the row: `error` tints it
-   * `surface/error/subtle`, `success` tints it `surface/success/subtle`.
+   * `surface.error.subtle`, `success` tints it `surface.success.subtle`.
    *
    * @default 'default'
    */

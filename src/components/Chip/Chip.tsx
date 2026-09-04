@@ -170,7 +170,7 @@ const bigRoleTokens: Record<
     bgSelectedOutline: surface.default.defaultHover,
     text: text.default.body,
     // The neutral role is the one place where the outline border and the
-    // selected border are different tokens: `border/layers/card 2` for
+    // selected border are different tokens: `border.layers.card2` for
     // the outline, one step darker for selection.
     outlineBorder: border.layers.card2,
     selectedBorder: border.default.default,

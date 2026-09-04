@@ -31,7 +31,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Marks the current choice with the `surface/primary/subtle` tint. Inside a `Menu` with the default `variant="selectedMenu"`, the selected item also takes initial focus.',
+        'Marks the current choice with the `surface.primary.subtle` tint. Inside a `Menu` with the default `variant="selectedMenu"`, the selected item also takes initial focus.',
     },
     {
       name: 'disabled',

@@ -56,7 +56,7 @@ function isHorizontal(anchor: DrawerAnchor): boolean {
  * corner with no seam.
  *
  * Read off the shell's own frames: the sidebar binds
- * `surface/layers/card 2` and `border/layers/card 2`, and so does the
+ * `surface.layers.card2` and `border.layers.card2`, and so does the
  * top bar, independently. The corners are the one thing MUI already
  * gets right — it renders the paper `square`, because a panel flush
  * against the viewport has no outside corner to round.

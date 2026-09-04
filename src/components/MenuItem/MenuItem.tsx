@@ -32,12 +32,11 @@ import type {
  * both — no separate icon rule, and no icon token this system does not
  * already have.
  *
- * `action` maps to `text.primary.accent` (`primary/500`). Figma
- * currently reports `text/primary/3` as `#4949dc` while this system's
- * `primary/500` is `#4961dc`; that is a raw-scale drift affecting the
- * brand accent everywhere, not something specific to menus, so this
- * component references the token and the drift is tracked in
- * DESIGNER_QUESTIONS.md #22.
+ * `action` maps to `text.primary.accent` (`colors.primary[500]`,
+ * `#4949dc`). That value was briefly out of step with the Figma board;
+ * the 11 August primitive export settled it and the raw scale now
+ * carries it (DESIGNER_QUESTIONS.md #22). Referencing the token rather
+ * than the hex is what made that a no-op here.
  */
 const toneTokens: Record<MenuItemVariant, ModeToken> = {
   primary: text.default.body,
@@ -114,11 +113,11 @@ const StyledMenuItem = styled(MuiMenuItem, {
   },
 
   // Hover deliberately departs from the Figma value. The `menu-item`
-  // sheet tints hover with `surface/layers/card 2` — the same token the
+  // sheet tints hover with `surface.layers.card2` — the same token the
   // panel it sits in is filled with (node 3228:62331), so inside a Menu
   // that hover is exactly invisible. The item sheet was drawn on the
-  // page surface, where a `card 2` tint reads fine; the composed menu
-  // is what ships. Moving one rung up the same ladder to `card 3`
+  // page surface, where that tint reads fine; the composed menu
+  // is what ships. Moving one rung up the same ladder to `card3`
   // preserves the intent (hover is one layer above its surface) with
   // the smallest possible deviation. Tracked in DESIGNER_QUESTIONS.md #23.
   '&:hover': {

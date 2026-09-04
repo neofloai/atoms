@@ -93,7 +93,7 @@ export const labelType: Record<ToggleButtonSize, LabelType> = {
 };
 
 /**
- * The border every `outline` toggle draws — `border/layers/card 1`,
+ * The border every `outline` toggle draws — `border.layers.card1`,
  * bound on all eight symbols of node 3763:4991.
  *
  * Note this is a *layers* token rather than the `border.default.default`
@@ -112,7 +112,7 @@ export const UNSELECTED_INK: ModeToken = icon.default.subtle;
  *
  * Composed, not transcribed: the component set has no hover, pressed,
  * or focus cell — only `on` / `off`. Two things constrain the choice.
- * The selected fill is `surface/layers/card 2`, the *first* neutral rung
+ * The selected fill is `surface.layers.card2`, the *first* neutral rung
  * above the page, so there is no lighter fill to put underneath it that
  * would still be visible on the `card 1` surface the toolbar sample
  * uses. And MUI's own ladder overlaps the same way (4% hover, 8%
@@ -143,7 +143,7 @@ interface RoleTokens {
 /**
  * Selected-state colour per role.
  *
- * `secondary` is the design: `surface/layers/card 2` behind
+ * `secondary` is the design: `surface.layers.card2` behind
  * `icon/default/b1`, straight off node 3763:4989.
  *
  * The other five have no toggle drawn anywhere in the Figma file, so

@@ -67,7 +67,7 @@ function gridGlyph(
 
 /**
  * The bar a cell draws while its row is loading: one shape, at the
- * design's 20 × 4 in `surface/primary/subtle`.
+ * design's 20 × 4 in `surface.primary.subtle`.
  *
  * Deliberately takes no props. MUI's own skeleton cell asks for a
  * *random* width between 40% and 80% of the column, and a circular

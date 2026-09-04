@@ -133,8 +133,9 @@ export function DataGridNotes() {
         <Typography variant="body2" color="text.secondary">
           Selection is drawn as a bracket rather than a heavier fill:{' '}
           <code>selected</code> and hover paint the same <code>card 1</code>{' '}
-          surface, and what tells them apart is a <code>border/primary/2</code>{' '}
-          hairline above and below the row.
+          surface, and what tells them apart is a{' '}
+          <code>border.primary.defaultHover</code> (Figma <code>border/primary/2</code>) hairline above and below
+          the row.
         </Typography>
         <Typography variant="body2" color="text.secondary">
           <code>disabled</code> is ink only, deliberately. A row that looks

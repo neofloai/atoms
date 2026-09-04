@@ -120,8 +120,8 @@ export const listSecondaryType: CSSObject = {
 };
 
 /**
- * The resting band: a `surface/layers/card 1` fill under a 1px
- * `border/layers/card 1` hairline along the bottom edge only.
+ * The resting band: a `surface.layers.card1` fill under a 1px
+ * `border.layers.card1` hairline along the bottom edge only.
  *
  * The same model `Accordion` uses, and for the same reason — the Figma
  * component there is literally called `accordion-list-items`. There is
@@ -158,8 +158,8 @@ export function listRowSurface(theme: Theme): CSSObject {
  * share a fill and differ only in the hairline, which is the sheet's way
  * of saying the rule is the focus indicator:
  *
- *   enabled    `card 1`             / `border/layers/card 1`
- *   hovered    `card 2`             / `border/layers/card 1`
+ *   enabled    `card 1`             / `border.layers.card1`
+ *   hovered    `card 2`             / `border.layers.card1`
  *   focused    `card 2`             / `border/primary/3`
  *   disabled   `surface/disabled`   / `border/disabled/default`
  *
@@ -172,7 +172,7 @@ export function listRowSurface(theme: Theme): CSSObject {
  * neutral hover tint. Logged as DESIGNER_QUESTIONS.md #51.
  *
  * `disabledInk` is one deviation from the sheet, and deliberate. Figma
- * dims the *title* to `text/disabled/default` but leaves the subtitle at
+ * dims the *title* to `text.disabled.default` but leaves the subtitle at
  * `text/default/b2` — which is darker, so a disabled row's second line
  * would read as more prominent than its first. That inverts the
  * hierarchy every other disabled control here observes, so both lines

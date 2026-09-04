@@ -1,7 +1,7 @@
 /**
  * Curated subset of Phosphor icons for the docs catalog page.
  *
- * Listing all ~9,000 Phosphor icons would tank the docs route's bundle
+ * Listing all 1,512 Phosphor icons would tank the docs route's bundle
  * and overwhelm browsers, so we ship a representative spread covering
  * common UI needs (actions, navigation, status, content, social,
  * commerce, etc.). The full catalog is linked from the page header.

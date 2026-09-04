@@ -93,7 +93,7 @@ import type {
  * focus, or disabled cell — but this is a button, so all four exist
  * whether or not they are drawn. Composed from the house ladders:
  *
- *   - **hover** `surface/layers/card 2`, one rung above the item's own
+ *   - **hover** `surface.layers.card2`, one rung above the item's own
  *     `card 1`, and **pressed** `card 3`, one rung above that. The same
  *     two rungs `ToggleButton` uses, and the same ladder `MenuItem`
  *     walks one step further along.
@@ -103,7 +103,7 @@ import type {
  *     the summary spans the item edge to edge, so an outer ring has
  *     nowhere to go but on top of the next item's hairline. See
  *     `FocusRingPlacement` in `_shared/actionStyles.ts`.
- *   - **disabled** `text/disabled/default` ink at full opacity, instead
+ *   - **disabled** `text.disabled.default` ink at full opacity, instead
  *     of MUI's 38% fade of the whole row. Every other disabled control
  *     in this system stays legible-but-inert, and the caret inherits it
  *     through `currentColor`.

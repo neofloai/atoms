@@ -43,14 +43,14 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Mark the row as chosen. It is bracketed between two `border/primary/2` hairlines rather than deepening its fill, because selection and hover share the same surface. The upper line belongs to the row above, so a selected first row keeps a grey line over it.',
+        'Mark the row as chosen. It is bracketed between two `border.primary.defaultHover` (Figma `border/primary/2`) hairlines rather than deepening its fill, because selection and hover share the same surface. The upper line belongs to the row above, so a selected first row keeps a grey line over it.',
     },
     {
       name: 'TableRow state',
       type: "'default' | 'error' | 'success'",
       default: "'default'",
       description:
-        'An outcome the row’s data carries: `error` tints it `surface/error/subtle`, `success` tints it `surface/success/subtle`. Combines with `hover` and `selected` — a failed row is still selectable, and it keeps its own colour under the pointer.',
+        'An outcome the row’s data carries: `error` tints it `surface.error.subtle`, `success` tints it `surface.success.subtle`. Combines with `hover` and `selected` — a failed row is still selectable, and it keeps its own colour under the pointer.',
     },
     {
       name: 'TableRow disabled',
@@ -78,7 +78,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'A muted second line, hard under the first with no gap — 12/16 in `text/default/b3` against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`.',
+        'A muted second line, hard under the first with no gap — 12/16 in `text.default.placeholder` (Figma `text/default/b3`) against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`.',
     },
     {
       name: 'TableCell padding',

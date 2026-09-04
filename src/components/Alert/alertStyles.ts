@@ -94,7 +94,7 @@ const roleTokens: Record<AlertSeverity, RoleTokens> = {
   info: {
     floatBg: surface.information.default,
     floatBorder: border.information.default,
-    // `surface/primary/subtle`, not `information/subtle`. The latter is
+    // `surface.primary.subtle`, not `information/subtle`. The latter is
     // `blue/100` (`#d1dcf9`), several rungs louder than the near-white
     // fills the other three take, so the sheet's choice is also the one
     // that keeps all four fills at one lightness.
