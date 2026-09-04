@@ -57,7 +57,7 @@ export function TableNotes() {
           and both are replaced: cells padded 16 on all four sides become 8
           either side and nothing top or bottom, and a hairline computed by
           lightening <code>palette.divider</code> 88% becomes the named{' '}
-          <code>border/layers/card 1</code>. The row&apos;s own 16px inset lands
+          <code>border.layers.card1</code>. The row&apos;s own 16px inset lands
           on the first and last cell, because a <code>tr</code> cannot be
           padded.
         </Typography>
@@ -124,7 +124,8 @@ export function TableNotes() {
           Selection is drawn as a bracket rather than a heavier fill:{' '}
           <code>selected</code> and <code>hover</code> paint the same{' '}
           <code>card 1</code> surface, and what tells them apart is a{' '}
-          <code>border/primary/2</code> hairline above and below the row. The
+          <code>border.primary.defaultHover</code> (Figma <code>border/primary/2</code>) hairline above and below
+          the row. The
           lower one is the row&apos;s own. The upper one belongs to the row
           above — under collapsed borders the two share that edge, and the cell
           further up the table wins it — so the table recolours the neighbour

@@ -136,11 +136,11 @@ export const branding: BrandGuide = {
         'purple',
       ],
       summary:
-        'Neutral greyscale foundation + one primary blue (#4961dc). Semantic green/red/yellow/blue for status, exposed as MUI palette roles; orange and purple are Chip tag tints only.',
+        'Neutral greyscale foundation + one primary blue (#4949dc). Semantic green/red/yellow/blue for status, exposed as MUI palette roles; orange and purple are Chip tag tints only.',
       body: [
         'The brand colour story is deliberately small:',
         '',
-        '- Primary blue — #4961dc (primary/500). The single brand accent, used for primary actions, selection, and focus. One per view. Reach it as `palette.primary.main`. (primary/600, #343eb3, is one rung darker — the palette\'s `.dark` shade, e.g. pressed states — not the resting accent.)',
+        '- Primary blue — #4949dc (`colors.primary[500]`). The single brand accent, used for primary actions, selection, and focus. One per view. Reach it as `palette.primary.main`. (`colors.primary[600]`, #343eb3, is one rung darker — the palette\'s `.dark` shade, e.g. pressed states — not the resting accent.)',
         '- Neutral greyscale — the foundation for surfaces, borders, and text. Most of any screen is greyscale.',
         '- Semantic status — green (success), red (error/destructive), yellow (warning), blue (informational). These are the MUI palette roles: `palette.success`, `palette.error`, `palette.warning`, `palette.info`.',
         '- Orange and purple are not brand colours. They are tag tints with a single consumer each — Chip\'s flat `size="sm"` variant (`variant="orange"` / `"purple"`) — and are only ever used as the confirmed token pair, `surface.<name>.default` for the fill plus `text.<name>.caption` for the label. They have no palette role and no shade-500 usage anywhere in the system; do not treat them as accents to reach for.',

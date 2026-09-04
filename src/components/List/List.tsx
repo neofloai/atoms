@@ -11,7 +11,7 @@ import type { ListProps, ListTypeMap } from './List.types';
  * Product Design System `list` frame (node 3653:29671).
  *
  * The list itself draws nothing — no fill, no edge, no radius, no gap.
- * Every visible decision belongs to the row: a `surface/layers/card 1`
+ * Every visible decision belongs to the row: a `surface.layers.card1`
  * band, 16px on all four sides, and a 1px hairline along its bottom
  * edge. A stack of those reads as a list because each one ends on a
  * rule. So this component is thin on purpose; `ListItem`,

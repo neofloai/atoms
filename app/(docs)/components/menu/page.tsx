@@ -163,7 +163,7 @@ Guidance.displayName = 'Guidance';
 const DESIGN_NOTES: readonly { title: string; body: string }[] = [
   {
     title: 'Hover is one layer above the design value',
-    body: 'The menu-item sheet tints hover with surface/layers/card 2 — #f5f5f3, which is the exact fill of the panel it sits in. Inside a menu that hover is invisible. The item sheet was drawn against the page surface, where the tint reads fine; the composed menu is what ships, so hover moves one rung up the same ladder to card 3. Smallest deviation that preserves the intent.',
+    body: 'The design tints hover with surface.layers.card2 — the exact token the panel it sits in is filled with, so inside a menu that hover is invisible. The item was drawn against the page surface, where the tint reads fine; the composed menu is what ships, so hover moves one rung up the same ladder to surface.layers.card3. Smallest deviation that preserves the intent, which is that hover sits one layer above whatever surface the row is on.',
   },
   {
     title: 'Keyboard focus is not in the sheet',
@@ -186,8 +186,8 @@ const DESIGN_NOTES: readonly { title: string; body: string }[] = [
     body: 'The design specifies one density, so dense is MUI\'s knob rather than a Neoflo variant. It drops the label to B2 and the row to 32px — MUI\'s own documented dense height — while holding the 8px inset, rather than inventing a second inset the design never gave. Worth knowing if you style it yourself: MUI 9.2.0 derives the dense styles from the inherited list context but the dense class name from the item\'s own props, so a row inheriting dense from slotProps.list has the dense styling without the MuiMenuItem-dense class. This component matches on the list\'s class too, so both routes produce the same row.',
   },
   {
-    title: 'The action tone tracks the token, not today\'s Figma hex',
-    body: 'Figma currently reports text/primary/3 as #4949dc while this system\'s primary/500 is #4961dc. That is a drift in the raw brand accent affecting Button, Chip, and the palette too — not something specific to menus — so the component references the token and the drift is tracked with the design team.',
+    title: 'The action tone is the brand accent, by token',
+    body: 'variant="action" takes text.primary.accent — the same brand accent Button and Chip resolve to — rather than a hex of its own, so the tone moves with the token if the accent is ever repointed.',
   },
 ];
 

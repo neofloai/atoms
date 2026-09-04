@@ -8,7 +8,7 @@ import { IconBrowser } from './_components/IconBrowser';
 export const metadata = {
   title: 'Icons — Atoms',
   description:
-    'Browse and copy any of the ~9,000 Phosphor icons shipped with @neofloai/atoms. Each icon supports six weights matching the Figma design system.',
+    'Browse and copy any of the 1,512 Phosphor icons shipped with @neofloai/atoms. Each icon supports six weights matching the Figma design system.',
 };
 
 export default function IconsPage() {
@@ -24,7 +24,7 @@ export default function IconsPage() {
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Atoms ships the full <strong>Phosphor</strong> icon library
-            (~9,000 icons, 6 weights). Consumers of{' '}
+            (1,512 icons, each in 6 weights). Consumers of{' '}
             <code>@neofloai/atoms</code> install nothing extra — every icon
             is importable from the <code>@neofloai/atoms/icons</code>{' '}
             subpath and tree-shaken at build time so the bundle stays

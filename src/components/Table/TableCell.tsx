@@ -163,7 +163,7 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  *     bottom, and leaves the height to the row.
  *   - **the hairline.** MUI derives it by lightening `palette.divider`
  *     88% — a computed grey. The design names one:
- *     `border/layers/card 1`.
+ *     `border.layers.card1`.
  *   - **the type.** `theme.typography.body2` for a data cell, and for a
  *     header cell a 24px leading at medium weight. The design uses
  *     `Sans/B1/Regular` and `Sans/B2/Regular`, and tells a header from
@@ -171,7 +171,7 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  *   - **the pinned fill.** A sticky header cell needs to be opaque or
  *     the rows scroll through it, and MUI reaches for
  *     `background.default` — the page. A table normally sits on a card,
- *     so this uses `surface/layers/card 1`; a table on some other
+ *     so this uses `surface.layers.card1`; a table on some other
  *     surface should say so with `sx`.
  *
  * ## The two props

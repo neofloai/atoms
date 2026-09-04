@@ -22,9 +22,14 @@
  *   Font families (primitive collection)
  *     - Product:    DM Sans            (Regular, Medium, SemiBold)
  *                   Instrument Serif   (Regular, Italic)
- *     - Mono:       Space Mono         (Regular, Bold) — declared in
- *                   Figma but not yet consumed by any component or
- *                   text style; not self-hosted until something needs it.
+ *     - Mono:       Space Mono         (Regular, Bold) — no Figma text
+ *                   style binds it and no component uses it, but pattern
+ *                   code does: `fontFamilies.product.mono` sets the
+ *                   digits and line ids that have to line up down a
+ *                   column. Still not self-hosted, so what actually
+ *                   renders is the system monospace — which is why it is
+ *                   used where alignment matters rather than for the
+ *                   face itself.
  *     - Marketing:  Clash Grotesk      (Regular, Medium, Bold)
  *                   Instrument Serif   (Regular, Italic)
  *

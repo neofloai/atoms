@@ -159,7 +159,7 @@ export const Tab = React.forwardRef<HTMLDivElement, TabProps>(
             size="sm"
             // Figma moves the pill to the neutral role on a disabled tab
             // rather than dimming it — node 3463:12465 draws
-            // `surface/layers/card 3` + `text/default/b2`, which is
+            // `surface.layers.card3` + `text/default/b2`, which is
             // exactly what `variant="secondary"` paints.
             variant={isDisabled ? 'secondary' : 'primary'}
             // A `<div>` inside the tab's `<button>` would be invalid

@@ -158,7 +158,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Selected item',
       description:
-        'When a menu reports a current choice, mark it with `selected` on the item — it takes the `surface/primary/subtle` tint, and `Menu`\'s default `variant="selectedMenu"` opens with focus already on it. Use `variant="menu"` on the Menu to keep the tint without moving initial focus.',
+        'When a menu reports a current choice, mark it with `selected` on the item — it takes the `surface.primary.subtle` tint, and `Menu`\'s default `variant="selectedMenu"` opens with focus already on it. Use `variant="menu"` on the Menu to keep the tint without moving initial focus.',
       code: [
         'const [sort, setSort] = React.useState("name");',
         '',

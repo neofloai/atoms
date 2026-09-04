@@ -125,7 +125,7 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
 
       <Typography variant="caption" color="text.secondary">
         Showing {filtered.length} of {CATALOG_ICONS.length} curated icons.
-        Need something else? Browse the full ~9,000-icon catalog at{' '}
+        Need something else? Browse the full 1,512-icon catalog at{' '}
         <Box
           component="a"
           href="https://phosphoricons.com"
@@ -138,7 +138,9 @@ export function IconBrowser({ initialWeight = 'regular' }: IconBrowserProps) {
         {' '}— every icon shown there is importable from{' '}
         <code>@neofloai/atoms/icons</code>. Names there are unsuffixed, so add{' '}
         <code>Icon</code>: <code>magnifying-glass</code> imports as{' '}
-        <code>MagnifyingGlassIcon</code>.
+        <code>MagnifyingGlassIcon</code>. That site counts 9,072, which is
+        the same 1,512 glyphs multiplied by the 6 weights; a weight is a
+        prop here, not a separate import.
       </Typography>
 
       <Box

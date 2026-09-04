@@ -42,7 +42,7 @@ StepperBase.displayName = 'Stepper';
  * A step is a 12px indicator column — an 8px dot, or a tapered pin on the
  * last one — with a 2px rule running down it, and everything else 16px to
  * its right on a single 28px margin. Colour is the only thing that moves:
- * the dot and the line go from `surface/primary/default` to
+ * the dot and the line go from `surface.primary.default` to
  * `surface/default/2` at the point the run stops being done. The header
  * stays the same ink and weight the whole way down.
  *

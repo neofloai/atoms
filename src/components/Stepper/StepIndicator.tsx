@@ -79,7 +79,7 @@ const Pin = styled('svg', { shouldForwardProp: forwardState })<IndicatorState>(
  *
  * MUI's `StepIcon` draws a 24px circle with the step's index in it, or a
  * check once the step is complete. This design draws neither: an 8px dot
- * in `surface/primary/default` when the step is done and
+ * in `surface.primary.default` when the step is done and
  * `surface/default/2` when it is not, with the line carrying the rest of
  * the story. `icon` still arrives as `index + 1` — MUI always supplies
  * it — and is deliberately ignored when it is a number.

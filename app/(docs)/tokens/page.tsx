@@ -8,6 +8,7 @@ import { APP_BAR_HEIGHT } from '../_components/navigation';
 const ANCHOR_OFFSET_SX = { scrollMarginTop: APP_BAR_HEIGHT + 16 };
 import { border, colors, icon, spacing, surface, text } from '@/src/tokens';
 import { ElevationSection } from './_components/ElevationSection';
+import { figmaSlotFor } from './_components/figmaSlots';
 import { RadiusSection } from './_components/RadiusSection';
 import { ResponsiveSection } from './_components/ResponsiveSection';
 import { ScaleSection } from './_components/ScaleSection';
@@ -54,6 +55,12 @@ export default function TokensPage() {
             <Typography variant="body2" color="text.secondary">
               Single-mode hex values from the designer&apos;s Figma library.
               These are the only place colours are declared as literals.
+              Scales are named by hue, exactly as Figma names them &mdash;{' '}
+              <code>red</code> and <code>blue</code>, not{' '}
+              <code>error</code> and <code>info</code>. The semantic
+              sections below name the same colours by meaning instead, so{' '}
+              <code>text.error</code> resolves to the <code>red</code>{' '}
+              scale and <code>text.information</code> to <code>blue</code>.
             </Typography>
           </Stack>
           <Stack spacing={4}>
@@ -85,18 +92,20 @@ export default function TokensPage() {
 
         <SemanticSection
           title="Text"
-          description="Text colour tokens grouped by typography slot. The neutral default group runs heading, body, caption, placeholder; every accent role is a four-rung ladder, darkest first: body, caption, accent, onColorHover."
+          description="Font colours, grouped by typography slot rather than by interaction state. The neutral default group runs heading, body, caption, placeholder and subtle — the first four also carry an OnColor cut, for text sitting on a filled surface. Every accent role (primary, information, success, error, warning, orange, purple) is a four-rung ladder, darkest first: body, caption, accent, onColorHover. disabled is default plus onColor. Each rung shows its Figma variable name underneath, where that differs — Figma names the default group after the type-scale rung it pairs with (b1, b2, b3) and numbers the accent ladders 1 to 4. A rung with no second name is spelled the same in both."
           tokens={text}
           swatchVariant="text"
+          figmaSlot={(group, token) => figmaSlotFor('text', group, token)}
         />
 
         <Divider />
 
         <SemanticSection
           title="Icon"
-          description="Icon colour tokens. Mirrors the text shape so an icon next to a body string picks up the matching colour automatically."
+          description="Icon colours, carrying the same group and rung names as Text so an icon beside a body string takes the matching token. As of the current sync only default.subtle and disabled.onColor hold values that differ from their text counterparts. Each rung shows its Figma variable name underneath."
           tokens={icon}
           swatchVariant="text"
+          figmaSlot={(group, token) => figmaSlotFor('icon', group, token)}
         />
 
         <Divider />

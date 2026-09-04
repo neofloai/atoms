@@ -16,9 +16,9 @@ import type { ModeToken } from '@/src/tokens';
  * That is not only tidiness. The two frames disagree in four places,
  * each by a single rung, and read as slips rather than intent:
  *
- *   - the resting fill is `surface/layers/card 1` on the checkbox and
+ *   - the resting fill is `surface.layers.card1` on the checkbox and
  *     `card 2` on the radio;
- *   - "selected" is `surface/primary/default` (`primary/500`) on the
+ *   - "selected" is `surface.primary.default` (`primary/500`) on the
  *     checkbox and `icon/primary/4` (`primary/400`) on the radio;
  *   - a disabled checkbox drops its border, a disabled radio keeps one;
  *   - the mark on a disabled control is `border/disabled/default`

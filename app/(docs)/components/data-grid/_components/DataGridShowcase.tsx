@@ -224,7 +224,7 @@ export function DataGridShowcase() {
 
       <PreviewCard
         title="Loading"
-        description="A 20px bar in surface/primary/subtle filling every cell, at the row height already set. This preview toggles every few seconds; a real one would follow a fetch."
+        description="A 20px bar in surface.primary.subtle filling every cell, at the row height already set. This preview toggles every few seconds; a real one would follow a fetch."
       >
         <LoadingGrid />
       </PreviewCard>

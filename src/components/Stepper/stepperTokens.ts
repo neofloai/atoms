@@ -36,10 +36,10 @@ import type { ModeToken } from '@/src/tokens';
  *
  *   Figma variable                  hex        token
  *   ------------------------------  ---------  ----------------------------
- *   surface/primary/default         #4949dc    surface.primary.default
+ *   surface.primary.default         #4949dc    surface.primary.default
  *   surface/default/2               #e5e4e1    surface.disabled.default
  *   border/primary/3                #868fee    border.primary.focus
- *   border/layers/card 1            #eeeeec    border.layers.card1
+ *   border.layers.card1            #eeeeec    border.layers.card1
  *   icon/primary/4                  #5f6aea    icon.primary.onColorHover
  *   icon/default/caption on-color   #cccac6    icon.default.captionOnColor
  *   text/default/b1                 #31302e    text.default.body

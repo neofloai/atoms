@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-17T16:51:13.041Z",
+  "generatedAt": "2026-09-04T17:00:49.522Z",
   "brand": {
     "name": "Neoflo",
     "tagline": "The Neoflo brand: one monochrome mark, a single blue accent, and a two-typeface system, all expressed through the Atoms theme.",
@@ -62,8 +62,8 @@
           "orange",
           "purple"
         ],
-        "summary": "Neutral greyscale foundation + one primary blue (#4961dc). Semantic green/red/yellow/blue for status, exposed as MUI palette roles; orange and purple are Chip tag tints only.",
-        "body": "The brand colour story is deliberately small:\n\n- Primary blue — #4961dc (primary/500). The single brand accent, used for primary actions, selection, and focus. One per view. Reach it as `palette.primary.main`. (primary/600, #343eb3, is one rung darker — the palette's `.dark` shade, e.g. pressed states — not the resting accent.)\n- Neutral greyscale — the foundation for surfaces, borders, and text. Most of any screen is greyscale.\n- Semantic status — green (success), red (error/destructive), yellow (warning), blue (informational). These are the MUI palette roles: `palette.success`, `palette.error`, `palette.warning`, `palette.info`.\n- Orange and purple are not brand colours. They are tag tints with a single consumer each — Chip's flat `size=\"sm\"` variant (`variant=\"orange\"` / `\"purple\"`) — and are only ever used as the confirmed token pair, `surface.<name>.default` for the fill plus `text.<name>.caption` for the label. They have no palette role and no shade-500 usage anywhere in the system; do not treat them as accents to reach for.\n\nAlways pull colours from the theme/tokens (call get_tokens for the colors and surface categories). Never hardcode hex; the palette roles and the semantic surface/border/text tokens carry the correct light and dark values."
+        "summary": "Neutral greyscale foundation + one primary blue (#4949dc). Semantic green/red/yellow/blue for status, exposed as MUI palette roles; orange and purple are Chip tag tints only.",
+        "body": "The brand colour story is deliberately small:\n\n- Primary blue — #4949dc (`colors.primary[500]`). The single brand accent, used for primary actions, selection, and focus. One per view. Reach it as `palette.primary.main`. (`colors.primary[600]`, #343eb3, is one rung darker — the palette's `.dark` shade, e.g. pressed states — not the resting accent.)\n- Neutral greyscale — the foundation for surfaces, borders, and text. Most of any screen is greyscale.\n- Semantic status — green (success), red (error/destructive), yellow (warning), blue (informational). These are the MUI palette roles: `palette.success`, `palette.error`, `palette.warning`, `palette.info`.\n- Orange and purple are not brand colours. They are tag tints with a single consumer each — Chip's flat `size=\"sm\"` variant (`variant=\"orange\"` / `\"purple\"`) — and are only ever used as the confirmed token pair, `surface.<name>.default` for the fill plus `text.<name>.caption` for the label. They have no palette role and no shade-500 usage anywhere in the system; do not treat them as accents to reach for.\n\nAlways pull colours from the theme/tokens (call get_tokens for the colors and surface categories). Never hardcode hex; the palette roles and the semantic surface/border/text tokens carry the correct light and dark values."
       },
       {
         "id": "typography",

@@ -116,7 +116,7 @@ const RowRoot = styled(MuiTableRow, {
  * `palette.action.hover` and `selected` with the primary colour at 8%
  * alpha — both translucent blacks and blues mixed against whatever is
  * behind them, where the design names two opaque surfaces
- * (`surface/layers/card 1` for both, as it happens) and distinguishes
+ * (`surface.layers.card1` for both, as it happens) and distinguishes
  * selection some other way. See below.
  *
  * ## Height lives here, and vertical padding does not

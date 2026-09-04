@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-23T10:03:00.155Z",
+  "generatedAt": "2026-09-04T17:09:09.791Z",
   "components": [
     {
       "name": "Accordion",
@@ -35,7 +35,7 @@
           "name": "disabled",
           "type": "boolean",
           "default": "false",
-          "description": "Makes the row inert: it cannot be opened, and the summary renders a real disabled `button`. The ink greys to `text/disabled/default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less."
+          "description": "Makes the row inert: it cannot be opened, and the summary renders a real disabled `button`. The ink greys to `text.disabled.default` and the surface is held — MUI’s translucent disabled tint is overridden, since a darker band reads as more active rather than less."
         },
         {
           "name": "component",
@@ -59,7 +59,7 @@
           "name": "AccordionSummary children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The title. Set at 13/20 regular in `text/default/b1`, so a plain string is already correct. It wraps rather than pushing the caret out of the row."
+          "description": "The title. Set at 13/20 regular in `text.default.body` (Figma `text/default/b1`), so a plain string is already correct. It wraps rather than pushing the caret out of the row."
         },
         {
           "name": "AccordionSummary expandIcon",
@@ -71,7 +71,7 @@
           "name": "AccordionDetails children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The body. Set at 13/20 regular in `text/default/b2`, so a plain string needs no `Typography` around it; anything nested keeps its own colour."
+          "description": "The body. Set at 13/20 regular in `text.default.caption` (Figma `text/default/b2`), so a plain string needs no `Typography` around it; anything nested keeps its own colour."
         },
         {
           "name": "AccordionActions children",
@@ -1261,7 +1261,7 @@
           "name": "rowState",
           "type": "(params) => 'error' | 'success' | 'disabled' | undefined",
           "default": "—",
-          "description": "An outcome to tint a row with, read off the row’s own data: `error` tints `surface/error/subtle`, `success` tints `surface/success/subtle`, `disabled` greys the ink and the hairline. A function rather than a prop because a grid has no per-row markup to hang one on; it composes with `getRowClassName` rather than replacing it. `disabled` is ink only — whether the row can still be picked or edited is `isRowSelectable` and `isCellEditable`’s to say."
+          "description": "An outcome to tint a row with, read off the row’s own data: `error` tints `surface.error.subtle`, `success` tints `surface.success.subtle`, `disabled` greys the ink and the hairline. A function rather than a prop because a grid has no per-row markup to hang one on; it composes with `getRowClassName` rather than replacing it. `disabled` is ink only — whether the row can still be picked or edited is `isRowSelectable` and `isCellEditable`’s to say."
         },
         {
           "name": "rowNoun",
@@ -1279,13 +1279,13 @@
           "name": "checkboxSelection",
           "type": "boolean",
           "default": "false",
-          "description": "Add the selection column, using the house `Checkbox`. A selected row is bracketed between two `border/primary/2` hairlines rather than filled more heavily, because selection and hover paint the same surface — the lines are what tell them apart."
+          "description": "Add the selection column, using the house `Checkbox`. A selected row is bracketed between two `border.primary.defaultHover` (Figma `border/primary/2`) hairlines rather than filled more heavily, because selection and hover paint the same surface — the lines are what tell them apart."
         },
         {
           "name": "loading",
           "type": "boolean",
           "default": "false",
-          "description": "Swap the rows for a 20px bar in `surface/primary/subtle`, filling every cell in every column at the row height already set. Both of MUI’s cases — loading over existing rows and loading with none yet — use the same skeleton, so a grid never flips between a bar and a spinner."
+          "description": "Swap the rows for a 20px bar in `surface.primary.subtle`, filling every cell in every column at the row height already set. Both of MUI’s cases — loading over existing rows and loading with none yet — use the same skeleton, so a grid never flips between a bar and a spinner."
         },
         {
           "name": "autoHeight",
@@ -2960,7 +2960,7 @@
         },
         {
           "title": "Selected item",
-          "description": "When a menu reports a current choice, mark it with `selected` on the item — it takes the `surface/primary/subtle` tint, and `Menu`'s default `variant=\"selectedMenu\"` opens with focus already on it. Use `variant=\"menu\"` on the Menu to keep the tint without moving initial focus.",
+          "description": "When a menu reports a current choice, mark it with `selected` on the item — it takes the `surface.primary.subtle` tint, and `Menu`'s default `variant=\"selectedMenu\"` opens with focus already on it. Use `variant=\"menu\"` on the Menu to keep the tint without moving initial focus.",
           "code": "const [sort, setSort] = React.useState(\"name\");\n\n<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  {[\"name\", \"date\", \"size\"].map((option) => (\n    <MenuItem\n      key={option}\n      selected={option === sort}\n      onClick={() => {\n        setSort(option);\n        close();\n      }}\n    >\n      {option}\n    </MenuItem>\n  ))}\n</Menu>"
         },
         {
@@ -3019,7 +3019,7 @@
           "name": "selected",
           "type": "boolean",
           "default": "false",
-          "description": "Marks the current choice with the `surface/primary/subtle` tint. Inside a `Menu` with the default `variant=\"selectedMenu\"`, the selected item also takes initial focus."
+          "description": "Marks the current choice with the `surface.primary.subtle` tint. Inside a `Menu` with the default `variant=\"selectedMenu\"`, the selected item also takes initial focus."
         },
         {
           "name": "disabled",
@@ -4385,13 +4385,13 @@
           "name": "TableRow selected",
           "type": "boolean",
           "default": "false",
-          "description": "Mark the row as chosen. It is bracketed between two `border/primary/2` hairlines rather than deepening its fill, because selection and hover share the same surface. The upper line belongs to the row above, so a selected first row keeps a grey line over it."
+          "description": "Mark the row as chosen. It is bracketed between two `border.primary.defaultHover` (Figma `border/primary/2`) hairlines rather than deepening its fill, because selection and hover share the same surface. The upper line belongs to the row above, so a selected first row keeps a grey line over it."
         },
         {
           "name": "TableRow state",
           "type": "'default' | 'error' | 'success'",
           "default": "'default'",
-          "description": "An outcome the row’s data carries: `error` tints it `surface/error/subtle`, `success` tints it `surface/success/subtle`. Combines with `hover` and `selected` — a failed row is still selectable, and it keeps its own colour under the pointer."
+          "description": "An outcome the row’s data carries: `error` tints it `surface.error.subtle`, `success` tints it `surface.success.subtle`. Combines with `hover` and `selected` — a failed row is still selectable, and it keeps its own colour under the pointer."
         },
         {
           "name": "TableRow disabled",
@@ -4415,7 +4415,7 @@
           "name": "TableCell secondary",
           "type": "ReactNode",
           "default": "—",
-          "description": "A muted second line, hard under the first with no gap — 12/16 in `text/default/b3` against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`."
+          "description": "A muted second line, hard under the first with no gap — 12/16 in `text.default.placeholder` (Figma `text/default/b3`) against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`."
         },
         {
           "name": "TableCell padding",

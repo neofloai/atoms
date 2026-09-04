@@ -235,7 +235,7 @@ export const cell = {
    * Keyboard focus on a cell that is already *selected*, where `focusRing`
    * cannot be used: it is a primary border drawn inside a primary fill. In
    * light mode that reads as an unintended second outline, and in dark mode
-   * `border/primary/3` and `surface/primary/default` are the same rung of the
+   * `border/primary/3` and `surface.primary.default` are the same rung of the
    * scale, so the ring disappears entirely and a focused selection looks
    * exactly like an unfocused one.
    *

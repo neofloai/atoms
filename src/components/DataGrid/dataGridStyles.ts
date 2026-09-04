@@ -87,7 +87,7 @@ export function dataGridStyles(theme: Theme): CSSObject {
     // key, so a second one at the same level silently replaces the first.
     //
     // `--DataGrid-rowBorderColor` is the hairline every rule and cell
-    // border in the grid reads, so the design's `border/layers/card 1`
+    // border in the grid reads, so the design's `border.layers.card1`
     // reaches all of them from here.
     ...paired(theme, {
       '--DataGrid-rowBorderColor': border.layers.card1,

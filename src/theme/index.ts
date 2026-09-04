@@ -15,7 +15,11 @@ import { neofloTypography } from './typography';
  *
  * Composition:
  *   - colour schemes: light + dark (palette derived from semantic tokens)
- *   - typography:     DM Sans + the H1-H6 / B1-B2 / caption scale
+ *   - typography:     DM Sans, with MUI's `h1`-`h6` / `body1` / `body2` /
+ *                     `caption` variants bound to the token ramp
+ *                     (`headings.h1`-`h6`, `body.b1`/`b2`/`caption`).
+ *                     The two vocabularies are not the same: `body1` is
+ *                     `b1`. `display.d1` has no variant bound to it.
  *   - shadows:        small / medium / large mapped across MUI's 25 slots
  *   - shape:          `theme.shape.borderRadius` set to `radius.sm` (8px),
  *                     matching the design system's default control radius.

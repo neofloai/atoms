@@ -29,7 +29,7 @@ interface StyledToggleButtonGroupProps {
  * button 1px onto the previous one's border, so the row ends up with a
  * single 1px outline and single 1px dividers. That is exactly how node
  * 3763:5333 is drawn, where the frame and its items both carry the same
- * `border/layers/card 1` stroke and Figma overlaps them.
+ * `border.layers.card1` stroke and Figma overlaps them.
  *
  * Two deliberate departures from the frame:
  *

@@ -30,7 +30,7 @@ export const data: ComponentExamplesData = {
       type: "(params) => 'error' | 'success' | 'disabled' | undefined",
       default: '—',
       description:
-        'An outcome to tint a row with, read off the row’s own data: `error` tints `surface/error/subtle`, `success` tints `surface/success/subtle`, `disabled` greys the ink and the hairline. A function rather than a prop because a grid has no per-row markup to hang one on; it composes with `getRowClassName` rather than replacing it. `disabled` is ink only — whether the row can still be picked or edited is `isRowSelectable` and `isCellEditable`’s to say.',
+        'An outcome to tint a row with, read off the row’s own data: `error` tints `surface.error.subtle`, `success` tints `surface.success.subtle`, `disabled` greys the ink and the hairline. A function rather than a prop because a grid has no per-row markup to hang one on; it composes with `getRowClassName` rather than replacing it. `disabled` is ink only — whether the row can still be picked or edited is `isRowSelectable` and `isCellEditable`’s to say.',
     },
     {
       name: 'rowNoun',
@@ -51,14 +51,14 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Add the selection column, using the house `Checkbox`. A selected row is bracketed between two `border/primary/2` hairlines rather than filled more heavily, because selection and hover paint the same surface — the lines are what tell them apart.',
+        'Add the selection column, using the house `Checkbox`. A selected row is bracketed between two `border.primary.defaultHover` (Figma `border/primary/2`) hairlines rather than filled more heavily, because selection and hover paint the same surface — the lines are what tell them apart.',
     },
     {
       name: 'loading',
       type: 'boolean',
       default: 'false',
       description:
-        'Swap the rows for a 20px bar in `surface/primary/subtle`, filling every cell in every column at the row height already set. Both of MUI’s cases — loading over existing rows and loading with none yet — use the same skeleton, so a grid never flips between a bar and a spinner.',
+        'Swap the rows for a 20px bar in `surface.primary.subtle`, filling every cell in every column at the row height already set. Both of MUI’s cases — loading over existing rows and loading with none yet — use the same skeleton, so a grid never flips between a bar and a spinner.',
     },
     {
       name: 'autoHeight',

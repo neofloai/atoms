@@ -205,7 +205,7 @@ const LOGO_MARK_PX = 16;
  * Nav row colour, read off the sidebar frame rather than taken from
  * `ToggleButton`'s own table.
  *
- * The toggle's neutral selected fill is `surface/layers/card 2` — which is
+ * The toggle's neutral selected fill is `surface.layers.card2` — which is
  * exactly the surface this rail is painted in, so on a rail the selected
  * row would not show at all. That is no fault of the toggle's: its own
  * component set sits it on a `card 1` toolbar, where `card 2` is the first
@@ -369,7 +369,7 @@ function initials(name: string): string {
  * trailing cluster so one shell cannot draw two of them.
  *
  * Colour is the design's own avatar cell (753:27289):
- * `surface/primary/default-pressed` behind `text/default/heading`, at
+ * `surface.primary.default-pressed` behind `text.default.heading`, at
  * `Sans/B3/Medium`. That pairing is not one of `Avatar`'s six roles —
  * `accent` is a softer primary under primary ink, `primary` a saturated one
  * under white — so it is applied here rather than added to the component,
@@ -655,7 +655,7 @@ function NavGroup({
               borderLeft: '1px solid',
               // The `default` ladder, not `layers` — the same correction
               // #46 made for the selected row. The frame's rule is
-              // `border/layers/card 2`, which is a rung *off* the rail's own
+              // `border.layers.card2`, which is a rung *off* the rail's own
               // `card 2` fill and measures 1.06:1 against it: drawn on the
               // canvas outside the rail, as this one was, that is never
               // visible. A branch nobody can see is not a branch.

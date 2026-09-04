@@ -84,7 +84,7 @@ export const DATA_GRID_EDGE_INSET_CALC = `calc(${TABLE_CELL_PADDING_INLINE_PX}px
 
 /**
  * The bar a cell draws while its row is still loading — 20 tall, 4
- * radius, `surface/primary/subtle`.
+ * radius, `surface.primary.subtle`.
  *
  * Measured off `item=loading, size=small` (3223:61894) at 1:1: the bars
  * run y=46..65 inside a row spanning 32..79, so 14 above and 14 below a
