@@ -113,7 +113,10 @@ function FloatingToolbar() {
         alignItems: 'center',
         gap: `${spacing.component.xxs}px`,
         padding: '1px',
-        borderRadius: `${radius.sm}px`,
+        // Follows the toggles it holds. At 1px of padding the two corners
+        // are effectively the same arc, so a wrapper left on 8px would
+        // show a visible sliver outside a 4px button.
+        borderRadius: `${radius.xs}px`,
         border: '1px solid',
         boxShadow: elevation.small,
         backgroundColor: surface.layers.card1.light,

@@ -46,7 +46,11 @@ interface StyledToggleButtonGroupProps {
 const StyledToggleButtonGroup = styled(MuiToggleButtonGroup, {
   shouldForwardProp: (prop) => prop !== 'neofloAppearance',
 })<StyledToggleButtonGroupProps>(({ neofloAppearance }) => {
-  const base: CSSObject = { borderRadius: radius.sm };
+  // Matches the buttons' own corner, which the group has to do at every
+  // appearance: the buttons paint the outer corners, so a group rounded
+  // differently would either clip them or leave a sliver of frame
+  // showing through.
+  const base: CSSObject = { borderRadius: radius.xs };
 
   if (neofloAppearance !== 'text') {
     return base;
@@ -63,7 +67,7 @@ const StyledToggleButtonGroup = styled(MuiToggleButtonGroup, {
       // Both undo MUI's collapse: the shorthand takes back all four
       // corners it squared, and the margins take back the 1px overlap in
       // either orientation.
-      borderRadius: radius.sm,
+      borderRadius: radius.xs,
       marginLeft: 0,
       marginTop: 0,
     },

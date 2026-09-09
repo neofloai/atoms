@@ -226,7 +226,7 @@ export const data: ComponentExamplesData = {
         "    alignItems: 'center',",
         '    gap: `${spacing.component.xxs}px`,',
         "    padding: '1px',",
-        '    borderRadius: `${radius.sm}px`,',
+        '    borderRadius: `${radius.xs}px`,',
         "    border: '1px solid',",
         '    boxShadow: elevation.small,',
         '    backgroundColor: surface.layers.card1.light,',
