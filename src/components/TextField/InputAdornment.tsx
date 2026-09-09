@@ -19,7 +19,7 @@
  * 1. **There is nothing left to brand.** The adornment renders a
  *    positioning box and no visual value of its own — the field it sits
  *    in supplies all of them. `TextField` paints
- *    `.MuiInputAdornment-root` with `text.default.caption` and resets
+ *    `.MuiInputAdornment-root` with `text.default.b2` and resets
  *    MUI's margin and height through `adornmentBox()`; the pickers do
  *    the same through `_shared/pickerStyles.tsx`. A wrapper here would
  *    have nothing to add that the parent has not already said, and its

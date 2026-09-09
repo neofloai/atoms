@@ -133,14 +133,14 @@ interface RoleTokens {
 }
 
 const roleTokens: Record<Exclude<LinkColor, 'inherit'>, RoleTokens> = {
-  primary: { rest: text.primary.body, hover: text.primary.caption },
-  secondary: { rest: text.default.body, hover: text.default.caption },
-  success: { rest: text.success.body, hover: text.success.caption },
-  error: { rest: text.error.body, hover: text.error.caption },
-  warning: { rest: text.warning.body, hover: text.warning.caption },
+  primary: { rest: text.primary[1], hover: text.primary[2] },
+  secondary: { rest: text.default.b1, hover: text.default.b2 },
+  success: { rest: text.success[1], hover: text.success[2] },
+  error: { rest: text.error[1], hover: text.error[2] },
+  warning: { rest: text.warning[0], hover: text.warning[2] },
   information: {
-    rest: text.information.body,
-    hover: text.information.caption,
+    rest: text.information[1],
+    hover: text.information[2],
   },
 };
 

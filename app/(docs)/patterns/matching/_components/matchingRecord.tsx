@@ -669,8 +669,8 @@ export const Digits = styled('span')({
 export const Index = styled('span')(({ theme }) => ({
   fontFamily: fontFamilies.product.mono,
   fontSize: typography.body.b2.size,
-  color: text.default.placeholder.light,
-  ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+  color: text.default.b3.light,
+  ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));
 
 /** An amount, pushed right so the decimal points line up down the column. */

@@ -150,7 +150,7 @@ export const Tooltip = styled(TooltipBase)(({ theme }) => ({
     fontWeight: fontWeights.regular,
     ...paired(theme, {
       backgroundColor: surface.layers.card6OnColor,
-      color: text.default.headingOnColor,
+      color: text.default['heading on-color'],
     }),
   },
   /*

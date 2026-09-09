@@ -27,7 +27,7 @@ import type { ModeToken } from '@/src/tokens';
  * `Button`'s label from `text/*`. Every slot these two controls touch
  * holds the same value in both groups as of the 2026-08-11 export, so
  * the table reads from `text` throughout; only `icon.default.subtle`
- * and `icon.disabled.onColor` differ, and neither control uses them.
+ * and `icon.disabled['on-color']` differ, and neither control uses them.
  * If a later export splits the accent roles apart, this is the seam.
  */
 
@@ -128,8 +128,8 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBg: surface.primary.default,
     containedBgHover: surface.primary.defaultHover,
     containedBgPressed: surface.primary.defaultPressed,
-    containedText: text.default.headingOnColor,
-    accentText: text.primary.caption,
+    containedText: text.default['heading on-color'],
+    accentText: text.primary[2],
     outlineBorder: border.primary.default,
     // The one role that keeps its own border while held.
     outlineBorderPressed: border.primary.default,
@@ -142,12 +142,12 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
       button: {
         hover: surface.primary.subtle,
         pressed: surface.primary.subtleHover,
-        outlineText: text.primary.body,
+        outlineText: text.primary[1],
       },
       iconButton: {
         hover: surface.primary.subtleHover,
         pressed: surface.primary.subtlePressed,
-        outlineText: text.primary.caption,
+        outlineText: text.primary[2],
       },
     },
   },
@@ -155,8 +155,8 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBg: surface.default.default,
     containedBgHover: surface.default.defaultHover,
     containedBgPressed: surface.default.defaultPressed,
-    containedText: text.default.body,
-    accentText: text.default.body,
+    containedText: text.default.b1,
+    accentText: text.default.b1,
     outlineBorder: border.default.default,
     // Already the neutral border, so the pressed swap is a no-op here.
     outlineBorderPressed: border.default.default,
@@ -180,52 +180,52 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
         dark: surface.default.defaultPressed.dark,
       },
       pressed: surface.default.defaultPressed,
-      outlineText: text.default.body,
+      outlineText: text.default.b1,
     }),
   },
   success: {
     containedBg: surface.success.default,
     containedBgHover: surface.success.defaultHover,
     containedBgPressed: surface.success.defaultPressed,
-    containedText: text.success.caption,
-    accentText: text.success.caption,
+    containedText: text.success[2],
+    accentText: text.success[2],
     outlineBorder: border.success.default,
     outlineBorderPressed: border.default.default,
     focusRing: border.success.focus,
     soft: bothControls({
       hover: surface.success.subtleHover,
       pressed: surface.success.subtlePressed,
-      outlineText: text.success.caption,
+      outlineText: text.success[2],
     }),
   },
   error: {
     containedBg: surface.error.default,
     containedBgHover: surface.error.defaultHover,
     containedBgPressed: surface.error.defaultPressed,
-    containedText: text.error.caption,
-    accentText: text.error.caption,
+    containedText: text.error[2],
+    accentText: text.error[2],
     outlineBorder: border.error.default,
     outlineBorderPressed: border.default.default,
     focusRing: border.error.focus,
     soft: bothControls({
       hover: surface.error.subtleHover,
       pressed: surface.error.subtlePressed,
-      outlineText: text.error.caption,
+      outlineText: text.error[2],
     }),
   },
   warning: {
     containedBg: surface.warning.default,
     containedBgHover: surface.warning.defaultHover,
     containedBgPressed: surface.warning.defaultPressed,
-    containedText: text.warning.caption,
-    accentText: text.warning.caption,
+    containedText: text.warning[2],
+    accentText: text.warning[2],
     outlineBorder: border.warning.default,
     outlineBorderPressed: border.default.default,
     focusRing: border.warning.focus,
     soft: bothControls({
       hover: surface.warning.subtleHover,
       pressed: surface.warning.subtlePressed,
-      outlineText: text.warning.caption,
+      outlineText: text.warning[2],
     }),
   },
 };

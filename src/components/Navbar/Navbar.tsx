@@ -57,7 +57,7 @@ const NAVBAR_BORDER_WIDTH_PX = 1;
 const NavbarRoot = styled(MuiAppBar)(({ theme }) => ({
   ...paired(theme, {
     backgroundColor: surface.layers.card2,
-    color: text.default.body,
+    color: text.default.b1,
     borderColor: border.layers.card2,
   }),
   borderStyle: 'solid',

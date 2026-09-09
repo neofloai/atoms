@@ -38,7 +38,7 @@ import type { ModeToken } from '@/src/tokens';
  */
 function tabStyles(theme: Theme, isSelected: boolean): CSSObject {
   const resting: Record<string, ModeToken> = {
-    color: isSelected ? text.default.heading : text.default.caption,
+    color: isSelected ? text.default.heading : text.default.b2,
   };
   if (isSelected) {
     resting.backgroundColor = surface.layers.card3;

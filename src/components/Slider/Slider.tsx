@@ -98,7 +98,7 @@ const StyledSlider = styled(MuiSlider)(({ theme }) => ({
     borderRadius: radius.xs,
     ...paired(theme, {
       backgroundColor: surface.layers.card4OnColor,
-      color: text.default.headingOnColor,
+      color: text.default['heading on-color'],
     }),
   },
 

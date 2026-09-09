@@ -112,7 +112,7 @@ export function adornmentButton(theme: Theme): CSSObject {
     // so the pull would hang the button over the border.
     marginLeft: 0,
     marginRight: 0,
-    ...paired(theme, { color: text.default.caption }),
+    ...paired(theme, { color: text.default.b2 }),
     // One glyph size regardless of what the caller's icon defaults to.
     '& svg': {
       width: ADORNMENT_GLYPH_PX,

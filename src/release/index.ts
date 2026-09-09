@@ -113,16 +113,17 @@ export const release: ReleaseGuide = {
   repo: 'neofloai/atoms',
   current: CURRENT.version,
   currentTag: CURRENT.tag,
-  // Pinned rather than tracking `current`, which is the whole point of
-  // the field: 1.0.1 fixed how the package is bundled and moved no API,
-  // so every example `get_component` and `get_pattern` serve still runs
-  // unchanged on 1.0.0. A caller on 1.0.0 should be told there is an
-  // upgrade worth taking, not refused code that would work.
+  // Moved to 2.0.0, which is what this field is for. It held at 1.0.0
+  // through 1.0.1 because that release changed how the package is bundled
+  // and moved no API, so served code ran unchanged on either version.
+  // 2.0.0 renamed every `text` and `icon` token key, and the examples
+  // these tools hand back use the new names -- `text.default.b1`,
+  // `icon.error[3]`. Pasted into a 1.0.x project they do not compile.
   //
-  // This moves only when a release actually removes or renames something
-  // the served code uses -- it is the oldest version that code still runs
-  // on, not the oldest version anyone should be on.
-  minimumSupported: '1.0.0',
+  // So a caller on 1.0.x now has to read as `unsupported` rather than
+  // `behind`: the difference is between being offered an upgrade and
+  // being refused code that would break, and here it would break.
+  minimumSupported: '2.0.0',
   releases: RELEASES,
   commands: COMMANDS,
   keywords: SEARCH_KEYWORDS,

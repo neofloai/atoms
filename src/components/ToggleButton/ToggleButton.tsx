@@ -58,7 +58,10 @@ function sizeStyles(size: ToggleButtonSize): CSSObject {
   const glyph = glyphSizePx[size];
   return {
     padding: TOGGLE_PADDING_PX - OUTLINE_BORDER_WIDTH_PX,
-    borderRadius: radius.sm,
+    // 4px (`Scale/100`), following `Button` — the two are the same class
+    // of control and a toggle sits beside a button often enough that a
+    // half-step difference in corner reads as a bug (#57).
+    borderRadius: radius.xs,
     borderWidth: OUTLINE_BORDER_WIDTH_PX,
     borderStyle: 'solid',
     // Only reached by a toggle holding both a glyph and a label, which

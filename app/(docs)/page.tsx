@@ -7,6 +7,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import NextLink from '@/app/_lib/Link';
+import { ATOMS_VERSION } from '@/src/release/version';
 
 interface LandingCard {
   readonly title: string;
@@ -33,9 +34,9 @@ const cards: readonly LandingCard[] = [
   {
     title: 'Patterns',
     description:
-      'Pre-composed layouts for common pages — dashboards, settings, auth flows.',
+      'Whole screens, already composed and reviewed — an invoice dashboard, extraction, matching, ERP posting and reporting.',
     href: '/patterns',
-    status: 'soon',
+    status: 'ready',
   },
 ];
 
@@ -45,7 +46,12 @@ export default function HomePage() {
       <Stack spacing={6}>
         <Stack spacing={2} sx={{ maxWidth: 720 }}>
           <Chip
-            label="v1.0.0"
+            // Read rather than written. This chip was hand-set to
+            // `v1.0.0` and still said so after 1.0.1 shipped -- the
+            // sidebar was right and the landing page was a release
+            // behind. `ATOMS_VERSION` is checked against `package.json`
+            // by `scripts/generate.ts`, so it cannot go stale again.
+            label={`v${ATOMS_VERSION}`}
             size="small"
             sx={{
               alignSelf: 'flex-start',

@@ -11,8 +11,8 @@ import type { ModeToken } from '@/src/tokens';
  *
  *   Figma variable            hex        token
  *   ------------------------  ---------  ----------------------------
- *   text/default/b1           #31302e    text.default.body
- *   text/default/b3           #848280    text.default.placeholder
+ *   text/default/b1           #31302e    text.default.b1
+ *   text/default/b3           #848280    text.default.b3
  *   text.disabled.default     #aeaba4    text.disabled.default
  *   border/primary/3          #868fee    border.primary.focus
  *   border/disabled/default   #cccac6    border.disabled.default
@@ -104,9 +104,9 @@ export const labelType = typography.body.b1;
  */
 export const ink = {
   /** `text/default/b1` on the selected tab. */
-  selected: text.default.body,
+  selected: text.default.b1,
   /** `text/default/b3` on the rest. */
-  unselected: text.default.placeholder,
+  unselected: text.default.b3,
   /**
    * Hover, on an unselected tab. Derived — the Figma set has no hovered
    * cell — and it lands on the *selected* rung, so a hovered tab reads
@@ -114,7 +114,7 @@ export const ink = {
    * thing that says which tab you already have. See
    * DESIGNER_QUESTIONS.md #40.
    */
-  hover: text.default.body,
+  hover: text.default.b1,
   disabled: text.disabled.default,
 } as const satisfies Record<string, ModeToken>;
 

@@ -8,7 +8,7 @@ import { APP_BAR_HEIGHT } from '../_components/navigation';
 const ANCHOR_OFFSET_SX = { scrollMarginTop: APP_BAR_HEIGHT + 16 };
 import { border, colors, icon, spacing, surface, text } from '@/src/tokens';
 import { ElevationSection } from './_components/ElevationSection';
-import { figmaSlotFor } from './_components/figmaSlots';
+import { accessorFor, figmaSlotFor } from './_components/figmaSlots';
 import { RadiusSection } from './_components/RadiusSection';
 import { ResponsiveSection } from './_components/ResponsiveSection';
 import { ScaleSection } from './_components/ScaleSection';
@@ -91,21 +91,27 @@ export default function TokensPage() {
         <Divider />
 
         <SemanticSection
-          title="Text"
-          description="Font colours, grouped by typography slot rather than by interaction state. The neutral default group runs heading, body, caption, placeholder and subtle — the first four also carry an OnColor cut, for text sitting on a filled surface. Every accent role (primary, information, success, error, warning, orange, purple) is a four-rung ladder, darkest first: body, caption, accent, onColorHover. disabled is default plus onColor. Each rung shows its Figma variable name underneath, where that differs — Figma names the default group after the type-scale rung it pairs with (b1, b2, b3) and numbers the accent ladders 1 to 4. A rung with no second name is spelled the same in both."
+          title="Font colours"
+          description="Every name below is the Figma variable name, exactly as it appears in the designer's variable list. Ask for text/default/b2 and that is the token you get; the smaller line beneath each name is the property path to paste. The neutral default group runs heading, b1, b2, b3 and subtle, and the first four repeat as an on-color cut for text sitting on a filled surface. Each accent role (primary, information, success, error, warning, orange, purple) is a four-rung ladder, darkest first — warning and orange are numbered 0, 2, 3, 4 rather than 1 to 4, which is Figma's own numbering, not a gap. disabled holds default and on-color."
           tokens={text}
           swatchVariant="text"
-          figmaSlot={(group, token) => figmaSlotFor('text', group, token)}
+          labels={(group, token) => [
+            figmaSlotFor('text', group, token),
+            accessorFor('text', group, token),
+          ]}
         />
 
         <Divider />
 
         <SemanticSection
-          title="Icon"
-          description="Icon colours, carrying the same group and rung names as Text so an icon beside a body string takes the matching token. As of the current sync only default.subtle and disabled.onColor hold values that differ from their text counterparts. Each rung shows its Figma variable name underneath."
+          title="Icon colours"
+          description="Named the same way, and grouped the same way, so an icon beside a body string takes the matching rung: icon/default/b2 sits next to text/default/b2. As of the current sync only default/subtle and disabled/on-color hold values that differ from their font-colour counterparts. One naming difference to know about: icon/warning starts at 1 where text/warning starts at 0."
           tokens={icon}
           swatchVariant="text"
-          figmaSlot={(group, token) => figmaSlotFor('icon', group, token)}
+          labels={(group, token) => [
+            figmaSlotFor('icon', group, token),
+            accessorFor('icon', group, token),
+          ]}
         />
 
         <Divider />

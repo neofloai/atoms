@@ -594,10 +594,10 @@ const DETAILS_COLS = { field: 250, invoice: 320 };
  */
 const labelCell = (theme) => ({
   backgroundColor: surface.default.default.light,
-  color: text.default.caption.light,
+  color: text.default.b2.light,
   ...theme.applyStyles('dark', {
     backgroundColor: surface.default.default.dark,
-    color: text.default.caption.dark,
+    color: text.default.b2.dark,
   }),
 });
 
@@ -615,8 +615,8 @@ function Required() {
     <Box
       component="span"
       sx={(theme) => ({
-        color: text.error.caption.light,
-        ...theme.applyStyles('dark', { color: text.error.caption.dark }),
+        color: text.error[2].light,
+        ...theme.applyStyles('dark', { color: text.error[2].dark }),
       })}
     >
       {' *'}
@@ -631,9 +631,9 @@ function LineId({ children }) {
       component="span"
       sx={(theme) => ({
         fontFamily: fontFamilies.product.mono,
-        color: text.default.placeholder.light,
+        color: text.default.b3.light,
         ...theme.applyStyles('dark', {
-          color: text.default.placeholder.dark,
+          color: text.default.b3.dark,
         }),
       })}
     >
@@ -667,16 +667,16 @@ const STATUS_ICON_PX = 16;
  *
  * The ink comes from icon, not text. The two groups hold the same values on
  * every accent role today, so nothing about the pixels turns on the choice -
- * but they already differ on default.subtle and disabled.onColor, and a glyph
+ * but they already differ on default/subtle and disabled/on-color, and a glyph
  * that follows the text ramp would silently move the day design splits another
  * rung. Every Atoms component that colours a glyph reads icon, and this is a
  * glyph.
  *
  * The rung is per role rather than one rule for all three: success and error
- * take onColorHover, warning takes accent. That is not an inconsistency - the
+ * take rung 4, warning takes rung 3. That is not an inconsistency - the
  * yellow ramp runs light-to-dark where green and red run dark-to-light, so its
- * onColorHover rung would be invisible against a white row. The rule is the
- * rung that reads on the surface, which is a different rung per ramp.
+ * rung 4 would be invisible against a white row. The rule is the rung that
+ * reads on the surface, which is a different rung per ramp.
  *
  * Three of the four are circles because they are outcomes of the same test.
  * 'accepted' is deliberately not: it is a person's decision rather than a
@@ -685,14 +685,14 @@ const STATUS_ICON_PX = 16;
 const STATUS_MARKS = {
   matched: {
     icon: <CheckCircleIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.success.onColorHover,
+    tone: icon.success[4],
     label: 'Matched',
     help: 'Quantity and amount both agree with the receipts allocated here',
     row: 'success',
   },
   probable: {
     icon: <QuestionIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.warning.accent,
+    tone: icon.warning[3],
     label: 'Probable',
     help: 'Receipts found for this item, but they do not add up to the line',
     // No fill. The design's own State axis on table-rows has six values and
@@ -702,14 +702,14 @@ const STATUS_MARKS = {
   },
   'no-match': {
     icon: <XCircleIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.error.onColorHover,
+    tone: icon.error[4],
     label: 'No match',
     help: 'No goods receipt exists for this line',
     row: 'error',
   },
   accepted: {
     icon: <SealCheckIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.information.onColorHover,
+    tone: icon.information[4],
     label: 'Accepted',
     help: 'Someone decided this line is payable without a receipt',
     // Resolved, but not matched: a person overrode the check rather than the

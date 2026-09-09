@@ -46,7 +46,7 @@ export const muiColorMap: Record<
  * counter badge is pale for five of the six roles (`surface.error.default`
  * is `red/75`) and would vanish at 4px.
  *
- * `secondary` is the neutral treatment and takes `icon.default.body`,
+ * `secondary` is the neutral treatment and takes `icon.default.b1`,
  * matching `Badge`'s neutral dot.
  *
  * This is one rung away from what `Slider` fills its track with —
@@ -57,12 +57,12 @@ export const muiColorMap: Record<
  * `DESIGNER_QUESTIONS.md` #36.
  */
 export const indicatorTokens: Record<ProgressRole, ModeToken> = {
-  primary: icon.primary.accent,
-  secondary: icon.default.body,
-  success: icon.success.accent,
-  error: icon.error.accent,
-  warning: icon.warning.accent,
-  information: icon.information.accent,
+  primary: icon.primary[3],
+  secondary: icon.default.b1,
+  success: icon.success[3],
+  error: icon.error[3],
+  warning: icon.warning[3],
+  information: icon.information[3],
 };
 
 /**

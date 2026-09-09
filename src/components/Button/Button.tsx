@@ -105,10 +105,12 @@ const StyledButton = styled(MuiButton, {
     prop !== 'neofloAppearance' &&
     prop !== 'neofloSize',
 })<StyledButtonProps>(({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
-  // 8px (`Scale/200`), not the stadium radius this shipped with — the
-  // 11 August update took both action controls off the pill, matching
-  // the move Chip already made (DESIGNER_QUESTIONS.md #19).
-  borderRadius: radius.sm,
+  // 4px (`Scale/100`). The 11 August update took both action controls
+  // off the stadium radius this shipped with, matching the move Chip
+  // already made (DESIGNER_QUESTIONS.md #19); this tightens it one more
+  // rung. `IconButton`, `ToggleButton` and `Chip` still sit at 8px, so a
+  // square icon button beside a button no longer matches — see #57.
+  borderRadius: radius.xs,
   fontFamily: fontFamilies.product.sans,
   fontSize: LABEL_TYPE.size,
   fontWeight: fontWeights.medium,

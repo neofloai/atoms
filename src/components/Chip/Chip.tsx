@@ -154,7 +154,7 @@ const bigRoleTokens: Record<
     bgPressed: surface.primary.defaultPressed,
     bgSelected: surface.primary.subtleHover,
     bgSelectedOutline: surface.primary.subtleHover,
-    text: text.primary.caption,
+    text: text.primary[2],
     outlineBorder: border.primary.default,
     selectedBorder: border.primary.default,
     focusRing: border.primary.focus,
@@ -168,7 +168,7 @@ const bigRoleTokens: Record<
     // hover fill (986:17986).
     bgSelected: surface.default.default,
     bgSelectedOutline: surface.default.defaultHover,
-    text: text.default.body,
+    text: text.default.b1,
     // The neutral role is the one place where the outline border and the
     // selected border are different tokens: `border.layers.card2` for
     // the outline, one step darker for selection.
@@ -182,7 +182,7 @@ const bigRoleTokens: Record<
     bgPressed: surface.success.subtlePressed,
     bgSelected: surface.success.subtleHover,
     bgSelectedOutline: surface.success.subtleHover,
-    text: text.success.caption,
+    text: text.success[2],
     outlineBorder: border.success.default,
     selectedBorder: border.success.default,
     focusRing: border.success.focus,
@@ -193,7 +193,7 @@ const bigRoleTokens: Record<
     bgPressed: surface.error.subtlePressed,
     bgSelected: surface.error.subtleHover,
     bgSelectedOutline: surface.error.subtleHover,
-    text: text.error.caption,
+    text: text.error[2],
     outlineBorder: border.error.default,
     selectedBorder: border.error.default,
     focusRing: border.error.focus,
@@ -206,7 +206,7 @@ const bigRoleTokens: Record<
     // rather than its hover tint (986:17972, 986:17996) — kept literal.
     bgSelected: surface.warning.subtlePressed,
     bgSelectedOutline: surface.warning.subtlePressed,
-    text: text.warning.caption,
+    text: text.warning[2],
     outlineBorder: border.warning.default,
     selectedBorder: border.warning.default,
     focusRing: border.warning.focus,
@@ -225,25 +225,24 @@ interface SmallRoleTokens {
  * uniform "always subtle" or "always default" rule), so these are copied
  * literally per role rather than derived from a pattern.
  *
- * Figma numbers the text slots; `/1`../4` are our
- * `body`/`caption`/`accent`/`onColorHover`, and for the neutral role
- * `b1`/`b2`/`b3` are `body`/`caption`/`placeholder`. The 2026-08-11
- * cross-check corrected two rungs that had been read a step off:
+ * The token names below are Figma's own, so a rung in the sheet is the
+ * rung in the code: `text/information/3` is `text.information[3]`. The
+ * 2026-08-11 cross-check corrected two that had been read a step off —
  * `secondary` draws `text/default/b2` (grey/650) not the lighter
  * `subtle`, and `information` draws `text/information/3` (blue/500) not
- * `onColorHover` (blue/400).
+ * `/4` (blue/400).
  */
 const smallRoleTokens: Record<ChipVariant, SmallRoleTokens> = {
-  secondary: { bg: surface.layers.card3, text: text.default.caption },
-  primary: { bg: surface.primary.subtle, text: text.primary.accent },
-  warning: { bg: surface.warning.subtleHover, text: text.warning.caption },
-  purple: { bg: surface.purple.default, text: text.purple.onColorHover },
-  success: { bg: surface.success.subtleHover, text: text.success.onColorHover },
-  orange: { bg: surface.orange.default, text: text.orange.accent },
-  error: { bg: surface.error.subtlePressed, text: text.error.onColorHover },
+  secondary: { bg: surface.layers.card3, text: text.default.b2 },
+  primary: { bg: surface.primary.subtle, text: text.primary[3] },
+  warning: { bg: surface.warning.subtleHover, text: text.warning[2] },
+  purple: { bg: surface.purple.default, text: text.purple[4] },
+  success: { bg: surface.success.subtleHover, text: text.success[4] },
+  orange: { bg: surface.orange.default, text: text.orange[3] },
+  error: { bg: surface.error.subtlePressed, text: text.error[4] },
   information: {
     bg: surface.information.default,
-    text: text.information.accent,
+    text: text.information[3],
   },
 };
 

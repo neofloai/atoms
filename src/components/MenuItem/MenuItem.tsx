@@ -32,16 +32,16 @@ import type {
  * both — no separate icon rule, and no icon token this system does not
  * already have.
  *
- * `action` maps to `text.primary.accent` (`colors.primary[500]`,
+ * `action` maps to `text.primary[3]` (`colors.primary[500]`,
  * `#4949dc`). That value was briefly out of step with the Figma board;
  * the 11 August primitive export settled it and the raw scale now
  * carries it (DESIGNER_QUESTIONS.md #22). Referencing the token rather
  * than the hex is what made that a no-op here.
  */
 const toneTokens: Record<MenuItemVariant, ModeToken> = {
-  primary: text.default.body,
-  secondary: text.default.caption,
-  action: text.primary.accent,
+  primary: text.default.b1,
+  secondary: text.default.b2,
+  action: text.primary[3],
 };
 
 interface StyledMenuItemProps {

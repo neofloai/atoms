@@ -45,9 +45,9 @@ const statusBorderTokens: Record<TextFieldStatus, ModeToken> = {
  * rest — see the `border.ts`/`text.ts`/`icon.ts` sync notes.
  */
 const statusTextTokens: Record<TextFieldStatus, ModeToken> = {
-  error: text.error.onColorHover,
-  success: text.success.onColorHover,
-  warning: text.warning.caption,
+  error: text.error[4],
+  success: text.success[4],
+  warning: text.warning[2],
 };
 
 interface StyledTextFieldProps {
@@ -102,11 +102,11 @@ const StyledTextField = styled(MuiTextField, {
       padding: `0 ${FIELD_PADDING_PX}px`,
       marginBottom: spacing.component.xxs,
       ...labelFont,
-      ...paired(theme, { color: text.default.placeholder }),
+      ...paired(theme, { color: text.default.b3 }),
       // MUI's InputLabel colours itself with the theme's primary colour
       // on focus by default; the Figma label stays neutral except when
       // a status is set (handled separately below).
-      '&.Mui-focused': paired(theme, { color: text.default.placeholder }),
+      '&.Mui-focused': paired(theme, { color: text.default.b3 }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
       // MUI's asterisk node is the string " *", and that leading space
       // sits at the start of a flex item's line box, where it
@@ -117,7 +117,7 @@ const StyledTextField = styled(MuiTextField, {
         // that actually wants it.
         marginLeft: 'auto',
         ...helperFont,
-        ...paired(theme, { color: text.default.placeholder }),
+        ...paired(theme, { color: text.default.b3 }),
       },
       '&.Mui-disabled .Neoflo-TextField-counter': paired(theme, {
         color: text.disabled.default,
@@ -132,7 +132,7 @@ const StyledTextField = styled(MuiTextField, {
       gap: FIELD_PADDING_PX,
       ...fieldFont,
       ...paired(theme, {
-        color: text.default.body,
+        color: text.default.b1,
         backgroundColor: surface.layers.page,
       }),
       '& .MuiOutlinedInput-notchedOutline': {
@@ -173,7 +173,7 @@ const StyledTextField = styled(MuiTextField, {
       padding: 0,
       '&::placeholder': {
         opacity: 1,
-        ...paired(theme, { color: text.default.placeholder }),
+        ...paired(theme, { color: text.default.b3 }),
       },
       '&.Mui-disabled': {
         ...paired(theme, { color: text.disabled.default }),
@@ -184,7 +184,7 @@ const StyledTextField = styled(MuiTextField, {
     '& .MuiInputBase-inputMultiline': { padding: 0 },
     '& .MuiInputAdornment-root': {
       ...adornmentBox(),
-      ...paired(theme, { color: text.default.caption }),
+      ...paired(theme, { color: text.default.b2 }),
     },
     // Any button in either adornment, whether or not it is wrapped in an
     // `InputAdornment`: one circular target, one ripple, and no effect on
@@ -198,7 +198,7 @@ const StyledTextField = styled(MuiTextField, {
       margin: `${spacing.component.xxs}px 0 0`,
       padding: `0 ${FIELD_PADDING_PX}px`,
       ...helperFont,
-      ...paired(theme, { color: text.default.placeholder }),
+      ...paired(theme, { color: text.default.b3 }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
     },
   };

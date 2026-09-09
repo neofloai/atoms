@@ -106,8 +106,8 @@ function IndexCell({ value }: { value: number }) {
       sx={(theme) => ({
         fontFamily: fontFamilies.product.mono,
         fontSize: 12,
-        color: text.default.placeholder.light,
-        ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+        color: text.default.b3.light,
+        ...theme.applyStyles('dark', { color: text.default.b3.dark }),
       })}
     >
       {value}
@@ -136,9 +136,9 @@ function AmountCell({ value }: { value: number }) {
       <Box
         component="span"
         sx={(theme) => ({
-          color: text.default.placeholder.light,
+          color: text.default.b3.light,
           ...theme.applyStyles('dark', {
-            color: text.default.placeholder.dark,
+            color: text.default.b3.dark,
           }),
         })}
       >

@@ -54,7 +54,7 @@ export const DialogContentText = styled(MuiDialogContentText)(({ theme }) => ({
     fontWeight: fontWeights.regular,
     lineHeight: `${bodyType.leading}px`,
     letterSpacing: `${bodyType.letterSpacing}em`,
-    ...paired(theme, { color: text.default.body }),
+    ...paired(theme, { color: text.default.b1 }),
   },
 }));
 

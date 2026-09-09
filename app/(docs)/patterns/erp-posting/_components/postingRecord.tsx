@@ -447,8 +447,8 @@ export const Digits = styled('span')({
 export const Index = styled('span')(({ theme }) => ({
   fontFamily: fontFamilies.product.mono,
   fontSize: typography.body.b2.size,
-  color: text.default.placeholder.light,
-  ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+  color: text.default.b3.light,
+  ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));
 
 /**
@@ -466,6 +466,6 @@ export const Money = styled('span')({
 
 /** Identical on every row, so it stays out of the way of what is not. */
 export const Currency = styled('span')(({ theme }) => ({
-  color: text.default.placeholder.light,
-  ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+  color: text.default.b3.light,
+  ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));

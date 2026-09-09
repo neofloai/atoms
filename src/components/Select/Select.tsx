@@ -42,9 +42,9 @@ const statusBorderTokens: Record<SelectStatus, ModeToken> = {
  * same tokens in both components).
  */
 const statusTextTokens: Record<SelectStatus, ModeToken> = {
-  error: text.error.onColorHover,
-  success: text.success.onColorHover,
-  warning: text.warning.caption,
+  error: text.error[4],
+  success: text.success[4],
+  warning: text.warning[2],
 };
 
 interface StyledSelectProps {
@@ -95,8 +95,8 @@ const StyledSelect = styled(MuiTextField, {
       padding: `0 ${FIELD_PADDING_PX}px`,
       marginBottom: spacing.component.xxs,
       ...labelFont,
-      ...paired(theme, { color: text.default.placeholder }),
-      '&.Mui-focused': paired(theme, { color: text.default.placeholder }),
+      ...paired(theme, { color: text.default.b3 }),
+      '&.Mui-focused': paired(theme, { color: text.default.b3 }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
       // The space in MUI's " *" collapses at the start of a flex item.
       '& .MuiFormLabel-asterisk': { marginLeft: ASTERISK_GAP_PX },
@@ -113,7 +113,7 @@ const StyledSelect = styled(MuiTextField, {
       // input text (Figma's `text/default/b2`, not `b1`) — it only
       // reaches full body strength while the menu is open.
       ...paired(theme, {
-        color: text.default.caption,
+        color: text.default.b2,
         backgroundColor: surface.layers.page,
       }),
       '& .MuiOutlinedInput-notchedOutline': {
@@ -134,7 +134,7 @@ const StyledSelect = styled(MuiTextField, {
         borderBottomRightRadius: 0,
         ...paired(theme, {
           backgroundColor: surface.layers.card1,
-          color: text.default.body,
+          color: text.default.b1,
         }),
         '& .MuiOutlinedInput-notchedOutline': {
           borderWidth: 1,
@@ -173,14 +173,14 @@ const StyledSelect = styled(MuiTextField, {
       right: 'auto',
       width: 16,
       height: 16,
-      ...paired(theme, { color: icon.default.caption }),
+      ...paired(theme, { color: icon.default.b2 }),
       '&.Mui-disabled': paired(theme, { color: icon.disabled.default }),
     },
     '& .MuiFormHelperText-root': {
       margin: `${spacing.component.xxs}px 0 0`,
       padding: `0 ${FIELD_PADDING_PX}px`,
       ...helperFont,
-      ...paired(theme, { color: text.default.placeholder }),
+      ...paired(theme, { color: text.default.b3 }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
     },
   };

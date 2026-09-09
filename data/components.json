@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T17:09:09.791Z",
+  "generatedAt": "2026-09-09T08:12:41.942Z",
   "components": [
     {
       "name": "Accordion",
@@ -59,7 +59,7 @@
           "name": "AccordionSummary children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The title. Set at 13/20 regular in `text.default.body` (Figma `text/default/b1`), so a plain string is already correct. It wraps rather than pushing the caret out of the row."
+          "description": "The title. Set at 13/20 regular in `text.default.b1`, so a plain string is already correct. It wraps rather than pushing the caret out of the row."
         },
         {
           "name": "AccordionSummary expandIcon",
@@ -71,7 +71,7 @@
           "name": "AccordionDetails children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The body. Set at 13/20 regular in `text.default.caption` (Figma `text/default/b2`), so a plain string needs no `Typography` around it; anything nested keeps its own colour."
+          "description": "The body. Set at 13/20 regular in `text.default.b2`, so a plain string needs no `Typography` around it; anything nested keeps its own colour."
         },
         {
           "name": "AccordionActions children",
@@ -4415,7 +4415,7 @@
           "name": "TableCell secondary",
           "type": "ReactNode",
           "default": "—",
-          "description": "A muted second line, hard under the first with no gap — 12/16 in `text.default.placeholder` (Figma `text/default/b3`) against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`."
+          "description": "A muted second line, hard under the first with no gap — 12/16 in `text.default.b3` against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`."
         },
         {
           "name": "TableCell padding",
@@ -5126,7 +5126,7 @@
         {
           "title": "A floating toolbar",
           "description": "The composition from the design file: `appearance=\"text\"` on a surface that already has the edge and the shadow, with a `Divider` between the two groups. One group per decision, so alignment and formatting keep separate selections. The 1px padding is the frame's 2px `Scale/50` with the border taken out of it, the same subtraction the components make.",
-          "code": "import { border, elevation, radius, spacing, surface } from '@neofloai/atoms/tokens';\n\n<Box\n  sx={(theme) => ({\n    display: 'inline-flex',\n    alignItems: 'center',\n    gap: `${spacing.component.xxs}px`,\n    padding: '1px',\n    borderRadius: `${radius.sm}px`,\n    border: '1px solid',\n    boxShadow: elevation.small,\n    backgroundColor: surface.layers.card1.light,\n    borderColor: border.layers.card1.light,\n    ...theme.applyStyles('dark', {\n      backgroundColor: surface.layers.card1.dark,\n      borderColor: border.layers.card1.dark,\n    }),\n  })}\n>\n  <ToggleButtonGroup\n    exclusive\n    size=\"sm\"\n    appearance=\"text\"\n    value={align}\n    onChange={(_, next) => next && setAlign(next)}\n    aria-label=\"Text alignment\"\n  >\n    <ToggleButton value=\"left\" aria-label=\"Align left\"><TextAlignLeftIcon /></ToggleButton>\n    <ToggleButton value=\"center\" aria-label=\"Align centre\"><TextAlignCenterIcon /></ToggleButton>\n    <ToggleButton value=\"right\" aria-label=\"Align right\"><TextAlignRightIcon /></ToggleButton>\n  </ToggleButtonGroup>\n\n  <Divider orientation=\"vertical\" flexItem sx={{ my: 0.5 }} />\n\n  <ToggleButtonGroup\n    size=\"sm\"\n    appearance=\"text\"\n    value={marks}\n    onChange={(_, next) => setMarks(next)}\n    aria-label=\"Text formatting\"\n  >\n    <ToggleButton value=\"bold\" aria-label=\"Bold\"><TextBIcon /></ToggleButton>\n    <ToggleButton value=\"italic\" aria-label=\"Italic\"><TextItalicIcon /></ToggleButton>\n    <ToggleButton value=\"underline\" aria-label=\"Underline\"><TextUnderlineIcon /></ToggleButton>\n  </ToggleButtonGroup>\n</Box>"
+          "code": "import { border, elevation, radius, spacing, surface } from '@neofloai/atoms/tokens';\n\n<Box\n  sx={(theme) => ({\n    display: 'inline-flex',\n    alignItems: 'center',\n    gap: `${spacing.component.xxs}px`,\n    padding: '1px',\n    borderRadius: `${radius.xs}px`,\n    border: '1px solid',\n    boxShadow: elevation.small,\n    backgroundColor: surface.layers.card1.light,\n    borderColor: border.layers.card1.light,\n    ...theme.applyStyles('dark', {\n      backgroundColor: surface.layers.card1.dark,\n      borderColor: border.layers.card1.dark,\n    }),\n  })}\n>\n  <ToggleButtonGroup\n    exclusive\n    size=\"sm\"\n    appearance=\"text\"\n    value={align}\n    onChange={(_, next) => next && setAlign(next)}\n    aria-label=\"Text alignment\"\n  >\n    <ToggleButton value=\"left\" aria-label=\"Align left\"><TextAlignLeftIcon /></ToggleButton>\n    <ToggleButton value=\"center\" aria-label=\"Align centre\"><TextAlignCenterIcon /></ToggleButton>\n    <ToggleButton value=\"right\" aria-label=\"Align right\"><TextAlignRightIcon /></ToggleButton>\n  </ToggleButtonGroup>\n\n  <Divider orientation=\"vertical\" flexItem sx={{ my: 0.5 }} />\n\n  <ToggleButtonGroup\n    size=\"sm\"\n    appearance=\"text\"\n    value={marks}\n    onChange={(_, next) => setMarks(next)}\n    aria-label=\"Text formatting\"\n  >\n    <ToggleButton value=\"bold\" aria-label=\"Bold\"><TextBIcon /></ToggleButton>\n    <ToggleButton value=\"italic\" aria-label=\"Italic\"><TextItalicIcon /></ToggleButton>\n    <ToggleButton value=\"underline\" aria-label=\"Underline\"><TextUnderlineIcon /></ToggleButton>\n  </ToggleButtonGroup>\n</Box>"
         },
         {
           "title": "Filling its container",

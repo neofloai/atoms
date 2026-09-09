@@ -167,11 +167,11 @@ const FOOTER_NAV = [{ key: 'help', label: 'Help', Icon: QuestionIcon }];
  */
 const navRowStyles = (theme: any) => {
   const scheme = (mode: 'light' | 'dark') => ({
-    color: text.default.caption[mode],
+    color: text.default.b2[mode],
     '&:hover': { backgroundColor: surface.default.defaultHover[mode] },
     '&.Mui-selected': {
       backgroundColor: surface.default.defaultPressed[mode],
-      color: text.default.body[mode],
+      color: text.default.b1[mode],
       '&:hover': { backgroundColor: surface.default.defaultPressed[mode] },
     },
   });
@@ -188,8 +188,8 @@ const navRowStyles = (theme: any) => {
  * group is shut and its selected child is not on screen at all.
  */
 const onBranchRow = (theme: any) => ({
-  color: text.default.body.light,
-  ...theme.applyStyles('dark', { color: text.default.body.dark }),
+  color: text.default.b1.light,
+  ...theme.applyStyles('dark', { color: text.default.b1.dark }),
 });
 
 /**
@@ -521,9 +521,9 @@ function NavGroup({ item, collapsed, active, onNavigate }) {
             noWrap
             sx={(theme) => ({
               fontWeight: fontWeights.medium,
-              color: text.default.placeholder.light,
+              color: text.default.b3.light,
               ...theme.applyStyles('dark', {
-                color: text.default.placeholder.dark,
+                color: text.default.b3.dark,
               }),
             })}
           >

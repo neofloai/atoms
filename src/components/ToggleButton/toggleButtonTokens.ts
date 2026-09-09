@@ -163,37 +163,37 @@ export const roleTokens: Record<ToggleButtonColor, RoleTokens> = {
   secondary: {
     selectedBg: surface.layers.card2,
     selectedBgHover: surface.layers.card3,
-    selectedInk: icon.default.body,
+    selectedInk: icon.default.b1,
     focusRing: border.default.defaultPressed,
   },
   primary: {
     selectedBg: surface.primary.subtle,
     selectedBgHover: surface.primary.subtleHover,
-    selectedInk: icon.primary.caption,
+    selectedInk: icon.primary[2],
     focusRing: border.primary.focus,
   },
   success: {
     selectedBg: surface.success.subtle,
     selectedBgHover: surface.success.subtleHover,
-    selectedInk: icon.success.caption,
+    selectedInk: icon.success[2],
     focusRing: border.success.focus,
   },
   error: {
     selectedBg: surface.error.subtle,
     selectedBgHover: surface.error.subtleHover,
-    selectedInk: icon.error.caption,
+    selectedInk: icon.error[2],
     focusRing: border.error.focus,
   },
   warning: {
     selectedBg: surface.warning.subtle,
     selectedBgHover: surface.warning.subtleHover,
-    selectedInk: icon.warning.caption,
+    selectedInk: icon.warning[2],
     focusRing: border.warning.focus,
   },
   information: {
     selectedBg: surface.information.subtle,
     selectedBgHover: surface.information.subtleHover,
-    selectedInk: icon.information.caption,
+    selectedInk: icon.information[2],
     focusRing: border.information.focus,
   },
 };
