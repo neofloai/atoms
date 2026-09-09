@@ -190,10 +190,10 @@ const DETAILS_COLS = { field: 250, invoice: 320 } as const;
  */
 const labelCell = (theme: Theme) => ({
   backgroundColor: surface.default.default.light,
-  color: text.default.caption.light,
+  color: text.default.b2.light,
   ...theme.applyStyles('dark', {
     backgroundColor: surface.default.default.dark,
-    color: text.default.caption.dark,
+    color: text.default.b2.dark,
   }),
 });
 
@@ -209,8 +209,8 @@ const labelCell = (theme: Theme) => ({
  * than a thing to keep settling per screen.
  */
 const Required = styled('span')(({ theme }) => ({
-  color: text.error.caption.light,
-  ...theme.applyStyles('dark', { color: text.error.caption.dark }),
+  color: text.error[2].light,
+  ...theme.applyStyles('dark', { color: text.error[2].dark }),
 }));
 
 /** Gap between the trailing actions, as `PageHeaderBar` sets it. */
@@ -224,7 +224,7 @@ const STATUS_ICON_PX = 16;
  *
  * The ink comes from `icon`, not `text`. The two groups hold the same values on
  * every accent role today, so nothing about the pixels turns on the choice —
- * but they already differ on `default.subtle` and `disabled.onColor`, and a
+ * but they already differ on `default/subtle` and `disabled/on-color`, and a
  * glyph that follows the text ramp would silently move the day design splits
  * another rung. Every component that colours a glyph reads `icon` (`Progress`,
  * `ToggleButton`, `Stepper`, `Accordion`), and this is a glyph.
@@ -252,14 +252,14 @@ const STATUS_MARKS: Record<
 > = {
   matched: {
     icon: <CheckCircleIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.success.onColorHover,
+    tone: icon.success[4],
     label: 'Matched',
     help: 'Quantity and amount both agree with the receipts allocated to this line',
     row: 'success',
   },
   probable: {
     icon: <QuestionIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.warning.accent,
+    tone: icon.warning[3],
     label: 'Probable',
     help: 'Receipts found for this item, but they do not add up to the line',
     // No fill. The design's own State axis on `table-rows` has six values and
@@ -269,14 +269,14 @@ const STATUS_MARKS: Record<
   },
   'no-match': {
     icon: <XCircleIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.error.onColorHover,
+    tone: icon.error[4],
     label: 'No match',
     help: 'No goods receipt exists for this line',
     row: 'error',
   },
   accepted: {
     icon: <SealCheckIcon weight="fill" size={STATUS_ICON_PX} />,
-    tone: icon.information.onColorHover,
+    tone: icon.information[4],
     label: 'Accepted',
     help: 'Someone decided this line is payable without a receipt',
     // Resolved, but not matched: a person overrode the check rather than the

@@ -187,7 +187,7 @@ const DESIGN_NOTES: readonly { title: string; body: string }[] = [
   },
   {
     title: 'The action tone is the brand accent, by token',
-    body: 'variant="action" takes text.primary.accent — the same brand accent Button and Chip resolve to — rather than a hex of its own, so the tone moves with the token if the accent is ever repointed.',
+    body: 'variant="action" takes text.primary[3] — the same brand accent Button and Chip resolve to — rather than a hex of its own, so the tone moves with the token if the accent is ever repointed.',
   },
 ];
 

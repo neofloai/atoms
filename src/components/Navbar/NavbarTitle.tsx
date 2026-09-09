@@ -66,7 +66,7 @@ const MetaRow = styled('div')(({ theme }) => ({
   letterSpacing: `${typography.body.b2.letterSpacing}em`,
   // One muted ink for the row, glyphs included — the icons inherit it
   // through `currentColor`, which is how a Phosphor icon takes its colour.
-  ...paired(theme, { color: text.default.caption }),
+  ...paired(theme, { color: text.default.b2 }),
 }));
 
 const MetaItem = styled('span')({

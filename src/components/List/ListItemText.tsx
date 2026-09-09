@@ -44,13 +44,13 @@ const StyledListItemText = styled(MuiListItemText)(({ theme }) => ({
   [`& .${listItemTextClasses.primary}`]: {
     ...listPrimaryType,
     wordBreak: 'break-word',
-    ...paired(theme, { color: text.default.body }),
+    ...paired(theme, { color: text.default.b1 }),
   },
 
   [`& .${listItemTextClasses.secondary}`]: {
     ...listSecondaryType,
     wordBreak: 'break-word',
-    ...paired(theme, { color: text.default.caption }),
+    ...paired(theme, { color: text.default.b2 }),
   },
 }));
 

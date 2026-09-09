@@ -40,12 +40,12 @@ import type { ModeToken } from '@/src/tokens';
  *   surface/default/2               #e5e4e1    surface.disabled.default
  *   border/primary/3                #868fee    border.primary.focus
  *   border.layers.card1            #eeeeec    border.layers.card1
- *   icon/primary/4                  #5f6aea    icon.primary.onColorHover
- *   icon/default/caption on-color   #cccac6    icon.default.captionOnColor
- *   text/default/b1                 #31302e    text.default.body
- *   text/default/b3                 #848280    text.default.placeholder
- *   text/primary/2                  #343eb3    text.primary.caption
- *   icon/primary/2                  #343eb3    icon.primary.caption
+ *   icon/primary/4                  #5f6aea    icon.primary[4]
+ *   icon/default/caption on-color   #cccac6    icon.default['caption on-color']
+ *   text/default/b1                 #31302e    text.default.b1
+ *   text/default/b3                 #848280    text.default.b3
+ *   text/primary/2                  #343eb3    text.primary[2]
+ *   icon/primary/2                  #343eb3    icon.primary[2]
  *   Scale/50                        2          LINE_WIDTH_PX (below)
  *   Scale/200                       8          DOT_SIZE_PX (below)
  *   Scale/300                       16         STEP_GAP_PX (below)
@@ -66,8 +66,9 @@ import type { ModeToken } from '@/src/tokens';
  *     state, and if the two ever diverge it should follow the disabled
  *     ladder.
  *   - `icon/primary/4` is the fourth rung of the primary icon ladder,
- *     which this repo names `onColorHover`. The pin is not on colour and
- *     is not hovered; it is the rung, and the name is the repo's.
+ *     read as `icon.primary[4]`. The pin is neither on colour nor
+ *     hovered — it is simply that rung, which is easier to say now the
+ *     token is numbered the way the sheet is.
  *
  * Note that the last step's pin does not reuse the dot's colours. Figma
  * draws it one rung lighter in both states — `primary/400` against the
@@ -204,8 +205,8 @@ export const dot = {
  * see the header comment.
  */
 export const pin = {
-  done: icon.primary.onColorHover,
-  pending: icon.default.captionOnColor,
+  done: icon.primary[4],
+  pending: icon.default['caption on-color'],
 } as const satisfies Record<string, ModeToken>;
 
 /**
@@ -224,11 +225,11 @@ export const line = {
  * the dot and the line.
  */
 export const ink = {
-  label: text.default.body,
-  description: text.default.placeholder,
+  label: text.default.b1,
+  description: text.default.b3,
   /** The collapse row's label and its caret, both `#343eb3`. */
-  collapse: text.primary.caption,
-  collapseGlyph: icon.primary.caption,
+  collapse: text.primary[2],
+  collapseGlyph: icon.primary[2],
 } as const satisfies Record<string, ModeToken>;
 
 /**
@@ -246,5 +247,5 @@ export const collapseDots = surface.primary.default;
  */
 export const errorState = {
   dot: surface.error.default,
-  label: text.error.caption,
+  label: text.error[2],
 } as const satisfies Record<string, ModeToken>;

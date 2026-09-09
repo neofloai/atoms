@@ -138,8 +138,8 @@ function TwoLine({
           textOverflow: 'ellipsis',
           fontSize: typography.body.b2.size,
           lineHeight: typography.body.b2.leading + 'px',
-          color: text.default.caption.light,
-          ...theme.applyStyles('dark', { color: text.default.caption.dark }),
+          color: text.default.b2.light,
+          ...theme.applyStyles('dark', { color: text.default.b2.dark }),
         })}
       >
         {secondary}
@@ -163,8 +163,8 @@ function AttachmentCell({ file }: { file: string }) {
         gap: 0.5,
         minWidth: 0,
         lineHeight: 'normal',
-        color: text.default.placeholder.light,
-        ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+        color: text.default.b3.light,
+        ...theme.applyStyles('dark', { color: text.default.b3.dark }),
       })}
     >
       <PaperclipIcon size={14} style={{ flexShrink: 0 }} />
@@ -207,9 +207,9 @@ function AmountCell({ amount }: { amount: number }) {
       <Box
         component="span"
         sx={(theme) => ({
-          color: text.default.placeholder.light,
+          color: text.default.b3.light,
           ...theme.applyStyles('dark', {
-            color: text.default.placeholder.dark,
+            color: text.default.b3.dark,
           }),
         })}
       >

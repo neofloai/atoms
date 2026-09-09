@@ -46,7 +46,7 @@ const descriptionType = typography.body.b1;
  *     invisible on a dark card.
  *   - **the description colour.** MUI uses `palette.text.secondary`
  *     (`grey/700` light, `grey/200` dark). Figma says
- *     `text/default/b2` — `text.default.caption`, `grey/650` and
+ *     `text/default/b2` — `text.default.b2`, `grey/650` and
  *     `grey/600`. A rung apart in light mode and four rungs apart in
  *     dark, so this is not a rounding difference.
  *   - **the padding.** 16 on all four sides, dropping the top when the
@@ -100,7 +100,7 @@ const StyledCardHeader = styled(MuiCardHeader)(({ theme }) => ({
     fontWeight: fontWeights.regular,
     lineHeight: `${descriptionType.leading}px`,
     letterSpacing: `${descriptionType.letterSpacing}em`,
-    ...paired(theme, { color: text.default.caption }),
+    ...paired(theme, { color: text.default.b2 }),
   },
 }));
 

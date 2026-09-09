@@ -222,11 +222,11 @@ const LOGO_MARK_PX = 16;
  */
 function navRowStyles(theme: Theme): CSSObject {
   const scheme = (mode: 'light' | 'dark'): CSSObject => ({
-    color: text.default.caption[mode],
+    color: text.default.b2[mode],
     '&:hover': { backgroundColor: surface.default.defaultHover[mode] },
     '&.Mui-selected': {
       backgroundColor: surface.default.defaultPressed[mode],
-      color: text.default.body[mode],
+      color: text.default.b1[mode],
       '&:hover': { backgroundColor: surface.default.defaultPressed[mode] },
     },
   });
@@ -475,8 +475,8 @@ function NavRow({
           textTransform: 'none',
           fontWeight: selected || onBranch ? 500 : 400,
           ...(onBranch && {
-            color: text.default.body.light,
-            ...theme.applyStyles('dark', { color: text.default.body.dark }),
+            color: text.default.b1.light,
+            ...theme.applyStyles('dark', { color: text.default.b1.dark }),
           }),
           // A folded parent's hover target runs to the rail's edge, not
           // just to the pill's.
@@ -736,9 +736,9 @@ function NavGroup({
             noWrap
             sx={(theme) => ({
               fontWeight: fontWeights.medium,
-              color: text.default.placeholder.light,
+              color: text.default.b3.light,
               ...theme.applyStyles('dark', {
-                color: text.default.placeholder.dark,
+                color: text.default.b3.dark,
               }),
             })}
           >

@@ -540,6 +540,6 @@ export const Money = styled('span')(tabular);
 export const Code = styled('span')(({ theme }) => ({
   ...tabular,
   fontSize: typography.body.b2.size,
-  color: text.default.caption.light,
-  ...theme.applyStyles('dark', { color: text.default.caption.dark }),
+  color: text.default.b2.light,
+  ...theme.applyStyles('dark', { color: text.default.b2.dark }),
 }));

@@ -14,14 +14,16 @@ interface SemanticSectionProps {
   tokens: NestedTokens;
   swatchVariant: 'fill' | 'border' | 'text';
   /**
-   * Resolves the Figma variable name for a rung, for the categories
-   * where the two vocabularies differ (`text` and `icon`). Returning
-   * null means Figma spells it the same, so no second label is drawn.
+   * Overrides the pair of labels drawn above each swatch: the heading
+   * someone scans for, and a smaller line beneath it.
    *
-   * Passed in rather than looked up here because `surface` and `border`
-   * need no translation on the groups this page shows.
+   * `text` and `icon` pass one so the heading is the Figma variable name
+   * — `text/default/b2`, the string a designer actually says — with the
+   * property path underneath. `surface` and `border` leave it unset and
+   * get `group.token` alone, because Figma's names for those are still
+   * renamed on the way in and a slash-joined label would be wrong.
    */
-  figmaSlot?: (groupName: string, tokenName: string) => string | null;
+  labels?: (groupName: string, tokenName: string) => readonly [string, string];
 }
 
 /**
@@ -37,7 +39,7 @@ export function SemanticSection({
   description,
   tokens,
   swatchVariant,
-  figmaSlot,
+  labels,
 }: SemanticSectionProps) {
   const groups = Object.entries(tokens);
 
@@ -64,16 +66,29 @@ export function SemanticSection({
                 gap: 3,
               }}
             >
-              {Object.entries(group).map(([tokenName, modeToken]) => (
+              {Object.entries(group).map(([tokenName, modeToken]) => {
+                const [heading, sub] = labels?.(groupName, tokenName) ?? [
+                  `${groupName}.${tokenName}`,
+                  '',
+                ];
+                return (
                 <Stack key={tokenName} spacing={1}>
                   <Stack spacing={0}>
                     <Typography
                       variant="caption"
-                      sx={{ fontWeight: 600, color: 'text.primary', lineHeight: 1.3 }}
+                      sx={{
+                        fontWeight: 600,
+                        color: 'text.primary',
+                        lineHeight: 1.3,
+                        // Only the Figma-named categories go mono: their
+                        // heading is a variable name someone will
+                        // character-match against the Figma panel.
+                        ...(labels && { fontFamily: MONO_FONT }),
+                      }}
                     >
-                      {`${groupName}.${tokenName}`}
+                      {heading}
                     </Typography>
-                    {figmaSlot?.(groupName, tokenName) && (
+                    {sub && (
                       <Typography
                         variant="caption"
                         sx={{
@@ -82,7 +97,7 @@ export function SemanticSection({
                           lineHeight: 1.3,
                         }}
                       >
-                        {figmaSlot(groupName, tokenName)}
+                        {sub}
                       </Typography>
                     )}
                   </Stack>
@@ -99,7 +114,8 @@ export function SemanticSection({
                     />
                   </Stack>
                 </Stack>
-              ))}
+                );
+              })}
             </Box>
           </Stack>
         ))}

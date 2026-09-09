@@ -91,7 +91,7 @@ export function dataGridStyles(theme: Theme): CSSObject {
     // reaches all of them from here.
     ...paired(theme, {
       '--DataGrid-rowBorderColor': border.layers.card1,
-      color: text.default.body,
+      color: text.default.b1,
     }),
 
     // A header label is told from its data by colour, not by weight.
@@ -119,7 +119,7 @@ export function dataGridStyles(theme: Theme): CSSObject {
     // the row instead. See `dataGridCellType`.
     [`& .${c.cell}`]: {
       ...dataGridCellType,
-      ...paired(theme, { color: text.default.body }),
+      ...paired(theme, { color: text.default.b1 }),
       paddingInline: TABLE_CELL_PADDING_INLINE_PX,
     },
 
@@ -227,7 +227,7 @@ export function dataGridStyles(theme: Theme): CSSObject {
     }),
     [`& .${c.columnHeader}`]: {
       ...dataGridCaptionType,
-      ...paired(theme, { color: text.default.placeholder }),
+      ...paired(theme, { color: text.default.b3 }),
       paddingInline: TABLE_CELL_PADDING_INLINE_PX,
     },
     // MUI leaves the label at `line-height: normal`, which is close to 16
@@ -292,14 +292,14 @@ export function dataGridStyles(theme: Theme): CSSObject {
     },
     [`& .${c.selectedRowCount}, & .${c.rowCount}`]: {
       ...dataGridCaptionType,
-      ...paired(theme, { color: text.default.caption }),
+      ...paired(theme, { color: text.default.b2 }),
       margin: 0,
     },
 
     // ── Overlays ──────────────────────────────────────────────────
     [`& .${c.overlay}`]: {
       ...dataGridCaptionType,
-      ...paired(theme, { color: text.default.caption }),
+      ...paired(theme, { color: text.default.b2 }),
       backgroundColor: 'transparent',
     },
 

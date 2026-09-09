@@ -45,7 +45,7 @@ import { ACCORDION_PADDING_PX, accordionType } from './accordionTokens';
 export const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   ...accordionType,
   padding: `0 ${ACCORDION_PADDING_PX}px ${ACCORDION_PADDING_PX}px`,
-  ...paired(theme, { color: text.default.caption }),
+  ...paired(theme, { color: text.default.b2 }),
 }));
 
 AccordionDetails.displayName = 'AccordionDetails';

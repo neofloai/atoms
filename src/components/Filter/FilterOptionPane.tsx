@@ -86,7 +86,7 @@ const EmptyMessage = styled('p')(({ theme }) => ({
   fontSize: filterLabelType.size,
   lineHeight: `${filterLabelType.leading}px`,
   letterSpacing: `${filterLabelType.letterSpacing}em`,
-  ...paired(theme, { color: text.default.placeholder }),
+  ...paired(theme, { color: text.default.b3 }),
 }));
 
 EmptyMessage.displayName = 'EmptyMessage';

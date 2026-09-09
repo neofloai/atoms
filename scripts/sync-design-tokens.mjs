@@ -9,7 +9,7 @@ const ROOT = resolve(SCRIPT_DIR, '..');
 // TOKENS_SEMANTIC / TOKENS_PRIMITIVE / TOKENS_RESPONSIVE when the
 // download lands somewhere else (Figma suffixes repeat downloads with
 // " (1)", " 3", etc.).
-const SEMANTIC_SRC = process.env.TOKENS_SEMANTIC ?? '/Users/ankitverma/Downloads/component (1)';
+const SEMANTIC_SRC = process.env.TOKENS_SEMANTIC ?? '/Users/ankitverma/Downloads/component (2)';
 const PRIMITIVE_SRC =
   process.env.TOKENS_PRIMITIVE ?? '/Users/ankitverma/Downloads/Mode 1.tokens 3.json';
 const RESPONSIVE_SRC = process.env.TOKENS_RESPONSIVE ?? '/Users/ankitverma/Downloads/responsive';
@@ -42,7 +42,7 @@ function aliasToRef(name) {
 }
 
 // Collect leaves into category trees: { surface: { layers: { page: {...}, ...} } }
-function collect(node, lightNode, darkNode) {
+function collect(node, lightNode, darkNode, keyOf = toCamel) {
   const out = {};
   for (const key of Object.keys(node).filter((k) => !k.startsWith('$'))) {
     const value = node[key];
@@ -52,7 +52,7 @@ function collect(node, lightNode, darkNode) {
       // leaf
       const lAlias = lightVal?.$extensions?.['com.figma.aliasData']?.targetVariableName;
       const dAlias = darkVal?.$extensions?.['com.figma.aliasData']?.targetVariableName;
-      out[toCamel(key)] = {
+      out[keyOf(key)] = {
         type: value.$type,
         lightAlias: aliasToRef(lAlias),
         darkAlias: aliasToRef(dAlias),
@@ -62,36 +62,38 @@ function collect(node, lightNode, darkNode) {
         darkNumber: darkVal?.$value,
       };
     } else if (value && typeof value === 'object') {
-      out[toCamel(key)] = collect(value, lightVal, darkVal);
+      out[keyOf(key)] = collect(value, lightVal, darkVal, keyOf);
     }
   }
   return out;
 }
 
-const collected = collect(light, light, dark);
+// `text` and `icon` keep Figma's leaf names verbatim — `b2`, `3`,
+// `body on-color`. Designers hand over colours by variable name, and any
+// rename on the way in means the name they say does not exist in the
+// code they get back. Everything else is camelised as before.
+const VERBATIM_CATEGORIES = new Set(['text', 'icon']);
+const identity = (key) => key;
+
+const collected = {};
+for (const category of Object.keys(light).filter((k) => !k.startsWith('$'))) {
+  const keyOf = VERBATIM_CATEGORIES.has(category) ? identity : toCamel;
+  collected[toCamel(category)] = collect(light[category], light[category], dark[category], keyOf);
+}
 
 // ---- tier -> name normalisation ----
 //
 // The 2026-08-11 export replaced every named slot with a bare tier
-// number: `surface/default/default-hover` became `surface/default/2`,
-// `text/primary/body` became `text/primary/1`, and so on. The public API
-// keeps descriptive names — a rename would churn ~100 call sites and buy
-// nothing — so each group maps its tiers back here.
+// number: `surface/default/default-hover` became `surface/default/2`.
+// `surface` and `border` map those back to descriptive names here.
 //
-// Accent roles (primary/information/success/error/warning/orange/purple)
-// are now a uniform four-rung ladder in both `text` and `icon`, darkest
-// first. Figma numbers the first rung `0` on `text/warning`,
-// `text/orange`, and `icon/orange`, and `1` everywhere else — the same
-// rung either way, so both map to `body`.
-const ACCENT_TIERS = { 0: 'body', 1: 'body', 2: 'caption', 3: 'accent', 4: 'onColorHover' };
+// `text` and `icon` deliberately do not: see VERBATIM_CATEGORIES above.
+// Those two are the categories a designer names out loud ("make this
+// text/primary/3"), so their keys are Figma's, numbers and all.
+//
 // `border` roles end on a focus ring rather than a pressed state.
 const BORDER_ROLE_TIERS = { 1: 'default', 2: 'defaultHover', 3: 'focus' };
 const STATE_TIERS = { 1: 'default', 2: 'defaultHover', 3: 'defaultPressed' };
-// `<category>/default` keeps typography slot names; Figma renamed these
-// to the `B1`-`B3` type-scale rungs, which we spell out instead.
-// `heading` is an identity rename, listed only to hold its position at
-// the top of the ladder.
-const DEFAULT_SLOTS = { heading: 'heading', b1: 'body', b2: 'caption', b3: 'placeholder' };
 
 const ACCENT_ROLES = [
   'primary',
@@ -110,8 +112,6 @@ const TIER_NAMES = {
     soft: BORDER_ROLE_TIERS,
     ...Object.fromEntries(ACCENT_ROLES.map((r) => [r, BORDER_ROLE_TIERS])),
   },
-  text: { default: DEFAULT_SLOTS, ...Object.fromEntries(ACCENT_ROLES.map((r) => [r, ACCENT_TIERS])) },
-  icon: { default: DEFAULT_SLOTS, ...Object.fromEntries(ACCENT_ROLES.map((r) => [r, ACCENT_TIERS])) },
 };
 
 // Emit groups in a fixed order so the generated files stay diffable when
@@ -167,8 +167,9 @@ for (const [category, groups] of Object.entries(TIER_NAMES)) {
   }
 }
 
-// Nothing downstream can express a numeric key readably, so fail loudly
-// if a group we do not know about still carries one.
+// `surface` and `border` are consumed by name, so a tier number reaching
+// the emitted file means Figma added a slot TIER_NAMES does not know
+// about. Fail loudly rather than ship `surface.default[4]`.
 function assertNoTierKeys(node, path) {
   for (const [key, value] of Object.entries(node)) {
     if (/^\d+$/.test(key)) {
@@ -177,8 +178,20 @@ function assertNoTierKeys(node, path) {
     if (value && !value.type) assertNoTierKeys(value, `${path}/${key}`);
   }
 }
-for (const category of ['surface', 'border', 'text', 'icon']) {
+for (const category of ['surface', 'border']) {
   assertNoTierKeys(collected[category], category);
+}
+
+// `text` and `icon` are meant to mirror each other group-for-group, so an
+// icon beside a body string can take the matching rung. Individual rungs
+// may differ — Figma starts `text/warning` at 0 and `icon/warning` at 1 —
+// but a missing *group* is an export problem worth stopping for.
+{
+  const textGroups = Object.keys(collected.text).sort().join(',');
+  const iconGroups = Object.keys(collected.icon).sort().join(',');
+  if (textGroups !== iconGroups) {
+    throw new Error(`text/icon groups diverge:\n  text: ${textGroups}\n  icon: ${iconGroups}`);
+  }
 }
 
 // Express a value either as `colors.<scale>[<shade>]` if aliased, or raw literal.
@@ -190,13 +203,30 @@ function colorExpr(alias, hex) {
   return JSON.stringify((hex || '').toLowerCase());
 }
 
+// Figma names are not all valid JS identifiers now that `text`/`icon`
+// keep them verbatim. Bare numbers stay numeric literals so call sites
+// read `text.primary[3]`; anything with a space or hyphen gets quoted.
+const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+function keyLiteral(key) {
+  if (IDENTIFIER.test(key) || /^\d+$/.test(key)) return key;
+  return JSON.stringify(key);
+}
+
+// Numeric ladders sort low-to-high; everything else keeps Figma's order,
+// which already runs darkest-first.
+function orderLeaves(entries) {
+  return entries.every(([k]) => /^\d+$/.test(k))
+    ? entries.sort(([a], [b]) => Number(a) - Number(b))
+    : entries;
+}
+
 function emitColorGroup(name, group, indent = '  ') {
-  const lines = [`${indent}${name}: {`];
-  for (const [k, v] of Object.entries(group)) {
+  const lines = [`${indent}${keyLiteral(name)}: {`];
+  for (const [k, v] of orderLeaves(Object.entries(group))) {
     if (v.type === 'color') {
       const lightExpr = colorExpr(v.lightAlias, v.lightHex);
       const darkExpr = colorExpr(v.darkAlias, v.darkHex);
-      lines.push(`${indent}  ${k}: { light: ${lightExpr}, dark: ${darkExpr} },`);
+      lines.push(`${indent}  ${keyLiteral(k)}: { light: ${lightExpr}, dark: ${darkExpr} },`);
     } else {
       lines.push(emitColorGroup(k, v, indent + '  '));
     }
@@ -485,34 +515,49 @@ writeColorFile('border.ts', 'border', borderHeader, collected.border);
 
 // text.ts
 const textHeader = `/**
- * Text semantic tokens.
+ * Text semantic tokens — font colours.
  *
- * Each role exposes typography *slots* rather than interaction states:
+ * **Every key is the Figma variable name, verbatim.** A designer saying
+ * "make this text/default/b2" is naming \`text.default.b2\`. Drop the
+ * category prefix, turn the slashes into property access, and that is
+ * the token — nothing is translated on the way in, so nothing can be
+ * translated wrongly:
  *
- *   text.default.{ heading, body, caption, placeholder, subtle,
- *                  headingOnColor, bodyOnColor, captionOnColor,
- *                  placeholderOnColor }
- *   text.<role>.{ body, caption, accent, onColorHover }
- *   text.disabled.{ default, onColor }
+ *   text/default/b2              ->  text.default.b2
+ *   text/primary/3               ->  text.primary[3]
+ *   text/default/body on-color   ->  text.default['body on-color']
+ *   text/disabled/on-color       ->  text.disabled['on-color']
+ *
+ * The shape, as Figma draws it:
+ *
+ *   text.default.{ heading, b1, b2, b3, subtle,
+ *                  'heading on-color', 'body on-color',
+ *                  'caption on-color', 'placeholder on-color' }
+ *   text.<role>[1..4]     (\`0\` in place of \`1\` on warning and orange)
+ *   text.disabled.{ default, 'on-color' }
  *
  * \`<role>\` is primary, information, success, error, warning, orange, or
- * purple. Every one is now a uniform four-rung ladder, darkest first: in
- * light mode \`body\`/\`caption\`/\`accent\`/\`onColorHover\` resolve to shades
- * 700/600/500/400 (800/700/600/500 for the two warm scales, which need an
- * extra rung of contrast against a light page), and dark mode walks the
- * same ladder from the other end.
+ * purple — each a four-rung ladder, darkest first. In light mode rungs
+ * 1-4 resolve to shades 700/600/500/400 (800/700/600/500 for the two
+ * warm scales, which need an extra rung of contrast against a light
+ * page); dark mode walks the same ladder from the other end.
+ *
+ * The numbers are Figma's, so they carry Figma's quirks: \`warning\` and
+ * \`orange\` start at \`0\` and skip \`1\` entirely, running \`0, 2, 3, 4\`.
+ * It is the same darkest rung either way. \`icon\` starts \`warning\` at
+ * \`1\`, so the two categories genuinely disagree there — see
+ * DESIGNER_QUESTIONS.md #56.
  *
  * Generated from the Figma "component" collection DTCG export
- * (2026-08-11). That export numbered the slots instead of naming them
- * (\`text/primary/1\`); the names above are ours, mapped in
- * \`scripts/sync-design-tokens.mjs\`. It also dropped the accent roles'
- * darkest \`heading\` rung — nothing consumed it — and replaced the
- * hand-guessed \`orange\`/\`purple\` singletons, whose \`dark\` mirrored
- * \`light\`, with the full per-mode ladder.
+ * (2026-09-09) — never hand-edit.
  *
- * \`default\` keeps its descriptive slot names; Figma calls
- * \`body\`/\`caption\`/\`placeholder\` \`b1\`/\`b2\`/\`b3\` after the type-scale
- * rungs they pair with.
+ * Releases up to 1.0.1 renamed these slots on the way in, to
+ * \`body\`/\`caption\`/\`accent\`/\`onColorHover\`. That mapping is gone. It
+ * was a translation layer nobody asked for: it meant the name a designer
+ * handed over did not exist in the code they got back, and twice running
+ * that produced the wrong colour in a review. The rename is a breaking
+ * change to \`@neofloai/atoms/tokens\` and needs a major version before it
+ * ships; \`.cursor/rules/20-tokens.mdc\` carries the before/after table.
  */`;
 
 writeColorFile('text.ts', 'text', textHeader, collected.text);
@@ -521,14 +566,18 @@ writeColorFile('text.ts', 'text', textHeader, collected.text);
 const iconHeader = `/**
  * Icon semantic tokens.
  *
- * Identical shape to \`text\`, and as of the 2026-08-11 export identical
- * *values* too on every accent role — designers use the same typography
- * slots for icon colours so an icon next to a body string picks up the
- * matching token automatically. Only \`default\`'s \`subtle\` rung and
- * \`disabled.onColor\` still differ between the two.
+ * Same Figma-verbatim naming as \`text\` — see \`./text.ts\` for how a
+ * variable name maps to a property path — and the same shape, so an
+ * icon beside a body string takes the matching rung:
+ * \`icon.default.b2\` sits next to \`text.default.b2\`.
  *
- * Generated from the Figma "component" collection DTCG export; see
- * \`./text.ts\` for how the numbered Figma slots map to these names.
+ * As of this export the accent ladders hold identical *values* to their
+ * text counterparts; only \`default.subtle\` and \`disabled['on-color']\`
+ * differ. The one naming difference is \`warning\`, which starts at \`1\`
+ * here and \`0\` on \`text\` (DESIGNER_QUESTIONS.md #56).
+ *
+ * Generated from the Figma "component" collection DTCG export
+ * (2026-09-09) — never hand-edit.
  */`;
 
 writeColorFile('icon.ts', 'icon', iconHeader, collected.icon);

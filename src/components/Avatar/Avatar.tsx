@@ -60,7 +60,7 @@ interface RoleColor {
 /**
  * Background + content colour per role. `accent` is the Figma default —
  * confirmed against node 981:16471 (2026-07-29 sync) as
- * `surface.primary.subtle` + `text.primary.onColorHover`, replacing the
+ * `surface.primary.subtle` + `text.primary[4]`, replacing the
  * `orange/500` fill assumed from the older sheet (DESIGNER_QUESTIONS.md
  * #16). The others reuse the shared semantic surface tokens so avatars
  * track the palette in both colour schemes.
@@ -68,13 +68,13 @@ interface RoleColor {
 const colorTokens: Record<AvatarColor, RoleColor> = {
   accent: {
     bg: surface.primary.subtle,
-    fg: text.primary.onColorHover,
+    fg: text.primary[4],
   },
-  primary: { bg: surface.primary.default, fg: text.default.headingOnColor },
+  primary: { bg: surface.primary.default, fg: text.default['heading on-color'] },
   secondary: { bg: surface.default.defaultPressed, fg: text.default.heading },
-  success: { bg: surface.success.default, fg: text.default.headingOnColor },
-  error: { bg: surface.error.default, fg: text.default.headingOnColor },
-  warning: { bg: surface.warning.default, fg: text.default.headingOnColor },
+  success: { bg: surface.success.default, fg: text.default['heading on-color'] },
+  error: { bg: surface.error.default, fg: text.default['heading on-color'] },
+  warning: { bg: surface.warning.default, fg: text.default['heading on-color'] },
 };
 
 const badgeColorTokens: Record<AvatarBadgeColor, ModeToken> = {

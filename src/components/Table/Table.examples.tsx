@@ -78,7 +78,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'A muted second line, hard under the first with no gap — 12/16 in `text.default.placeholder` (Figma `text/default/b3`) against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`.',
+        'A muted second line, hard under the first with no gap — 12/16 in `text.default.b3` against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`.',
     },
     {
       name: 'TableCell padding',

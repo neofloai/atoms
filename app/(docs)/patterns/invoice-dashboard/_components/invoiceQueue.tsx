@@ -250,8 +250,8 @@ const Secondary = styled('span')(({ theme }) => ({
   whiteSpace: 'nowrap',
   fontSize: typography.body.b2.size,
   lineHeight: `${typography.body.b2.leading}px`,
-  color: text.default.caption.light,
-  ...theme.applyStyles('dark', { color: text.default.caption.dark }),
+  color: text.default.b2.light,
+  ...theme.applyStyles('dark', { color: text.default.b2.dark }),
 }));
 
 const Row = styled('span')({
@@ -269,8 +269,8 @@ const Attachment = styled('span')(({ theme }) => ({
   gap: 4,
   minWidth: 0,
   lineHeight: 'normal',
-  color: text.default.placeholder.light,
-  ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+  color: text.default.b3.light,
+  ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));
 
 /**
@@ -290,8 +290,8 @@ const Money = styled('span')({
 });
 
 const Currency = styled('span')(({ theme }) => ({
-  color: text.default.placeholder.light,
-  ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+  color: text.default.b3.light,
+  ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));
 
 const Digits = styled('span')({ fontFamily: fontFamilies.product.mono });

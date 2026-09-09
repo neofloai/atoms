@@ -81,8 +81,8 @@ export function selectorInsetPx(size: SelectorSize): number {
  * keeps its light value in both rather than turning black on the second.
  */
 const onAccent: ModeToken = {
-  light: icon.default.headingOnColor.light,
-  dark: icon.default.headingOnColor.light,
+  light: icon.default['heading on-color'].light,
+  dark: icon.default['heading on-color'].light,
 };
 
 /**

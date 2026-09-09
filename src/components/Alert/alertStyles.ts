@@ -52,9 +52,9 @@ interface RoleTokens {
  * Two entries are not what the pattern predicts, and both are the sheet's
  * own (see DESIGNER_QUESTIONS.md #52):
  *
- *   - `success.glyph` is the role's `accent` rung where the other three
- *     take `caption`. Green at 20px does need the extra weight, so this
- *     reads as intent rather than a slip.
+ *   - `success.glyph` is the role's rung `3` where the other three take
+ *     rung `2`. Green at 20px does need the extra weight, so this reads
+ *     as intent rather than a slip.
  *   - `info` draws its title, message and fill from the **primary** group
  *     while its surface, border and action label come from
  *     **information**. So an info alert carries two blues: `#343eb3` in
@@ -68,28 +68,28 @@ const roleTokens: Record<AlertSeverity, RoleTokens> = {
     floatBg: surface.error.default,
     floatBorder: border.error.default,
     fillBg: surface.error.subtle,
-    title: text.error.body,
-    body: text.error.caption,
-    glyph: iconTokens.error.caption,
-    action: text.error.caption,
+    title: text.error[1],
+    body: text.error[2],
+    glyph: iconTokens.error[2],
+    action: text.error[2],
   },
   warning: {
     floatBg: surface.warning.default,
     floatBorder: border.warning.default,
     fillBg: surface.warning.subtle,
-    title: text.warning.body,
-    body: text.warning.caption,
-    glyph: iconTokens.warning.caption,
-    action: text.warning.caption,
+    title: text.warning[0],
+    body: text.warning[2],
+    glyph: iconTokens.warning[2],
+    action: text.warning[2],
   },
   success: {
     floatBg: surface.success.default,
     floatBorder: border.success.default,
     fillBg: surface.success.subtle,
-    title: text.success.body,
-    body: text.success.caption,
-    glyph: iconTokens.success.accent,
-    action: text.success.caption,
+    title: text.success[1],
+    body: text.success[2],
+    glyph: iconTokens.success[3],
+    action: text.success[2],
   },
   info: {
     floatBg: surface.information.default,
@@ -99,10 +99,10 @@ const roleTokens: Record<AlertSeverity, RoleTokens> = {
     // fills the other three take, so the sheet's choice is also the one
     // that keeps all four fills at one lightness.
     fillBg: surface.primary.subtle,
-    title: text.primary.body,
-    body: text.primary.caption,
-    glyph: iconTokens.information.caption,
-    action: text.information.caption,
+    title: text.primary[1],
+    body: text.primary[2],
+    glyph: iconTokens.information[2],
+    action: text.information[2],
   },
 };
 

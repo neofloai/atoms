@@ -132,7 +132,7 @@ const StyledAccordionSummary = styled(MuiAccordionSummary)(({ theme }) => ({
   // MUI floors the row at 48px — 4px taller than the design's closed
   // item on its own, before the padding is counted.
   minHeight: 0,
-  ...paired(theme, { color: text.default.body }),
+  ...paired(theme, { color: text.default.b1 }),
   transition: theme.transitions.create(
     ['padding-bottom', 'background-color'],
     { duration: theme.transitions.duration.shortest }
@@ -175,7 +175,7 @@ const StyledAccordionSummary = styled(MuiAccordionSummary)(({ theme }) => ({
   // Figma's `shrink-0` — without it a wrapping title squashes the glyph.
   [`& .${accordionSummaryClasses.expandIconWrapper}`]: {
     flexShrink: 0,
-    ...paired(theme, { color: icon.default.body }),
+    ...paired(theme, { color: icon.default.b1 }),
   },
 }));
 

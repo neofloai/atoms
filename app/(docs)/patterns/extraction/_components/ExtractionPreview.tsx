@@ -155,10 +155,10 @@ const HIGHLIGHT_INSET_PX = 3;
  */
 const labelCell = (theme: Theme) => ({
   backgroundColor: surface.default.default.light,
-  color: text.default.caption.light,
+  color: text.default.b2.light,
   ...theme.applyStyles('dark', {
     backgroundColor: surface.default.default.dark,
-    color: text.default.caption.dark,
+    color: text.default.b2.dark,
   }),
 });
 
@@ -171,8 +171,8 @@ const labelCell = (theme: Theme) => ({
  * inconsistency is the component's to settle now, not a screen's.
  */
 const Required = styled('span')(({ theme }) => ({
-  color: text.error.caption.light,
-  ...theme.applyStyles('dark', { color: text.error.caption.dark }),
+  color: text.error[2].light,
+  ...theme.applyStyles('dark', { color: text.error[2].dark }),
 }));
 
 /**
@@ -230,8 +230,8 @@ function Block({ block }: { block: DocumentBlock }) {
         sx={(theme) => ({
           fontSize: typography.body.b2.size,
           lineHeight: 1.35,
-          color: text.default.body.light,
-          ...theme.applyStyles('dark', { color: text.default.body.dark }),
+          color: text.default.b1.light,
+          ...theme.applyStyles('dark', { color: text.default.b1.dark }),
         })}
       >
         {block.value}
@@ -248,8 +248,8 @@ function Block({ block }: { block: DocumentBlock }) {
           gap: 1,
           fontSize: typography.body.caption.size,
           lineHeight: 1.4,
-          color: text.default.body.light,
-          ...theme.applyStyles('dark', { color: text.default.body.dark }),
+          color: text.default.b1.light,
+          ...theme.applyStyles('dark', { color: text.default.b1.dark }),
         })}
       >
         <Box component="span" sx={{ opacity: 0.7 }}>
@@ -265,8 +265,8 @@ function Block({ block }: { block: DocumentBlock }) {
       sx={(theme) => ({
         fontSize: typography.body.caption.size,
         lineHeight: 1.5,
-        color: text.default.caption.light,
-        ...theme.applyStyles('dark', { color: text.default.caption.dark }),
+        color: text.default.b2.light,
+        ...theme.applyStyles('dark', { color: text.default.b2.dark }),
       })}
     >
       {(block.lines ?? []).map((line) => (
@@ -294,8 +294,8 @@ function DocumentGrid() {
       sx={(theme) => ({
         fontSize: typography.body.caption.size,
         lineHeight: 1.6,
-        color: text.default.body.light,
-        ...theme.applyStyles('dark', { color: text.default.body.dark }),
+        color: text.default.b1.light,
+        ...theme.applyStyles('dark', { color: text.default.b1.dark }),
       })}
     >
       <Stack
@@ -305,10 +305,10 @@ function DocumentGrid() {
           pb: 0.25,
           borderBottom: '1px solid',
           borderColor: border.layers.card2.light,
-          color: text.default.caption.light,
+          color: text.default.b2.light,
           ...theme.applyStyles('dark', {
             borderColor: border.layers.card2.dark,
-            color: text.default.caption.dark,
+            color: text.default.b2.dark,
           }),
         })}
       >

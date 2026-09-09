@@ -147,7 +147,7 @@ export const headerType: CSSObject = {
 
 /** The field, at rest and in each state. Mirrors `TextField` token for token. */
 export const field = {
-  ink: text.default.body,
+  ink: text.default.b1,
   background: surface.layers.page,
   border: border.layers.card1,
   /** Focus recolours the bottom edge only — Figma 3179:106156's focused cell. */
@@ -158,9 +158,9 @@ export const field = {
   disabledBackground: surface.disabled.default,
   disabledBorder: border.layers.card2,
   /** The label above the field and the helper text under it. */
-  label: text.default.placeholder,
+  label: text.default.b3,
   /** The format placeholder shown in an empty section (`MM/DD/YYYY`, `hh:mm aa`). */
-  placeholder: text.default.placeholder,
+  placeholder: text.default.b3,
 } as const satisfies Record<string, ModeToken>;
 
 /**
@@ -175,9 +175,9 @@ export const statusBorder = {
 } as const satisfies Record<PickerStatus, ModeToken>;
 
 export const statusInk = {
-  error: text.error.onColorHover,
-  success: text.success.onColorHover,
-  warning: text.warning.caption,
+  error: text.error[4],
+  success: text.success[4],
+  warning: text.warning[2],
 } as const satisfies Record<PickerStatus, ModeToken>;
 
 /** The popover. `Menu`'s panel, token for token. */
@@ -216,17 +216,17 @@ export const panel = {
  */
 export const cell = {
   /** A panel heading, and the number in an enabled cell. */
-  ink: text.default.body,
+  ink: text.default.b1,
   /** Weekday initials, a day in the neighbouring month, an inner clock numeral. */
-  muted: text.default.placeholder,
+  muted: text.default.b3,
   /** Carets and arrows in a panel header. */
-  glyph: text.default.caption,
+  glyph: text.default.b2,
   hover: surface.layers.card3,
   pressed: surface.primary.subtle,
   /** A selected cell — `Button` `primary` `contained`. */
   selectedBackground: surface.primary.default,
   selectedBackgroundHover: surface.primary.defaultHover,
-  selectedInk: text.default.headingOnColor,
+  selectedInk: text.default['heading on-color'],
   /** A cell outside the accepted range, or refused by a `shouldDisable*` prop. */
   disabledInk: text.disabled.default,
   /** Keyboard focus on a cell. */
@@ -243,5 +243,5 @@ export const cell = {
    * *on* a primary fill, so it is guaranteed to read against it in both
    * schemes. Logged in DESIGNER_QUESTIONS.md #43.
    */
-  selectedFocusRing: text.default.headingOnColor,
+  selectedFocusRing: text.default['heading on-color'],
 } as const satisfies Record<string, ModeToken>;

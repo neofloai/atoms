@@ -51,7 +51,7 @@ const CellRoot = styled(MuiTableCell, {
   return {
     ...(head ? tableCaptionType : tableCellType),
     ...paired(theme, {
-      color: head ? text.default.placeholder : text.default.body,
+      color: head ? text.default.b3 : text.default.b1,
       borderBottomColor: border.layers.card1,
     }),
     borderBottomStyle: 'solid',
@@ -145,7 +145,7 @@ const TextColumn = styled('span')({
  */
 const SecondaryLine = styled('span')(({ theme }) => ({
   ...tableCaptionType,
-  ...paired(theme, { color: text.default.placeholder }),
+  ...paired(theme, { color: text.default.b3 }),
 }));
 
 /**

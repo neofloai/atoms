@@ -99,8 +99,8 @@ const Lines = styled('span')({
 const Secondary = styled('span')(({ theme }) => ({
   fontSize: typography.body.b2.size,
   lineHeight: `${typography.body.b2.leading}px`,
-  color: text.default.placeholder.light,
-  ...theme.applyStyles('dark', { color: text.default.placeholder.dark }),
+  color: text.default.b3.light,
+  ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));
 
 /**

@@ -23,7 +23,7 @@ export const SelectorFormControlLabel = styled(FormControlLabel)(
       fontSize: typography.body.b1.size,
       fontWeight: fontWeights.medium,
       lineHeight: `${typography.body.b1.leading}px`,
-      ...paired(theme, { color: text.default.body }),
+      ...paired(theme, { color: text.default.b1 }),
       '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
     },
   })

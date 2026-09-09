@@ -11,11 +11,69 @@ Tokens live in `src/tokens/` and are the **single source of truth** for every vi
 
 | File | What it contains |
 |------|-----------------|
-| `colors.ts` | Brand, semantic (success/warning/error/info), and gray scales |
+| `colors.ts` | Raw scales by hue — `grey`, `primary`, `blue`, `red`, `yellow`, `orange`, `purple`, `green`. The only place a hex is written |
+| `surface.ts` | Background fills, per light/dark |
+| `border.ts` | Outline colours, per light/dark |
+| `text.ts` | Font colours, per light/dark |
+| `icon.ts` | Icon colours, per light/dark |
 | `typography.ts` | Font families, sizes, weights, line-heights |
-| `spacing.ts` | Spacing scale (multiplied by base 8px) |
+| `spacing.ts` | Component spacing scale in px |
+| `responsive.ts` | Page-scale type and spacing, per breakpoint |
 | `radius.ts` | Border-radius values |
-| `shadows.ts` | Box-shadow elevations |
+| `elevation.ts` | Box-shadow elevations |
+
+## Font and icon colours are named exactly as Figma names them
+
+`text` and `icon` keys **are** the Figma variable names. When a designer
+says "make this `text/default/b2`", drop the category prefix and turn the
+slashes into property access — that is the token, with nothing to
+translate:
+
+| Designer says | You write |
+|---|---|
+| `text/default/b2` | `text.default.b2` |
+| `text/primary/3` | `text.primary[3]` |
+| `icon/success/2` | `icon.success[2]` |
+| `text/default/body on-color` | `text.default['body on-color']` |
+| `text/disabled/on-color` | `text.disabled['on-color']` |
+
+Never substitute a rung you think looks closer. If the name a designer
+gives you does not exist, say so rather than picking a neighbour — a
+wrong rung is a visible bug that looks like a deliberate choice.
+
+Two quirks are Figma's own, not typos: `text/warning` and `text/orange`
+run `0, 2, 3, 4` with no rung `1`, and `icon/warning` starts at `1` where
+`text/warning` starts at `0`.
+
+`surface` and `border` are **not** named this way — they still rename
+Figma's tier numbers to state names (`border/primary/2` is
+`border.primary.defaultHover`). Check `src/tokens/border.ts` rather than
+guessing.
+
+### Renamed from the 1.0.x names
+
+Releases up to 1.0.1 gave these rungs descriptive names. Every one moved:
+
+| 1.0.x | Now |
+|---|---|
+| `text.default.body` | `text.default.b1` |
+| `text.default.caption` | `text.default.b2` |
+| `text.default.placeholder` | `text.default.b3` |
+| `text.default.headingOnColor` | `text.default['heading on-color']` |
+| `text.default.bodyOnColor` | `text.default['body on-color']` |
+| `text.default.captionOnColor` | `text.default['caption on-color']` |
+| `text.default.placeholderOnColor` | `text.default['placeholder on-color']` |
+| `text.<role>.body` | `text.<role>[1]` — `[0]` on `warning`/`orange` |
+| `text.<role>.caption` | `text.<role>[2]` |
+| `text.<role>.accent` | `text.<role>[3]` |
+| `text.<role>.onColorHover` | `text.<role>[4]` |
+| `text.disabled.onColor` | `text.disabled['on-color']` |
+
+`heading`, `subtle` and `disabled.default` did not move. `icon` moved
+identically, except that `icon.warning.body` is `icon.warning[1]`.
+
+No token *value* changed — all 78 rungs resolve to the same light and
+dark hex as before. This is a rename only.
 
 ## Adding or updating tokens
 

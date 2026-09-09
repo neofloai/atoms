@@ -96,7 +96,7 @@ const IconBadge = styled('div')(({ theme }) => ({
   borderRadius: radius.sm,
   ...paired(theme, {
     backgroundColor: surface.primary.default,
-    color: text.default.headingOnColor,
+    color: text.default['heading on-color'],
   }),
   // The consumer passes their own glyph, so its size is pinned here
   // rather than trusted to arrive at 24 — Phosphor's own default is 24,
@@ -194,7 +194,7 @@ const SubtitleLine = styled('p')(({ theme }) => ({
   fontWeight: fontWeights.regular,
   lineHeight: `${subtitleType.leading}px`,
   letterSpacing: `${subtitleType.letterSpacing}em`,
-  ...paired(theme, { color: text.default.body }),
+  ...paired(theme, { color: text.default.b1 }),
 }));
 
 /**

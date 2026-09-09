@@ -34,7 +34,7 @@ const Strip = styled('div')({
 
 const Count = styled('span')(({ theme }) => ({
   ...dataGridCaptionType,
-  ...paired(theme, { color: text.default.caption }),
+  ...paired(theme, { color: text.default.b2 }),
   whiteSpace: 'nowrap',
 }));
 

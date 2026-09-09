@@ -106,10 +106,10 @@ type SeriesRole = 'success' | 'information' | 'warning' | 'error';
  * theme argument stays inferred and nothing has to import a Theme type.
  */
 const SERIES = {
-  success: icon.success.accent,
-  information: icon.information.accent,
-  warning: icon.warning.accent,
-  error: icon.error.accent,
+  success: icon.success[3],
+  information: icon.information[3],
+  warning: icon.warning[3],
+  error: icon.error[3],
 } as const;
 
 /** The unfilled part of any bar on the screen. One token, one meaning. */

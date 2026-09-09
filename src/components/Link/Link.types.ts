@@ -35,7 +35,7 @@ import type { OverrideProps } from '@mui/material/OverridableComponent';
  *
  * `inherit` is kept verbatim, and it is the one role with no token
  * behind it. It is how a link inside already-coloured copy stays that
- * colour: the message in an `Alert`, a caption in `text.default.caption`,
+ * colour: the message in an `Alert`, a caption in `text.default.b2`,
  * a heading. Dropping it would mean those links either fight their
  * surroundings or need `sx`.
  */

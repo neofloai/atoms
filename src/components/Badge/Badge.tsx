@@ -71,38 +71,38 @@ interface RoleTokens {
  * apart.
  *
  * `secondary` is the neutral role — MUI's `'default'` — and has no
- * accent rung, so its mark uses `icon.default.body`.
+ * accent rung, so its mark uses `icon.default.b1`.
  */
 const roleTokens: Record<BadgeColor, RoleTokens> = {
   primary: {
     fill: surface.primary.default,
-    ink: text.default.headingOnColor,
-    mark: icon.primary.accent,
+    ink: text.default['heading on-color'],
+    mark: icon.primary[3],
   },
   secondary: {
     fill: surface.default.default,
-    ink: text.default.body,
-    mark: icon.default.body,
+    ink: text.default.b1,
+    mark: icon.default.b1,
   },
   success: {
     fill: surface.success.default,
-    ink: text.success.caption,
-    mark: icon.success.accent,
+    ink: text.success[2],
+    mark: icon.success[3],
   },
   error: {
     fill: surface.error.default,
-    ink: text.error.caption,
-    mark: icon.error.accent,
+    ink: text.error[2],
+    mark: icon.error[3],
   },
   warning: {
     fill: surface.warning.default,
-    ink: text.warning.caption,
-    mark: icon.warning.accent,
+    ink: text.warning[2],
+    mark: icon.warning[3],
   },
   information: {
     fill: surface.information.default,
-    ink: text.information.caption,
-    mark: icon.information.accent,
+    ink: text.information[2],
+    mark: icon.information[3],
   },
 };
 

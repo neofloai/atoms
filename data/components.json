@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T17:09:09.791Z",
+  "generatedAt": "2026-09-09T06:45:38.879Z",
   "components": [
     {
       "name": "Accordion",
@@ -59,7 +59,7 @@
           "name": "AccordionSummary children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The title. Set at 13/20 regular in `text.default.body` (Figma `text/default/b1`), so a plain string is already correct. It wraps rather than pushing the caret out of the row."
+          "description": "The title. Set at 13/20 regular in `text.default.b1`, so a plain string is already correct. It wraps rather than pushing the caret out of the row."
         },
         {
           "name": "AccordionSummary expandIcon",
@@ -71,7 +71,7 @@
           "name": "AccordionDetails children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The body. Set at 13/20 regular in `text.default.caption` (Figma `text/default/b2`), so a plain string needs no `Typography` around it; anything nested keeps its own colour."
+          "description": "The body. Set at 13/20 regular in `text.default.b2`, so a plain string needs no `Typography` around it; anything nested keeps its own colour."
         },
         {
           "name": "AccordionActions children",
@@ -4415,7 +4415,7 @@
           "name": "TableCell secondary",
           "type": "ReactNode",
           "default": "—",
-          "description": "A muted second line, hard under the first with no gap — 12/16 in `text.default.placeholder` (Figma `text/default/b3`) against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`."
+          "description": "A muted second line, hard under the first with no gap — 12/16 in `text.default.b3` against the cell’s 13/20. The pair comes to 36, so a two-line cell fits every row height including the 48px `sm`."
         },
         {
           "name": "TableCell padding",

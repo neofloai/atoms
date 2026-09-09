@@ -51,7 +51,7 @@ const SortLabelRoot = styled(MuiTableSortLabel)(({ theme }) => ({
   [`&.${tableSortLabelClasses.active}`]: {
     // A sorted column earns the darker ink. The design does not draw a
     // sorted header — see DESIGNER_QUESTIONS.md #48.
-    ...paired(theme, { color: text.default.body }),
+    ...paired(theme, { color: text.default.b1 }),
     [`& .${tableSortLabelClasses.icon}`]: { color: 'inherit' },
   },
 
