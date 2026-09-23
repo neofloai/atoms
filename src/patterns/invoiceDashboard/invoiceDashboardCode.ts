@@ -17,7 +17,6 @@ import {
   Box,
   Button,
   Chip,
-  CircularProgress,
   DataGrid,
   Divider,
   Filter,
@@ -191,6 +190,15 @@ const TABS = [
   { value: 'closed', label: 'Closed' },
 ] as const;
 
+/**
+ * The row action's width, held across all three states.
+ *
+ * A call-site number rather than a Button size: the component hugs its
+ * content by design, and a table wants one width down the column. The
+ * 32px height is \`size="sm"\`, unchanged.
+ */
+const CTA_WIDTH_PX = 96;
+
 /** Rows a page holds, and the choices the footer offers. */
 const PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 25, 50];
@@ -353,14 +361,37 @@ function ActionCell({
 
   return (
     <Stack direction="row" sx={{ gap: 1, alignItems: 'center' }}>
+      {/* Two appearances, because the two actions are not the same weight.
+          Review is a live open task and takes the accented outline; View is
+          a record with nothing left to act on and takes the neutral fill
+          that contained + secondary already paints.
+
+          \`loading\` is Button's own treatment rather than a disabled button
+          with a spinner posted into \`startIcon\` — it disables the control
+          for us and needs no second component. \`center\` puts the indicator
+          in the middle of the box, which is what holds the width: the
+          label stays in the DOM for the accessible name and the control
+          measures the same 96 in all three states. */}
       <Button
         size="sm"
-        appearance="outline"
+        appearance={invoice.action === 'review' ? 'outline' : 'contained'}
         variant={invoice.action === 'review' ? 'primary' : 'secondary'}
-        disabled={busy}
-        startIcon={busy ? <CircularProgress size={14} color="inherit" /> : undefined}
+        loading={busy}
+        // \`center\` rather than \`start\`: the specification pins this
+        // control to 96 in every state, and "Processing" beside a 14px
+        // indicator needs 112 at 13/500. The label stays in the DOM for
+        // the accessible name and the indicator sits over it, so the
+        // width holds and the row still announces what it is doing.
+        loadingPosition="center"
         onClick={() => onOpen(invoice.id, 'panel')}
-        sx={{ minWidth: 88 }}
+        sx={{
+          width: CTA_WIDTH_PX,
+          minWidth: CTA_WIDTH_PX,
+          flexShrink: 0,
+          // The loading label is hidden rather than removed, so it keeps
+          // its natural width inside a box pinned narrower than it.
+          overflow: 'hidden',
+        }}
       >
         {busy ? 'Processing' : invoice.action === 'review' ? 'Review' : 'View'}
       </Button>

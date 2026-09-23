@@ -32,6 +32,15 @@ import type { InvoiceRecord } from '../../table/_components/records';
 /** The glyph size the design's cells use. */
 const CELL_ICON_PX = TABLE_CELL_ICON_PX;
 
+/**
+ * The row action's width, held down the column.
+ *
+ * A call-site number rather than a `Button` size — the component hugs its
+ * content by design and a table wants one width. The 32px height is
+ * `size="sm"`.
+ */
+const CTA_WIDTH_PX = 96;
+
 /** A row, with the real `Date` a sortable, filterable column needs. */
 export interface GridInvoice extends InvoiceRecord {
   readonly received: Date;
@@ -238,7 +247,12 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
     filterable: false,
     renderCell: ({ row }) => (
       <Stack neofloTwoLine={false} sx={{ justifyContent: 'flex-end', gap: '4px' }}>
-        <Button appearance="outline" variant="secondary" size="sm">
+        <Button
+          appearance="outline"
+          variant="primary"
+          size="sm"
+          sx={{ width: CTA_WIDTH_PX, minWidth: CTA_WIDTH_PX, flexShrink: 0 }}
+        >
           Review
         </Button>
         <IconButton

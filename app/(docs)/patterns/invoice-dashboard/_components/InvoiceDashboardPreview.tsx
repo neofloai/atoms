@@ -12,7 +12,6 @@ import { Divider } from '@/src/components/Divider';
 import { Filter, countActiveFilters } from '@/src/components/Filter';
 import { IconButton } from '@/src/components/IconButton';
 import { Navbar } from '@/src/components/Navbar';
-import { CircularProgress } from '@/src/components/Progress';
 import { Tab, Tabs } from '@/src/components/Tabs';
 import { TextField } from '@/src/components/TextField';
 import { Tooltip } from '@/src/components/Tooltip';
@@ -66,29 +65,55 @@ const TABS: readonly { value: Queue; label: string }[] = [
  * removing the control in the meantime would make the table jump under the
  * cursor.
  */
+/**
+ * The row action's width, held across all three states.
+ *
+ * 96 is a call-site number, not a `Button` size: the component is
+ * content-hugging by design and a table wants one width down the column.
+ * The 32px height is `size="sm"`, unchanged.
+ */
+const CTA_WIDTH_PX = 96;
+
 function ActionCell({ invoice }: { invoice: Invoice }) {
   const busy = invoice.action === 'processing';
-  const label = busy
-    ? 'Processing'
-    : invoice.action === 'review'
-      ? 'Review'
-      : 'View';
+  const review = invoice.action === 'review';
+  const label = busy ? 'Processing' : review ? 'Review' : 'View';
 
   return (
     <Stack direction="row" sx={{ gap: 0.5, alignItems: 'center' }}>
       <Button
         size="sm"
-        appearance="outline"
-        variant={invoice.action === 'review' ? 'primary' : 'secondary'}
-        disabled={busy}
-        startIcon={
-          busy ? <CircularProgress size={14} color="inherit" /> : undefined
-        }
-        // A width rather than a floor. `Processing` is the longest of the
-        // three labels and carries a spinner as well, so a floor would let it
-        // grow past the other two and push the icon button out of the cell —
-        // the exact jump this cell exists to avoid.
-        sx={{ width: 104, minWidth: 104, flexShrink: 0 }}
+        // Two appearances rather than one, because the two actions are not
+        // the same weight. `Review` is a live open task and takes the
+        // accented outline; `View` is a record with nothing left to act on
+        // and takes the neutral fill, which is what `contained` +
+        // `secondary` already paints — `surface.default.default` behind
+        // `text.default.b1`, no border.
+        appearance={review ? 'outline' : 'contained'}
+        variant={review ? 'primary' : 'secondary'}
+        // Button's own loading treatment rather than a disabled button
+        // with a spinner posted into `startIcon` — it disables the control
+        // for us and needs no second component.
+        loading={busy}
+        // `center` rather than `start`: the specification pins this
+        // control to 96 in every state, and "Processing" beside a 14px
+        // indicator needs 112 at 13/500. The label stays in the DOM for
+        // the accessible name and the indicator sits over it, so the
+        // width holds and the row still announces what it is doing.
+        loadingPosition="center"
+        // A width rather than a floor, and the same one in every state.
+        // `Processing` is the longest of the three labels and carries an
+        // indicator as well, so a floor would let it grow past the other
+        // two and push the icon button out of the cell — the exact jump
+        // this cell exists to avoid.
+        sx={{
+          width: CTA_WIDTH_PX,
+          minWidth: CTA_WIDTH_PX,
+          flexShrink: 0,
+          // The loading label is hidden rather than removed, so it keeps
+          // its natural width inside a box pinned narrower than it.
+          overflow: 'hidden',
+        }}
       >
         {label}
       </Button>
