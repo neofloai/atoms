@@ -17,6 +17,7 @@ import {
   tableCaptionType,
   tableCellType,
   tableHeaderFill,
+  tableHeaderRule,
   tableHeaderType,
 } from './tableTokens';
 import { useTableContext } from './TableContext';
@@ -54,7 +55,10 @@ const CellRoot = styled(MuiTableCell, {
     ...(head ? tableHeaderType : tableCellType),
     ...paired(theme, {
       color: head ? text.default.b3 : text.default.b1,
-      borderBottomColor: border.layers.card1,
+      // The strip's own line is a rung darker than the ones between
+      // rows: a header separates from its data more firmly than one row
+      // separates from the next.
+      borderBottomColor: head ? tableHeaderRule : border.layers.card1,
     }),
     borderBottomStyle: 'solid',
     borderBottomWidth: TABLE_BORDER_WIDTH_PX,
@@ -183,8 +187,9 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  *     colour rather than by weight.
  *   - **the header's fill.** MUI gives the strip none, and reaches for
  *     `background.default` — the page — only once it is pinned. The
- *     design fills it either way, with `surface.default.default`, so a
- *     pinned header is opaque because every header is.
+ *     design fills it either way, with `surface.layers.card2`, so a
+ *     pinned header is opaque because every header is. Its bottom
+ *     hairline is a rung darker than the ones between rows.
  *
  * ## The two props
  *

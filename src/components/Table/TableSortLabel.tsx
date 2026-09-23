@@ -38,10 +38,12 @@ const SortLabelRoot = styled(MuiTableSortLabel)(({ theme }) => ({
   // the design keeps one colour and changes the background instead.
   color: 'inherit',
 
-  // The tint is one rung down from the strip's own fill. It used to be
-  // `surface/default/default` against a header with no fill of its own;
-  // now that the strip *is* that surface, the affordance has to move or
-  // it paints the header its own colour and disappears.
+  // The tint used to be `surface/default/default` against a header with
+  // no fill of its own. The strip now carries `surface/layers/card 2`,
+  // which is the same colour in light, so the affordance had to move off
+  // it or it would paint the header its own shade and disappear. It goes
+  // one rung along its own interactive ladder, which is also the ladder
+  // the strip is deliberately *not* on — see `tableHeaderFill`.
   '&:hover': {
     color: 'inherit',
     ...paired(theme, { backgroundColor: surface.default.defaultHover }),

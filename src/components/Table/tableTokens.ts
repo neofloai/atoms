@@ -1,4 +1,5 @@
 import {
+  border,
   fontFamilies,
   fontWeights,
   radius,
@@ -195,19 +196,49 @@ export const TABLE_CHECKBOX_CELL_WIDTH_PX = 48;
 export const TABLE_HEADER_LETTER_SPACING_PX = -0.12;
 
 /**
- * The fill behind the header strip — `surface/default/default`, which
- * the sheet binds on every `cell-header` and which resolves to the
- * `#f5f5f3` it draws, exactly.
+ * The fill behind the header strip — `surface/layers/card 2`.
  *
- * New, and it does two jobs at once. The strip now reads as a strip
- * rather than as a row that happens to be labelled, which is what the
- * mono face started and this finishes. And a pinned header has to be
- * opaque or the rows scroll through it, which the table used to solve
- * by reaching for `surface.layers.card1` only while `stickyHeader` was
- * set — a fill that appeared and disappeared with an unrelated prop.
- * One named fill, always on, covers both.
+ * It does two jobs at once. The strip reads as a strip rather than as a
+ * row that happens to be labelled, which is what the mono face started
+ * and this finishes. And a pinned header has to be opaque or the rows
+ * scroll through it, which the table used to solve by reaching for
+ * `surface.layers.card1` only while `stickyHeader` was set — a fill
+ * that appeared and disappeared with an unrelated prop. One named fill,
+ * always on, covers both.
+ *
+ * ## Why this rung and not `surface/default/default`
+ *
+ * The Figma frame binds `surface/default/default` and this shipped as
+ * that rung first. The two are the *same colour* in light — both
+ * `grey/100`, `#f5f5f3` — and differ only in dark, where `layers/card 2`
+ * is `grey/950` against `default/default`'s `grey/1000`. So nothing a
+ * light-mode inspection can see tells them apart, and the frame's
+ * binding is not evidence either way about the dark half.
+ *
+ * `layers` is the right ladder on the naming, which is what settles it.
+ * `surface.default.*` is the interactive ramp — `default`, `defaultHover`,
+ * `defaultPressed`, the fills a control moves through. A header strip is
+ * not a control. It is a layer stacked on the surface under it, which is
+ * what `surface.layers.*` is for, and putting it there also stops the
+ * strip sharing a ladder with its own sortable hover tint — which is on
+ * `surface.default.defaultHover` and had to be moved off this rung when
+ * the two collided.
  */
-export const tableHeaderFill = surface.default.default;
+export const tableHeaderFill = surface.layers.card2;
+
+/**
+ * The hairline under the header strip — `border/layers/card 3`, one rung
+ * darker than the `card 1` every body row uses.
+ *
+ * The strip separates from the data more firmly than one row separates
+ * from the next, which is the point of a header: `#e5e4e1` under the
+ * labels against `#eeeeec` between the rows. It was `card 1` for both
+ * until the Self-Serve report named the difference.
+ *
+ * `Table` and `DataGrid` both read it, so the two strips end the same
+ * way.
+ */
+export const tableHeaderRule = border.layers.card3;
 
 /** The sort glyph in a header cell — the house small glyph. */
 export const TABLE_SORT_ICON_PX = 16;

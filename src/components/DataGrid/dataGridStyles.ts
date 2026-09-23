@@ -13,12 +13,14 @@ import {
 
 import { paired } from '../_shared/actionStyles';
 import {
+  TABLE_BORDER_WIDTH_PX,
   TABLE_CELL_PADDING_INLINE_PX,
   TABLE_SORT_ICON_PX,
   TABLE_SORT_TINT_HEIGHT_PX,
   TABLE_SORT_TINT_PADDING_PX,
   TABLE_SORT_TINT_RADIUS_PX,
   tableHeaderFill,
+  tableHeaderRule,
 } from '../Table/tableTokens';
 import {
   DATA_GRID_CHECKBOX_INSET_PULL_PX,
@@ -231,6 +233,15 @@ export function dataGridStyles(theme: Theme): CSSObject {
       ...dataGridHeaderType,
       ...paired(theme, { color: text.default.b3 }),
       paddingInline: TABLE_CELL_PADDING_INLINE_PX,
+    },
+    // The line under the strip, a rung darker than the ones between
+    // rows. It is set on the header container rather than on each
+    // header cell: the grid gives a cell its rule as a `border-top`, so
+    // a bottom border per header would be a second line rather than a
+    // recolouring of the first.
+    [`& .${c.columnHeaders}`]: {
+      borderBottom: `${TABLE_BORDER_WIDTH_PX}px solid`,
+      ...paired(theme, { borderBottomColor: tableHeaderRule }),
     },
     // The label is its own element inside the header cell, and MUI styles
     // it directly -- `line-height: normal` and the grid's own font stack,

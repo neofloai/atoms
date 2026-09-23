@@ -14,7 +14,8 @@ import type { TableHeadProps } from './Table.types';
  * Carries no styling of its own. It exists because the three things
  * that make a header row look like one belong to the row and the cell,
  * and neither can tell which group it is in: the flat 40px height
- * regardless of the table's size, the `surface/default/default` fill,
+ * regardless of the table's size, the `surface/layers/card 2` fill
+ * over a `border/layers/card 3` hairline,
  * and the muted DM Mono 12/16 `text/default/b3` label. This component
  * is what tells them.
  *
