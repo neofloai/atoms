@@ -53,6 +53,24 @@ export interface ChipProps
   /** Pill size. @default 'md' */
   size?: ChipSize;
   /**
+   * Draws a 1px outline in the role's own border token, over the role's
+   * fill — the treatment the status sheet uses in a table's Status
+   * column. Every role has one, so a bordered chip is still picked by
+   * meaning (`variant="information"`) rather than by colour, and it
+   * resolves in both schemes with no hex at the call site.
+   *
+   * `size="sm"` only. The pill already carries a border on
+   * `appearance="outline"`, and stacking a second axis on top of it
+   * would give two ways to say one thing.
+   *
+   * The outline is given back out of the inline padding, so a bordered
+   * chip is exactly as wide as a plain one and a column of mixed
+   * statuses still lines up.
+   *
+   * @default false
+   */
+  bordered?: boolean;
+  /**
    * Renders the 32px pill instead of the 36px one (Figma's `small=True`
    * axis on node 986:18006). Only the vertical padding changes — type,
    * radius, gap, and glyph size are shared. No effect at `size="sm"`.

@@ -47,6 +47,13 @@ export const data: ComponentExamplesData = {
         'Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size="sm"`.',
     },
     {
+      name: 'bordered',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size="sm"` only; the pill already carries a border on `appearance="outline"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one.',
+    },
+    {
       name: 'selected',
       type: 'boolean',
       default: '—',
@@ -136,6 +143,33 @@ export const data: ComponentExamplesData = {
         '<Chip size="sm" variant="purple" label="Small" />',
         '<Chip dense label="Dense" />',
         '<Chip label="Medium" />',
+      ].join('\n'),
+    },
+    {
+      title: 'Bordered status tags',
+      description:
+        'A table’s Status column: the role’s fill with its own border token outlined over it. Pick the role for what the status means — `information` for in-flight, `success` for done, `error` for failed — and the colour follows from the token in both light and dark.',
+      code: [
+        '<Chip size="sm" variant="information" bordered label="Extraction" />',
+        '<Chip size="sm" variant="warning" bordered label="Matching" />',
+        '<Chip size="sm" variant="success" bordered label="ERP Posting" />',
+        '<Chip size="sm" variant="error" bordered label="Error" />',
+      ].join('\n'),
+    },
+    {
+      title: 'A status with a glyph',
+      description:
+        'The `icon` slot needs no wiring: the glyph inherits the role’s label colour and is sized by the chip. Keep it for the status that needs attention — a glyph on every row is decoration, and it stops the one that matters from standing out.',
+      code: [
+        "import { WarningCircleIcon } from '@neofloai/atoms/icons';",
+        '',
+        '<Chip',
+        '  size="sm"',
+        '  variant="error"',
+        '  bordered',
+        '  icon={<WarningCircleIcon />}',
+        '  label="Error"',
+        '/>',
       ].join('\n'),
     },
     {

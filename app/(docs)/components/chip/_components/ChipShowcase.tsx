@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { FunnelSimpleIcon } from '@/src/icons';
+import { FunnelSimpleIcon, WarningCircleIcon } from '@/src/icons';
 import { Chip } from '@/src/components/Chip';
 
 import type { ChipAppearance, ChipVariant } from '@/src/components/Chip';
@@ -168,6 +168,61 @@ export function ChipShowcase() {
           {smallVariants.map((variant) => (
             <Chip key={variant} size="sm" variant={variant} label={variant} />
           ))}
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard title="Bordered tags — a table&apos;s Status column">
+        <Stack spacing={2}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+          >
+            <Chip
+              size="sm"
+              variant="information"
+              bordered
+              label="Extraction"
+            />
+            <Chip size="sm" variant="warning" bordered label="Matching" />
+            <Chip size="sm" variant="success" bordered label="ERP Posting" />
+            <Chip
+              size="sm"
+              variant="error"
+              bordered
+              icon={<WarningCircleIcon />}
+              label="Error"
+            />
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            The <code>icon</code> slot takes a glyph without any extra
+            wiring — it inherits the role&apos;s label colour and is sized by
+            the chip. Only the error carries one: a stage of the workflow is
+            named by its label, and a glyph on all four would be decoration
+            that stops the one that needs attention from standing out.
+          </Typography>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+          >
+            {smallVariants.map((variant) => (
+              <Chip
+                key={variant}
+                size="sm"
+                variant={variant}
+                bordered
+                label={variant}
+              />
+            ))}
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            <code>bordered</code> outlines the role&apos;s fill with the
+            role&apos;s own border token, so every one of the eight reads as a
+            status without a hex at the call site and without a second set of
+            colours to keep in step. It is taken out of the inline padding, so
+            a bordered chip is exactly as wide as the plain one above it.
+          </Typography>
         </Stack>
       </PreviewCard>
 
