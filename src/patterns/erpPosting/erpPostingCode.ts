@@ -40,7 +40,6 @@ import {
   Tooltip,
   Typography,
 } from '@neofloai/atoms';
-import { styled } from '@mui/material/styles';
 import {
   ArrowRightIcon,
   BuildingsIcon,
@@ -235,13 +234,22 @@ function TaxHeader({
  */
 const CTA_WIDTH_PX = 104;
 
-const ActionSlot = styled('span')({
-  display: 'inline-flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: CTA_WIDTH_PX,
-  flexShrink: 0,
-});
+function ActionSlot({ children }: { children: React.ReactNode }) {
+  return (
+    <Box
+      component="span"
+      sx={{
+        display: 'inline-flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: CTA_WIDTH_PX,
+        flexShrink: 0,
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
 
 /**
  * The one control on a line, and it changes with what the check found.

@@ -31,7 +31,6 @@ import {
   Typography,
   countActiveFilters,
 } from '@neofloai/atoms';
-import { styled } from '@mui/material/styles';
 import {
   ArrowSquareOutIcon,
   CheckCircleIcon,
@@ -84,15 +83,28 @@ interface StageMeta {
  * prop on the icon would have been shorter and light-mode only; this
  * resolves per scheme.
  */
-const GlyphInk = styled('span')<{ ink: { light: string; dark: string } }>(
-  ({ theme, ink }) => ({
-    display: 'inline-flex',
-    '&&&': {
-      color: ink.light,
-      ...theme.applyStyles('dark', { color: ink.dark }),
-    },
-  })
-);
+function GlyphInk({
+  ink,
+  children,
+}: {
+  ink: { light: string; dark: string };
+  children: React.ReactNode;
+}) {
+  return (
+    <Box
+      component="span"
+      sx={(theme) => ({
+        display: 'inline-flex',
+        '&&&': {
+          color: ink.light,
+          ...theme.applyStyles('dark', { color: ink.dark }),
+        },
+      })}
+    >
+      {children}
+    </Box>
+  );
+}
 
 /**
  * The stage an invoice is parked at, and the chip that says so.
