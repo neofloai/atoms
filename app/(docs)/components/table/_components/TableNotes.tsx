@@ -40,16 +40,19 @@ export function TableNotes() {
           A stack of bands, not a card
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          There is no outer border, no radius, no shadow and no fill of its own.
-          A header and six 48px rows measures 320, which is{' '}
-          <code>32 + 6 × 48</code> with nothing left over — no padding around
-          the set, no gap between rows. So a table takes the colour of whatever
-          it is dropped onto, and the edge around it is a <code>Card</code>
-          &apos;s to draw.
+          There is no outer border, no radius and no shadow. A header and six
+          48px rows measures 328, which is <code>40 + 6 × 48</code> with nothing
+          left over — no padding around the set, no gap between rows. The edge
+          around it is still a <code>Card</code>&apos;s to draw.
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          The one line it does draw is the hairline under each row, including
-          the last, so a table ends on a rule rather than on nothing.{' '}
+          What it does paint is its own bands: the strip takes{' '}
+          <code>surface.layers.card2</code> and every row takes{' '}
+          <code>surface.layers.page</code>, so a table no longer shows the
+          colour of whatever it was dropped onto. The hairline between rows is{' '}
+          <code>border.layers.card3</code>, and the last row has none — a rule
+          divides two rows, and the row with nothing under it has nothing to be
+          divided from.{' '}
           <code>Accordion</code> ends its lists the same way.
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -75,7 +78,7 @@ export function TableNotes() {
           than a row height, so it is replaced rather than mapped.
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          The header stays 32 in all three sizes. It is a label strip rather
+          The header stays 40 in all three sizes. It is a label strip rather
           than a row of data, and the design holds it while the data breathes.
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -99,12 +102,21 @@ export function TableNotes() {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           The other two are geometry, and geometry is what drifts when every
-          call site rebuilds it. <code>icon</code> holds a node 8px clear of the
-          text, centred against the whole row rather than the first line — a
-          glyph for a file, an <code>Avatar</code> for a person.{' '}
-          <code>secondary</code> puts a muted 12/16 line hard under the first,
-          with no gap, because the two leadings already hold each other apart.{' '}
-          <code>NavbarTitle</code> exists for the same reason.
+          call site rebuilds it. <code>icon</code> holds a 14px node 6px clear
+          of the text, centred against the row — a glyph for a file, an{' '}
+          <code>Avatar</code> for a person. <code>secondary</code> puts a muted
+          11/13 line 2px under the first. <code>NavbarTitle</code> exists for
+          the same reason.
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          The two interact, and four things change at once. Given both, the
+          glyph tops out rather than centring, drops 2px onto the first
+          line&apos;s cap height, takes 8px of gap rather than 6, and goes one
+          rung quieter — <code>icon.default.b3</code> against{' '}
+          <code>icon.default.b2</code>. A glyph beside one line is part of that
+          line; beside two it is a marker on a block, and should not compete
+          with the line it is aligned to. Only the 14px size is the same in
+          both.
         </Typography>
       </Stack>
 

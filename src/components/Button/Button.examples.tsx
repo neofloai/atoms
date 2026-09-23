@@ -21,16 +21,17 @@ export const data: ComponentExamplesData = {
     },
     {
       name: 'appearance',
-      type: "'contained' | 'outline' | 'text'",
+      type: "'prominent' | 'contained' | 'outline' | 'text'",
       default: "'contained'",
       description:
-        'Visual emphasis: solid fill, 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label.',
+        'Visual emphasis, highest first: a gradient fill at heading size, a solid fill, a 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label. `prominent` is the page’s single call to action: 48px tall, drawn to sit beside a page title, and the one appearance that ignores `size`.',
     },
     {
       name: 'size',
       type: "'sm' | 'md' | 'lg'",
       default: "'md'",
-      description: 'Control height: 32px, 36px, or 44px.',
+      description:
+        'Control height: 32px, 36px, or 44px. No effect on `appearance="prominent"`, which has one height of its own (48px) — it is a page-level call to action, and a small one would be a contradiction.',
     },
     {
       name: 'loading',
@@ -73,6 +74,18 @@ export const data: ComponentExamplesData = {
       code: '<Button variant="error" appearance="text">Delete account</Button>',
     },
     {
+      title: 'The action a page exists for',
+      description:
+        'A gradient fill at heading size, 48px tall, sitting beside the page title rather than in a row of controls. The ramp runs from the role’s hover colour down to its resting one, so every role has one; `size` does not apply.',
+      code: [
+        "import { UploadSimpleIcon } from '@neofloai/atoms/icons';",
+        '',
+        '<Button appearance="prominent" startIcon={<UploadSimpleIcon />}>',
+        '  Add Invoice',
+        '</Button>',
+      ].join('\n'),
+    },
+    {
       title: 'Sizes',
       code: [
         '<Button size="sm">Small</Button>',
@@ -100,12 +113,16 @@ export const data: ComponentExamplesData = {
     'Use `variant="error"` for irreversible actions (delete, remove)',
     'Use `appearance="outline"` or `appearance="text"` for secondary actions',
     'Pair `variant="secondary"` with a primary button for cancel/back actions',
+    'Use `appearance="prominent"` for the one action a screen exists for, beside its title',
   ],
   donts: [
     "Don't use multiple `primary` contained buttons in the same section",
     "Don't use `variant=\"error\"` for cancel or dismiss actions",
     "Don't override button colours with `sx` — pick the right variant instead",
     "Don't use `size=\"sm\"` for primary page-level CTAs",
+    "Don't put two `prominent` buttons on one screen — it is the page's single call to action, and a second one cancels the first",
+    "Don't reach for `prominent` inside a card, a toolbar, a dialog or a table row; it is sized for a page header",
+
   ],
   relatedComponents: ['IconButton'],
 };

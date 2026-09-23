@@ -1,7 +1,8 @@
 /**
  * Self-hosted brand fonts.
  *
- * Atoms renders in DM Sans (body/UI) and Instrument Serif (accent).
+ * Atoms renders in DM Sans (body/UI), Instrument Serif (accent) and
+ * DM Mono (the monospace, worn by table and grid headers).
  * Importing the `@fontsource` stylesheets here as side effects means
  * any host that renders `NeofloThemeProvider` gets the correct
  * `@font-face` rules automatically -- no manual `<link>` tags or
@@ -10,6 +11,12 @@
  * Only the weights the theme actually uses are loaded:
  *   - DM Sans:           400 (regular), 500 (medium), 600 (semibold)
  *   - Instrument Serif:  400 (regular + italic)
+ *   - DM Mono:           400 (regular), 500 (medium)
+ *
+ * DM Mono is the first monospace this package actually ships. The
+ * primitive collection still names Space Mono, which was never hosted,
+ * so every `fontFamilies.product.mono` call site has been rendering the
+ * system monospace -- see DESIGNER_QUESTIONS.md #58.
  *
  * DM Sans replaced Plus Jakarta Sans as the product sans in the
  * 2026-07-29 token sync (see DESIGNER_QUESTIONS.md #7).
@@ -21,5 +28,7 @@
 import '@fontsource/dm-sans/400.css';
 import '@fontsource/dm-sans/500.css';
 import '@fontsource/dm-sans/600.css';
+import '@fontsource/dm-mono/400.css';
+import '@fontsource/dm-mono/500.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';

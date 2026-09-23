@@ -26,7 +26,7 @@ const TableRoot = styled(MuiTable)(({ theme }) => ({
 }));
 
 /**
- * A table of records: a 32px strip of column labels over rows of one
+ * A table of records: a 40px strip of column labels over rows of one
  * height, separated by hairlines. Wraps MUI `Table` with the geometry
  * the Figma `table-rows` section draws (node 3215:52225) and leaves the
  * groups, rows and cells inside it to `TableHead`, `TableBody`,
@@ -52,12 +52,16 @@ const TableRoot = styled(MuiTable)(({ theme }) => ({
  * There is no outer border, no radius, no shadow, and no fill of its
  * own. `3223:61897` is 320 tall for a header and six `sm` rows, which is
  * `32 + 6 × 48` exactly — no padding around the set and no gap between
- * rows. So a table takes the colour of whatever it is dropped onto, and
- * an edge around it is the `Card`'s job rather than this component's.
+ * rows, and an edge around it is the `Card`'s job rather than this
+ * component's.
  *
- * The one line it does draw is the hairline under each row, including
- * the last, so a table ends on a rule rather than on nothing. That is
- * how Figma stacks them, and `Accordion` ends its lists the same way.
+ * It does paint its own bands: `surface.layers.card2` on the strip and
+ * `surface.layers.page` on every row, so a table no longer shows the
+ * colour of what it was dropped onto. The hairline between them is
+ * `border.layers.card3`, and the last row has none — a rule divides two
+ * rows, and the row with nothing under it has nothing to be divided
+ * from. `Accordion` and `List` still end on a rule; this one does
+ * not.
  *
  * ## What the wrapper corrects in MUI
  *

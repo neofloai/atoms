@@ -13,11 +13,15 @@ import {
 
 import { paired } from '../_shared/actionStyles';
 import {
+  TABLE_BORDER_WIDTH_PX,
   TABLE_CELL_PADDING_INLINE_PX,
   TABLE_SORT_ICON_PX,
   TABLE_SORT_TINT_HEIGHT_PX,
   TABLE_SORT_TINT_PADDING_PX,
   TABLE_SORT_TINT_RADIUS_PX,
+  tableHeaderFill,
+  tableRowFill,
+  tableRule,
 } from '../Table/tableTokens';
 import {
   DATA_GRID_CHECKBOX_INSET_PULL_PX,
@@ -25,6 +29,7 @@ import {
   DATA_GRID_FOOTER_HEIGHT_PX,
   dataGridCaptionType,
   dataGridCellType,
+  dataGridHeaderType,
 } from './dataGridTokens';
 
 import type { CSSObject, Theme } from '@mui/material/styles';
@@ -163,12 +168,21 @@ export function dataGridStyles(theme: Theme): CSSObject {
 
     // ── Hairlines ─────────────────────────────────────────────────
     // The grid draws the rule as a `border-top` per cell with the first
-    // row's set to transparent, which comes out identical to the table's
-    // bottom-per-row — except at the end, where the last row has no line
-    // under it. The design's table ends on a rule.
-    [`& .${c['row--lastVisible']} .${c.cell}`]: {
-      borderBottom: '1px solid var(--rowBorderColor)',
-    },
+    // row's set to transparent, and the last row gets nothing under it.
+    // That is now what the table does too, so there is nothing to
+    // correct: the hairline is a divider between two rows, and the row
+    // with nothing under it has nothing to be divided from.
+    //
+    // This used to add a `border-bottom` to the last visible row,
+    // because the Product Design System sheet ended its table on a
+    // rule. The Self-Serve report ends it on the last row instead, and
+    // is followed here for the same reason it is followed elsewhere on
+    // this component. See DESIGNER_QUESTIONS.md #64.
+
+    // The resting fill on a row. The strip above is `layers/card 2`,
+    // a row is `layers/page`, and hover and selection are
+    // `layers/card 1` between them.
+    [`& .${c.row}`]: paired(theme, { backgroundColor: tableRowFill }),
     // The design draws no vertical rules, and the grid draws one between
     // every pair of headers. They are also the handle a column is resized
     // by, so they are hidden rather than removed: nothing at rest, and
@@ -218,22 +232,37 @@ export function dataGridStyles(theme: Theme): CSSObject {
     },
 
     // ── The header strip ──────────────────────────────────────────
-    // Filled, because the header is always pinned over a scrolling body
-    // and a transparent one would have rows moving through it. It takes
-    // the card surface, on the assumption a grid sits on a card; a grid
-    // somewhere else says so with `sx`.
+    // Filled with the design's own header surface, which also answers
+    // the practical requirement: a grid header is always pinned over a
+    // scrolling body, and a transparent one would have rows moving
+    // through it. Shared with `Table`, so the two strips match.
     [`& .${c.columnHeaders}, & .${c.columnHeader}`]: paired(theme, {
-      backgroundColor: surface.layers.card1,
+      backgroundColor: tableHeaderFill,
     }),
     [`& .${c.columnHeader}`]: {
-      ...dataGridCaptionType,
+      ...dataGridHeaderType,
       ...paired(theme, { color: text.default.b3 }),
       paddingInline: TABLE_CELL_PADDING_INLINE_PX,
     },
-    // MUI leaves the label at `line-height: normal`, which is close to 16
-    // for 12px DM Sans but not equal to it.
+    // The line under the strip, a rung darker than the ones between
+    // rows. It is set on the header container rather than on each
+    // header cell: the grid gives a cell its rule as a `border-top`, so
+    // a bottom border per header would be a second line rather than a
+    // recolouring of the first.
+    [`& .${c.columnHeaders}`]: {
+      borderBottom: `${TABLE_BORDER_WIDTH_PX}px solid`,
+      ...paired(theme, { borderBottomColor: tableRule }),
+    },
+    // The label is its own element inside the header cell, and MUI styles
+    // it directly -- `line-height: normal` and the grid's own font stack,
+    // neither of which the rule above reaches. `normal` is close to 16 at
+    // 12px and not equal to it, and the family has to be restated here or
+    // the mono stops at the cell and the label renders in the sans.
     [`& .${c.columnHeaderTitle}`]: {
-      lineHeight: dataGridCaptionType.lineHeight,
+      fontFamily: dataGridHeaderType.fontFamily,
+      fontWeight: dataGridHeaderType.fontWeight,
+      lineHeight: dataGridHeaderType.lineHeight,
+      letterSpacing: dataGridHeaderType.letterSpacing,
     },
 
     // The tint behind a sortable column's label while the pointer is on
@@ -255,8 +284,11 @@ export function dataGridStyles(theme: Theme): CSSObject {
     [`& .${c['columnHeader--alignCenter']} .${c.columnHeaderTitleContainer}`]: {
       marginInline: 'auto',
     },
+    // One rung down from the strip's own fill, for the reason
+    // `TableSortLabel` gives: the tint and the header used to be
+    // different surfaces and are now the same one.
     [`& .${c['columnHeader--sortable']}:hover .${c.columnHeaderTitleContainer}`]:
-      paired(theme, { backgroundColor: surface.default.default }),
+      paired(theme, { backgroundColor: surface.default.defaultHover }),
 
     // The glyphs inside that tint are the design's 16px ones with no
     // chrome of their own: the tint is the affordance, so a second hover
@@ -304,7 +336,7 @@ export function dataGridStyles(theme: Theme): CSSObject {
     },
 
     // ── The edge inset ────────────────────────────────────────────
-    // The row's 16px, spent on the two columns that touch the edge
+    // The row's 8px, spent on the two columns that touch the edge
     // exactly as the table spends it. `[aria-colindex='1']` picks up the
     // first header and the first cell in one selector, including a
     // selection column, which the design also insets. The last cell is

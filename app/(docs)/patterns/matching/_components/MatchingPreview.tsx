@@ -107,8 +107,8 @@ const FRAME_HEIGHT_PX = 900;
  * width it needs and the container scrolls, which is what the real screen does
  * at a narrow viewport too.
  */
-const INVOICE_TABLE_MIN_PX = 520;
-const GRN_TABLE_MIN_PX = 520;
+const INVOICE_TABLE_MIN_PX = 616;
+const GRN_TABLE_MIN_PX = 632;
 
 /**
  * Fixed column widths, and why the tables are laid out fixed at all.
@@ -137,18 +137,18 @@ const TABLE_LAYOUT = { tableLayout: 'fixed' } as const;
  * columns flexible, so it is not consistent about it either.
  */
 const INVOICE_COLS = {
-  check: 64,
-  itemNo: 80,
-  description: 150,
-  qty: 70,
+  check: 80,
+  itemNo: 96,
+  description: 166,
+  qty: 86,
 } as const;
 
 const GRN_COLS = {
-  check: 64,
-  poNo: 100,
-  grnNo: 80,
-  description: 150,
-  qty: 70,
+  check: 80,
+  poNo: 116,
+  grnNo: 96,
+  description: 166,
+  qty: 86,
 } as const;
 
 /** Clip rather than wrap, per `TableCell`'s own note on long text. */
@@ -166,7 +166,7 @@ const truncate = { overflow: 'hidden', textOverflow: 'ellipsis' } as const;
  */
 const wrap = { whiteSpace: 'normal' } as const;
 
-const DETAILS_TABLE_MIN_PX = 720;
+const DETAILS_TABLE_MIN_PX = 768;
 
 /**
  * The field column's width, and the invoice column's.
@@ -176,7 +176,7 @@ const DETAILS_TABLE_MIN_PX = 720;
  * column, because the PO column also carries the row's decision — see the
  * header cells.
  */
-const DETAILS_COLS = { field: 250, invoice: 320 } as const;
+const DETAILS_COLS = { field: 266, invoice: 336 } as const;
 
 /**
  * The label column, and the header strip above it.

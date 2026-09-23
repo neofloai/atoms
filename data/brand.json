@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T17:00:49.522Z",
+  "generatedAt": "2026-09-23T07:28:21.274Z",
   "brand": {
     "name": "Neoflo",
     "tagline": "The Neoflo brand: one monochrome mark, a single blue accent, and a two-typeface system, all expressed through the Atoms theme.",
@@ -75,11 +75,14 @@
           "typography",
           "dm sans",
           "instrument serif",
+          "dm mono",
+          "mono",
+          "monospace",
           "clash grotesk",
           "type"
         ],
-        "summary": "Product UI uses DM Sans (with Instrument Serif accents); marketing uses Clash Grotesk. Weights: 400 / 500 / 600.",
-        "body": "Neoflo runs a two-context type system:\n\n- Product (the app UI): DM Sans is the primary sans for all interface text; Instrument Serif is an occasional accent for editorial/display moments.\n- Marketing: Clash Grotesk is the display face for marketing surfaces, with Instrument Serif as the serif accent.\n\nWeights are Regular (400), Medium (500), and SemiBold (600) — DM Sans has no Bold cut. DM Sans and Instrument Serif are self-hosted by the package (via @fontsource) and load automatically through NeofloThemeProvider — consumers do not wire fonts themselves. Clash Grotesk is not yet self-hosted, so marketing text falls back to DM Sans until it is hosted (see DESIGNER_QUESTIONS.md #7).\n\nUse the typography scale from the theme rather than ad-hoc font sizes (call get_tokens for the typography category)."
+        "summary": "Product UI uses DM Sans (with Instrument Serif accents) and DM Mono for table and grid headers; marketing uses Clash Grotesk. Weights: 400 / 500 / 600.",
+        "body": "Neoflo runs a two-context type system:\n\n- Product (the app UI): DM Sans is the primary sans for all interface text; Instrument Serif is an occasional accent for editorial/display moments; DM Mono is the monospace, worn by table and data grid column headers and available as fontFamilies.product.mono for figures that have to line up down a column.\n- Marketing: Clash Grotesk is the display face for marketing surfaces, with Instrument Serif as the serif accent.\n\nWeights are Regular (400), Medium (500), and SemiBold (600) — DM Sans has no Bold cut. DM Mono ships Regular (400) and Medium (500) only. DM Sans, DM Mono and Instrument Serif are self-hosted by the package (via @fontsource) and load automatically through NeofloThemeProvider — consumers do not wire fonts themselves. Clash Grotesk is not yet self-hosted, so marketing text falls back to DM Sans until it is hosted (see DESIGNER_QUESTIONS.md #7).\n\nUse the typography scale from the theme rather than ad-hoc font sizes (call get_tokens for the typography category)."
       },
       {
         "id": "theme",

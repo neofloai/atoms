@@ -17,7 +17,6 @@ import {
   Box,
   Button,
   Chip,
-  CircularProgress,
   DataGrid,
   Divider,
   Filter,
@@ -34,17 +33,26 @@ import {
 } from '@neofloai/atoms';
 import {
   ArrowSquareOutIcon,
+  CheckCircleIcon,
   FadersHorizontalIcon,
   HeadsetIcon,
   MagnifyingGlassIcon,
   PaperclipIcon,
   SidebarSimpleIcon,
   UploadSimpleIcon,
-  WarningCircleIcon,
+  WarningIcon,
+  XCircleIcon,
 } from '@neofloai/atoms/icons';
-import { fontFamilies, text, typography } from '@neofloai/atoms/tokens';
+import {
+  border,
+  fontFamilies,
+  icon,
+  surface,
+  text,
+  typography,
+} from '@neofloai/atoms/tokens';
 
-import type { FilterValue, GridColDef } from '@neofloai/atoms';
+import type { ChipColors, FilterValue, GridColDef } from '@neofloai/atoms';
 
 // The rail, the invoices and the facets are the application's. The rail is
 // the same one every other screen in the workflow mounts, so it is imported
@@ -55,33 +63,133 @@ import { INVOICE_FILTER_GROUPS, filterInvoices } from './invoices';
 
 import type { Invoice, InvoiceStage } from './invoices';
 
+/** The glyph in a status chip. */
+const STATUS_ICON_PX = 14;
+
+/** One status: its label, its colours, and an optional glyph. */
+interface StageMeta {
+  label: string;
+  variant?: 'information';
+  colors?: ChipColors;
+  icon?: React.ReactElement;
+}
+
+/**
+ * Paints a status glyph in a colour of its own rather than the label's.
+ *
+ * Chip sets \`color: inherit\` on its icon slot, two classes deep from the
+ * chip root, so a colour set on the slot element itself loses to it. \`&&&\`
+ * lifts this to three and settles it without an \`!important\`. A \`color\`
+ * prop on the icon would have been shorter and light-mode only; this
+ * resolves per scheme.
+ */
+function GlyphInk({
+  ink,
+  children,
+}: {
+  ink: { light: string; dark: string };
+  children: React.ReactNode;
+}) {
+  return (
+    <Box
+      component="span"
+      sx={(theme) => ({
+        display: 'inline-flex',
+        '&&&': {
+          color: ink.light,
+          ...theme.applyStyles('dark', { color: ink.dark }),
+        },
+      })}
+    >
+      {children}
+    </Box>
+  );
+}
+
 /**
  * The stage an invoice is parked at, and the chip that says so.
  *
  * This map is the screen. Every other column tells you *which* invoice; the
  * stage tells you what the invoice is waiting for, and it is the only thing
- * on the row that decides where Review takes you — extraction review,
- * match review, or the posting screen.
+ * on the row that decides where Review takes you.
  *
- * The four roles are the semantic ones every other status pill in the library
- * uses — \`information\`, \`warning\`, \`success\`, \`error\` — rather than the
- * hues in the frame. Read down the column it is a progression: the machine is
- * working, a human is needed, everything is validated, a stage has failed. A
- * decorative role like \`purple\` or \`orange\` carries no state, so a reader
- * could not tell from it which of two stages was the bad one.
+ * Six of the seven carry their own colours rather than a chip role, because
+ * the workflow needs seven that are tellable apart down a column and the
+ * semantic roles supply four. \`extraction\` is the exception and still uses
+ * \`information\`: its colour is specified as three literal hexes, in a hue
+ * the token collection has no scale for.
+ *
+ * Every colour here is a \`{ light, dark }\` token rather than a ramp step.
+ * A ramp step — \`colors.purple[75]\` and the like — is a plain string, so a
+ * chip built from one paints the same colour on a near-black page. Where a
+ * specification named a ramp step, the semantic token carrying the identical
+ * light value was used instead.
+ *
+ * Two of the three glyphs are drawn in an ink of their own rather than
+ * inheriting the label's, so the tick and the cross read at full strength
+ * against a quieter label.
  */
-const STAGE_META: Record<
-  InvoiceStage,
-  {
-    label: string;
-    variant: 'information' | 'warning' | 'success' | 'error';
-    Icon?: typeof WarningCircleIcon;
-  }
-> = {
+const STAGE_META: Record<InvoiceStage, StageMeta> = {
   extraction: { label: 'Extraction', variant: 'information' },
-  matching: { label: 'Matching', variant: 'warning' },
-  posting: { label: 'ERP Posting', variant: 'success' },
-  error: { label: 'Error', variant: 'error', Icon: WarningCircleIcon },
+  faktur: {
+    label: 'Faktur Pajak',
+    colors: {
+      bg: surface.warning.subtle,
+      border: border.warning.default,
+      text: text.warning[2],
+    },
+  },
+  matching: {
+    label: 'Matching',
+    colors: {
+      bg: surface.purple.default,
+      border: icon.purple[4],
+      text: text.purple[2],
+    },
+  },
+  posting: {
+    label: 'ERP Posting',
+    colors: {
+      bg: surface.information.default,
+      border: icon.information[4],
+      text: text.information[3],
+    },
+  },
+  error: {
+    label: 'Error',
+    colors: {
+      bg: surface.orange.default,
+      border: icon.orange[3],
+      text: text.orange[0],
+    },
+    icon: <WarningIcon size={STATUS_ICON_PX} />,
+  },
+  posted: {
+    label: 'Posted',
+    colors: {
+      bg: surface.success.subtleHover,
+      border: border.success.focus,
+      text: text.success[3],
+    },
+    icon: (
+      <GlyphInk ink={icon.success[3]}>
+        <CheckCircleIcon size={STATUS_ICON_PX} />
+      </GlyphInk>
+    ),
+  },
+  rejected: {
+    label: 'Rejected',
+    colors: {
+      bg: surface.error.default,
+      border: border.error.defaultHover,
+      text: text.error[2],
+    },
+    icon: (
+      <GlyphInk ink={icon.error[2]}>
+        <XCircleIcon size={STATUS_ICON_PX} />
+      </GlyphInk>
+    ),
+  },
 };
 
 /**
@@ -93,6 +201,15 @@ const TABS = [
   { value: 'open', label: 'Open' },
   { value: 'closed', label: 'Closed' },
 ] as const;
+
+/**
+ * The row action's width, held across all three states.
+ *
+ * A call-site number rather than a Button size: the component hugs its
+ * content by design, and a table wants one width down the column. The
+ * 32px height is \`size="sm"\`, unchanged.
+ */
+const CTA_WIDTH_PX = 96;
 
 /** Rows a page holds, and the choices the footer offers. */
 const PAGE_SIZE = 10;
@@ -159,12 +276,18 @@ function AttachmentCell({ file }: { file: string }) {
       component="span"
       sx={(theme) => ({
         display: 'flex',
+        // Beside one line the glyph centres, takes 6 of gap, and is one
+        // rung stronger than the glyph beside a two-line cell.
         alignItems: 'center',
-        gap: 0.5,
+        gap: '6px',
         minWidth: 0,
         lineHeight: 'normal',
         color: text.default.b3.light,
         ...theme.applyStyles('dark', { color: text.default.b3.dark }),
+        '& > svg': {
+          color: icon.default.b2.light,
+          ...theme.applyStyles('dark', { color: icon.default.b2.dark }),
+        },
       })}
     >
       <PaperclipIcon size={14} style={{ flexShrink: 0 }} />
@@ -250,14 +373,37 @@ function ActionCell({
 
   return (
     <Stack direction="row" sx={{ gap: 1, alignItems: 'center' }}>
+      {/* Two appearances, because the two actions are not the same weight.
+          Review is a live open task and takes the accented outline; View is
+          a record with nothing left to act on and takes the neutral fill
+          that contained + secondary already paints.
+
+          \`loading\` is Button's own treatment rather than a disabled button
+          with a spinner posted into \`startIcon\` — it disables the control
+          for us and needs no second component. \`center\` puts the indicator
+          in the middle of the box, which is what holds the width: the
+          label stays in the DOM for the accessible name and the control
+          measures the same 96 in all three states. */}
       <Button
         size="sm"
-        appearance="outline"
+        appearance={invoice.action === 'review' ? 'outline' : 'contained'}
         variant={invoice.action === 'review' ? 'primary' : 'secondary'}
-        disabled={busy}
-        startIcon={busy ? <CircularProgress size={14} color="inherit" /> : undefined}
+        loading={busy}
+        // \`center\` rather than \`start\`: the specification pins this
+        // control to 96 in every state, and "Processing" beside a 14px
+        // indicator needs 112 at 13/500. The label stays in the DOM for
+        // the accessible name and the indicator sits over it, so the
+        // width holds and the row still announces what it is doing.
+        loadingPosition="center"
         onClick={() => onOpen(invoice.id, 'panel')}
-        sx={{ minWidth: 88 }}
+        sx={{
+          width: CTA_WIDTH_PX,
+          minWidth: CTA_WIDTH_PX,
+          flexShrink: 0,
+          // The loading label is hidden rather than removed, so it keeps
+          // its natural width inside a box pinned narrower than it.
+          overflow: 'hidden',
+        }}
       >
         {busy ? 'Processing' : invoice.action === 'review' ? 'Review' : 'View'}
       </Button>
@@ -296,17 +442,26 @@ function invoiceColumns(
       field: 'reference',
       headerName: 'Source ID/ Time',
       flex: 1.4,
-      minWidth: 168,
+      minWidth: 184,
       renderCell: ({ row }) => (
         <Box
           component="span"
-          sx={{
+          sx={(theme) => ({
             display: 'flex',
-            alignItems: 'center',
+            // Beside two lines the glyph tops out rather than centring,
+            // drops 2px onto the first line's cap height, takes 8 of gap
+            // and the quieter of the two icon rungs. Centred against the
+            // block it would read as drifting between the lines.
+            alignItems: 'flex-start',
             gap: 1,
             minWidth: 0,
             lineHeight: 'normal',
-          }}
+            '& > svg': {
+              marginBlockStart: '2px',
+              color: icon.default.b3.light,
+              ...theme.applyStyles('dark', { color: icon.default.b3.dark }),
+            },
+          })}
         >
           {/* The channel the invoice arrived on. A glyph rather than a
               column, because it is the same answer for most rows. */}
@@ -332,7 +487,7 @@ function invoiceColumns(
       field: 'vendor',
       headerName: 'Vendor / Invoice#',
       flex: 1.6,
-      minWidth: 168,
+      minWidth: 184,
       renderCell: ({ row }) => (
         <TwoLine primary={row.vendor} secondary={row.invoiceNumber} />
       ),
@@ -340,16 +495,18 @@ function invoiceColumns(
     {
       field: 'stage',
       headerName: 'Status',
-      width: 148,
+      width: 164,
       sortable: false,
       renderCell: ({ row }) => {
         const meta = STAGE_META[row.stage];
         return (
           <Chip
             size="sm"
+            bordered
             variant={meta.variant}
+            colors={meta.colors}
             label={meta.label}
-            icon={meta.Icon ? <meta.Icon /> : undefined}
+            icon={meta.icon}
           />
         );
       },
@@ -358,14 +515,14 @@ function invoiceColumns(
       field: 'attachment',
       headerName: 'Invoice attachment',
       flex: 1.6,
-      minWidth: 176,
+      minWidth: 192,
       sortable: false,
       renderCell: ({ row }) => <AttachmentCell file={row.attachment} />,
     },
     {
       field: 'amount',
       headerName: 'Amount',
-      width: 148,
+      width: 164,
       align: 'right',
       headerAlign: 'right',
       renderCell: ({ row }) => <AmountCell amount={row.amount} />,
@@ -373,7 +530,7 @@ function invoiceColumns(
     {
       field: 'action',
       headerName: 'Action',
-      width: 172,
+      width: 188,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => <ActionCell invoice={row} onOpen={onOpen} />,

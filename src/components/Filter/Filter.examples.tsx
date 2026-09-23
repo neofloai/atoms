@@ -217,20 +217,14 @@ export const data: ComponentExamplesData = {
     {
       title: 'Chips as option labels',
       description:
-        'An option label can be any node. Give those rows a `searchText` — a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.',
+        'An option label can be any node, and a status facet should use the same chip its column draws — one that reads differently in the dropdown makes the reader check whether it is the same thing. Give those rows a `searchText`: a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.',
       code: [
-        'const statusOptions = [',
-        '  {',
-        "    value: 'routed',",
-        '    label: <Chip size="sm" variant="warning" label="Routed to Human" />,',
-        "    searchText: 'Routed to Human',",
-        '  },',
-        '  {',
-        "    value: 'answered',",
-        '    label: <Chip size="sm" variant="success" label="Auto-answered" />,',
-        "    searchText: 'Auto-answered',",
-        '  },',
-        '];',
+        'const statusOptions = STATUSES.map((status) => ({',
+        '  value: status.value,',
+        '  // The same component the Status column renders, not a copy of it.',
+        '  label: <StatusChip status={status.value} />,',
+        '  searchText: status.label,',
+        '}));',
       ].join('\n'),
     },
     {

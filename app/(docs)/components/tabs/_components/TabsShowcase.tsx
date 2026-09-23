@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -242,6 +243,28 @@ function NothingSelected() {
 
 NothingSelected.displayName = 'NothingSelected';
 
+/**
+ * A bar handing its bottom edge to the panel around it — the shape a
+ * consuming app reached for, and the reason `divider` exists.
+ */
+function WorkArea() {
+  const [tab, setTab] = React.useState('open');
+
+  return (
+    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Tabs
+        value={tab}
+        onChange={(_, next: string) => setTab(next)}
+        divider={false}
+        aria-label="Work area"
+      >
+        <Tab label="Open" value="open" />
+        <Tab label="Closed" value="closed" />
+      </Tabs>
+    </Box>
+  );
+}
+
 export function TabsShowcase() {
   return (
     <Stack spacing={5}>
@@ -260,6 +283,13 @@ export function TabsShowcase() {
       </PreviewCard>
 
       <PreviewCard
+        title="Inside a panel that draws its own border"
+        description="divider={false} hands the bottom edge to the container. The indicator still draws — it belongs to the tab, not to the strip."
+      >
+        <WorkArea />
+      </PreviewCard>
+
+      <PreviewCard
         title="Too many to fit"
         description="variant=&quot;scrollable&quot; lets the row scroll rather than wrap. The carets are the house Phosphor pair."
       >
@@ -275,7 +305,7 @@ export function TabsShowcase() {
 
       <PreviewCard
         title="Down the side"
-        description="Not drawn in Figma. The rule moves to the inline edge, the 12px gap moves with it, and the labels left-align — every colour and size unchanged."
+        description="Not drawn in Figma. The rule moves to the inline edge, the two paddings swap with it, and the labels left-align — every colour and size unchanged."
       >
         <VerticalSettings />
       </PreviewCard>

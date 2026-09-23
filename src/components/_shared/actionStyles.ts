@@ -408,3 +408,95 @@ export function appearanceStyles(
     '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
   };
 }
+
+/**
+ * The angle the gradient runs at.
+ *
+ * The sheet exports 178.28deg, which is 180 plus the rounding a frame
+ * picks up from being drawn by hand. Straight down is what it means and
+ * what ships -- a 1.7deg lean on a 48px box moves the ramp by under a
+ * pixel and costs the value its legibility.
+ */
+const PROMINENT_GRADIENT_ANGLE = '180deg';
+
+function prominentGradient(from: string, to: string): string {
+  return `linear-gradient(${PROMINENT_GRADIENT_ANGLE}, ${from} 0%, ${to} 100%)`;
+}
+
+/**
+ * `prominent` — the one page-level call to action, painted as a vertical
+ * gradient rather than a flat fill.
+ *
+ * Kept out of `ActionAppearance` on purpose. That union is shared with
+ * `IconButton` and everything else built on `appearanceStyles`, and this
+ * treatment is drawn for a labelled button only: a 20px glyph in a 48px
+ * square has no room for a ramp to read across. `ButtonAppearance` widens
+ * the union locally instead, so adding this costs the other controls
+ * nothing.
+ *
+ * ## The gradient is two rungs the role already owns
+ *
+ * It runs from the role's *hover* fill at the top down to its *resting*
+ * fill at the bottom, which is exactly what the sheet draws for primary:
+ * `primary/400` (#5f6aea, our `surface.primary.defaultHover`) into
+ * `primary/500`, and our resting primary is within a hair of that. So
+ * nothing is invented, and the rule generalises -- every role has both
+ * rungs, so `variant="error"` gets its own ramp rather than a primary
+ * one or a crash.
+ *
+ * It also means the resting button already carries its own hover colour
+ * along the top edge. Hover therefore *flattens* to that colour rather
+ * than darkening: the button resolves to the lighter end of the ramp it
+ * was already showing, which reads as lifting toward the pointer. Press
+ * and focus follow `contained` exactly.
+ *
+ * Every state that is not the resting one sets `backgroundImage: 'none'`
+ * explicitly. A `background-color` does not replace a
+ * `background-image` -- the image paints over it -- so without this the
+ * gradient would sit on top of every hover, press, focus and disabled
+ * fill and none of them would show.
+ */
+export function prominentStyles(
+  theme: Theme,
+  variant: ActionVariant
+): CSSObject {
+  const role = roleTokens[variant];
+
+  return {
+    backgroundImage: prominentGradient(
+      role.containedBgHover.light,
+      role.containedBg.light
+    ),
+    color: role.containedText.light,
+    ...theme.applyStyles('dark', {
+      backgroundImage: prominentGradient(
+        role.containedBgHover.dark,
+        role.containedBg.dark
+      ),
+      color: role.containedText.dark,
+    }),
+    '&:hover': {
+      backgroundImage: 'none',
+      ...paired(theme, { backgroundColor: role.containedBgHover }),
+    },
+    '&:active': {
+      backgroundImage: 'none',
+      ...paired(theme, { backgroundColor: role.containedBgPressed }),
+    },
+    '&.Mui-focusVisible': {
+      backgroundImage: 'none',
+      ...pairedFocusRing(
+        theme,
+        { backgroundColor: role.containedBgHover },
+        role.focusRing
+      ),
+    },
+    '&.Mui-disabled': {
+      backgroundImage: 'none',
+      ...paired(theme, {
+        backgroundColor: surface.disabled.default,
+        color: text.disabled.default,
+      }),
+    },
+  };
+}

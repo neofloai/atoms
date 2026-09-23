@@ -212,7 +212,7 @@ export const QUERY_COLUMNS: GridColDef<QueryRecord>[] = [
   {
     field: 'reference',
     headerName: 'Source ID / Time',
-    width: 148,
+    width: 164,
     renderCell: ({ row }) => (
       <TwoLine primary={row.reference} secondary={row.received} />
     ),
@@ -221,7 +221,7 @@ export const QUERY_COLUMNS: GridColDef<QueryRecord>[] = [
     field: 'vendor',
     headerName: 'Vendor',
     flex: 1,
-    minWidth: 150,
+    minWidth: 166,
     renderCell: ({ row }) => (
       <TwoLine primary={row.vendor} secondary={row.vendorEmail} />
     ),
@@ -229,29 +229,29 @@ export const QUERY_COLUMNS: GridColDef<QueryRecord>[] = [
   {
     field: 'types',
     headerName: 'Type',
-    width: 164,
+    width: 180,
     sortable: false,
     renderCell: ({ row }) => <TypeCell types={row.types} />,
   },
   {
     field: 'status',
     headerName: 'Status',
-    width: 144,
+    width: 160,
     sortable: false,
     renderCell: ({ row }) => {
       const meta = statusMeta(row.status);
-      return <Chip size="sm" variant={meta.variant} label={meta.label} />;
+      return <Chip size="sm" bordered variant={meta.variant} label={meta.label} />;
     },
   },
   {
     field: 'entity',
     headerName: 'Entity',
-    width: 112,
+    width: 128,
   },
   {
     field: 'assignee',
     headerName: 'Assignee',
-    width: 152,
+    width: 168,
     renderCell: ({ row }) =>
       row.assignee === null ? (
         '—'

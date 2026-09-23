@@ -12,15 +12,26 @@ import type {
 export type ButtonVariant = ActionVariant;
 
 /**
- * Visual emphasis of the button, mapped from the Figma `style` axis.
+ * Visual emphasis of the button. `contained`, `outline` and `text` come
+ * from the Figma `style` axis; `prominent` sits above all three.
  *
- *   - `contained` — solid fill, highest emphasis
+ *   - `prominent` — gradient fill at heading size, highest emphasis
+ *   - `contained` — solid fill
  *   - `outline`   — 1px border, transparent fill
  *   - `text`      — label only, lowest emphasis
+ *
+ * Wider than `ActionAppearance` by exactly one value. That union is
+ * shared with `IconButton`, and `prominent` is drawn for a labelled
+ * button only, so it is added here rather than there.
  */
-export type ButtonAppearance = ActionAppearance;
+export type ButtonAppearance = ActionAppearance | 'prominent';
 
-/** Control height: `sm` = 32px, `md` = 36px, `lg` = 44px. */
+/**
+ * Control height: `sm` = 32px, `md` = 36px, `lg` = 44px.
+ *
+ * `appearance="prominent"` has one height of its own (48) and ignores
+ * this — see `ButtonProps.size`.
+ */
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /**
@@ -36,6 +47,12 @@ export interface ButtonProps
   variant?: ButtonVariant;
   /** Visual emphasis. @default 'contained' */
   appearance?: ButtonAppearance;
-  /** Control size. @default 'md' */
+  /**
+   * Control size. Ignored when `appearance="prominent"`, which is drawn
+   * at one size only — it is the page's single call to action, and a
+   * small one would be a contradiction.
+   *
+   * @default 'md'
+   */
   size?: ButtonSize;
 }

@@ -220,6 +220,38 @@ function TaxHeader({
 }
 
 /**
+ * The row action's width, held whichever control the row is showing.
+ *
+ * A column that alternates between a labelled button and a bare icon
+ * button jumps as the eye goes down it — the same problem a fixed CTA
+ * width solves on the invoice queue, and the same answer. 104 rather
+ * than that screen's 96 because the number is per column: it is sized
+ * to its own longest label, and "Fix value" with a 14px wrench needs
+ * 96 of the 96 exactly.
+ *
+ * \`ActionSlot\` is what holds it for the icon-button case, which has no
+ * width of its own to pin.
+ */
+const CTA_WIDTH_PX = 104;
+
+function ActionSlot({ children }: { children: React.ReactNode }) {
+  return (
+    <Box
+      component="span"
+      sx={{
+        display: 'inline-flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: CTA_WIDTH_PX,
+        flexShrink: 0,
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+/**
  * The one control on a line, and it changes with what the check found.
  *
  * Split is always available: a line covering two cost centres has to become
@@ -239,32 +271,37 @@ function LineActions({
 }) {
   if (finding && finding.fix !== undefined) {
     return (
-      <Tooltip title={'Set the line total to ' + formatMoney(finding.fix)}>
-        <Button
-          variant="error"
-          appearance="outline"
-          size="sm"
-          startIcon={<WrenchIcon size={14} />}
-          onClick={onFix}
-        >
-          Fix value
-        </Button>
-      </Tooltip>
+      <ActionSlot>
+        <Tooltip title={'Set the line total to ' + formatMoney(finding.fix)}>
+          <Button
+            variant="error"
+            appearance="outline"
+            size="sm"
+            onClick={onFix}
+            startIcon={<WrenchIcon size={14} />}
+            sx={{ width: CTA_WIDTH_PX, minWidth: CTA_WIDTH_PX, flexShrink: 0 }}
+          >
+            Fix value
+          </Button>
+        </Tooltip>
+      </ActionSlot>
     );
   }
 
   return (
-    <Tooltip title="Split this line">
-      <IconButton
-        variant="secondary"
-        appearance="text"
-        size="sm"
-        aria-label="Split this line"
-        onClick={onSplit}
-      >
-        <ScissorsIcon size={16} />
-      </IconButton>
-    </Tooltip>
+    <ActionSlot>
+      <Tooltip title="Split this line">
+        <IconButton
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          aria-label="Split this line"
+          onClick={onSplit}
+        >
+          <ScissorsIcon size={16} />
+        </IconButton>
+      </Tooltip>
+    </ActionSlot>
   );
 }
 
@@ -413,7 +450,7 @@ export default function ErpPostingPage() {
     {
       field: 'id',
       headerName: '#',
-      width: 56,
+      width: 72,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => <IndexCell value={row.id} />,
@@ -422,12 +459,12 @@ export default function ErpPostingPage() {
       field: 'description',
       headerName: 'Description',
       flex: 1.6,
-      minWidth: 180,
+      minWidth: 196,
     },
     {
       field: 'lineTotal',
       headerName: 'Line Total',
-      width: 140,
+      width: 156,
       align: 'right',
       headerAlign: 'right',
       renderCell: ({ row }) => <AmountCell value={row.lineTotal} />,
@@ -435,7 +472,7 @@ export default function ErpPostingPage() {
     {
       field: 'vatCode',
       headerName: 'VAT Tax Code',
-      width: 200,
+      width: 216,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -465,7 +502,7 @@ export default function ErpPostingPage() {
     {
       field: 'whtCode',
       headerName: 'WHT Tax Code',
-      width: 200,
+      width: 216,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -498,7 +535,7 @@ export default function ErpPostingPage() {
       // of the two states happened to be more common.
       field: 'actions',
       headerName: '',
-      width: 122,
+      width: 144,
       sortable: false,
       filterable: false,
       align: 'center',

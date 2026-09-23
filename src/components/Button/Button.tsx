@@ -9,6 +9,7 @@ import { fontFamilies, fontWeights, radius, spacing, typography } from '@/src/to
 import {
   appearanceStyles,
   OUTLINE_BORDER_WIDTH_PX,
+  prominentStyles,
 } from '../_shared/actionStyles';
 
 import type { CSSObject } from '@mui/material/styles';
@@ -31,6 +32,10 @@ const muiVariantMap: Record<
   ButtonAppearance,
   'contained' | 'outlined' | 'text'
 > = {
+  // `prominent` rides MUI's `contained` for the same reason it paints
+  // like one: it is a filled button with a ramp instead of a flat fill,
+  // so it wants the filled variant's ripple colour and label contrast.
+  prominent: 'contained',
   contained: 'contained',
   outline: 'outlined',
   text: 'text',
@@ -57,6 +62,31 @@ const sizeMetrics: Record<
 };
 
 /**
+ * The one geometry `prominent` has, from the Revamp UI sheet
+ * (node 1367:48486): 48 tall, `Scale/250` on all four sides, and a
+ * `Sans/H6/Medium` label.
+ *
+ * It is a fourth size in everything but name, and deliberately not one:
+ * `size` is a ladder a caller walks to fit a control into a row, and
+ * this button is the page's single call to action sitting on its own
+ * beside a heading. Exposing it as `size="xl"` would invite
+ * `appearance="text" size="xl"`, which the design does not draw and
+ * which would be a 48px box holding a bare 16px label.
+ *
+ * The 48 falls out rather than being set: 12 + 24 + 12 with the h6
+ * leading in the middle, which is the same arithmetic the other three
+ * sizes use.
+ */
+const PROMINENT = {
+  block: spacing.component.sm,
+  inline: spacing.component.sm,
+  icon: 20,
+  label: typography.headings.h6,
+} as const;
+
+const PROMINENT_HEIGHT_PX = PROMINENT.label.leading + PROMINENT.block * 2;
+
+/**
  * Padding for one size + appearance, in pixels.
  *
  * Two adjustments to the raw Figma numbers, both so the three
@@ -78,6 +108,13 @@ const sizeMetrics: Record<
 const TEXT_PADDING_INLINE_PX = spacing.component.xs;
 
 function paddingFor(size: ButtonSize, appearance: ButtonAppearance): CSSObject {
+  if (appearance === 'prominent') {
+    return {
+      paddingBlock: PROMINENT.block,
+      paddingInline: PROMINENT.inline,
+    };
+  }
+
   const { block, inline } = sizeMetrics[size];
   return {
     paddingBlock:
@@ -93,6 +130,22 @@ const iconSizeStyles: Record<ButtonSize, CSSObject> = {
   sm: { width: 16, height: 16 },
 };
 
+/**
+ * Type and box for one appearance + size. `prominent` answers from its
+ * own constants and the other three from the `size` ladder, which is the
+ * whole of what "`size` is ignored when prominent" means in practice.
+ */
+function metricsFor(size: ButtonSize, appearance: ButtonAppearance) {
+  const prominent = appearance === 'prominent';
+  return {
+    minHeight: prominent ? PROMINENT_HEIGHT_PX : sizeMetrics[size].height,
+    label: prominent ? PROMINENT.label : LABEL_TYPE,
+    icon: prominent
+      ? { width: PROMINENT.icon, height: PROMINENT.icon }
+      : iconSizeStyles[size],
+  };
+}
+
 interface StyledButtonProps {
   neofloVariant: ButtonVariant;
   neofloAppearance: ButtonAppearance;
@@ -104,41 +157,62 @@ const StyledButton = styled(MuiButton, {
     prop !== 'neofloVariant' &&
     prop !== 'neofloAppearance' &&
     prop !== 'neofloSize',
-})<StyledButtonProps>(({ theme, neofloVariant, neofloAppearance, neofloSize }) => ({
-  // 4px (`Scale/100`). The 11 August update took both action controls
-  // off the stadium radius this shipped with, matching the move Chip
-  // already made (DESIGNER_QUESTIONS.md #19); this tightens it one more
-  // rung. `IconButton`, `ToggleButton` and `Chip` still sit at 8px, so a
-  // square icon button beside a button no longer matches — see #57.
-  borderRadius: radius.xs,
-  fontFamily: fontFamilies.product.sans,
-  fontSize: LABEL_TYPE.size,
-  fontWeight: fontWeights.medium,
-  lineHeight: `${LABEL_TYPE.leading}px`,
-  letterSpacing: `${LABEL_TYPE.letterSpacing}em`,
-  textTransform: 'none',
-  boxShadow: 'none',
-  gap: spacing.component.xs,
-  '&:hover': { boxShadow: 'none' },
-  '& .MuiButton-startIcon, & .MuiButton-endIcon': {
-    margin: 0,
-  },
-  '& .MuiButton-startIcon > *, & .MuiButton-endIcon > *': {
-    ...iconSizeStyles[neofloSize],
-  },
-  minHeight: sizeMetrics[neofloSize].height,
-  ...paddingFor(neofloSize, neofloAppearance),
-  ...appearanceStyles(theme, neofloVariant, neofloAppearance, 'button'),
-}));
+})<StyledButtonProps>(({
+  theme,
+  neofloVariant,
+  neofloAppearance,
+  neofloSize,
+}) => {
+  const { minHeight, label, icon } = metricsFor(neofloSize, neofloAppearance);
+
+  return {
+    // 4px (`Scale/100`). The 11 August update took both action controls
+    // off the stadium radius this shipped with, matching the move Chip
+    // already made (DESIGNER_QUESTIONS.md #19); this tightens it one more
+    // rung. `IconButton`, `ToggleButton` and `Chip` still sit at 8px, so a
+    // square icon button beside a button no longer matches — see #57.
+    // `prominent` is drawn on the same 4px, so nothing branches here.
+    borderRadius: radius.xs,
+    fontFamily: fontFamilies.product.sans,
+    fontSize: label.size,
+    fontWeight: fontWeights.medium,
+    lineHeight: `${label.leading}px`,
+    letterSpacing: `${label.letterSpacing}em`,
+    textTransform: 'none',
+    boxShadow: 'none',
+    gap: spacing.component.xs,
+    '&:hover': { boxShadow: 'none' },
+    '& .MuiButton-startIcon, & .MuiButton-endIcon': {
+      margin: 0,
+    },
+    '& .MuiButton-startIcon > *, & .MuiButton-endIcon > *': { ...icon },
+    minHeight,
+    ...paddingFor(neofloSize, neofloAppearance),
+    ...(neofloAppearance === 'prominent'
+      ? prominentStyles(theme, neofloVariant)
+      : appearanceStyles(theme, neofloVariant, neofloAppearance, 'button')),
+  };
+});
 
 /**
  * Branded action button. Wraps MUI `Button` with the Neoflo API from
  * the Product Design System Figma (node 983:17180): five colour roles,
- * three emphasis levels, three sizes, full hover / pressed / focus /
+ * four emphasis levels, three sizes, full hover / pressed / focus /
  * disabled state styling in both colour schemes.
+ *
+ * `appearance="prominent"` is the page's single call to action — a
+ * gradient fill at heading size, 48px tall, drawn to sit beside a page
+ * title rather than in a row of controls. It is the one appearance with
+ * a fixed size, and `size` has no effect on it. Use at most one per
+ * screen; a page with two of these has neither.
  *
  * @example Primary call to action
  * <Button variant="primary">Submit</Button>
+ *
+ * @example The action a page exists for
+ * <Button appearance="prominent" startIcon={<UploadSimpleIcon />}>
+ *   Add Invoice
+ * </Button>
  *
  * @example Low-emphasis destructive action
  * <Button variant="error" appearance="text">Delete account</Button>

@@ -15,14 +15,14 @@ export const data: ComponentExamplesData = {
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3215-52225&m=dev',
   tagline:
-    'A table of records: a 32px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.',
+    'A table of records: a 40px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.',
   props: [
     {
       name: 'size',
       type: "'sm' | 'md' | 'lg'",
       default: "'md'",
       description:
-        'Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 32 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes.',
+        'Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 40 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes.',
     },
     {
       name: 'stickyHeader',
@@ -142,16 +142,16 @@ export const data: ComponentExamplesData = {
     {
       title: 'Two lines in one row, and a leading glyph',
       description:
-        'The richest cells are still cells. `secondary` puts a muted line under the first with no gap between them, and `icon` holds a node 8px clear of the text — a glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.',
+        'The richest cells are still cells. `secondary` puts a muted 11/13 line 2px under the first, and `icon` holds a 14px node clear of the text. Given both, four things change at once: the glyph tops out rather than centring, drops 2px onto the first line’s cap height, takes 8px of gap rather than 6, and goes one rung quieter. A glyph beside one line is part of that line; beside two it is a marker on a block.',
       code: [
         '<TableRow>',
-        '  <TableCell icon={<UploadSimpleIcon size={16} />} secondary="14 Feb 2026 · 21:38">',
+        '  <TableCell icon={<UploadSimpleIcon size={14} />} secondary="14 Feb 2026 · 21:38">',
         '    #1008',
         '  </TableCell>',
         '  <TableCell icon={<Avatar size="sm">OP</Avatar>} secondary="administrator">',
         '    Kaustav',
         '  </TableCell>',
-        '  <TableCell icon={<PaperclipIcon size={16} />}>inv-so90-9333.pdf</TableCell>',
+        '  <TableCell icon={<PaperclipIcon size={14} />}>inv-so90-9333.pdf</TableCell>',
         '  <TableCell align="right" secondary="$ 14,509.32">',
         '    Total',
         '  </TableCell>',
@@ -161,7 +161,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Selectable rows',
       description:
-        'A checkbox column plus `selected` on the row. `padding="checkbox"` narrows the cell to the design’s 32px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.',
+        'A checkbox column plus `selected` on the row. `padding="checkbox"` narrows the cell to the design’s 48px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.',
       code: [
         'const [picked, setPicked] = React.useState<string[]>([]);',
         '',
@@ -203,6 +203,38 @@ export const data: ComponentExamplesData = {
         '    <TableCell>Withdrawn</TableCell>',
         '  </TableRow>',
         '</TableBody>',
+      ].join('\n'),
+    },
+    {
+      title: 'A column of money',
+      description:
+        'Amounts are content, not a prop — `tableAmountType` is the type to put on them. The mono face is what makes a column of figures line up on its decimal, and `tabular-nums` holds that even if the family is swapped. Set the symbol apart in the quiet ink so the eye lands on the figure rather than on a column of repeated symbols.',
+      code: [
+        "import { tableAmountType } from '@neofloai/atoms';",
+        '',
+        '<TableCell align="right">',
+        "  <Box component=\"span\" sx={{ color: 'text.secondary', mr: 0.25 }}>",
+        '    $',
+        '  </Box>',
+        '  <Box component="span" sx={tableAmountType}>',
+        '    12,780.50',
+        '  </Box>',
+        '</TableCell>',
+      ].join('\n'),
+    },
+    {
+      title: 'A column of actions',
+      description:
+        'Nothing in the table knows about this — a cell holds a `Button` the way it holds text. `size="sm"` is the 32px control the design puts in a 56px row, and the low-emphasis appearance is what keeps a column of them from reading as louder than the data beside it. Pin it with `stickyHeader` and a `position: sticky` cell if the table scrolls sideways.',
+      code: [
+        '<TableCell align="right">',
+        '  <Button size="sm" appearance="outline" variant="primary">',
+        '    Review',
+        '  </Button>',
+        '  <IconButton size="sm" appearance="text" aria-label="Open in a new tab">',
+        '    <ArrowSquareOutIcon />',
+        '  </IconButton>',
+        '</TableCell>',
       ].join('\n'),
     },
     {

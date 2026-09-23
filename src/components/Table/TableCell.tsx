@@ -4,17 +4,24 @@ import * as React from 'react';
 import { TableCell as MuiTableCell } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { border, surface, text } from '@/src/tokens';
+import { text } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
 import {
   TABLE_BORDER_WIDTH_PX,
   TABLE_CELL_GAP_PX,
   TABLE_CELL_PADDING_INLINE_PX,
+  TABLE_CELL_SECONDARY_GAP_PX,
   TABLE_CHECKBOX_CELL_WIDTH_PX,
   TABLE_EDGE_INSET_PX,
-  tableCaptionType,
+  TABLE_CELL_GAP_TWO_LINE_PX,
+  TABLE_CELL_ICON_OFFSET_PX,
   tableCellType,
+  tableIconInk,
+  tableHeaderFill,
+  tableHeaderType,
+  tableRule,
+  tableSecondaryType,
 } from './tableTokens';
 import { useTableContext } from './TableContext';
 
@@ -23,11 +30,11 @@ import type { TableCellProps } from './Table.types';
 
 interface CellStyleProps {
   neofloRegion: 'head' | 'body';
-  neofloSticky: boolean;
 }
 
 /**
- * The row's 16px inset, spent on the two cells that touch the edge.
+ * The row's 8px inset, spent on the two cells that touch the edge, on
+ * top of the 16 every cell already carries.
  *
  * `:first-child` rather than `:first-of-type`, so that a row-header
  * `<th>` followed by `<td>`s insets once rather than twice.
@@ -42,17 +49,16 @@ function edgeInsetStyles(inset: boolean): CSSObject {
 }
 
 const CellRoot = styled(MuiTableCell, {
-  shouldForwardProp: (prop) =>
-    prop !== 'neofloRegion' && prop !== 'neofloSticky',
-})<CellStyleProps>(({ theme, neofloRegion, neofloSticky, padding, align }) => {
+  shouldForwardProp: (prop) => prop !== 'neofloRegion',
+})<CellStyleProps>(({ theme, neofloRegion, padding, align }) => {
   const head = neofloRegion === 'head';
   const bare = padding === 'none';
 
   return {
-    ...(head ? tableCaptionType : tableCellType),
+    ...(head ? tableHeaderType : tableCellType),
     ...paired(theme, {
       color: head ? text.default.b3 : text.default.b1,
-      borderBottomColor: border.layers.card1,
+      borderBottomColor: tableRule,
     }),
     borderBottomStyle: 'solid',
     borderBottomWidth: TABLE_BORDER_WIDTH_PX,
@@ -77,7 +83,7 @@ const CellRoot = styled(MuiTableCell, {
     ...edgeInsetStyles(!bare),
 
     // A selection column is as narrow as its control, with the cell's own
-    // 8 either side and nothing else. The control's padding goes, which is
+    // padding either side and nothing else. The control's padding goes, which is
     // the same move MUI makes for its dense tables: it is a touch target
     // on a form, and here it is 9px of dead space in a 32px column.
     //
@@ -94,9 +100,11 @@ const CellRoot = styled(MuiTableCell, {
     // `align="right"` reach `TableSortLabel` through `flex-direction`.
     ...(align === 'center' && { justifyContent: 'center' }),
 
-    ...(head &&
-      neofloSticky &&
-      paired(theme, { backgroundColor: surface.layers.card1 })),
+    // The header strip's fill, whether or not it is pinned. It has to be
+    // opaque while it is — rows would otherwise scroll through it — and
+    // the design now gives it a fill regardless, so `stickyHeader` no
+    // longer changes how the strip looks, only where it sits.
+    ...(head && paired(theme, { backgroundColor: tableHeaderFill })),
   };
 });
 
@@ -108,35 +116,71 @@ const CellRoot = styled(MuiTableCell, {
  * and picked up here — so a right-aligned column reads inward from its
  * own edge with the glyph on the outside.
  */
-const CellLayout = styled('span')({
+const CellLayout = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'neofloTwoLine',
+})<{ neofloTwoLine: boolean }>(({ neofloTwoLine }) => ({
   display: 'flex',
   flexDirection: 'inherit',
   justifyContent: 'inherit',
-  alignItems: 'center',
-  gap: TABLE_CELL_GAP_PX,
+  // A glyph beside one line centres against it, because there the line
+  // box and the text are the same thing. Beside two lines it aligns to
+  // the top and is nudged down onto the first line's cap height —
+  // centred against a 35px block it floats between the two and reads as
+  // belonging to neither.
+  alignItems: neofloTwoLine ? 'flex-start' : 'center',
+  gap: neofloTwoLine ? TABLE_CELL_GAP_TWO_LINE_PX : TABLE_CELL_GAP_PX,
   minWidth: 0,
-});
+}));
 
-/** Holds its size against a long label in the next column. */
-const LeadingSlot = styled('span')({
+/**
+ * Holds its size against a long label in the next column, and carries the
+ * glyph's ink.
+ *
+ * The ink is one rung quieter beside two lines than beside one — a glyph
+ * next to a single line is part of that line, and a glyph next to a block
+ * is a marker on it. It reaches only what uses `currentColor`, so a glyph
+ * follows it and an `Avatar` in the same slot keeps its own colours.
+ *
+ * `data-neoflo-table-icon` is how a disabled row greys it. Without that
+ * the glyph would hold `b2`/`b3` while the text around it went to the
+ * disabled ink — and `b2` is *darker* than that ink, so a greyed row
+ * would come out with its glyph the loudest thing in it. Exactly the
+ * problem the second line already has.
+ */
+const LeadingSlot = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'neofloTwoLine',
+})<{ neofloTwoLine: boolean }>(({ theme, neofloTwoLine }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   flexShrink: 0,
-});
+  // The 2 that lands a top-aligned glyph on the first line's cap
+  // height rather than on its line box.
+  marginBlockStart: neofloTwoLine ? TABLE_CELL_ICON_OFFSET_PX : 0,
+  ...paired(theme, {
+    color: neofloTwoLine ? tableIconInk.twoLine : tableIconInk.oneLine,
+  }),
+}));
 
 const TextColumn = styled('span')({
   display: 'flex',
   flexDirection: 'column',
+  gap: TABLE_CELL_SECONDARY_GAP_PX,
   minWidth: 0,
 });
 
 /**
- * The muted second line — 12/16 in `text/default/b3`, hard against the
- * line above it.
+ * The muted second line — 12/16 in `text/default/b3`, `Scale/100` under
+ * the line above it.
  *
- * No gap between the two: Figma's group is 36 tall for a 20px line and a
- * 16px one (`1 line=false` cells, 3206:122293 and 3206:122290), and the
- * two leadings already hold them apart.
+ * The gap is `TextColumn`'s and is new; the two lines used to sit on
+ * their leadings alone, from a 36px group holding a 20px line and a
+ * 16px one (`1 line=false` cells, 3206:122293 and 3206:122290). The
+ * Revamp UI row draws the 4 explicitly and the pair comes to 40, which
+ * still centres in a 48px row.
+ *
+ * The size does not follow it. That sheet sets the second line at 11/14
+ * on a `text/default/caption` the library has no rung for, so the line
+ * stays at `Sans/B2` — see DESIGNER_QUESTIONS.md #62.
  *
  * It carries `data-neoflo-table-secondary` so a disabled row can grey it
  * with the rest of its ink. Without that the line keeps its own colour —
@@ -144,7 +188,7 @@ const TextColumn = styled('span')({
  * with its quieter line louder than its title.
  */
 const SecondaryLine = styled('span')(({ theme }) => ({
-  ...tableCaptionType,
+  ...tableSecondaryType,
   ...paired(theme, { color: text.default.b3 }),
 }));
 
@@ -159,20 +203,24 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  * like a MUI table:
  *
  *   - **the padding.** MUI pads a cell 16 on all four sides (6 and 16 at
- *     `size="small"`). The design pads 8 either side and nothing top or
- *     bottom, and leaves the height to the row.
+ *     `size="small"`). The design pads 16 either side and nothing top
+ *     or bottom, and leaves the height to the row — the two agree on
+ *     the inline number and on nothing else.
  *   - **the hairline.** MUI derives it by lightening `palette.divider`
  *     88% — a computed grey. The design names one:
- *     `border.layers.card1`.
+ *     `border.layers.card3`, under the header and between the rows
+ *     alike, and none under the last row.
  *   - **the type.** `theme.typography.body2` for a data cell, and for a
  *     header cell a 24px leading at medium weight. The design uses
- *     `Sans/B1/Regular` and `Sans/B2/Regular`, and tells a header from
- *     its data by colour rather than weight.
- *   - **the pinned fill.** A sticky header cell needs to be opaque or
- *     the rows scroll through it, and MUI reaches for
- *     `background.default` — the page. A table normally sits on a card,
- *     so this uses `surface.layers.card1`; a table on some other
- *     surface should say so with `sx`.
+ *     `Sans/B1` at Medium for data and DM Mono Medium 12/16 for a
+ *     header, so a header is told from its data by face and colour
+ *     rather than by weight — both are Medium.
+ *   - **the header's fill.** MUI gives the strip none, and reaches for
+ *     `background.default` — the page — only once it is pinned. The
+ *     design fills it either way, with `surface.layers.card2`, so a
+ *     pinned header is opaque because every header is. Body rows carry
+ *     `surface.layers.page` for the same reason: the table paints its
+ *     own bands rather than showing what is behind them.
  *
  * ## The two props
  *
@@ -182,16 +230,33 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  * putting a component in a cell.
  *
  * The other two are geometry, and geometry is what drifts when every
- * call site rebuilds it: a leading node 8px clear of the text, centred
- * against the row rather than the first line (`icon`), and a muted 12/16
- * second line hard under the first (`secondary`). `NavbarTitle` exists
- * for the same reason.
+ * call site rebuilds it: a leading node 6px clear of the text and
+ * centred against the row (`icon`), and a muted 11/13 second line 2px
+ * under the first (`secondary`). `NavbarTitle` exists for the same
+ * reason.
+ *
+ * The two interact, and four things change at once. Given both, the
+ * glyph tops out rather than centring, drops 2px onto the first line's
+ * cap height, takes 8px of gap rather than 6, and goes one rung quieter
+ * (`icon/default/b3` against `b2`). A glyph beside one line is part of
+ * that line and reads with it; beside two it is a marker on a block and
+ * should not compete with the line it is aligned to. Only the 14px size
+ * is the same in both.
+ *
+ * `tableAmountType` is the third piece of geometry and is not a prop,
+ * because a money column is content: put it on the cell's contents with
+ * `sx` and pair it with `align="right"`.
  *
  * @example An attachment
- * <TableCell icon={<PaperclipIcon size={16} />}>invoice-attachment</TableCell>
+ * <TableCell icon={<PaperclipIcon size={TABLE_CELL_ICON_PX} />}>
+ *   invoice-attachment
+ * </TableCell>
  *
  * @example A record with its timestamp under it
  * <TableCell secondary="14 Feb 2026 · 21:38">#1008</TableCell>
+ *
+ * @example An amount
+ * <TableCell align="right" sx={tableAmountType}>12,780.50</TableCell>
  *
  * @example A person
  * <TableCell icon={<Avatar size="sm">OP</Avatar>} secondary="administrator">
@@ -207,10 +272,12 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  */
 export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
   function TableCell({ icon, secondary, children, ...rest }, ref) {
-    const { region, stickyHeader } = useTableContext();
+    const { region } = useTableContext();
+
+    const twoLine = secondary != null;
 
     const textBlock =
-      secondary != null ? (
+      twoLine ? (
         <TextColumn>
           {children}
           <SecondaryLine data-neoflo-table-secondary>{secondary}</SecondaryLine>
@@ -220,15 +287,12 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
       );
 
     return (
-      <CellRoot
-        ref={ref}
-        neofloRegion={region}
-        neofloSticky={stickyHeader}
-        {...rest}
-      >
+      <CellRoot ref={ref} neofloRegion={region} {...rest}>
         {icon != null ? (
-          <CellLayout>
-            <LeadingSlot>{icon}</LeadingSlot>
+          <CellLayout neofloTwoLine={twoLine}>
+            <LeadingSlot neofloTwoLine={twoLine} data-neoflo-table-icon>
+              {icon}
+            </LeadingSlot>
             {textBlock}
           </CellLayout>
         ) : (

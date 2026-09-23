@@ -203,11 +203,11 @@ interface DataGridComponent {
  *
  *   - **the frame.** MUI draws a 1px border with a radius around the
  *     whole grid and fills it with `background.paper`. The design draws a
- *     stack of bands: no border, no radius, no fill, a hairline under
- *     every row including the last, and a 32px label strip on top. An
- *     edge around it is a `Card`'s to draw.
+ *     stack of bands: no border and no radius, a hairline between rows
+ *     and none under the last, and a 40px label strip on top. An edge
+ *     around it is a `Card`'s to draw.
  *   - **the density.** `size` sets the row height and the header height
- *     together — 48 / 56 / 64 over a flat 32 — where MUI has a 52px row
+ *     together — 48 / 56 / 64 over a flat 40 — where MUI has a 52px row
  *     under a 56px header and a separate `density` multiplier on top.
  *   - **the footer.** MUI's is `TablePagination`: a rows-per-page
  *     `Select`, a count, two bare arrows. The design's is a count and

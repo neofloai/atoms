@@ -25,6 +25,8 @@ import type { CSSObject, Theme } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
 import type {
   ChipAppearance,
+  ChipColorValue,
+  ChipColors,
   ChipProps,
   ChipSize,
   ChipVariant,
@@ -84,21 +86,49 @@ function pillSizeStyles(dense: boolean): CSSObject {
 }
 
 /**
- * 20px flat tag geometry (node 3156:83830). A separate component set
- * from the pill: its own type ramp, radius, and colour roles, and no
- * border in any swatch.
+ * Width of the tag's optional outline.
+ *
+ * The status sheet (node 1308:88266) draws it at 0.5. It ships at 1: a
+ * half-pixel border is a physical pixel on a 2x screen and either a full
+ * one or nothing on a 1x screen, depending on how the browser rounds, so
+ * the drawn value is the one thing here that cannot be relied on to
+ * render. See DESIGNER_QUESTIONS.md #61.
  */
-const tagSizeStyles: CSSObject = {
-  height: 20,
-  padding: `${spacing.component.xxs}px ${spacing.component.xs}px`,
-  gap: spacing.component.xxs,
-  borderRadius: radius.xs,
-  border: 'none',
-  fontSize: smallLabelType.size,
-  fontWeight: fontWeights.regular,
-  lineHeight: `${smallLabelType.leading}px`,
-  letterSpacing: `${smallLabelType.letterSpacing}em`,
-};
+const TAG_BORDER_WIDTH_PX = 1;
+
+/**
+ * 20px flat tag geometry (node 3156:83830), with or without the outline
+ * `bordered` adds. A separate component set from the pill: its own type
+ * ramp, radius, and colour roles.
+ *
+ * The original set drew no border on any swatch, which is why this was a
+ * flat `border: none` until the status sheet turned up wanting one.
+ *
+ * A bordered tag gives its two border widths back out of the inline
+ * padding, the same trade `Button`'s `outline` makes: a CSS border sits
+ * outside the content box, so without this a bordered tag would be 2px
+ * wider than a plain one and a column of mixed statuses would not line
+ * up. The height is pinned at 20 either way, so only the inline axis
+ * needs the adjustment.
+ */
+function tagSizeStyles(bordered: boolean): CSSObject {
+  return {
+    height: 20,
+    paddingBlock: spacing.component.xxs,
+    paddingInline: bordered
+      ? spacing.component.xs - TAG_BORDER_WIDTH_PX
+      : spacing.component.xs,
+    gap: spacing.component.xxs,
+    borderRadius: radius.xs,
+    ...(bordered
+      ? { borderWidth: TAG_BORDER_WIDTH_PX, borderStyle: 'solid' }
+      : { border: 'none' }),
+    fontSize: smallLabelType.size,
+    fontWeight: fontWeights.regular,
+    lineHeight: `${smallLabelType.leading}px`,
+    letterSpacing: `${smallLabelType.letterSpacing}em`,
+  };
+}
 
 /** Icon glyph size per chip size, from the two Figma component sets. */
 const iconSizeStyles: Record<ChipSize, CSSObject> = {
@@ -216,6 +246,14 @@ const bigRoleTokens: Record<
 interface SmallRoleTokens {
   bg: ModeToken;
   text: ModeToken;
+  /**
+   * Drawn only when `bordered` is set. `border/<role>/default` wherever
+   * the collection has one; `orange` and `purple` have no border ramp at
+   * all, so they take the darkest rung of their own `default` surface
+   * ladder, which is the nearest thing to the separation the named
+   * border tokens give the other six. See DESIGNER_QUESTIONS.md #61.
+   */
+  border: ModeToken;
 }
 
 /**
@@ -233,16 +271,45 @@ interface SmallRoleTokens {
  * `/4` (blue/400).
  */
 const smallRoleTokens: Record<ChipVariant, SmallRoleTokens> = {
-  secondary: { bg: surface.layers.card3, text: text.default.b2 },
-  primary: { bg: surface.primary.subtle, text: text.primary[3] },
-  warning: { bg: surface.warning.subtleHover, text: text.warning[2] },
-  purple: { bg: surface.purple.default, text: text.purple[4] },
-  success: { bg: surface.success.subtleHover, text: text.success[4] },
-  orange: { bg: surface.orange.default, text: text.orange[3] },
-  error: { bg: surface.error.subtlePressed, text: text.error[4] },
+  secondary: {
+    bg: surface.layers.card3,
+    text: text.default.b2,
+    border: border.default.default,
+  },
+  primary: {
+    bg: surface.primary.subtle,
+    text: text.primary[3],
+    border: border.primary.default,
+  },
+  warning: {
+    bg: surface.warning.subtleHover,
+    text: text.warning[2],
+    border: border.warning.default,
+  },
+  purple: {
+    bg: surface.purple.default,
+    text: text.purple[4],
+    border: surface.purple.defaultPressed,
+  },
+  success: {
+    bg: surface.success.subtleHover,
+    text: text.success[4],
+    border: border.success.default,
+  },
+  orange: {
+    bg: surface.orange.default,
+    text: text.orange[3],
+    border: surface.orange.defaultPressed,
+  },
+  error: {
+    bg: surface.error.subtlePressed,
+    text: text.error[4],
+    border: border.error.default,
+  },
   information: {
     bg: surface.information.default,
     text: text.information[3],
+    border: border.information.default,
   },
 };
 
@@ -343,14 +410,48 @@ function bigChipStyles(
   };
 }
 
+/**
+ * Lifts a `colors` value to the `{ light, dark }` shape `paired` wants.
+ *
+ * A token arrives as that shape already. A plain CSS colour is widened
+ * to both schemes, which is the honest reading of what a caller passing
+ * one bare string has said — and the reason the prop's doc asks for a
+ * token instead.
+ */
+function asModeToken(value: ChipColorValue): ModeToken {
+  return typeof value === 'string' ? { light: value, dark: value } : value;
+}
+
 /** Flat styling for the 20px tag — no interaction states in Figma. */
-function smallChipStyles(theme: Theme, variant: ChipVariant): CSSObject {
+function smallChipStyles(
+  theme: Theme,
+  variant: ChipVariant,
+  bordered: boolean,
+  colors: ChipColors | undefined
+): CSSObject {
   const role = smallRoleTokens[variant];
+
+  // `colors` overrides per key rather than wholesale, so a caller can
+  // recolour the fill and leave the label on its role.
+  const fill = colors?.bg ? asModeToken(colors.bg) : role.bg;
+  const ink = colors?.text ? asModeToken(colors.text) : role.text;
+  const line = colors?.border ? asModeToken(colors.border) : role.border;
+
+  // One `paired` call per selector: two of them spread into the same
+  // rule would drop the first one's dark block. See `pairedFocusRing`.
   return {
-    ...paired(theme, { backgroundColor: role.bg, color: role.text }),
+    ...paired(theme, {
+      backgroundColor: fill,
+      color: ink,
+      ...(bordered ? { borderColor: line } : {}),
+    }),
     '&.Mui-disabled': paired(theme, {
       backgroundColor: surface.disabled.default,
       color: text.disabled.default,
+      // The outline greys with the rest of it. Left on the role's colour
+      // it would be the loudest thing on a chip that is meant to read as
+      // switched off.
+      ...(bordered ? { borderColor: border.disabled.default } : {}),
     }),
   };
 }
@@ -367,10 +468,12 @@ function chipStateStyles(
   size: ChipSize,
   variant: ChipVariant,
   appearance: ChipAppearance,
-  selected: boolean
+  selected: boolean,
+  bordered: boolean,
+  colors: ChipColors | undefined
 ): CSSObject {
   if (size === 'sm') {
-    return smallChipStyles(theme, variant);
+    return smallChipStyles(theme, variant, bordered, colors);
   }
 
   const {
@@ -392,6 +495,8 @@ interface StyledChipProps {
   neofloSize: ChipSize;
   neofloDense: boolean;
   neofloSelected: boolean;
+  neofloBordered: boolean;
+  neofloColors: ChipColors | undefined;
 }
 
 const StyledChip = styled(MuiChip, {
@@ -400,7 +505,9 @@ const StyledChip = styled(MuiChip, {
     prop !== 'neofloAppearance' &&
     prop !== 'neofloSize' &&
     prop !== 'neofloDense' &&
-    prop !== 'neofloSelected',
+    prop !== 'neofloSelected' &&
+    prop !== 'neofloBordered' &&
+    prop !== 'neofloColors',
 })<StyledChipProps>(
   ({
     theme,
@@ -409,9 +516,13 @@ const StyledChip = styled(MuiChip, {
     neofloSize,
     neofloDense,
     neofloSelected,
+    neofloBordered,
+    neofloColors,
   }) => ({
     fontFamily: fontFamilies.product.sans,
-    ...(neofloSize === 'sm' ? tagSizeStyles : pillSizeStyles(neofloDense)),
+    ...(neofloSize === 'sm'
+      ? tagSizeStyles(neofloBordered)
+      : pillSizeStyles(neofloDense)),
     '& .MuiChip-label': {
       padding: 0,
     },
@@ -430,7 +541,9 @@ const StyledChip = styled(MuiChip, {
       neofloSize,
       neofloVariant,
       neofloAppearance,
-      neofloSelected
+      neofloSelected,
+      neofloBordered,
+      neofloColors
     ),
   })
 );
@@ -449,10 +562,25 @@ const StyledChip = styled(MuiChip, {
  *   not a saturated fill with a white label like Button's `contained`.
  * - `size="sm"` — the 20px flat tag (node 3156:83830): adds
  *   `information` / `orange` / `purple`, no emphasis axis, no
- *   interaction states (every swatch is a single flat colour). `dense`
- *   and `selected` do not apply.
+ *   interaction states (every swatch is a single flat colour), and a
+ *   `bordered` flag that outlines the fill in the role's own border
+ *   token — the Status column treatment. `dense` and `selected` do not
+ *   apply.
  *
  * Supports MUI's `avatar`, `icon`, and `onDelete` slots unchanged.
+ *
+ * ## Colouring a status the roles have no colour for
+ *
+ * Reach for a role first. A status column is read by meaning, and the
+ * roles are the vocabulary for it — `information` for in flight,
+ * `success` for done, `error` for stuck. A reader cannot tell from a
+ * decorative hue which of two statuses is the bad one.
+ *
+ * When the design genuinely has a colour the roles do not carry,
+ * `colors` takes the three it paints, per key, at `size="sm"`. Pass
+ * design tokens rather than hexes: a token is a `{ light, dark }` pair
+ * and resolves per scheme, where a bare hex is light-mode only by
+ * definition and paints the same colour on a near-black page.
  *
  * @example Status tag
  * <Chip variant="success" label="Active" />
@@ -466,6 +594,21 @@ const StyledChip = styled(MuiChip, {
  * @example Flat tag
  * <Chip size="sm" variant="purple" label="Design" />
  *
+ * @example A status in a table cell
+ * <Chip size="sm" variant="information" bordered label="Extraction" />
+ *
+ * @example A status the roles have no colour for
+ * <Chip
+ *   size="sm"
+ *   bordered
+ *   label="Extraction"
+ *   colors={{
+ *     bg: surface.information.subtle,
+ *     border: border.information.default,
+ *     text: text.information[3],
+ *   }}
+ * />
+ *
  * @see Related: Button, IconButton
  */
 export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
@@ -475,6 +618,8 @@ export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
       appearance = 'contained',
       size = 'md',
       dense = false,
+      bordered = false,
+      colors,
       selected,
       ...rest
     },
@@ -498,6 +643,8 @@ export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
         neofloSize={size}
         neofloDense={dense}
         neofloSelected={selected ?? false}
+        neofloBordered={bordered}
+        neofloColors={colors}
         {...rest}
       />
     );

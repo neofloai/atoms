@@ -9,13 +9,15 @@ import type { TableContextValue } from './TableContext';
 import type { TableHeadProps } from './Table.types';
 
 /**
- * The `<thead>` — the design's 32px strip of column labels.
+ * The `<thead>` — the design's 40px strip of column labels.
  *
- * Carries no styling of its own. It exists because the two things that
- * make a header row look like one belong to the row and the cell, and
- * neither can tell which group it is in: the flat 32px height regardless
- * of the table's size, and the muted 12/16 `text/default/b3` label. This
- * component is what tells them.
+ * Carries no styling of its own. It exists because the three things
+ * that make a header row look like one belong to the row and the cell,
+ * and neither can tell which group it is in: the flat 40px height
+ * regardless of the table's size, the `surface/layers/card 2` fill
+ * over a `border/layers/card 3` hairline,
+ * and the muted DM Mono 12/16 `text/default/b3` label. This component
+ * is what tells them.
  *
  * MUI's `TableHead` is left to do its own job underneath, which is real:
  * it is what makes each cell render `<th scope="col">` instead of

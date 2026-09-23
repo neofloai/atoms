@@ -39,10 +39,11 @@ export function DataGridNotes() {
         <Typography variant="body2" color="text.secondary">
           MUI draws a 1px border with a radius around the whole grid and fills
           it with <code>background.paper</code>. This one draws what the table
-          draws: no border, no radius, no fill of its own, a hairline under
-          every row including the last, and a 32px strip of labels on top. So a
-          grid takes the colour of whatever it is dropped onto, and the edge
-          around it is a <code>Card</code>&apos;s to draw.
+          draws: no border and no radius, a hairline between rows and none
+          under the last, and a 40px strip of labels on top. It paints its own
+          bands — <code>surface.layers.card2</code> on the strip,{' '}
+          <code>surface.layers.page</code> on the rows — and the edge around it
+          is a <code>Card</code>&apos;s to draw.
         </Typography>
         <Typography variant="body2" color="text.secondary">
           One difference is worth knowing because it is where every first grid
@@ -74,7 +75,7 @@ export function DataGridNotes() {
           One <code>size</code> — <code>sm</code> 48, <code>md</code> 56,{' '}
           <code>lg</code> 64 — the same three values <code>Table</code> takes,
           so a screen can move from one to the other without changing how dense
-          it looks. The header stays 32 in all three: it is a label strip rather
+          it looks. The header stays 40 in all three: it is a label strip rather
           than a row of data.
         </Typography>
         <Typography variant="body2" color="text.secondary">

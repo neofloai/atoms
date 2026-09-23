@@ -1,132 +1,209 @@
-import { border, spacing, text, typography } from '@/src/tokens';
+import { border, spacing, surface, text, typography } from '@/src/tokens';
 
 import type { ModeToken } from '@/src/tokens';
 
 /**
- * Geometry and colour read off the Product Design System Figma
- * (node 3463:12374 — `tab-items` 3463:12373 and the bar 3463:12630).
+ * Geometry and colour for the tab bar.
  *
- * Every hex in that node resolves to a token this repo already had, so
- * nothing here is a new value:
+ * Three sources have described this component, and this file follows
+ * the third:
  *
- *   Figma variable            hex        token
- *   ------------------------  ---------  ----------------------------
- *   text/default/b1           #31302e    text.default.b1
- *   text/default/b3           #848280    text.default.b3
- *   text.disabled.default     #aeaba4    text.disabled.default
- *   border/primary/3          #868fee    border.primary.focus
- *   border/disabled/default   #cccac6    border.disabled.default
- *   border.layers.card1      #eeeeec    border.layers.card1
- *   Scale/250                 12         spacing.component.sm
- *   Scale/25                  1          RULE_WIDTH_PX (below)
- *   Sans/B1/Regular           13/20      typography.body.b1
+ *   1. the Product Design System sheet (node 3463:12374), which built it
+ *   2. the Revamp UI sheet (node 1367:48487), which redrew it
+ *   3. **a correction from Neoflo Self-Serve** (`WorkAreaPage.tsx`,
+ *      21 September, against Atoms 2.0.0), which is what ships now
  *
- * The count chip's four values (`surface.primary.subtle`,
- * `text/primary/3`, `surface.layers.card3`, `text/default/b2`) are not
- * listed because nothing here reads them: that chip is an instance of
- * the `chip-small` component in Figma, and `Chip size="sm"` already
- * paints exactly those tokens for `variant="primary"` and
- * `variant="secondary"` respectively. See `Tab.tsx`.
+ * The third is a consuming app rather than a Figma file, and taking it
+ * means overruling (2) on four counts: the indicator's weight and
+ * colour, the label's leading, and whether selection moves the font
+ * weight. That was an explicit call and is recorded in
+ * DESIGNER_QUESTIONS.md #63 so a designer can settle it against the
+ * sheet rather than discovering it in a diff.
+ *
+ * ## What the correction changes, against the Revamp UI sheet
+ *
+ *   Property            sheet (1367:48487)      shipped
+ *   ------------------  ----------------------  ----------------------
+ *   tab padding         8 / 16                  12 / 16
+ *   label leading       24 (`Sans/H6`)          20
+ *   tab height          40                      44, and no floor
+ *   weight on select    Regular -> Medium       no move, colour only
+ *   selected ink        text/default/b1         text/default/heading
+ *   indicator           2px, text/default/b1    1px, border/layers/card 5
+ *   bar's own rule      always drawn            `divider` can drop it
+ *   hover               ink -> selected rung    a fill, ink unchanged
+ *
+ * The last two are the ones no sheet contradicts, because no sheet can
+ * answer them: Figma never draws the container a bar sits in, and it
+ * has never drawn a hovered tab at all (DESIGNER_QUESTIONS.md #59).
+ * They are additions rather than reversals.
+ *
+ * ## The one value with no rung behind it
+ *
+ * The label is 16/20. `Sans/H6` is 16/**24** and the type scale carries
+ * no 16/20 slot — `headings.h5` is 20/28 and `body.b1` is 13/20, so
+ * neither the size nor the leading can be borrowed from one rung. The
+ * size and tracking come from `h6`; the leading is a named literal
+ * below. See DESIGNER_QUESTIONS.md #63.
  */
 
 /**
- * Space between the label and the rule (`Scale/250`) — and, here, above
- * the label as well. See `BAR_HEIGHT_PX` for why it is mirrored.
+ * `Scale/250` — above and below the label, which with the 20px leading
+ * is what makes the tab 44.
+ *
+ * It was `Scale/200` under the Revamp UI sheet, for a 40px tab. The
+ * correction is the taller of the two despite describing itself as
+ * compact, because what it was measured against was MUI's untouched
+ * ~48px bar rather than this library's.
  */
-export const TAB_LABEL_GAP_PX = spacing.component.sm;
+export const TAB_PADDING_BLOCK_PX = spacing.component.sm;
 
 /**
- * Height of the bar, and of one tab: 12 + 20 + 12.
+ * `Scale/300` — either side of the label. The one number all three
+ * sources agree on.
  *
- * **This is the one place the implementation does not measure what Figma
- * measures**, and it is worth being clear about why.
+ * A named literal rather than a token, for the reason `Table`'s edge
+ * inset is one: the component spacing ladder runs 0, 4, 8, 12, 24, 48,
+ * 64, 96, so it skips 16 entirely. `radius.lg` is also 16, but
+ * borrowing a radius for a distance reads as a radius at the call site.
  *
- * Figma's tab item is 32px — a 20px label with the 12px gap below it and
- * nothing above (node 3463:12373 is `flex-col`, `gap-[Scale/250]`, no
- * padding). That puts the label flush with the top of the bar, which is
- * fine for a static frame and wrong for a control: everything that paints
- * on a tab paints on its whole box, so the hover surface, the ripple, and
- * the focus ring would all cover the label plus 12px of empty space under
- * it, reading as a highlight hanging below the text.
- *
- * Mirroring the gap to the top fixes that with no new value: the label
- * ends up centred in its tab, the interaction surface covers the tab the
- * way MUI's does, and the gap the design actually specifies — between the
- * label and the rule — is untouched. What changes is the bar's total
- * height, and that 32px was never a bound token: it is Figma's frame
- * hugging its contents, whereas the 12px is `Scale/250`. See
- * DESIGNER_QUESTIONS.md #40.
+ * This is also what sets the indicator's width, since MUI measures the
+ * indicator from the tab's box — see `Tabs.tsx`.
  */
-export const BAR_HEIGHT_PX = typography.body.b1.leading + TAB_LABEL_GAP_PX * 2;
+export const TAB_PADDING_INLINE_PX = 16;
 
 /**
- * Distance between two adjacent tab *labels*, from the bar's 24px gap.
- * Not the flex gap we set — see `Tabs.tsx`, which splits it between the
- * gap and each tab's own padding.
+ * `Scale/250` — between the label and its count pill.
+ *
+ * The frame lays each tab out as a 12px-gap flex row holding the label
+ * and a badge. It was 4 under the Product Design System sheet.
  */
-export const TAB_LABEL_SPACING_PX = spacing.component.md;
+export const TAB_COUNT_GAP_PX = spacing.component.sm;
 
 /**
- * Padding on the two faces of a tab that point along the bar — left and
- * right when the bar is horizontal, top and bottom when it is vertical.
- * Taken *out of* `TAB_LABEL_SPACING_PX` rather than added to it, so the
- * flex gap between two tabs is 24 - 8 - 8 and the labels still land 24px
- * apart.
+ * Label leading — 20, and the one measurement in this file that no
+ * token can supply.
  *
- * Figma draws a tab as bare text with nothing around it. That leaves the
- * focus ring nowhere to go — a ring on the label's own box crosses the
- * first and last glyph — and it leaves the hover surface no room either,
- * so it ends up the exact width of the text. 8px each side fixes both,
- * comes out of the gap rather than adding to the row, and every tab
- * including the first gets the same.
- *
- * It also widens the indicator by 16px, since MUI measures that from the
- * tab's box: the line runs end to end under the tab rather than stopping
- * at the text. That is how MUI draws it too.
+ * `labelType` below hands over the size (16) and the tracking; this is
+ * the third value, and it is a literal because the scale has no 16/20
+ * rung to name. Writing `typography.headings.h6.leading` would be 24
+ * and wrong; writing `typography.body.b1.leading` would be 20 and right
+ * by coincidence, off a 13px rung that has nothing to do with this
+ * label — a coincidence that breaks silently the day `b1` is retuned.
  */
-export const TAB_PADDING_PX = spacing.component.xs;
+export const TAB_LABEL_LEADING_PX = 20;
 
 /**
- * Thickness of both the bar's rule and the selected indicator
- * (`Scale/25` = 1). The component spacing ladder starts at 4, so this
- * stays a literal — the same reason `Chip` keeps its own
- * `DENSE_PADDING_Y_PX`.
+ * Label type — `Sans/H6` for its size and tracking only. The leading
+ * comes from `TAB_LABEL_LEADING_PX`, which this rung disagrees with.
+ */
+export const labelType = typography.headings.h6;
+
+/**
+ * The height a tab comes out at: 12 + 20 + 12.
+ *
+ * Computed rather than imposed, and nothing in the component sets it as
+ * a `min-height` — the correction asks for no floor at all, so the box
+ * is exactly its padding plus its content, and a bar whose labels are
+ * shorter is shorter.
+ *
+ * Which is why it ships: with no floor, this number exists only as the
+ * outcome of an arithmetic a caller would otherwise have to redo. The
+ * layout problem is the same one `NAVBAR_HEIGHT_PX` answers — a panel
+ * that has to reserve the strip's height before the strip has rendered,
+ * or a sibling that has to line up with it.
+ */
+export const TABS_HEIGHT_PX = TAB_LABEL_LEADING_PX + TAB_PADDING_BLOCK_PX * 2;
+
+/**
+ * Gap between adjacent tabs — none.
+ *
+ * All the air between two labels is the 16px each tab carries, which
+ * comes to 32 and is why none is needed on top.
+ *
+ * It matters more than it looks, because the indicator spans the whole
+ * tab. A flex gap would leave the rule stopping short of where the next
+ * tab begins, and the selected tab would read as narrower than it is.
+ */
+export const TAB_LIST_GAP_PX = 0;
+
+/**
+ * Thickness of the selected indicator — 1, square, flush to the bottom
+ * of the strip.
+ *
+ * Halved from the Revamp UI sheet's 2. At one pixel the indicator is
+ * the same weight as the rule it sits on, so selection reads as a
+ * *darkening* of the container's hairline under one tab rather than as
+ * a bar laid over it — which is the whole point of the correction, and
+ * why it also wanted the bar's own rule gone.
+ */
+export const INDICATOR_WIDTH_PX = 1;
+
+/**
+ * Thickness of the bar's own rule (`Scale/25` = 1) — drawn only while
+ * `Tabs divider` is set, which it is by default.
+ *
+ * A bar is often dropped into a container that already draws a bottom
+ * border, and two hairlines on the same edge read as one thick, slightly
+ * wrong line. That is exactly what Self-Serve hit and overrode. The rule
+ * stays on by default because a bar on a bare page needs it, and
+ * `divider={false}` hands the edge to the container.
  */
 export const RULE_WIDTH_PX = 1;
 
-/** Label type: `Sans/B1/Regular`, at `Regular` in every Figma cell. */
-export const labelType = typography.body.b1;
+/**
+ * Label weight — one value, for every state.
+ *
+ * The Revamp UI sheet moved the selected tab to Medium; the correction
+ * does not move it at all, and says so explicitly ("regular — same as
+ * selected, only color changes"). Keeping one weight is also what stops
+ * the row reflowing as selection moves, since a tab is as wide as its
+ * label and Medium is wider than Regular — the reflow DESIGNER_QUESTIONS
+ * .md #59 raised against the sheet.
+ */
+export const labelWeight = 'regular' as const;
 
 /**
- * Label ink. Selection moves the label two rungs up the neutral ladder
- * and is the *only* thing the label does — Figma gives the selected tab
- * no weight change, no fill, and no tint.
+ * Label ink. This is the whole of what selection changes.
  */
 export const ink = {
-  /** `text/default/b1` on the selected tab. */
-  selected: text.default.b1,
-  /** `text/default/b3` on the rest. */
+  /** `text/default/heading` — the darkest rung, on the selected tab. */
+  selected: text.default.heading,
+  /** `text/default/b3`, the correction's "caption / b3". */
   unselected: text.default.b3,
   /**
-   * Hover, on an unselected tab. Derived — the Figma set has no hovered
-   * cell — and it lands on the *selected* rung, so a hovered tab reads
-   * as "this is what you would be picking". The indicator stays the
-   * thing that says which tab you already have. See
-   * DESIGNER_QUESTIONS.md #40.
+   * Hover leaves the ink alone — "unchanged from unselected". The
+   * pointer is answered by a fill instead, which is new; see
+   * `hoverFill`.
    */
-  hover: text.default.b1,
+  hover: text.default.b3,
   disabled: text.disabled.default,
 } as const satisfies Record<string, ModeToken>;
 
-/** The hairline under the whole bar (`border.layers.card1`). */
-export const rule = border.layers.card1;
+/**
+ * The fill an unselected tab takes under the pointer —
+ * `surface/layers/card 2`.
+ *
+ * New, and derived from a consuming app rather than from a sheet: no
+ * Figma cell has ever drawn a hovered tab (DESIGNER_QUESTIONS.md #59),
+ * and this bar previously answered the pointer by moving the ink to the
+ * selected rung — which made a hovered tab look briefly selected. A
+ * fill says "you are over this" without borrowing the one signal that
+ * means "this is the one you are on".
+ */
+export const hoverFill = surface.layers.card2;
+
+/** The hairline under the whole bar (`border/layers/card 2`). */
+export const rule = border.layers.card2;
 
 /**
- * The selected tab's segment of that hairline. `border/primary/3` is the
- * house focus-ring rung of the primary scale; here it is the indicator,
- * which is the one place this design uses colour at all.
+ * The selected tab's segment of that rule —
+ * `border/layers/card 5 on-color`, a dark neutral.
+ *
+ * Named as a border rather than as ink, which is what it is: at 1px it
+ * is a rule, not an underline of the label.
  */
-export const indicator = border.primary.focus;
+export const indicator = border.layers.card5OnColor;
 
 /** The same indicator on a disabled bar (`border/disabled/default`). */
 export const indicatorDisabled = border.disabled.default;

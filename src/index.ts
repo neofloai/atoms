@@ -181,6 +181,8 @@ export type {
 export { Chip } from './components/Chip';
 export type {
   ChipAppearance,
+  ChipColorValue,
+  ChipColors,
   ChipProps,
   ChipSize,
   ChipVariant,
@@ -339,19 +341,23 @@ export type {
 } from './components/Accordion';
 
 /**
- * The tab family — MUI's `Tabs` and `Tab`, matching the two Figma
- * components (`tabs` 3463:12630 and `tab-items` 3463:12373). `Tabs` owns
- * the bar's rule, the 24px rhythm, and the indicator; `Tab` owns one
- * label and its optional count.
+ * The tab family — MUI's `Tabs` and `Tab`. `Tabs` owns the bar's rule
+ * and the indicator; `Tab` owns one label and its optional count.
  *
  * Two of MUI's props are dropped (`textColor`, `indicatorColor` — this
- * design has no colour axis) and two are added: `disabled` on the bar,
- * which is Figma's `enabled` axis, and `count` on a tab, which is its
- * `tag` axis. The panels are not part of it — MUI ships no `TabPanel`
- * and there is no Figma node for one. See
+ * design has no colour axis) and three are added: `disabled` on the
+ * bar, which is Figma's `enabled` axis; `divider`, which hands the
+ * bar's bottom edge to a container that draws its own; and `count` on a
+ * tab, which is its `tag` axis. The panels are not part of it — MUI
+ * ships no `TabPanel` and there is no Figma node for one. See
  * `src/components/Tabs/Tabs.types.ts`.
+ *
+ * `TABS_HEIGHT_PX` ships alongside because the bar has no height floor:
+ * it is as tall as its padding plus its label, so the 44 is an outcome
+ * rather than a setting, and a panel reserving space for a strip it has
+ * not rendered yet would otherwise redo the arithmetic.
  */
-export { Tab, Tabs } from './components/Tabs';
+export { TABS_HEIGHT_PX, Tab, Tabs } from './components/Tabs';
 export type { TabProps, TabsProps } from './components/Tabs';
 
 /**
@@ -602,7 +608,7 @@ export type {
  *     is a `Card`'s to draw.
  *   - **Density belongs to the table.** One `size` — 48, 56 or 64 —
  *     reaches every row through context, because MUI's own `size` holds
- *     two values where the design has three. The header stays 32 in all
+ *     two values where the design has three. The header stays 40 in all
  *     three: it is a label strip rather than a row of data.
  *   - **`State` is not one prop.** Four of the design's six row states
  *     are things MUI's row already models (`hover`, `selected`,
@@ -613,8 +619,16 @@ export type {
  * for the layout problems that need the number and cannot read it off the
  * DOM — a `Skeleton` standing in for a row while it loads, or a virtual
  * list that has to know a row's height before rendering one.
+ * `TABLE_CELL_ICON_PX` is there for a different reason: `icon` is a slot
+ * the caller fills, so the size of what goes in it is the caller's to
+ * set, and this is the number to set it to. `tableAmountType` is a
+ * third: a money column is content rather than a prop, and this is the
+ * type to put on it — the mono face and `tabular-nums` that make a
+ * column of figures line up on its decimal. Pair it with
+ * `align="right"`.
  */
 export {
+  TABLE_CELL_ICON_PX,
   TABLE_HEADER_ROW_HEIGHT_PX,
   TABLE_ROW_HEIGHT_PX,
   Table,
@@ -624,6 +638,7 @@ export {
   TableHead,
   TableRow,
   TableSortLabel,
+  tableAmountType,
 } from './components/Table';
 export type {
   TableBodyProps,
@@ -649,8 +664,8 @@ export type {
  *
  *   - **The frame goes.** MUI borders and rounds the grid and fills it
  *     with `background.paper`; the design draws the same stack of bands
- *     the table does, hairline under every row including the last, no
- *     edge of its own. A grid needs a *height* though — MUI's root is
+ *     the table does, a hairline between rows and none under the last,
+ *     no edge of its own. A grid needs a *height* though — MUI's root is
  *     `height: 100%`, so a grid in an unsized parent renders as a line.
  *     There is a 320px floor to stop that happening silently.
  *   - **`size` is the density,** 48 / 56 / 64 over a flat 32px header, the

@@ -84,7 +84,7 @@ export interface TableProps extends Omit<MuiTableProps, LockedTableProp> {
   /**
    * Row height: `sm` 48, `md` 56, `lg` 64.
    *
-   * The header stays 32 in all three — it is a label strip rather than a
+   * The header stays 40 in all three — it is a label strip rather than a
    * row of data, and the design holds it while the data breathes.
    *
    * @default 'md'

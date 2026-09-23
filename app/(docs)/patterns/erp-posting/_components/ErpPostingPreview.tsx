@@ -216,6 +216,29 @@ function TaxHeader({
 TaxHeader.displayName = 'TaxHeader';
 
 /**
+ * The row action's width, held whichever control the row is showing.
+ *
+ * A column that alternates between a labelled button and a bare icon
+ * button jumps as the eye goes down it — the same problem a fixed CTA
+ * width solves on the invoice queue, and the same answer. 104 rather
+ * than that screen's 96 because the number is per column: it is sized
+ * to its own longest label, and "Fix value" with a 14px wrench needs
+ * 96 of the 96 exactly.
+ *
+ * `ActionSlot` is what holds it for the icon-button case, which has no
+ * width of its own to pin.
+ */
+const CTA_WIDTH_PX = 104;
+
+const ActionSlot = styled('span')({
+  display: 'inline-flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: CTA_WIDTH_PX,
+  flexShrink: 0,
+});
+
+/**
  * The one control on a line, and it changes with what the check found.
  *
  * `Split` is always available: a line that covers two cost centres has to
@@ -234,31 +257,36 @@ function LineActions({
 }) {
   if (finding?.fix !== undefined) {
     return (
-      <Tooltip title={'Set the line total to ' + formatMoney(finding.fix)}>
-        <Button
-          variant="error"
-          appearance="outline"
-          size="sm"
-          startIcon={<WrenchIcon size={14} />}
-          onClick={onFix}
-        >
-          Fix value
-        </Button>
-      </Tooltip>
+      <ActionSlot>
+        <Tooltip title={'Set the line total to ' + formatMoney(finding.fix)}>
+          <Button
+            variant="error"
+            appearance="outline"
+            size="sm"
+            onClick={onFix}
+            startIcon={<WrenchIcon size={14} />}
+            sx={{ width: CTA_WIDTH_PX, minWidth: CTA_WIDTH_PX, flexShrink: 0 }}
+          >
+            Fix value
+          </Button>
+        </Tooltip>
+      </ActionSlot>
     );
   }
 
   return (
-    <Tooltip title="Split this line">
-      <IconButton
-        variant="secondary"
-        appearance="text"
-        size="sm"
-        aria-label="Split this line"
-      >
-        <ScissorsIcon size={16} />
-      </IconButton>
-    </Tooltip>
+    <ActionSlot>
+      <Tooltip title="Split this line">
+        <IconButton
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          aria-label="Split this line"
+        >
+          <ScissorsIcon size={16} />
+        </IconButton>
+      </Tooltip>
+    </ActionSlot>
   );
 }
 
@@ -367,7 +395,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'id',
       headerName: '#',
-      width: 56,
+      width: 72,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => <Index>{row.id}</Index>,
@@ -376,12 +404,12 @@ export function ErpPostingPreview(): React.JSX.Element {
       field: 'description',
       headerName: 'Description',
       flex: 1.6,
-      minWidth: 150,
+      minWidth: 166,
     },
     {
       field: 'lineTotal',
       headerName: 'Line Total',
-      width: 118,
+      width: 134,
       align: 'right',
       headerAlign: 'right',
       renderCell: ({ row }) => (
@@ -399,7 +427,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'vatCode',
       headerName: 'VAT Tax Code',
-      width: 148,
+      width: 164,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -429,7 +457,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'whtCode',
       headerName: 'WHT Tax Code',
-      width: 148,
+      width: 164,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -459,7 +487,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'actions',
       headerName: '',
-      width: 122,
+      width: 144,
       sortable: false,
       filterable: false,
       align: 'center',

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-09T08:12:41.942Z",
+  "generatedAt": "2026-09-23T12:37:31.096Z",
   "components": [
     {
       "name": "Accordion",
@@ -587,15 +587,15 @@
         },
         {
           "name": "appearance",
-          "type": "'contained' | 'outline' | 'text'",
+          "type": "'prominent' | 'contained' | 'outline' | 'text'",
           "default": "'contained'",
-          "description": "Visual emphasis: solid fill, 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label."
+          "description": "Visual emphasis, highest first: a gradient fill at heading size, a solid fill, a 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label. `prominent` is the page’s single call to action: 48px tall, drawn to sit beside a page title, and the one appearance that ignores `size`."
         },
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Control height: 32px, 36px, or 44px."
+          "description": "Control height: 32px, 36px, or 44px. No effect on `appearance=\"prominent\"`, which has one height of its own (48px) — it is a page-level call to action, and a small one would be a contradiction."
         },
         {
           "name": "loading",
@@ -636,6 +636,11 @@
           "code": "<Button variant=\"error\" appearance=\"text\">Delete account</Button>"
         },
         {
+          "title": "The action a page exists for",
+          "description": "A gradient fill at heading size, 48px tall, sitting beside the page title rather than in a row of controls. The ramp runs from the role’s hover colour down to its resting one, so every role has one; `size` does not apply.",
+          "code": "import { UploadSimpleIcon } from '@neofloai/atoms/icons';\n\n<Button appearance=\"prominent\" startIcon={<UploadSimpleIcon />}>\n  Add Invoice\n</Button>"
+        },
+        {
           "title": "Sizes",
           "code": "<Button size=\"sm\">Small</Button>\n<Button size=\"md\">Medium</Button>\n<Button size=\"lg\">Large</Button>"
         },
@@ -652,13 +657,16 @@
         "Use `variant=\"primary\"` for the main CTA on a page (one per section)",
         "Use `variant=\"error\"` for irreversible actions (delete, remove)",
         "Use `appearance=\"outline\"` or `appearance=\"text\"` for secondary actions",
-        "Pair `variant=\"secondary\"` with a primary button for cancel/back actions"
+        "Pair `variant=\"secondary\"` with a primary button for cancel/back actions",
+        "Use `appearance=\"prominent\"` for the one action a screen exists for, beside its title"
       ],
       "donts": [
         "Don't use multiple `primary` contained buttons in the same section",
         "Don't use `variant=\"error\"` for cancel or dismiss actions",
         "Don't override button colours with `sx` — pick the right variant instead",
-        "Don't use `size=\"sm\"` for primary page-level CTAs"
+        "Don't use `size=\"sm\"` for primary page-level CTAs",
+        "Don't put two `prominent` buttons on one screen — it is the page's single call to action, and a second one cancels the first",
+        "Don't reach for `prominent` inside a card, a toolbar, a dialog or a table row; it is sized for a page header"
       ],
       "relatedComponents": [
         "IconButton"
@@ -932,6 +940,18 @@
           "description": "Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size=\"sm\"`."
         },
         {
+          "name": "colors",
+          "type": "{ bg?: ModeToken | string; border?: ModeToken | string; text?: ModeToken | string }",
+          "default": "undefined",
+          "description": "Overrides the three colours `variant` would paint, per key — pass one and the other two still come from the role. `size=\"sm\"` only, and `border` shows only with `bordered`; `disabled` still wins over all three. Reach for a role first: a status column is read by meaning, and a reader cannot tell from a decorative hue which of two statuses is the bad one. This is for a colour the roles genuinely do not carry. Pass design tokens rather than hexes — a token is a `{ light, dark }` pair and resolves per scheme, where a bare hex is light-mode only by definition and paints the same colour on a near-black page."
+        },
+        {
+          "name": "bordered",
+          "type": "boolean",
+          "default": "false",
+          "description": "Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size=\"sm\"` only; the pill already carries a border on `appearance=\"outline\"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one."
+        },
+        {
           "name": "selected",
           "type": "boolean",
           "default": "—",
@@ -994,6 +1014,21 @@
           "title": "Sizes",
           "description": "`dense` is the 32px pill; the 36px pill is the default. `size=\"sm\"` is the separate 20px flat tag.",
           "code": "<Chip size=\"sm\" variant=\"purple\" label=\"Small\" />\n<Chip dense label=\"Dense\" />\n<Chip label=\"Medium\" />"
+        },
+        {
+          "title": "Bordered status tags",
+          "description": "A table’s Status column: the role’s fill with its own border token outlined over it. Pick the role for what the status means — `information` for in-flight, `success` for done, `error` for failed — and the colour follows from the token in both light and dark.",
+          "code": "<Chip size=\"sm\" variant=\"information\" bordered label=\"Extraction\" />\n<Chip size=\"sm\" variant=\"warning\" bordered label=\"Matching\" />\n<Chip size=\"sm\" variant=\"success\" bordered label=\"ERP Posting\" />\n<Chip size=\"sm\" variant=\"error\" bordered label=\"Error\" />"
+        },
+        {
+          "title": "A status the roles have no colour for",
+          "description": "The escape hatch, and the last resort. `colors` takes the fill, the outline and the label separately, so a status the semantic roles do not cover can still be built out of tokens rather than hexes — which is what keeps it working in dark mode. Everything else about the chip is unchanged: same 20px box, same 4px radius, same hairline.",
+          "code": "import { border, surface, text } from '@neofloai/atoms/tokens';\n\n<Chip\n  size=\"sm\"\n  bordered\n  label=\"Extraction\"\n  colors={{\n    bg: surface.information.subtle,\n    border: border.information.default,\n    text: text.information[3],\n  }}\n/>"
+        },
+        {
+          "title": "A status with a glyph",
+          "description": "The `icon` slot needs no wiring: the glyph inherits the role’s label colour and is sized by the chip. Keep it for the status that needs attention — a glyph on every row is decoration, and it stops the one that matters from standing out.",
+          "code": "import { WarningCircleIcon } from '@neofloai/atoms/icons';\n\n<Chip\n  size=\"sm\"\n  variant=\"error\"\n  bordered\n  icon={<WarningCircleIcon />}\n  label=\"Error\"\n/>"
         },
         {
           "title": "Flat tag colours",
@@ -1255,7 +1290,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Row height: `sm` 48, `md` 56, `lg` 64, with the header strip at 32 in all three. The same values `Table` takes, so a screen can move between the two without changing how dense it looks. Replaces MUI’s `rowHeight`, `columnHeaderHeight` and `density` — the same fact stated three ways, which disagree as soon as two of them are set."
+          "description": "Row height: `sm` 48, `md` 56, `lg` 64, with the header strip at 40 in all three. The same values `Table` takes, so a screen can move between the two without changing how dense it looks. Replaces MUI’s `rowHeight`, `columnHeaderHeight` and `density` — the same fact stated three ways, which disagree as soon as two of them are set."
         },
         {
           "name": "rowState",
@@ -2219,8 +2254,8 @@
         },
         {
           "title": "Chips as option labels",
-          "description": "An option label can be any node. Give those rows a `searchText` — a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.",
-          "code": "const statusOptions = [\n  {\n    value: 'routed',\n    label: <Chip size=\"sm\" variant=\"warning\" label=\"Routed to Human\" />,\n    searchText: 'Routed to Human',\n  },\n  {\n    value: 'answered',\n    label: <Chip size=\"sm\" variant=\"success\" label=\"Auto-answered\" />,\n    searchText: 'Auto-answered',\n  },\n];"
+          "description": "An option label can be any node, and a status facet should use the same chip its column draws — one that reads differently in the dropdown makes the reader check whether it is the same thing. Give those rows a `searchText`: a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.",
+          "code": "const statusOptions = STATUSES.map((status) => ({\n  value: status.value,\n  // The same component the Status column renders, not a copy of it.\n  label: <StatusChip status={status.value} />,\n  searchText: status.label,\n}));"
         },
         {
           "title": "A category with its own pane",
@@ -4361,13 +4396,13 @@
       "name": "Table",
       "category": "Data Display",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3215-52225&m=dev",
-      "tagline": "A table of records: a 32px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.",
+      "tagline": "A table of records: a 40px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.",
       "props": [
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 32 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes."
+          "description": "Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 40 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes."
         },
         {
           "name": "stickyHeader",
@@ -4450,18 +4485,28 @@
         },
         {
           "title": "Two lines in one row, and a leading glyph",
-          "description": "The richest cells are still cells. `secondary` puts a muted line under the first with no gap between them, and `icon` holds a node 8px clear of the text — a glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.",
-          "code": "<TableRow>\n  <TableCell icon={<UploadSimpleIcon size={16} />} secondary=\"14 Feb 2026 · 21:38\">\n    #1008\n  </TableCell>\n  <TableCell icon={<Avatar size=\"sm\">OP</Avatar>} secondary=\"administrator\">\n    Kaustav\n  </TableCell>\n  <TableCell icon={<PaperclipIcon size={16} />}>inv-so90-9333.pdf</TableCell>\n  <TableCell align=\"right\" secondary=\"$ 14,509.32\">\n    Total\n  </TableCell>\n</TableRow>"
+          "description": "The richest cells are still cells. `secondary` puts a muted 11/13 line 2px under the first, and `icon` holds a 14px node clear of the text. Given both, four things change at once: the glyph tops out rather than centring, drops 2px onto the first line’s cap height, takes 8px of gap rather than 6, and goes one rung quieter. A glyph beside one line is part of that line; beside two it is a marker on a block.",
+          "code": "<TableRow>\n  <TableCell icon={<UploadSimpleIcon size={14} />} secondary=\"14 Feb 2026 · 21:38\">\n    #1008\n  </TableCell>\n  <TableCell icon={<Avatar size=\"sm\">OP</Avatar>} secondary=\"administrator\">\n    Kaustav\n  </TableCell>\n  <TableCell icon={<PaperclipIcon size={14} />}>inv-so90-9333.pdf</TableCell>\n  <TableCell align=\"right\" secondary=\"$ 14,509.32\">\n    Total\n  </TableCell>\n</TableRow>"
         },
         {
           "title": "Selectable rows",
-          "description": "A checkbox column plus `selected` on the row. `padding=\"checkbox\"` narrows the cell to the design’s 32px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.",
+          "description": "A checkbox column plus `selected` on the row. `padding=\"checkbox\"` narrows the cell to the design’s 48px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.",
           "code": "const [picked, setPicked] = React.useState<string[]>([]);\n\n<TableBody>\n  {rows.map((row) => {\n    const isPicked = picked.includes(row.id);\n\n    return (\n      <TableRow key={row.id} hover selected={isPicked}>\n        <TableCell padding=\"checkbox\">\n          <Checkbox\n            checked={isPicked}\n            onChange={() => setPicked(toggle(picked, row.id))}\n          />\n        </TableCell>\n        <TableCell>{row.number}</TableCell>\n      </TableRow>\n    );\n  })}\n</TableBody>"
         },
         {
           "title": "Rows that carry an outcome",
           "description": "What `state` is for: the row’s colour comes from its data rather than from the pointer. Use it for a result the reader has to notice — a line that failed validation, one that cleared it — and leave every other row plain so the tinted ones stand out.",
           "code": "<TableBody>\n  <TableRow state=\"error\">\n    <TableCell>inv-mds1204</TableCell>\n    <TableCell>Vendor not on file</TableCell>\n  </TableRow>\n  <TableRow state=\"success\">\n    <TableCell>inv-mds1203</TableCell>\n    <TableCell>Matched</TableCell>\n  </TableRow>\n  <TableRow disabled>\n    <TableCell>inv-mds1202</TableCell>\n    <TableCell>Withdrawn</TableCell>\n  </TableRow>\n</TableBody>"
+        },
+        {
+          "title": "A column of money",
+          "description": "Amounts are content, not a prop — `tableAmountType` is the type to put on them. The mono face is what makes a column of figures line up on its decimal, and `tabular-nums` holds that even if the family is swapped. Set the symbol apart in the quiet ink so the eye lands on the figure rather than on a column of repeated symbols.",
+          "code": "import { tableAmountType } from '@neofloai/atoms';\n\n<TableCell align=\"right\">\n  <Box component=\"span\" sx={{ color: 'text.secondary', mr: 0.25 }}>\n    $\n  </Box>\n  <Box component=\"span\" sx={tableAmountType}>\n    12,780.50\n  </Box>\n</TableCell>"
+        },
+        {
+          "title": "A column of actions",
+          "description": "Nothing in the table knows about this — a cell holds a `Button` the way it holds text. `size=\"sm\"` is the 32px control the design puts in a 56px row, and the low-emphasis appearance is what keeps a column of them from reading as louder than the data beside it. Pin it with `stickyHeader` and a `position: sticky` cell if the table scrolls sideways.",
+          "code": "<TableCell align=\"right\">\n  <Button size=\"sm\" appearance=\"outline\" variant=\"primary\">\n    Review\n  </Button>\n  <IconButton size=\"sm\" appearance=\"text\" aria-label=\"Open in a new tab\">\n    <ArrowSquareOutIcon />\n  </IconButton>\n</TableCell>"
         },
         {
           "title": "A sortable column",
@@ -4505,8 +4550,8 @@
     {
       "name": "Tabs",
       "category": "Navigation",
-      "tagline": "One row of labels that switches which panel is showing. A hairline along the bottom, and one coloured segment of it under the tab you are on.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3463-12374&m=dev",
+      "tagline": "One row of labels that switches which panel is showing. A hairline along the bottom, a dark 1px rule under the tab you are on running that tab’s full width, and a quiet fill under the tab your pointer is on.",
+      "figmaUrl": "https://www.figma.com/design/eGSap2yP2uNr79UoP1Vecd/Revamp-UI?node-id=1367-48487&m=dev",
       "props": [
         {
           "name": "Tabs value",
@@ -4525,6 +4570,12 @@
           "type": "boolean",
           "default": "false",
           "description": "Disables every tab in the bar and dims the indicator with it — the Figma `enabled` axis, which is drawn on the whole row rather than one tab. Inherited by each `Tab` and not undoable from there: a tab can add its own `disabled` on top, but cannot opt back in."
+        },
+        {
+          "name": "Tabs divider",
+          "type": "boolean",
+          "default": "true",
+          "description": "Draws the bar’s own hairline along its bottom edge. Turn it off when the bar sits in something that already draws that border — a `Card`, a panel, a `Box` with its own `borderBottom`. Two hairlines on one edge do not read as a double line; they read as one line of the wrong weight, which is harder to spot. The selected tab’s indicator is unaffected: it belongs to the tab, not to the strip."
         },
         {
           "name": "Tabs variant",
@@ -4584,13 +4635,13 @@
           "name": "Tab icon / iconPosition",
           "type": "ReactNode / 'top' | 'bottom' | 'start' | 'end'",
           "default": "— / 'top'",
-          "description": "A glyph beside the label. Figma draws no icon in a tab, so this is MUI’s behaviour unchanged; `iconPosition=\"start\"` keeps the 32px row, while `top` and `bottom` stack and make the bar taller."
+          "description": "A glyph beside the label. Figma draws no icon in a tab, so this is MUI’s behaviour unchanged; `iconPosition=\"start\"` keeps the row on one line, while `top` and `bottom` stack and make the bar taller."
         },
         {
           "name": "Tab wrapped",
           "type": "boolean",
           "default": "false",
-          "description": "Lets a long label use a second line. Tabs are `nowrap` by default so the row keeps its 32px box and scrolls instead; this is the way back out when a label genuinely needs two lines."
+          "description": "Lets a long label use a second line. Tabs are `nowrap` by default so the row keeps its 44px box and scrolls instead; this is the way back out when a label genuinely needs two lines."
         },
         {
           "name": "sx / classes",
@@ -4609,6 +4660,11 @@
           "title": "With counts",
           "description": "The Figma `tag` axis — a count beside the label, in the design’s small chip.",
           "code": "<Tabs value={status} onChange={(_, next) => setStatus(next)} aria-label=\"Invoice status\">\n  <Tab label=\"All\" value=\"all\" count={48} />\n  <Tab label=\"Open\" value=\"open\" count={12} aria-label=\"Open, 12 invoices\" />\n  <Tab label=\"Paid\" value=\"paid\" count={36} />\n</Tabs>"
+        },
+        {
+          "title": "Inside a panel that draws its own border",
+          "description": "The bar owns its bottom edge by default. In a container that already has one, hand the edge over with `divider={false}` rather than painting a second hairline on it — the indicator still draws, because it belongs to the tab rather than to the strip.",
+          "code": "<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>\n  <Tabs value={tab} onChange={handleChange} divider={false}>\n    <Tab label=\"Open\" value=\"open\" />\n    <Tab label=\"Closed\" value=\"closed\" />\n  </Tabs>\n</Box>"
         },
         {
           "title": "Too many to fit",
@@ -4649,7 +4705,7 @@
         "Give every `Tab` a stable `value` when the row is built from data, rather than relying on child order",
         "Use `variant=\"scrollable\"` for a row that can outgrow its container, and `fullWidth` for three or four tabs on a phone",
         "Use `count` for the number behind a tab instead of writing it into the label — it gets the house pill and the right ink",
-        "Keep labels to one or two words; the bar is a single 32px row",
+        "Keep labels to one or two words; the bar is a single 44px row",
         "Reach for `ToggleButtonGroup` when the choice filters what is on screen rather than switching between whole views"
       ],
       "donts": [

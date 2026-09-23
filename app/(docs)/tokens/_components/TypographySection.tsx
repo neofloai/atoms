@@ -106,8 +106,8 @@ export function TypographySection() {
           </Stack>
           <Stack spacing={0.5}>
             <Typography variant="caption" sx={{ fontFamily: MONO_FONT, color: 'text.secondary' }}>
-              product.mono &mdash; Space Mono (not self-hosted; falls back to
-              the system monospace)
+              product.mono &mdash; DM Mono (self-hosted; worn by table and
+              grid headers)
             </Typography>
             <Typography sx={{ fontFamily: fontFamilies.product.mono, fontSize: 24 }}>
               1,512 icons &mdash; INV-04821 &mdash; 9,072

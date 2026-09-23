@@ -47,6 +47,20 @@ export const data: ComponentExamplesData = {
         'Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size="sm"`.',
     },
     {
+      name: 'colors',
+      type: '{ bg?: ModeToken | string; border?: ModeToken | string; text?: ModeToken | string }',
+      default: 'undefined',
+      description:
+        'Overrides the three colours `variant` would paint, per key — pass one and the other two still come from the role. `size="sm"` only, and `border` shows only with `bordered`; `disabled` still wins over all three. Reach for a role first: a status column is read by meaning, and a reader cannot tell from a decorative hue which of two statuses is the bad one. This is for a colour the roles genuinely do not carry. Pass design tokens rather than hexes — a token is a `{ light, dark }` pair and resolves per scheme, where a bare hex is light-mode only by definition and paints the same colour on a near-black page.',
+    },
+    {
+      name: 'bordered',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size="sm"` only; the pill already carries a border on `appearance="outline"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one.',
+    },
+    {
       name: 'selected',
       type: 'boolean',
       default: '—',
@@ -136,6 +150,52 @@ export const data: ComponentExamplesData = {
         '<Chip size="sm" variant="purple" label="Small" />',
         '<Chip dense label="Dense" />',
         '<Chip label="Medium" />',
+      ].join('\n'),
+    },
+    {
+      title: 'Bordered status tags',
+      description:
+        'A table’s Status column: the role’s fill with its own border token outlined over it. Pick the role for what the status means — `information` for in-flight, `success` for done, `error` for failed — and the colour follows from the token in both light and dark.',
+      code: [
+        '<Chip size="sm" variant="information" bordered label="Extraction" />',
+        '<Chip size="sm" variant="warning" bordered label="Matching" />',
+        '<Chip size="sm" variant="success" bordered label="ERP Posting" />',
+        '<Chip size="sm" variant="error" bordered label="Error" />',
+      ].join('\n'),
+    },
+    {
+      title: 'A status the roles have no colour for',
+      description:
+        'The escape hatch, and the last resort. `colors` takes the fill, the outline and the label separately, so a status the semantic roles do not cover can still be built out of tokens rather than hexes — which is what keeps it working in dark mode. Everything else about the chip is unchanged: same 20px box, same 4px radius, same hairline.',
+      code: [
+        "import { border, surface, text } from '@neofloai/atoms/tokens';",
+        '',
+        '<Chip',
+        '  size="sm"',
+        '  bordered',
+        '  label="Extraction"',
+        '  colors={{',
+        '    bg: surface.information.subtle,',
+        '    border: border.information.default,',
+        '    text: text.information[3],',
+        '  }}',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'A status with a glyph',
+      description:
+        'The `icon` slot needs no wiring: the glyph inherits the role’s label colour and is sized by the chip. Keep it for the status that needs attention — a glyph on every row is decoration, and it stops the one that matters from standing out.',
+      code: [
+        "import { WarningCircleIcon } from '@neofloai/atoms/icons';",
+        '',
+        '<Chip',
+        '  size="sm"',
+        '  variant="error"',
+        '  bordered',
+        '  icon={<WarningCircleIcon />}',
+        '  label="Error"',
+        '/>',
       ].join('\n'),
     },
     {

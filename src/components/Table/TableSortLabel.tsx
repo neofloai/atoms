@@ -16,14 +16,18 @@ import {
   TABLE_SORT_TINT_HEIGHT_PX,
   TABLE_SORT_TINT_PADDING_PX,
   TABLE_SORT_TINT_RADIUS_PX,
-  tableCaptionType,
+  tableHeaderType,
 } from './tableTokens';
 
 import type { TableSortLabelProps } from './Table.types';
 
 /** The affordance itself. Documented on the component below. */
 const SortLabelRoot = styled(MuiTableSortLabel)(({ theme }) => ({
-  ...tableCaptionType,
+  // The header's own type, not the cell's. This element sits inside the
+  // header cell and sets `font-family` itself, so anything but the
+  // header type here leaves a sortable column in the sans while the
+  // column beside it is in the mono.
+  ...tableHeaderType,
   minHeight: TABLE_SORT_TINT_HEIGHT_PX,
   paddingInline: TABLE_SORT_TINT_PADDING_PX,
   gap: TABLE_SORT_TINT_PADDING_PX,
@@ -34,9 +38,15 @@ const SortLabelRoot = styled(MuiTableSortLabel)(({ theme }) => ({
   // the design keeps one colour and changes the background instead.
   color: 'inherit',
 
+  // The tint used to be `surface/default/default` against a header with
+  // no fill of its own. The strip now carries `surface/layers/card 2`,
+  // which is the same colour in light, so the affordance had to move off
+  // it or it would paint the header its own shade and disappear. It goes
+  // one rung along its own interactive ladder, which is also the ladder
+  // the strip is deliberately *not* on — see `tableHeaderFill`.
   '&:hover': {
     color: 'inherit',
-    ...paired(theme, { backgroundColor: surface.default.default }),
+    ...paired(theme, { backgroundColor: surface.default.defaultHover }),
     // Restated under `:hover` because MUI fades the glyph to 50% there,
     // and that rule is a class more specific than the one below — left
     // alone, the glyph would be full strength at rest and washed out in
@@ -45,7 +55,7 @@ const SortLabelRoot = styled(MuiTableSortLabel)(({ theme }) => ({
   },
   '&:focus-visible': {
     color: 'inherit',
-    ...paired(theme, { backgroundColor: surface.default.default }),
+    ...paired(theme, { backgroundColor: surface.default.defaultHover }),
   },
 
   [`&.${tableSortLabelClasses.active}`]: {

@@ -83,11 +83,17 @@ export function statusMeta(value: string): StatusMeta {
 /**
  * The rows whose label is a node rather than a string. Each carries its
  * own `searchText`, without which the search box has nothing to read.
+ *
+ * `bordered`, the same as the column the filter narrows. A status that
+ * reads one way in the table and another in the dropdown that filters it
+ * makes the reader check whether they are the same thing.
  */
 export const statusOptions: readonly FilterOption[] = STATUSES.map(
   (status) => ({
     value: status.value,
-    label: <Chip size="sm" variant={status.variant} label={status.label} />,
+    label: (
+      <Chip size="sm" bordered variant={status.variant} label={status.label} />
+    ),
     searchText: status.label,
   })
 );

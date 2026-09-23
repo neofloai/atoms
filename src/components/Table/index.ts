@@ -5,7 +5,12 @@ export { TableContainer } from './TableContainer';
 export { TableHead } from './TableHead';
 export { TableRow } from './TableRow';
 export { TableSortLabel } from './TableSortLabel';
-export { TABLE_HEADER_ROW_HEIGHT_PX, TABLE_ROW_HEIGHT_PX } from './tableTokens';
+export {
+  TABLE_CELL_ICON_PX,
+  TABLE_HEADER_ROW_HEIGHT_PX,
+  TABLE_ROW_HEIGHT_PX,
+  tableAmountType,
+} from './tableTokens';
 export type {
   TableBodyProps,
   TableCellProps,

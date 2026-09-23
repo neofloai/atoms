@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-09-09T08:25:01.938Z",
+  "generatedAt": "2026-09-23T12:43:04.804Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
   "shared": [
     {
       "title": "Install from the public GitHub repo",
-      "body": "neofloai/atoms is a public repository, so this needs no registry, no token, and no .npmrc. Anyone can install it. The #semver: range resolves against release tags -- 2.0.0 is current:",
-      "code": "npm install github:neofloai/atoms#semver:^2.0.0",
+      "body": "neofloai/atoms is a public repository, so this needs no registry, no token, and no .npmrc. Anyone can install it. The #semver: range resolves against release tags -- 2.1.0 is current:",
+      "code": "npm install github:neofloai/atoms#semver:^2.1.0",
       "language": "bash"
     },
     {
       "title": "Pin what you install",
-      "body": "A bare install tracks the default branch, so the code can change under you between installs. Pin to a semver range instead and npm resolves it against the release tags. 2.0.0 is current; a range on the major picks up patches and minors without a package.json edit, and crossing a major stays deliberate.",
-      "code": "# Recommended -- resolves against release tags\nnpm install github:neofloai/atoms#semver:^2.0.0\n\n# Exactly one release, nothing else\nnpm install github:neofloai/atoms#semver:2.0.0\n\n# A specific commit -- for reproducing a build, not for staying current\nnpm install github:neofloai/atoms#1a2b3c4",
+      "body": "A bare install tracks the default branch, so the code can change under you between installs. Pin to a semver range instead and npm resolves it against the release tags. 2.1.0 is current; a range on the major picks up patches and minors without a package.json edit, and crossing a major stays deliberate.",
+      "code": "# Recommended -- resolves against release tags\nnpm install github:neofloai/atoms#semver:^2.1.0\n\n# Exactly one release, nothing else\nnpm install github:neofloai/atoms#semver:2.1.0\n\n# A specific commit -- for reproducing a build, not for staying current\nnpm install github:neofloai/atoms#1a2b3c4",
       "language": "bash"
     },
     {
@@ -94,12 +94,12 @@
     "react and react-dom are peer dependencies: your app provides them (React 18 or 19). MUI and Emotion ship inside the package, so you do not install them.",
     "Keep react and react-dom on the same major version across every project that installs @neofloai/atoms -- mixing versions across projects makes Atoms bugs reproduce inconsistently and harder to triage.",
     "The package ships compiled JavaScript (dist/), so no transpilePackages or bundler transpile config is required.",
-    "Brand fonts (DM Sans and Instrument Serif) are self-hosted and loaded automatically by NeofloThemeProvider -- you do not need to add Google Fonts links or next/font wiring.",
+    "Brand fonts (DM Sans, DM Mono and Instrument Serif) are self-hosted and loaded automatically by NeofloThemeProvider -- you do not need to add Google Fonts links or next/font wiring.",
     "Color scheme follows the OS by default. Pin it with NeofloThemeProvider's defaultMode prop (\"light\", \"dark\", or \"system\") when your UI is designed for a single scheme.",
     "For a switch the user can operate, import useColorScheme from @neofloai/atoms -- it returns { mode, setMode } and the provider persists the choice. You do not need @mui/material for this. Note that mode is undefined on the first render, before the stored preference has been read, so render the space rather than a guess or the control flips after hydration.",
     "Do not call MUI's createTheme() or mount a second theme provider -- NeofloThemeProvider is the only theme. Style through tokens (@neofloai/atoms/tokens) or the sx prop's theme-aware keys (e.g. color: \"primary.main\"), never hardcoded hex or pixel values.",
     "Missing a variant or prop? Open a component-request or bug issue against the Atoms repo instead of locally wrapping or style-overriding the component -- local overrides drift between projects and stop tracking design system changes.",
-    "Atoms 2.0.0 is the current release. Install by range (#semver:^2.0.0) rather than bare -- a bare install tracks the default branch and can change between installs without a version to explain what moved.",
+    "Atoms 2.1.0 is the current release. Install by range (#semver:^2.1.0) rather than bare -- a bare install tracks the default branch and can change between installs without a version to explain what moved.",
     "npm update @neofloai/atoms advances a #semver: range automatically for patch and minor releases; crossing a major (^1.0.0 -> ^2.0.0) stays a deliberate package.json edit. A commit-pinned or branch-tracking install only moves when you change the ref yourself.",
     "Read the installed version with npm ls @neofloai/atoms --depth=0, or from ATOMS_VERSION exported by the package -- never from the dependency line in your own package.json, which for a git install is a ref or a range and not a version.",
     "The changelog is on the docs site and served by the MCP check_version tool. Read it before taking a new major -- the release notes carry the migration steps, and there is nowhere else they are written down."
