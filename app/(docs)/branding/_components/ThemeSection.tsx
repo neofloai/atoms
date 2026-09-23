@@ -66,8 +66,8 @@ export function ThemeSection({ summary }: { summary: string }) {
       <Snippet>{PROVIDER_SNIPPET}</Snippet>
       <Typography variant="body2" color="text.secondary">
         That one wrapper is the whole setup. It applies the theme, mounts{' '}
-        <code>CssBaseline</code>, self-hosts DM Sans and Instrument Serif, and
-        sets the Phosphor icon defaults — no font links, no CSS imports, no
+        <code>CssBaseline</code>, self-hosts DM Sans, DM Mono and Instrument
+        Serif, and sets the Phosphor icon defaults — no font links, no CSS imports, no
         per-component theming. It defaults to the system colour scheme and both
         schemes are first-class, so every value in the table above resolves
         correctly in either.

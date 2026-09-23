@@ -27,6 +27,7 @@ export default defineConfig({
     // imports pass through to the consumer's bundler (Vite, Next, CRA all
     // resolve `@fontsource/*` CSS), instead of esbuild trying to inline them.
     '@fontsource/dm-sans',
+    '@fontsource/dm-mono',
     '@fontsource/instrument-serif',
   ],
   treeshake: true,

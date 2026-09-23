@@ -22,14 +22,16 @@
  *   Font families (primitive collection)
  *     - Product:    DM Sans            (Regular, Medium, SemiBold)
  *                   Instrument Serif   (Regular, Italic)
- *     - Mono:       Space Mono         (Regular, Bold) — no Figma text
- *                   style binds it and no component uses it, but pattern
- *                   code does: `fontFamilies.product.mono` sets the
- *                   digits and line ids that have to line up down a
- *                   column. Still not self-hosted, so what actually
- *                   renders is the system monospace — which is why it is
- *                   used where alignment matters rather than for the
- *                   face itself.
+ *     - Mono:       DM Mono            (Regular, Medium) — and this one
+ *                   parts company with the primitive collection, which
+ *                   still names Space Mono. Space Mono was never hosted,
+ *                   so `fontFamilies.product.mono` has been rendering
+ *                   the system monospace everywhere it is used; the
+ *                   table and grid headers the 11 September sheet redrew
+ *                   in DM Mono are the first thing in the system to name
+ *                   a monospace and mean it. One mono, self-hosted,
+ *                   rather than a declared face and a real one — see
+ *                   DESIGNER_QUESTIONS.md #58.
  *     - Marketing:  Clash Grotesk      (Regular, Medium, Bold)
  *                   Instrument Serif   (Regular, Italic)
  *
@@ -45,12 +47,12 @@
  * declaration. The first family in each list is the brand font; the
  * rest are sensible system fallbacks.
  *
- * DM Sans and Instrument Serif are both available on Google Fonts and
- * are self-hosted via `@fontsource` (see `src/theme/fonts.ts`). Clash
- * Grotesk is currently hosted on Fontshare (not Google Fonts); it is
- * intentionally not yet wired into `next/font`, so its fallback chain
- * now points at DM Sans (the self-hosted product sans) rather than the
- * retired Plus Jakarta Sans.
+ * DM Sans, DM Mono and Instrument Serif are all available on Google
+ * Fonts and are self-hosted via `@fontsource` (see
+ * `src/theme/fonts.ts`). Clash Grotesk is currently hosted on Fontshare
+ * (not Google Fonts); it is intentionally not yet wired into
+ * `next/font`, so its fallback chain now points at DM Sans (the
+ * self-hosted product sans) rather than the retired Plus Jakarta Sans.
  *
  * Each `var()` carries a literal font-name fallback (e.g.
  * `var(--font-dm-sans, "DM Sans")`). The Next.js docs site defines
@@ -65,8 +67,13 @@ export const fontFamilies = {
   product: {
     sans: 'var(--font-dm-sans, "DM Sans"), system-ui, -apple-system, sans-serif',
     serif: 'var(--font-instrument-serif, "Instrument Serif"), Georgia, "Times New Roman", serif',
-    /** Declared in Figma; not yet self-hosted — see the header comment. */
-    mono: '"Space Mono", ui-monospace, "SF Mono", Menlo, monospace',
+    /**
+     * Self-hosted via `@fontsource` (see `src/theme/fonts.ts`), which is
+     * new — this used to name Space Mono and fall through to whatever
+     * monospace the machine had. Ships Regular and Medium only, so a
+     * call site wanting emphasis has 500 and nothing above it.
+     */
+    mono: 'var(--font-dm-mono, "DM Mono"), ui-monospace, "SF Mono", Menlo, monospace',
   },
   marketing: {
     sans: '"Clash Grotesk", var(--font-dm-sans, "DM Sans"), system-ui, sans-serif',

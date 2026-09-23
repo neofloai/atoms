@@ -15,6 +15,7 @@ import {
   TABLE_EDGE_INSET_PX,
   tableCaptionType,
   tableCellType,
+  tableHeaderType,
 } from './tableTokens';
 import { useTableContext } from './TableContext';
 
@@ -49,7 +50,7 @@ const CellRoot = styled(MuiTableCell, {
   const bare = padding === 'none';
 
   return {
-    ...(head ? tableCaptionType : tableCellType),
+    ...(head ? tableHeaderType : tableCellType),
     ...paired(theme, {
       color: head ? text.default.b3 : text.default.b1,
       borderBottomColor: border.layers.card1,
@@ -166,8 +167,9 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  *     `border.layers.card1`.
  *   - **the type.** `theme.typography.body2` for a data cell, and for a
  *     header cell a 24px leading at medium weight. The design uses
- *     `Sans/B1/Regular` and `Sans/B2/Regular`, and tells a header from
- *     its data by colour rather than weight.
+ *     `Sans/B1/Regular` for data and DM Mono Medium 12/16
+ *     for a header, so a header is told from its data by face and
+ *     colour rather than by weight.
  *   - **the pinned fill.** A sticky header cell needs to be opaque or
  *     the rows scroll through it, and MUI reaches for
  *     `background.default` — the page. A table normally sits on a card,

@@ -25,6 +25,7 @@ import {
   DATA_GRID_FOOTER_HEIGHT_PX,
   dataGridCaptionType,
   dataGridCellType,
+  dataGridHeaderType,
 } from './dataGridTokens';
 
 import type { CSSObject, Theme } from '@mui/material/styles';
@@ -226,14 +227,20 @@ export function dataGridStyles(theme: Theme): CSSObject {
       backgroundColor: surface.layers.card1,
     }),
     [`& .${c.columnHeader}`]: {
-      ...dataGridCaptionType,
+      ...dataGridHeaderType,
       ...paired(theme, { color: text.default.b3 }),
       paddingInline: TABLE_CELL_PADDING_INLINE_PX,
     },
-    // MUI leaves the label at `line-height: normal`, which is close to 16
-    // for 12px DM Sans but not equal to it.
+    // The label is its own element inside the header cell, and MUI styles
+    // it directly -- `line-height: normal` and the grid's own font stack,
+    // neither of which the rule above reaches. `normal` is close to 16 at
+    // 12px and not equal to it, and the family has to be restated here or
+    // the mono stops at the cell and the label renders in the sans.
     [`& .${c.columnHeaderTitle}`]: {
-      lineHeight: dataGridCaptionType.lineHeight,
+      fontFamily: dataGridHeaderType.fontFamily,
+      fontWeight: dataGridHeaderType.fontWeight,
+      lineHeight: dataGridHeaderType.lineHeight,
+      letterSpacing: dataGridHeaderType.letterSpacing,
     },
 
     // The tint behind a sortable column's label while the pointer is on

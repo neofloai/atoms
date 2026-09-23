@@ -13,6 +13,7 @@ import {
   TABLE_HEADER_ROW_HEIGHT_PX,
   TABLE_ROW_HEIGHT_PX,
   tableCaptionType,
+  tableHeaderType,
 } from '../Table/tableTokens';
 
 import type { CSSObject } from '@mui/material/styles';
@@ -26,8 +27,9 @@ import type { CSSObject } from '@mui/material/styles';
  * grid and a table render the same design. A row is 48 / 56 / 64, the
  * header strip is 32, a cell is padded 8 either side with the row's 16
  * spent on the two that touch the edge, the hairline is 1px, and the
- * type is `Sans/B1/Regular` over `Sans/B2/Regular`. If one of those ever
- * moves it moves for both, which is what a single source is for.
+ * type is `Sans/B1/Regular` for data under a DM Mono Medium header. If
+ * one of those ever moves it moves for both, which is what a single
+ * source is for.
  *
  * What is measured here is the three pieces the plain table left alone
  * because they belong to a grid: the pagination strip under the rows,
@@ -46,10 +48,22 @@ export const DATA_GRID_ROW_HEIGHT_PX = TABLE_ROW_HEIGHT_PX;
 export const DATA_GRID_HEADER_HEIGHT_PX = TABLE_HEADER_ROW_HEIGHT_PX;
 
 /**
- * `Sans/B2/Regular` — 12/16, for a header label and the footer's count.
+ * `Sans/B2/Regular` — 12/16, for the footer's count and the overlays.
  * The table's own, unchanged.
  */
 export const dataGridCaptionType = tableCaptionType;
+
+/**
+ * DM Mono Medium, 12/16 — the column header label. The table's own,
+ * unchanged.
+ *
+ * Split out from `dataGridCaptionType` because the two were one object
+ * until the header moved to a monospace, and the footer's row count did
+ * not move with it: the count is data about the grid, and it reads as
+ * data. Sharing a constant between a label strip and a running total was
+ * only ever true by coincidence.
+ */
+export const dataGridHeaderType = tableHeaderType;
 
 /**
  * `Sans/B1/Regular` — 13, weight 400, for every data cell.

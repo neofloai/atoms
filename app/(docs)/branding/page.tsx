@@ -42,6 +42,11 @@ const fontSpecs: readonly FontSpec[] = [
     family: fontFamilies.product.serif,
   },
   {
+    name: 'DM Mono',
+    role: 'Table and grid headers',
+    family: fontFamilies.product.mono,
+  },
+  {
     name: 'Clash Grotesk',
     role: 'Marketing display',
     family: fontFamilies.marketing.sans,

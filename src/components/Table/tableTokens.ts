@@ -119,6 +119,15 @@ export const TABLE_CELL_GAP_PX = spacing.component.xs;
  */
 export const TABLE_CHECKBOX_CELL_WIDTH_PX = 32;
 
+/**
+ * Tracking on the header label — -0.12px, the sheet's own figure.
+ *
+ * Kept in px rather than converted to the `em` the rest of this file
+ * writes, so it can be read back against the sheet without doing the
+ * division. See `tableHeaderType`.
+ */
+export const TABLE_HEADER_LETTER_SPACING_PX = -0.12;
+
 /** The sort glyph in a header cell — the house small glyph. */
 export const TABLE_SORT_ICON_PX = 16;
 
@@ -155,12 +164,11 @@ export const tableCellType: CSSObject = {
 };
 
 /**
- * `Sans/B2/Regular` — 12/16, weight 400, worn by two things: a header
- * label, and the second line of a two-line cell.
+ * `Sans/B2/Regular` — 12/16, weight 400, for the second line of a
+ * two-line cell.
  *
- * Regular weight in both, including the header. A header is told apart
- * from its data by colour here, not by weight — MUI's `variant="head"`
- * sets `fontWeightMedium` and a 24px leading, and both are overwritten.
+ * Header labels used to wear this too, and no longer do: see
+ * `tableHeaderType`.
  */
 export const tableCaptionType: CSSObject = {
   fontFamily: fontFamilies.product.sans,
@@ -168,4 +176,46 @@ export const tableCaptionType: CSSObject = {
   fontSize: typography.body.b2.size,
   lineHeight: `${typography.body.b2.leading}px`,
   letterSpacing: `${typography.body.b2.letterSpacing}em`,
+};
+
+/**
+ * The header label — DM Mono Medium, 12/16, tracked -0.12px.
+ *
+ * From the 11 September sheet (node 1308:88980), and it is the one place
+ * in the system that asks for a monospace by name. A header is a label
+ * strip rather than a row of data, and this is what now says so: the
+ * face changes, where before a header differed from its data only in
+ * colour and size. The ink is unchanged at `text/default/b3`, which the
+ * sheet confirms (#848280).
+ *
+ * Three things here are not `typography.body.b2`, which is why this is
+ * its own object rather than a spread of `tableCaptionType`:
+ *
+ *   - **the family.** `fontFamilies.product.mono`, which as of this
+ *     change is a real self-hosted DM Mono rather than the system
+ *     monospace it used to fall through to.
+ *   - **the weight.** Medium, against the Regular the rest of the table
+ *     wears. DM Mono's Regular is light enough at 12px that the strip
+ *     stopped reading as a heading; Medium is also the top of what DM
+ *     Mono ships, so there is no rung above this to drift onto.
+ *   - **the tracking.** -0.12px on 12px is -0.01em, which is `b1`'s
+ *     tracking rather than `b2`'s 0. Written from the sheet's own
+ *     number rather than borrowed from the `b1` slot, because the two
+ *     agreeing here is a coincidence of arithmetic and not a shared
+ *     decision -- if `b1` retracks, this should not follow.
+ *
+ * `text-overflow: ellipsis` comes with it: the sheet sets it on the
+ * label, and a mono face at 12px runs wider than the sans it replaced,
+ * so a header that used to fit its column may no longer. Truncating is
+ * what the design asks for, and it is also the only option that does not
+ * push the strip off its fixed 32.
+ */
+export const tableHeaderType: CSSObject = {
+  fontFamily: fontFamilies.product.mono,
+  fontWeight: fontWeights.medium,
+  fontSize: typography.body.b2.size,
+  lineHeight: `${typography.body.b2.leading}px`,
+  letterSpacing: `${TABLE_HEADER_LETTER_SPACING_PX}px`,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 };
