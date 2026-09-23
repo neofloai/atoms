@@ -275,7 +275,7 @@ export function TabsShowcase() {
 
       <PreviewCard
         title="Down the side"
-        description="Not drawn in Figma. The rule moves to the inline edge, the 12px gap moves with it, and the labels left-align — every colour and size unchanged."
+        description="Not drawn in Figma. The rule moves to the inline edge, the two paddings swap with it, and the labels left-align — every colour and size unchanged."
       >
         <VerticalSettings />
       </PreviewCard>

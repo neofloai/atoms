@@ -11,9 +11,9 @@ export const data: ComponentExamplesData = {
   name: 'Tabs',
   category: 'Navigation',
   tagline:
-    'One row of labels that switches which panel is showing. A hairline along the bottom, and one coloured segment of it under the tab you are on.',
+    'One row of labels that switches which panel is showing. A hairline along the bottom, and a thicker rule under the tab you are on, running that tab’s full width.',
   figmaUrl:
-    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3463-12374&m=dev',
+    'https://www.figma.com/design/eGSap2yP2uNr79UoP1Vecd/Revamp-UI?node-id=1367-48487&m=dev',
   props: [
     {
       name: 'Tabs value',
@@ -104,14 +104,14 @@ export const data: ComponentExamplesData = {
       type: "ReactNode / 'top' | 'bottom' | 'start' | 'end'",
       default: "— / 'top'",
       description:
-        'A glyph beside the label. Figma draws no icon in a tab, so this is MUI’s behaviour unchanged; `iconPosition="start"` keeps the 32px row, while `top` and `bottom` stack and make the bar taller.',
+        'A glyph beside the label. Figma draws no icon in a tab, so this is MUI’s behaviour unchanged; `iconPosition="start"` keeps the 40px row, while `top` and `bottom` stack and make the bar taller.',
     },
     {
       name: 'Tab wrapped',
       type: 'boolean',
       default: 'false',
       description:
-        'Lets a long label use a second line. Tabs are `nowrap` by default so the row keeps its 32px box and scrolls instead; this is the way back out when a label genuinely needs two lines.',
+        'Lets a long label use a second line. Tabs are `nowrap` by default so the row keeps its 40px box and scrolls instead; this is the way back out when a label genuinely needs two lines.',
     },
     {
       name: 'sx / classes',
@@ -233,7 +233,7 @@ export const data: ComponentExamplesData = {
     'Give every `Tab` a stable `value` when the row is built from data, rather than relying on child order',
     'Use `variant="scrollable"` for a row that can outgrow its container, and `fullWidth` for three or four tabs on a phone',
     'Use `count` for the number behind a tab instead of writing it into the label — it gets the house pill and the right ink',
-    'Keep labels to one or two words; the bar is a single 32px row',
+    'Keep labels to one or two words; the bar is a single 40px row',
     'Reach for `ToggleButtonGroup` when the choice filters what is on screen rather than switching between whole views',
   ],
   donts: [

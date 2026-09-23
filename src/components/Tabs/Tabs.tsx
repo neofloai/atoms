@@ -11,10 +11,11 @@ import { paired } from '../_shared/actionStyles';
 import { TabsContext } from './TabsContext';
 import {
   BAR_HEIGHT_PX,
+  INDICATOR_WIDTH_PX,
   RULE_WIDTH_PX,
-  TAB_LABEL_GAP_PX,
-  TAB_LABEL_SPACING_PX,
-  TAB_PADDING_PX,
+  TAB_LIST_GAP_PX,
+  TAB_PADDING_BLOCK_PX,
+  TAB_PADDING_INLINE_PX,
   indicator,
   indicatorDisabled,
   rule,
@@ -30,14 +31,6 @@ import type { TabsProps } from './Tabs.types';
  */
 const SCROLL_GLYPH_PX = 16;
 
-/**
- * The gap actually set on the tab list. Figma spaces adjacent *labels*
- * 24px apart; each tab keeps `TAB_PADDING_PX` of its own on both faces,
- * so the flex gap is what is left over. Getting this wrong is visible —
- * the whole bar's rhythm comes out of it.
- */
-const LIST_GAP_PX = TAB_LABEL_SPACING_PX - TAB_PADDING_PX * 2;
-
 function barStyles(theme: Theme, disabled: boolean): CSSObject {
   return {
     position: 'relative',
@@ -49,11 +42,11 @@ function barStyles(theme: Theme, disabled: boolean): CSSObject {
      *
      * A border sits outside the root's padding box, which puts it
      * *below* the indicator instead of behind it: the selected tab would
-     * show 1px of colour with 1px of grey underneath, where Figma has
-     * one 1px line whose selected segment is coloured. `::before` is
-     * inserted ahead of the scroller in paint order, so the indicator
-     * covers it with no z-index needed, and the bar measures the 32px
-     * the design says it does rather than 33.
+     * show its 2px rule with a 1px grey one stacked under it, reading as
+     * a 3px line that thickens at the selection. `::before` is inserted
+     * ahead of the scroller in paint order, so the indicator covers it
+     * with no z-index needed, and the bar measures the 40px the design
+     * says it does rather than 41.
      */
     '&::before': {
       content: '""',
@@ -63,17 +56,17 @@ function barStyles(theme: Theme, disabled: boolean): CSSObject {
       ...paired(theme, { backgroundColor: rule }),
     },
 
-    [`& .${tabsClasses.list}`]: { gap: LIST_GAP_PX },
+    [`& .${tabsClasses.list}`]: { gap: TAB_LIST_GAP_PX },
 
     /*
-     * MUI measures the indicator from the tab's box, so the line runs the
-     * tab's full width — the label plus its 8px each side — rather than
-     * stopping at the text. Figma draws it at the width of an unpadded
-     * tab item, which is the same thing measured on a tab that has no
-     * padding; end to end is what it looks like once the tab has some.
+     * MUI measures the indicator from the tab's box, which is exactly
+     * what this sheet draws: the rule under the selected tab is 73px
+     * wide where the label is 41px, so it spans the label plus the 16px
+     * either side of it. Nothing to correct — the default measurement is
+     * the specified one, and the 16px padding is what sets the width.
      */
     [`& .${tabsClasses.indicator}`]: {
-      height: RULE_WIDTH_PX,
+      height: INDICATOR_WIDTH_PX,
       ...paired(theme, {
         backgroundColor: disabled ? indicatorDisabled : indicator,
       }),
@@ -87,13 +80,8 @@ function barStyles(theme: Theme, disabled: boolean): CSSObject {
     /*
      * Vertical is not drawn in Figma. Rather than invent a treatment, it
      * keeps every colour and size and rotates the layout: the rule moves
-     * to the inline-end edge, the labels still sit 24px apart centre to
-     * centre, and they left-align because a column of centred text has
-     * no edge to read down.
-     *
-     * The two paddings swap with it: the 8px that spaces tabs along the
-     * bar becomes vertical, and the 12px `Scale/250` becomes horizontal,
-     * where it now holds the label off the rule. See
+     * to the inline-end edge and the labels left-align, because a column
+     * of centred text has no edge to read down. See
      * DESIGNER_QUESTIONS.md #40.
      */
     [`&.${tabsClasses.vertical}`]: {
@@ -106,13 +94,15 @@ function barStyles(theme: Theme, disabled: boolean): CSSObject {
       [`& .${tabsClasses.indicator}`]: {
         // MUI sets `height` inline here and `width` from the stylesheet,
         // the opposite of the horizontal case.
-        width: RULE_WIDTH_PX,
+        width: INDICATOR_WIDTH_PX,
       },
       // Reached from the bar rather than set in `Tab.tsx`, because a tab
-      // cannot see which way its parent runs.
+      // cannot see which way its parent runs. The two paddings swap: the
+      // 16 that sets a horizontal tab's width becomes the distance from
+      // the rule, and the 8 becomes the space between stacked labels.
       [`& .${tabClasses.root}`]: {
         minHeight: 0,
-        padding: `${TAB_PADDING_PX}px ${TAB_LABEL_GAP_PX}px`,
+        padding: `${TAB_PADDING_BLOCK_PX}px ${TAB_PADDING_INLINE_PX}px`,
         // A column of centred text has no edge to read down.
         alignItems: 'flex-start',
         textAlign: 'start',
@@ -148,13 +138,13 @@ EndCaret.displayName = 'TabsEndCaret';
 
 /**
  * A row of tabs that switches which panel is showing. Wraps MUI `Tabs`
- * with the Neoflo API from the Product Design System Figma
- * (node 3463:12374).
+ * with the Neoflo API from the Revamp UI Figma (node 1367:48487).
  *
- * The bar is deliberately plain: a 1px rule along the bottom, labels
- * 24px apart in neutral ink, and one 1px coloured segment of that rule
- * under whichever tab is selected. No fills, no pills, no weight change
- * — selection is carried by the indicator and by two rungs of ink.
+ * The bar is deliberately plain: a hairline along the bottom, labels at
+ * heading size in neutral ink, and a 2px near-black rule under whichever
+ * tab is selected, running the tab's full width rather than the label's.
+ * No fills and no pills — selection is carried by that rule, by two
+ * rungs of ink, and by the label stepping from Regular to Medium.
  *
  * MUI's selection model is untouched and is the point of the component:
  * `value` plus `onChange(event, value)`, matched against each child's
