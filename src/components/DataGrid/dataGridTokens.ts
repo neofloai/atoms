@@ -27,7 +27,7 @@ import type { CSSObject } from '@mui/material/styles';
  * grid and a table render the same design. A row is 48 / 56 / 64, the
  * header strip is a filled 40, a cell is padded 16 either side with the
  * row's 8 spent on the two that touch the edge, the hairline is 1px,
- * and the type is `Sans/B1/Regular` for data under a DM Mono Medium
+ * and the type is `Sans/B1` at Medium for data under a DM Mono Medium
  * header. If one of those ever moves it moves for both, which is what a
  * single source is for — the Revamp UI redraw (node 879:22095) moved
  * four of them at once and this file needed no arithmetic for any.
@@ -67,7 +67,7 @@ export const dataGridCaptionType = tableCaptionType;
 export const dataGridHeaderType = tableHeaderType;
 
 /**
- * `Sans/B1/Regular` — 13, weight 400, for every data cell.
+ * `Sans/B1` at Medium — 13, weight 500, for every data cell.
  *
  * The one type slot that is not simply `tableCellType`, and the leading
  * is why: the grid centres a cell's single line by setting
@@ -79,7 +79,7 @@ export const dataGridHeaderType = tableHeaderType;
  */
 export const dataGridCellType: CSSObject = {
   fontFamily: fontFamilies.product.sans,
-  fontWeight: fontWeights.regular,
+  fontWeight: fontWeights.medium,
   fontSize: typography.body.b1.size,
   letterSpacing: `${typography.body.b1.letterSpacing}em`,
 };

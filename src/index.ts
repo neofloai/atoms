@@ -619,7 +619,11 @@ export type {
  * list that has to know a row's height before rendering one.
  * `TABLE_CELL_ICON_PX` is there for a different reason: `icon` is a slot
  * the caller fills, so the size of what goes in it is the caller's to
- * set, and this is the number to set it to.
+ * set, and this is the number to set it to. `tableAmountType` is a
+ * third: a money column is content rather than a prop, and this is the
+ * type to put on it — the mono face and `tabular-nums` that make a
+ * column of figures line up on its decimal. Pair it with
+ * `align="right"`.
  */
 export {
   TABLE_CELL_ICON_PX,
@@ -632,6 +636,7 @@ export {
   TableHead,
   TableRow,
   TableSortLabel,
+  tableAmountType,
 } from './components/Table';
 export type {
   TableBodyProps,
@@ -657,8 +662,8 @@ export type {
  *
  *   - **The frame goes.** MUI borders and rounds the grid and fills it
  *     with `background.paper`; the design draws the same stack of bands
- *     the table does, hairline under every row including the last, no
- *     edge of its own. A grid needs a *height* though — MUI's root is
+ *     the table does, a hairline between rows and none under the last,
+ *     no edge of its own. A grid needs a *height* though — MUI's root is
  *     `height: 100%`, so a grid in an unsized parent renders as a line.
  *     There is a 320px floor to stop that happening silently.
  *   - **`size` is the density,** 48 / 56 / 64 over a flat 32px header, the

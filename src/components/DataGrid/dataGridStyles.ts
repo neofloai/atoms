@@ -20,7 +20,8 @@ import {
   TABLE_SORT_TINT_PADDING_PX,
   TABLE_SORT_TINT_RADIUS_PX,
   tableHeaderFill,
-  tableHeaderRule,
+  tableRowFill,
+  tableRule,
 } from '../Table/tableTokens';
 import {
   DATA_GRID_CHECKBOX_INSET_PULL_PX,
@@ -167,12 +168,21 @@ export function dataGridStyles(theme: Theme): CSSObject {
 
     // ── Hairlines ─────────────────────────────────────────────────
     // The grid draws the rule as a `border-top` per cell with the first
-    // row's set to transparent, which comes out identical to the table's
-    // bottom-per-row — except at the end, where the last row has no line
-    // under it. The design's table ends on a rule.
-    [`& .${c['row--lastVisible']} .${c.cell}`]: {
-      borderBottom: '1px solid var(--rowBorderColor)',
-    },
+    // row's set to transparent, and the last row gets nothing under it.
+    // That is now what the table does too, so there is nothing to
+    // correct: the hairline is a divider between two rows, and the row
+    // with nothing under it has nothing to be divided from.
+    //
+    // This used to add a `border-bottom` to the last visible row,
+    // because the Product Design System sheet ended its table on a
+    // rule. The Self-Serve report ends it on the last row instead, and
+    // is followed here for the same reason it is followed elsewhere on
+    // this component. See DESIGNER_QUESTIONS.md #64.
+
+    // The resting fill on a row. The strip above is `layers/card 2`,
+    // a row is `layers/page`, and hover and selection are
+    // `layers/card 1` between them.
+    [`& .${c.row}`]: paired(theme, { backgroundColor: tableRowFill }),
     // The design draws no vertical rules, and the grid draws one between
     // every pair of headers. They are also the handle a column is resized
     // by, so they are hidden rather than removed: nothing at rest, and
@@ -241,7 +251,7 @@ export function dataGridStyles(theme: Theme): CSSObject {
     // recolouring of the first.
     [`& .${c.columnHeaders}`]: {
       borderBottom: `${TABLE_BORDER_WIDTH_PX}px solid`,
-      ...paired(theme, { borderBottomColor: tableHeaderRule }),
+      ...paired(theme, { borderBottomColor: tableRule }),
     },
     // The label is its own element inside the header cell, and MUI styles
     // it directly -- `line-height: normal` and the grid's own font stack,

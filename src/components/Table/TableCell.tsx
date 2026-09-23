@@ -4,7 +4,7 @@ import * as React from 'react';
 import { TableCell as MuiTableCell } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { border, text } from '@/src/tokens';
+import { text } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
 import {
@@ -14,11 +14,13 @@ import {
   TABLE_CELL_SECONDARY_GAP_PX,
   TABLE_CHECKBOX_CELL_WIDTH_PX,
   TABLE_EDGE_INSET_PX,
-  tableCaptionType,
+  TABLE_CELL_GAP_TWO_LINE_PX,
+  TABLE_CELL_ICON_OFFSET_PX,
   tableCellType,
   tableHeaderFill,
-  tableHeaderRule,
   tableHeaderType,
+  tableRule,
+  tableSecondaryType,
 } from './tableTokens';
 import { useTableContext } from './TableContext';
 
@@ -55,10 +57,7 @@ const CellRoot = styled(MuiTableCell, {
     ...(head ? tableHeaderType : tableCellType),
     ...paired(theme, {
       color: head ? text.default.b3 : text.default.b1,
-      // The strip's own line is a rung darker than the ones between
-      // rows: a header separates from its data more firmly than one row
-      // separates from the next.
-      borderBottomColor: head ? tableHeaderRule : border.layers.card1,
+      borderBottomColor: tableRule,
     }),
     borderBottomStyle: 'solid',
     borderBottomWidth: TABLE_BORDER_WIDTH_PX,
@@ -116,21 +115,33 @@ const CellRoot = styled(MuiTableCell, {
  * and picked up here — so a right-aligned column reads inward from its
  * own edge with the glyph on the outside.
  */
-const CellLayout = styled('span')({
+const CellLayout = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'neofloTwoLine',
+})<{ neofloTwoLine: boolean }>(({ neofloTwoLine }) => ({
   display: 'flex',
   flexDirection: 'inherit',
   justifyContent: 'inherit',
-  alignItems: 'center',
-  gap: TABLE_CELL_GAP_PX,
+  // A glyph beside one line centres against it, because there the line
+  // box and the text are the same thing. Beside two lines it aligns to
+  // the top and is nudged down onto the first line's cap height —
+  // centred against a 35px block it floats between the two and reads as
+  // belonging to neither.
+  alignItems: neofloTwoLine ? 'flex-start' : 'center',
+  gap: neofloTwoLine ? TABLE_CELL_GAP_TWO_LINE_PX : TABLE_CELL_GAP_PX,
   minWidth: 0,
-});
+}));
 
 /** Holds its size against a long label in the next column. */
-const LeadingSlot = styled('span')({
+const LeadingSlot = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'neofloTwoLine',
+})<{ neofloTwoLine: boolean }>(({ neofloTwoLine }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   flexShrink: 0,
-});
+  // The 2 that lands a top-aligned glyph on the first line's cap
+  // height rather than on its line box.
+  marginBlockStart: neofloTwoLine ? TABLE_CELL_ICON_OFFSET_PX : 0,
+}));
 
 const TextColumn = styled('span')({
   display: 'flex',
@@ -159,7 +170,7 @@ const TextColumn = styled('span')({
  * with its quieter line louder than its title.
  */
 const SecondaryLine = styled('span')(({ theme }) => ({
-  ...tableCaptionType,
+  ...tableSecondaryType,
   ...paired(theme, { color: text.default.b3 }),
 }));
 
@@ -179,17 +190,19 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  *     the inline number and on nothing else.
  *   - **the hairline.** MUI derives it by lightening `palette.divider`
  *     88% — a computed grey. The design names one:
- *     `border.layers.card1`.
+ *     `border.layers.card3`, under the header and between the rows
+ *     alike, and none under the last row.
  *   - **the type.** `theme.typography.body2` for a data cell, and for a
  *     header cell a 24px leading at medium weight. The design uses
- *     `Sans/B1/Regular` for data and DM Mono Medium 12/16
- *     for a header, so a header is told from its data by face and
- *     colour rather than by weight.
+ *     `Sans/B1` at Medium for data and DM Mono Medium 12/16 for a
+ *     header, so a header is told from its data by face and colour
+ *     rather than by weight — both are Medium.
  *   - **the header's fill.** MUI gives the strip none, and reaches for
  *     `background.default` — the page — only once it is pinned. The
  *     design fills it either way, with `surface.layers.card2`, so a
- *     pinned header is opaque because every header is. Its bottom
- *     hairline is a rung darker than the ones between rows.
+ *     pinned header is opaque because every header is. Body rows carry
+ *     `surface.layers.page` for the same reason: the table paints its
+ *     own bands rather than showing what is behind them.
  *
  * ## The two props
  *
@@ -199,16 +212,31 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  * putting a component in a cell.
  *
  * The other two are geometry, and geometry is what drifts when every
- * call site rebuilds it: a leading node 8px clear of the text, centred
- * against the row rather than the first line (`icon`), and a muted 12/16
- * second line hard under the first (`secondary`). `NavbarTitle` exists
- * for the same reason.
+ * call site rebuilds it: a leading node 6px clear of the text and
+ * centred against the row (`icon`), and a muted 11/13 second line 2px
+ * under the first (`secondary`). `NavbarTitle` exists for the same
+ * reason.
+ *
+ * The two interact. Given both, the glyph stops centring and aligns to
+ * the top instead — nudged 2px down onto the first line's cap height,
+ * with 8px of gap rather than 6 — because a glyph centred against a
+ * two-line block floats between the lines and reads as belonging to
+ * neither.
+ *
+ * `tableAmountType` is the third piece of geometry and is not a prop,
+ * because a money column is content: put it on the cell's contents with
+ * `sx` and pair it with `align="right"`.
  *
  * @example An attachment
- * <TableCell icon={<PaperclipIcon size={16} />}>invoice-attachment</TableCell>
+ * <TableCell icon={<PaperclipIcon size={TABLE_CELL_ICON_PX} />}>
+ *   invoice-attachment
+ * </TableCell>
  *
  * @example A record with its timestamp under it
  * <TableCell secondary="14 Feb 2026 · 21:38">#1008</TableCell>
+ *
+ * @example An amount
+ * <TableCell align="right" sx={tableAmountType}>12,780.50</TableCell>
  *
  * @example A person
  * <TableCell icon={<Avatar size="sm">OP</Avatar>} secondary="administrator">
@@ -226,8 +254,10 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
   function TableCell({ icon, secondary, children, ...rest }, ref) {
     const { region } = useTableContext();
 
+    const twoLine = secondary != null;
+
     const textBlock =
-      secondary != null ? (
+      twoLine ? (
         <TextColumn>
           {children}
           <SecondaryLine data-neoflo-table-secondary>{secondary}</SecondaryLine>
@@ -239,8 +269,8 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     return (
       <CellRoot ref={ref} neofloRegion={region} {...rest}>
         {icon != null ? (
-          <CellLayout>
-            <LeadingSlot>{icon}</LeadingSlot>
+          <CellLayout neofloTwoLine={twoLine}>
+            <LeadingSlot neofloTwoLine={twoLine}>{icon}</LeadingSlot>
             {textBlock}
           </CellLayout>
         ) : (

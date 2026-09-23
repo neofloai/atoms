@@ -126,46 +126,68 @@ export const TABLE_CELL_PADDING_INLINE_PX = 16;
  */
 export const TABLE_EDGE_INSET_PX = spacing.component.xs;
 
-/** The hairline under every row, and under the header. */
+/** The hairline between rows, and under the header. */
 export const TABLE_BORDER_WIDTH_PX = 1;
 
 /**
- * `Scale/100` — gap between a cell's leading slot and its text.
+ * Gap between a cell's leading slot and its text — 6 on a one-line
+ * cell, 8 on a two-line one.
  *
- * From the `cell-body` component (549:9682), which is the design
- * system's own definition of a cell with a glyph in it: a 16px icon, 4
- * after it, then the label.
+ * Two numbers because the report names two, and the reason holds up: a
+ * glyph beside a single line sits inside that line's optical box, while
+ * a glyph beside a two-line block sits outside a taller shape and needs
+ * more air to read as a separate thing rather than as a bullet.
  *
- * The assembled frame contradicts it in one column — its first cell is
- * an ad-hoc frame holding a 14px glyph 8 from the text — and the
- * component is followed instead, on the grounds that a component set
- * outranks a page layout for that component's own geometry. Logged as
- * DESIGNER_QUESTIONS.md #62, together with the consequence: `icon`
- * takes any node, so an `Avatar` in that slot now sits 4 from its label
- * where the older sheet drew 8.
+ * Neither is on the component spacing ladder at 6, so the one-line
+ * value is a literal; the two-line value is `Scale/200`. Three sources
+ * have given three answers here — the `cell-body` component draws 4,
+ * the assembled frame's ad-hoc first cell draws 8, and the report draws
+ * 6 and 8. See DESIGNER_QUESTIONS.md #62.
  */
-export const TABLE_CELL_GAP_PX = spacing.component.xxs;
+export const TABLE_CELL_GAP_PX = 6;
+export const TABLE_CELL_GAP_TWO_LINE_PX = spacing.component.xs;
 
 /**
- * `Scale/100` — between the two lines of a two-line cell.
+ * How far the leading glyph is pushed down beside a two-line cell — 2.
  *
- * New: the lines used to sit hard against each other, held apart by
- * their leadings alone, on a reading of a 36px group holding a 20px
- * line and a 16px one. The Revamp UI row draws the gap explicitly
- * (`gap-[4px]` on every `Vendor / Invoice #` cell), which makes the
- * pair 40 tall and still centres inside every row height the table has.
+ * A two-line cell aligns its glyph to the *top*, not to the middle:
+ * centred against a 35px block the glyph floats between the two lines
+ * and reads as belonging to neither. Top-aligned it would sit on the
+ * line box's ascent rather than on the text, hence the 2 — it drops the
+ * glyph onto the first line's cap height.
+ *
+ * One-line cells are unaffected and stay centred, because there the
+ * line box and the text are the same thing.
  */
-export const TABLE_CELL_SECONDARY_GAP_PX = spacing.component.xxs;
+export const TABLE_CELL_ICON_OFFSET_PX = 2;
 
 /**
- * The glyph in a cell's leading slot — 16.
+ * Between the two lines of a two-line cell — 2 (`Scale/50`).
+ *
+ * The lines used to sit hard against each other on their leadings
+ * alone. The Revamp UI row draws 4 and the Self-Serve report draws 2;
+ * the report wins, as it does everywhere else the two disagree, and 2
+ * is also what the smaller secondary line wants — at 11/13 the pair is
+ * already tighter than the 4 was drawn for.
+ *
+ * Not on the component ladder, which starts at 4, so it is a literal.
+ */
+export const TABLE_CELL_SECONDARY_GAP_PX = 2;
+
+/**
+ * The glyph in a cell's leading slot — 14.
  *
  * Exported because a caller fills that slot and has to size what goes
  * in it; `<PaperclipIcon size={TABLE_CELL_ICON_PX} />` is the whole of
  * it. The cell does not impose the size, because the slot also takes an
  * `Avatar`, which carries its own.
+ *
+ * It was 16, from the `cell-body` component. The report says 14 for
+ * every one of the four cell shapes it identifies, and the frame's own
+ * ad-hoc cells draw 14 too — so 16 was the outlier and this is the
+ * majority of three readings rather than a new value.
  */
-export const TABLE_CELL_ICON_PX = 16;
+export const TABLE_CELL_ICON_PX = 14;
 
 /**
  * Width of a checkbox column — 48 (16 + a 16px box + 16).
@@ -185,6 +207,27 @@ export const TABLE_CELL_ICON_PX = 16;
  * DESIGNER_QUESTIONS.md #48.
  */
 export const TABLE_CHECKBOX_CELL_WIDTH_PX = 48;
+
+/**
+ * The fill behind a body row — `surface/layers/page`.
+ *
+ * New, and it is the one change on this component that is visible
+ * without a table to compare against: rows used to be transparent, on
+ * the principle that "a table is a stack of bands on whatever surface
+ * it is dropped onto". Both sources disagree with that — the Revamp UI
+ * frame binds `surface/layers/page` on every `Row`, and the Self-Serve
+ * report names the same rung — so a table now paints its own rows and a
+ * table sitting on a card shows page-coloured bands against it.
+ *
+ * It also makes the two fills either side of it consistent: the strip
+ * above is `layers/card 2`, a row is `layers/page`, and a hovered or
+ * selected row is `layers/card 1` between them. Three rungs of one
+ * ladder, where before the middle one was "whatever is behind".
+ *
+ * A table that genuinely wants to be transparent says so with `sx` on
+ * the row. See DESIGNER_QUESTIONS.md #64.
+ */
+export const tableRowFill = surface.layers.page;
 
 /**
  * Tracking on the header label — -0.12px, the sheet's own figure.
@@ -227,18 +270,25 @@ export const TABLE_HEADER_LETTER_SPACING_PX = -0.12;
 export const tableHeaderFill = surface.layers.card2;
 
 /**
- * The hairline under the header strip — `border/layers/card 3`, one rung
- * darker than the `card 1` every body row uses.
+ * Every hairline in the table — `border/layers/card 3`.
  *
- * The strip separates from the data more firmly than one row separates
- * from the next, which is the point of a header: `#e5e4e1` under the
- * labels against `#eeeeec` between the rows. It was `card 1` for both
- * until the Self-Serve report named the difference.
+ * One colour under the header and between the rows. It was `card 1`
+ * until the Self-Serve reports, and it briefly split in two: the
+ * header-cell report named `card 3` for the strip, and with nothing
+ * said about the rows they were left on `card 1`, which read as a
+ * deliberate two-weight design. The body-row report then named `card 3`
+ * for the rows as well, so there is no split — the whole table moved
+ * one rung darker, `#eeeeec` to `#e5e4e1`.
  *
- * `Table` and `DataGrid` both read it, so the two strips end the same
- * way.
+ * Which is also the reading that agrees with Figma. The frame binds
+ * `border/layers/card 1` at `#dfdedb`, a hex our `card 1` does not
+ * carry (ours is `#eeeeec`); of the two rungs we do have, `card 3` is
+ * the nearer to what the frame draws. Two independent sources moving
+ * the same direction is better evidence than either alone.
+ *
+ * `Table` and `DataGrid` both read it.
  */
-export const tableHeaderRule = border.layers.card3;
+export const tableRule = border.layers.card3;
 
 /** The sort glyph in a header cell — the house small glyph. */
 export const TABLE_SORT_ICON_PX = 16;
@@ -262,25 +312,94 @@ export const TABLE_SORT_TINT_PADDING_PX = spacing.component.xxs;
 export const TABLE_SORT_TINT_RADIUS_PX = radius.xs;
 
 /**
- * `Sans/B1/Regular` — 13/20, weight 400, for every data cell.
+ * `Sans/B1` at Medium — 13/20, weight 500, for every data cell.
  *
  * Set explicitly rather than inherited, because MUI's `TableCell`
  * already sets `theme.typography.body2` and would otherwise win.
+ *
+ * The weight moved from Regular. Both sources say so — the frame sets
+ * every body cell `font-medium`, and the report gives Medium for a
+ * one-line cell and for the primary line of a two-line one. It is the
+ * change most likely to be noticed in a table that was already built,
+ * because it touches every cell rather than a column or an edge.
+ *
+ * The report pairs weight with ink rather than treating them
+ * separately: strong ink (`text/default/b1`) takes Medium, quiet ink
+ * (`b3`) takes Regular. Only the first is a default — a muted cell is a
+ * decision about that column's content, and the caller makes it with
+ * `sx`. See DESIGNER_QUESTIONS.md #64.
  */
 export const tableCellType: CSSObject = {
   fontFamily: fontFamilies.product.sans,
-  fontWeight: fontWeights.regular,
+  fontWeight: fontWeights.medium,
   fontSize: typography.body.b1.size,
   lineHeight: `${typography.body.b1.leading}px`,
   letterSpacing: `${typography.body.b1.letterSpacing}em`,
 };
 
 /**
- * `Sans/B2/Regular` — 12/16, weight 400, for the second line of a
- * two-line cell.
+ * The muted second line of a two-line cell — 11/13, Regular.
  *
- * Header labels used to wear this too, and no longer do: see
- * `tableHeaderType`.
+ * Neither number is on the type scale. `body.b1` is 13/20, `body.b2` is
+ * 12/16, `body.caption` is 10/12 — so 11 falls between two rungs and 13
+ * is not a leading the scale carries at all. Both are literals here.
+ *
+ * The three sources give three answers: the original sheet's group
+ * implied 12/16, the Revamp UI frame draws 11/14, the report says
+ * 11/13. The report wins for the size, which two of the three agree on,
+ * and for the leading, which only it states outright. **This is the
+ * third missing rung in three components** — see DESIGNER_QUESTIONS.md
+ * #61, #62 and #64.
+ */
+export const TABLE_SECONDARY_SIZE_PX = 11;
+export const TABLE_SECONDARY_LEADING_PX = 13;
+
+export const tableSecondaryType: CSSObject = {
+  fontFamily: fontFamilies.product.sans,
+  fontWeight: fontWeights.regular,
+  fontSize: TABLE_SECONDARY_SIZE_PX,
+  lineHeight: `${TABLE_SECONDARY_LEADING_PX}px`,
+};
+
+/**
+ * An amount, for the column every invoice table has on its right.
+ *
+ * Not a prop and not a variant — a cell holds whatever you put in it,
+ * and this is the type to put on it. It is exported for the reason
+ * `TableCell`'s two props exist at all: this is geometry, and geometry
+ * is what drifts when every call site rebuilds it. Three patterns in
+ * this repo had each written their own version of it before this
+ * existed.
+ *
+ * Two things in it are the point:
+ *
+ *   - **the mono face**, which is what makes a column of figures line
+ *     up on its decimal without anything being told to.
+ *   - **`tabular-nums`**, which pins every digit to one advance width.
+ *     DM Mono is monospaced so this is belt and braces, but the rule
+ *     survives a caller swapping the family and costs nothing.
+ *
+ * Pair it with `align="right"`. The currency symbol is set separately,
+ * in `text/default/b3`, so the eye lands on the figure rather than on a
+ * column of repeated `$`.
+ */
+export const tableAmountType: CSSObject = {
+  fontFamily: fontFamilies.product.mono,
+  fontWeight: fontWeights.regular,
+  fontSize: typography.body.b1.size,
+  lineHeight: `${typography.body.b1.leading}px`,
+  letterSpacing: `${typography.body.b1.letterSpacing}em`,
+  fontVariantNumeric: 'tabular-nums',
+};
+
+/**
+ * `Sans/B2/Regular` — 12/16, weight 400.
+ *
+ * Nothing in the table itself wears this any more. Header labels moved
+ * to `tableHeaderType` and a cell's second line to
+ * `tableSecondaryType`; what is left is the grid's footer count and its
+ * overlays, which read as data about the grid rather than as part of
+ * it.
  */
 export const tableCaptionType: CSSObject = {
   fontFamily: fontFamilies.product.sans,

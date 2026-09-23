@@ -11,16 +11,27 @@ import { styled } from '@mui/material/styles';
 import { border, surface, text } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
-import { TABLE_HEADER_ROW_HEIGHT_PX, TABLE_ROW_HEIGHT_PX } from './tableTokens';
+import {
+  TABLE_HEADER_ROW_HEIGHT_PX,
+  TABLE_ROW_HEIGHT_PX,
+  tableRowFill,
+} from './tableTokens';
 import { useTableContext } from './TableContext';
 
 import type { CSSObject, Theme } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
 import type { TableRowProps, TableRowState } from './Table.types';
 
-/** The fill a row carries because of its data, per `state`. */
-const STATE_FILL: Record<TableRowState, ModeToken | undefined> = {
-  default: undefined,
+/**
+ * The fill a row carries because of its data, per `state`.
+ *
+ * `default` is no longer `undefined`: a row paints `surface/layers/page`
+ * rather than showing whatever is behind it. Both the Revamp UI frame
+ * and the Self-Serve report bind that rung on every row — see
+ * `tableRowFill`.
+ */
+const STATE_FILL: Record<TableRowState, ModeToken> = {
+  default: tableRowFill,
   error: surface.error.subtle,
   success: surface.success.subtle,
 };
@@ -45,13 +56,12 @@ interface RowStyleProps {
   neofloHeight: number;
   neofloState: TableRowState;
   neofloDisabled: boolean;
+  neofloLastRule: boolean;
 }
 
 function rowStateStyles(theme: Theme, state: TableRowState): CSSObject {
-  const fill = STATE_FILL[state];
-
   return {
-    ...(fill && paired(theme, { backgroundColor: fill })),
+    ...paired(theme, { backgroundColor: STATE_FILL[state] }),
     // MUI's hover rule is two classes and a pseudo-class deep, so it
     // outranks the plain fill above no matter which is written first.
     // Both have to be answered, and `state` has to answer both.
@@ -66,12 +76,35 @@ const RowRoot = styled(MuiTableRow, {
   shouldForwardProp: (prop) =>
     prop !== 'neofloHeight' &&
     prop !== 'neofloState' &&
-    prop !== 'neofloDisabled',
+    prop !== 'neofloDisabled' &&
+    prop !== 'neofloLastRule',
 })<RowStyleProps>(
-  ({ theme, neofloHeight, neofloState, neofloDisabled }): CSSObject => ({
+  ({
+    theme,
+    neofloHeight,
+    neofloState,
+    neofloDisabled,
+    neofloLastRule,
+  }): CSSObject => ({
     height: neofloHeight,
 
     ...rowStateStyles(theme, neofloState),
+
+    // The table closes on its last row rather than on a rule. The
+    // hairline is a divider between two rows, so the row with nothing
+    // under it has nothing to be divided from; a line there reads as an
+    // underline on the table instead. Reached through the cells because
+    // that is where the border is drawn.
+    //
+    // Body rows only. A header row is also the last child of its own
+    // section, and the line under the strip is the one hairline that is
+    // not a divider between two rows — it is what makes the strip a
+    // strip.
+    ...(neofloLastRule && {
+      '&:last-child': {
+        [`& .${tableCellClasses.root}`]: { borderBottomWidth: 0 },
+      },
+    }),
 
     [`&.${tableRowClasses.selected}`]: {
       ...paired(theme, { backgroundColor: surface.layers.card1 }),
@@ -88,9 +121,12 @@ const RowRoot = styled(MuiTableRow, {
     // row is disabled whatever else is true of it.
     ...(neofloDisabled && {
       pointerEvents: 'none',
-      [`&, &.${tableRowClasses.hover}:hover, &.${tableRowClasses.selected}`]: {
-        backgroundColor: 'transparent',
-      },
+      // Back to the resting fill, not to transparent. A disabled row
+      // drops whatever its `state` or its selection was painting, but a
+      // row is opaque now — a transparent one would show the card
+      // behind it while every row around it shows `layers/page`.
+      [`&, &.${tableRowClasses.hover}:hover, &.${tableRowClasses.selected}`]:
+        paired(theme, { backgroundColor: tableRowFill }),
       [`& .${tableCellClasses.root}`]: paired(theme, {
         color: text.disabled.default,
         borderBottomColor: border.disabled.default,
@@ -174,6 +210,7 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
         }
         neofloState={state}
         neofloDisabled={disabled}
+        neofloLastRule={region === 'body'}
         // Visual only in Figma, and visual only here — the controls in a
         // disabled row keep their own `disabled`. This says so to anything
         // reading the row rather than looking at it.

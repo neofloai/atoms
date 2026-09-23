@@ -144,7 +144,7 @@ export function DataGridShowcase() {
     <Stack spacing={4}>
       <PreviewCard
         title="A grid of records"
-        description="The same six columns as the table page's first preview, with a grid behind them: click a header to sort, drag a separator to resize, hover one for the tint and the two-headed arrow. Nothing about the rows changed — 48 tall, 24 from the edge, a hairline under each including the last."
+        description="The same six columns as the table page's first preview, with a grid behind them: click a header to sort, drag a separator to resize, hover one for the tint and the two-headed arrow. Nothing about the rows changed — 48 tall, 24 from the edge, a hairline between each and none under the last."
       >
         <GridBox rows={6}>
           <DataGrid

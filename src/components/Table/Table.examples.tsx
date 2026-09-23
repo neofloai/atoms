@@ -142,16 +142,16 @@ export const data: ComponentExamplesData = {
     {
       title: 'Two lines in one row, and a leading glyph',
       description:
-        'The richest cells are still cells. `secondary` puts a muted line 4px under the first, and `icon` holds a node 4px clear of the text — a 16px glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.',
+        'The richest cells are still cells. `secondary` puts a muted 11/13 line 2px under the first, and `icon` holds a 14px node clear of the text. Given both, the glyph stops centring and aligns to the first line’s cap height instead — centred against a two-line block it floats between the lines and reads as belonging to neither.',
       code: [
         '<TableRow>',
-        '  <TableCell icon={<UploadSimpleIcon size={16} />} secondary="14 Feb 2026 · 21:38">',
+        '  <TableCell icon={<UploadSimpleIcon size={14} />} secondary="14 Feb 2026 · 21:38">',
         '    #1008',
         '  </TableCell>',
         '  <TableCell icon={<Avatar size="sm">OP</Avatar>} secondary="administrator">',
         '    Kaustav',
         '  </TableCell>',
-        '  <TableCell icon={<PaperclipIcon size={16} />}>inv-so90-9333.pdf</TableCell>',
+        '  <TableCell icon={<PaperclipIcon size={14} />}>inv-so90-9333.pdf</TableCell>',
         '  <TableCell align="right" secondary="$ 14,509.32">',
         '    Total',
         '  </TableCell>',
@@ -203,6 +203,23 @@ export const data: ComponentExamplesData = {
         '    <TableCell>Withdrawn</TableCell>',
         '  </TableRow>',
         '</TableBody>',
+      ].join('\n'),
+    },
+    {
+      title: 'A column of money',
+      description:
+        'Amounts are content, not a prop — `tableAmountType` is the type to put on them. The mono face is what makes a column of figures line up on its decimal, and `tabular-nums` holds that even if the family is swapped. Set the symbol apart in the quiet ink so the eye lands on the figure rather than on a column of repeated symbols.',
+      code: [
+        "import { tableAmountType } from '@neofloai/atoms';",
+        '',
+        '<TableCell align="right">',
+        "  <Box component=\"span\" sx={{ color: 'text.secondary', mr: 0.25 }}>",
+        '    $',
+        '  </Box>',
+        '  <Box component="span" sx={tableAmountType}>',
+        '    12,780.50',
+        '  </Box>',
+        '</TableCell>',
       ].join('\n'),
     },
     {
