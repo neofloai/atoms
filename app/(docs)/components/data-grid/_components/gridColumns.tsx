@@ -173,7 +173,7 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
     width: 132,
     sortable: false,
     renderCell: ({ row }) => (
-      <Chip size="sm" variant={row.statusVariant} label={row.status} />
+      <Chip size="sm" bordered variant={row.statusVariant} label={row.status} />
     ),
   },
   {

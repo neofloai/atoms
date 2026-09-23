@@ -7,6 +7,9 @@ import Typography from '@mui/material/Typography';
 
 import { Chip } from '@/src/components/Chip';
 import { invoiceDashboard } from '@/src/patterns';
+import { StageChip } from './_components/invoiceQueue';
+
+import type { InvoiceStage } from './_components/invoiceQueue';
 import { CodeBlock } from '../../_components/CodeBlock';
 import { InvoiceDashboardPreview } from './_components/InvoiceDashboardPreview';
 
@@ -27,36 +30,54 @@ function componentHref(name: string): string {
   return `/components/${slug}`;
 }
 
-/** The four stages, and the chip role each one is drawn in. */
+/**
+ * The seven statuses, and where each one's colour comes from.
+ *
+ * Six carry their own colours rather than a chip role: the workflow needs
+ * seven that are tellable apart down a column, and the four semantic roles
+ * cannot supply seven. `extraction` is the exception and still uses
+ * `information` — its colour is specified as three literal hexes in a cyan
+ * the collection has no scale for.
+ */
 const STAGES: readonly {
-  label: string;
-  variant: 'information' | 'warning' | 'success' | 'error';
-  variantName: string;
+  stage: InvoiceStage;
+  source: string;
   what: string;
 }[] = [
   {
-    label: 'Extraction',
-    variant: 'information',
-    variantName: 'information',
+    stage: 'extraction',
+    source: 'information (role)',
     what: 'OCR and contextual extraction have run; every field carries a confidence score and the ones the model is unsure of are flagged for review.',
   },
   {
-    label: 'Matching',
-    variant: 'warning',
-    variantName: 'warning',
+    stage: 'faktur',
+    source: 'warning ramp',
+    what: 'The Indonesian tax invoice is being validated against the commercial one. A stage of its own because it can fail on its own, without anything being wrong with the invoice it belongs to.',
+  },
+  {
+    stage: 'matching',
+    source: 'purple ramp',
     what: 'Metadata and line items are being matched. Fields that disagree show red, and acknowledging the same field three times commits it to memory — so this is the stage that is genuinely waiting on a person.',
   },
   {
-    label: 'ERP Posting',
-    variant: 'success',
-    variantName: 'success',
-    what: 'The last stage. Everything extracted, matched and validated is posted from here, along with the extra fields the posting itself needs. Simulate checks the accounting first and surfaces the error the ERP throws if there is one.',
+    stage: 'posting',
+    source: 'information ramp',
+    what: 'Everything extracted, matched and validated is posted from here, along with the extra fields the posting itself needs. Simulate checks the accounting first and surfaces the error the ERP throws if there is one.',
   },
   {
-    label: 'Error',
-    variant: 'error',
-    variantName: 'error',
-    what: 'The stage failed. This is the only status that also carries a glyph, so a failed invoice is legible without relying on hue.',
+    stage: 'error',
+    source: 'orange ramp',
+    what: 'A stage failed. Carries a glyph in the label’s own ink, so a failed invoice is legible without relying on hue.',
+  },
+  {
+    stage: 'posted',
+    source: 'success ramp',
+    what: 'Done, and out of the queue. Its tick is drawn in its own green rather than the label’s ink, so the mark reads at full strength against a quieter label.',
+  },
+  {
+    stage: 'rejected',
+    source: 'error ramp',
+    what: 'Closed without posting. Like Posted, its cross carries its own ink rather than the label’s.',
   },
 ];
 
@@ -115,7 +136,7 @@ export default function InvoiceDashboardPatternPage() {
           <Stack component="ul" spacing={1.5} sx={{ pl: 0, m: 0, listStyle: 'none' }}>
             {STAGES.map((stage) => (
               <Stack
-                key={stage.label}
+                key={stage.stage}
                 component="li"
                 direction={{ xs: 'column', sm: 'row' }}
                 spacing={1.5}
@@ -126,9 +147,9 @@ export default function InvoiceDashboardPatternPage() {
                   spacing={1}
                   sx={{ flexShrink: 0, alignItems: 'center', minWidth: 200 }}
                 >
-                  <Chip size="sm" variant={stage.variant} label={stage.label} />
+                  <StageChip stage={stage.stage} />
                   <Typography variant="caption" color="text.disabled">
-                    <code>{stage.variantName}</code>
+                    <code>{stage.source}</code>
                   </Typography>
                 </Stack>
                 <Typography variant="body2" color="text.secondary">

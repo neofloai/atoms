@@ -240,7 +240,7 @@ export const QUERY_COLUMNS: GridColDef<QueryRecord>[] = [
     sortable: false,
     renderCell: ({ row }) => {
       const meta = statusMeta(row.status);
-      return <Chip size="sm" variant={meta.variant} label={meta.label} />;
+      return <Chip size="sm" bordered variant={meta.variant} label={meta.label} />;
     },
   },
   {

@@ -32,19 +32,29 @@ import {
   Typography,
   countActiveFilters,
 } from '@neofloai/atoms';
+import { styled } from '@mui/material/styles';
 import {
   ArrowSquareOutIcon,
+  CheckCircleIcon,
   FadersHorizontalIcon,
   HeadsetIcon,
   MagnifyingGlassIcon,
   PaperclipIcon,
   SidebarSimpleIcon,
   UploadSimpleIcon,
-  WarningCircleIcon,
+  WarningIcon,
+  XCircleIcon,
 } from '@neofloai/atoms/icons';
-import { fontFamilies, text, typography } from '@neofloai/atoms/tokens';
+import {
+  border,
+  fontFamilies,
+  icon,
+  surface,
+  text,
+  typography,
+} from '@neofloai/atoms/tokens';
 
-import type { FilterValue, GridColDef } from '@neofloai/atoms';
+import type { ChipColors, FilterValue, GridColDef } from '@neofloai/atoms';
 
 // The rail, the invoices and the facets are the application's. The rail is
 // the same one every other screen in the workflow mounts, so it is imported
@@ -55,33 +65,120 @@ import { INVOICE_FILTER_GROUPS, filterInvoices } from './invoices';
 
 import type { Invoice, InvoiceStage } from './invoices';
 
+/** The glyph in a status chip. */
+const STATUS_ICON_PX = 14;
+
+/** One status: its label, its colours, and an optional glyph. */
+interface StageMeta {
+  label: string;
+  variant?: 'information';
+  colors?: ChipColors;
+  icon?: React.ReactElement;
+}
+
+/**
+ * Paints a status glyph in a colour of its own rather than the label's.
+ *
+ * Chip sets \`color: inherit\` on its icon slot, two classes deep from the
+ * chip root, so a colour set on the slot element itself loses to it. \`&&&\`
+ * lifts this to three and settles it without an \`!important\`. A \`color\`
+ * prop on the icon would have been shorter and light-mode only; this
+ * resolves per scheme.
+ */
+const GlyphInk = styled('span')<{ ink: { light: string; dark: string } }>(
+  ({ theme, ink }) => ({
+    display: 'inline-flex',
+    '&&&': {
+      color: ink.light,
+      ...theme.applyStyles('dark', { color: ink.dark }),
+    },
+  })
+);
+
 /**
  * The stage an invoice is parked at, and the chip that says so.
  *
  * This map is the screen. Every other column tells you *which* invoice; the
  * stage tells you what the invoice is waiting for, and it is the only thing
- * on the row that decides where Review takes you — extraction review,
- * match review, or the posting screen.
+ * on the row that decides where Review takes you.
  *
- * The four roles are the semantic ones every other status pill in the library
- * uses — \`information\`, \`warning\`, \`success\`, \`error\` — rather than the
- * hues in the frame. Read down the column it is a progression: the machine is
- * working, a human is needed, everything is validated, a stage has failed. A
- * decorative role like \`purple\` or \`orange\` carries no state, so a reader
- * could not tell from it which of two stages was the bad one.
+ * Six of the seven carry their own colours rather than a chip role, because
+ * the workflow needs seven that are tellable apart down a column and the
+ * semantic roles supply four. \`extraction\` is the exception and still uses
+ * \`information\`: its colour is specified as three literal hexes, in a hue
+ * the token collection has no scale for.
+ *
+ * Every colour here is a \`{ light, dark }\` token rather than a ramp step.
+ * A ramp step — \`colors.purple[75]\` and the like — is a plain string, so a
+ * chip built from one paints the same colour on a near-black page. Where a
+ * specification named a ramp step, the semantic token carrying the identical
+ * light value was used instead.
+ *
+ * Two of the three glyphs are drawn in an ink of their own rather than
+ * inheriting the label's, so the tick and the cross read at full strength
+ * against a quieter label.
  */
-const STAGE_META: Record<
-  InvoiceStage,
-  {
-    label: string;
-    variant: 'information' | 'warning' | 'success' | 'error';
-    Icon?: typeof WarningCircleIcon;
-  }
-> = {
+const STAGE_META: Record<InvoiceStage, StageMeta> = {
   extraction: { label: 'Extraction', variant: 'information' },
-  matching: { label: 'Matching', variant: 'warning' },
-  posting: { label: 'ERP Posting', variant: 'success' },
-  error: { label: 'Error', variant: 'error', Icon: WarningCircleIcon },
+  faktur: {
+    label: 'Faktur Pajak',
+    colors: {
+      bg: surface.warning.subtle,
+      border: border.warning.default,
+      text: text.warning[2],
+    },
+  },
+  matching: {
+    label: 'Matching',
+    colors: {
+      bg: surface.purple.default,
+      border: icon.purple[4],
+      text: text.purple[2],
+    },
+  },
+  posting: {
+    label: 'ERP Posting',
+    colors: {
+      bg: surface.information.default,
+      border: icon.information[4],
+      text: text.information[3],
+    },
+  },
+  error: {
+    label: 'Error',
+    colors: {
+      bg: surface.orange.default,
+      border: icon.orange[3],
+      text: text.orange[0],
+    },
+    icon: <WarningIcon size={STATUS_ICON_PX} />,
+  },
+  posted: {
+    label: 'Posted',
+    colors: {
+      bg: surface.success.subtleHover,
+      border: border.success.focus,
+      text: text.success[3],
+    },
+    icon: (
+      <GlyphInk ink={icon.success[3]}>
+        <CheckCircleIcon size={STATUS_ICON_PX} />
+      </GlyphInk>
+    ),
+  },
+  rejected: {
+    label: 'Rejected',
+    colors: {
+      bg: surface.error.default,
+      border: border.error.defaultHover,
+      text: text.error[2],
+    },
+    icon: (
+      <GlyphInk ink={icon.error[2]}>
+        <XCircleIcon size={STATUS_ICON_PX} />
+      </GlyphInk>
+    ),
+  },
 };
 
 /**
@@ -347,9 +444,11 @@ function invoiceColumns(
         return (
           <Chip
             size="sm"
+            bordered
             variant={meta.variant}
+            colors={meta.colors}
             label={meta.label}
-            icon={meta.Icon ? <meta.Icon /> : undefined}
+            icon={meta.icon}
           />
         );
       },

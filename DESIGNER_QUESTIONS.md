@@ -1326,3 +1326,33 @@ The two label inks are a rounding difference — within three units of the rung 
 **`Sans/B1` at 11px is the third missing rung in three components.** The second line is 11/13 and the type scale runs `b1` 13/20, `b2` 12/16, `caption` 10/12 — so 11 falls between two rungs and 13 is not a leading the scale carries. Both are literals. With #61's `Sans/B3` and #62's 11/14, three components now hold a number where a rung should be. **This is the one to fix first**; it is the same request three times and it blocks resolving any of them cleanly.
 
 **The amount column is composition, and ships as a token rather than a prop.** `tableAmountType` — the mono face, `tabular-nums`, and `Sans/B1`'s size — because a money column is content a caller puts in a cell, and three patterns in this repo had each rebuilt it before this existed. The currency symbol stays separate, in the quiet ink, so the eye lands on the figure. **Confirm the symbol is meant to be dimmer than its own amount.**
+
+### 65. The invoice status vocabulary grows to seven and stops using the semantic roles (added 23 September, source: Neoflo Self-Serve status specification)
+
+**The four roles could not carry seven statuses, so six of them now name their own colours.** Extraction, Faktur Pajak, Matching, ERP Posting, Error, Posted and Rejected have to be tellable apart down one column, and `information` / `warning` / `success` / `error` supply four. This reverses the decision recorded on the invoice dashboard pattern — *"one vocabulary across the library beats per-screen fidelity"* — which was itself made in response to an earlier instruction. **Confirm the reversal**, because the reason for the old rule has not gone away: a reader still cannot tell from a decorative hue which of two statuses is the bad one, and the workflow now has two failure states (Error, Rejected) drawn in two different hues.
+
+**Every colour ships as a mode-aware token, which required substituting each raw ramp step named in the specification.** A ramp step — `colors.purple[75]`, `colors.orange[600]` — is a plain string, not a `{ light, dark }` pair, so a chip built from one paints the identical colour on a near-black page. Each was replaced by the semantic token carrying the *same light value*, so light mode is pixel-for-pixel what was specified and dark mode works:
+
+| specified | shipped | light |
+|---|---|---|
+| `colors.yellow[75]` | `surface.warning.subtle` | `#fdf9e8` |
+| `colors.yellow[400]` | `border.warning.default` | `#fedb5c` |
+| `colors.yellow[700]` | `text.warning[2]` | `#9e8324` |
+| `colors.purple[75]` | `surface.purple.default` | `#f1edfc` |
+| `colors.purple[400]` | `icon.purple[4]` | `#9a7efe` |
+| `colors.purple[600]` | `text.purple[2]` | `#6a4ece` |
+| `colors.blue[400]` | `icon.information[4]` | `#4c77ef` |
+| `colors.orange[100]` | `surface.orange.default` | `#fde9d4` |
+| `colors.orange[600]` | `icon.orange[3]` | `#ce7d2c` |
+| `colors.orange[800]` | `text.orange[0]` | `#6d451c` |
+| `colors.green[500]` | `icon.success[3]` | `#016f43` |
+
+**Please specify in semantic tokens, not ramp steps.** A ramp step has no dark half by construction, so a specification written in them is a light-mode specification whether or not that was the intent.
+
+**Two of those substitutions put an `icon` token on a border, which is the wrong shelf.** Matching's stroke is `icon.purple[4]` and Error's is `icon.orange[3]`, because `orange` and `purple` have no `border` ramp in the collection at all — the gap #61 already asks to close. This is the second component to need it.
+
+**Two glyphs do not inherit the label's ink and one does.** Posted's tick is `icon.success[3]` and Rejected's cross is `icon.error[2]`, both drawn in their own colour; Error's warning takes `currentColor`. Three glyphs, two rules. It is drawn that way and shipped that way, and the effect is real — a tick at full strength against a quieter label reads as a mark rather than as part of the text. **Say whether that is the intent for all three**, because three glyphs with two rules between them is a decision once and an inconsistency forever after.
+
+**Extraction is the one status still on a role.** Its colours are given as three literal hexes — `#e7f4fa`, `#78cdf2`, `#128dc2` — in a cyan the collection has no scale for and which is unbound in Figma too (#61 has the evidence). It keeps `information` rather than hardcoding a colour that would not survive dark mode, which means Extraction and ERP Posting are now the same hue at different rungs. **This is the cost of not having the cyan**, and it is visible in the first two rows of the queue.
+
+**The chips are now `bordered` everywhere a status appears**, including the table and data-grid documentation pages, whose own vocabulary (Matched / In review / Held / Rejected) is unrelated to the workflow and keeps its semantic roles. Only the hairline treatment was applied there, not the colours — a status column in a different domain should not borrow this one's palette.

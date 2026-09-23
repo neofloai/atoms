@@ -80,6 +80,7 @@ export function RecordsTable({
               <TableCell>
                 <Chip
                   size="sm"
+                  bordered
                   variant={invoice.statusVariant}
                   label={invoice.status}
                 />
