@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T11:27:29.304Z",
+  "generatedAt": "2026-09-23T12:37:31.096Z",
   "components": [
     {
       "name": "Accordion",
@@ -2254,8 +2254,8 @@
         },
         {
           "title": "Chips as option labels",
-          "description": "An option label can be any node. Give those rows a `searchText` — a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.",
-          "code": "const statusOptions = [\n  {\n    value: 'routed',\n    label: <Chip size=\"sm\" variant=\"warning\" label=\"Routed to Human\" />,\n    searchText: 'Routed to Human',\n  },\n  {\n    value: 'answered',\n    label: <Chip size=\"sm\" variant=\"success\" label=\"Auto-answered\" />,\n    searchText: 'Auto-answered',\n  },\n];"
+          "description": "An option label can be any node, and a status facet should use the same chip its column draws — one that reads differently in the dropdown makes the reader check whether it is the same thing. Give those rows a `searchText`: a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.",
+          "code": "const statusOptions = STATUSES.map((status) => ({\n  value: status.value,\n  // The same component the Status column renders, not a copy of it.\n  label: <StatusChip status={status.value} />,\n  searchText: status.label,\n}));"
         },
         {
           "title": "A category with its own pane",

@@ -377,9 +377,15 @@ export const INVOICE_FILTER_GROUPS: readonly FilterGroup[] = [
   {
     id: 'stage',
     label: 'Status',
+    // The same chip the Status column draws, not a copy of its text: a
+    // status that reads one way in the table and another in the dropdown
+    // that filters it makes the reader check whether they are the same
+    // thing. `searchText` is what the option pane's search box matches
+    // on, and a node has none of its own.
     options: (Object.keys(STAGE_META) as InvoiceStage[]).map((stage) => ({
       value: stage,
-      label: STAGE_META[stage].label,
+      label: <StageChip stage={stage} />,
+      searchText: STAGE_META[stage].label,
     })),
   },
   {
