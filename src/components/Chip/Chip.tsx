@@ -25,6 +25,8 @@ import type { CSSObject, Theme } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
 import type {
   ChipAppearance,
+  ChipColorValue,
+  ChipColors,
   ChipProps,
   ChipSize,
   ChipVariant,
@@ -408,21 +410,40 @@ function bigChipStyles(
   };
 }
 
+/**
+ * Lifts a `colors` value to the `{ light, dark }` shape `paired` wants.
+ *
+ * A token arrives as that shape already. A plain CSS colour is widened
+ * to both schemes, which is the honest reading of what a caller passing
+ * one bare string has said — and the reason the prop's doc asks for a
+ * token instead.
+ */
+function asModeToken(value: ChipColorValue): ModeToken {
+  return typeof value === 'string' ? { light: value, dark: value } : value;
+}
+
 /** Flat styling for the 20px tag — no interaction states in Figma. */
 function smallChipStyles(
   theme: Theme,
   variant: ChipVariant,
-  bordered: boolean
+  bordered: boolean,
+  colors: ChipColors | undefined
 ): CSSObject {
   const role = smallRoleTokens[variant];
+
+  // `colors` overrides per key rather than wholesale, so a caller can
+  // recolour the fill and leave the label on its role.
+  const fill = colors?.bg ? asModeToken(colors.bg) : role.bg;
+  const ink = colors?.text ? asModeToken(colors.text) : role.text;
+  const line = colors?.border ? asModeToken(colors.border) : role.border;
 
   // One `paired` call per selector: two of them spread into the same
   // rule would drop the first one's dark block. See `pairedFocusRing`.
   return {
     ...paired(theme, {
-      backgroundColor: role.bg,
-      color: role.text,
-      ...(bordered ? { borderColor: role.border } : {}),
+      backgroundColor: fill,
+      color: ink,
+      ...(bordered ? { borderColor: line } : {}),
     }),
     '&.Mui-disabled': paired(theme, {
       backgroundColor: surface.disabled.default,
@@ -448,10 +469,11 @@ function chipStateStyles(
   variant: ChipVariant,
   appearance: ChipAppearance,
   selected: boolean,
-  bordered: boolean
+  bordered: boolean,
+  colors: ChipColors | undefined
 ): CSSObject {
   if (size === 'sm') {
-    return smallChipStyles(theme, variant, bordered);
+    return smallChipStyles(theme, variant, bordered, colors);
   }
 
   const {
@@ -474,6 +496,7 @@ interface StyledChipProps {
   neofloDense: boolean;
   neofloSelected: boolean;
   neofloBordered: boolean;
+  neofloColors: ChipColors | undefined;
 }
 
 const StyledChip = styled(MuiChip, {
@@ -483,7 +506,8 @@ const StyledChip = styled(MuiChip, {
     prop !== 'neofloSize' &&
     prop !== 'neofloDense' &&
     prop !== 'neofloSelected' &&
-    prop !== 'neofloBordered',
+    prop !== 'neofloBordered' &&
+    prop !== 'neofloColors',
 })<StyledChipProps>(
   ({
     theme,
@@ -493,6 +517,7 @@ const StyledChip = styled(MuiChip, {
     neofloDense,
     neofloSelected,
     neofloBordered,
+    neofloColors,
   }) => ({
     fontFamily: fontFamilies.product.sans,
     ...(neofloSize === 'sm'
@@ -517,7 +542,8 @@ const StyledChip = styled(MuiChip, {
       neofloVariant,
       neofloAppearance,
       neofloSelected,
-      neofloBordered
+      neofloBordered,
+      neofloColors
     ),
   })
 );
@@ -543,6 +569,19 @@ const StyledChip = styled(MuiChip, {
  *
  * Supports MUI's `avatar`, `icon`, and `onDelete` slots unchanged.
  *
+ * ## Colouring a status the roles have no colour for
+ *
+ * Reach for a role first. A status column is read by meaning, and the
+ * roles are the vocabulary for it — `information` for in flight,
+ * `success` for done, `error` for stuck. A reader cannot tell from a
+ * decorative hue which of two statuses is the bad one.
+ *
+ * When the design genuinely has a colour the roles do not carry,
+ * `colors` takes the three it paints, per key, at `size="sm"`. Pass
+ * design tokens rather than hexes: a token is a `{ light, dark }` pair
+ * and resolves per scheme, where a bare hex is light-mode only by
+ * definition and paints the same colour on a near-black page.
+ *
  * @example Status tag
  * <Chip variant="success" label="Active" />
  *
@@ -558,6 +597,18 @@ const StyledChip = styled(MuiChip, {
  * @example A status in a table cell
  * <Chip size="sm" variant="information" bordered label="Extraction" />
  *
+ * @example A status the roles have no colour for
+ * <Chip
+ *   size="sm"
+ *   bordered
+ *   label="Extraction"
+ *   colors={{
+ *     bg: surface.information.subtle,
+ *     border: border.information.default,
+ *     text: text.information[3],
+ *   }}
+ * />
+ *
  * @see Related: Button, IconButton
  */
 export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
@@ -568,6 +619,7 @@ export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
       size = 'md',
       dense = false,
       bordered = false,
+      colors,
       selected,
       ...rest
     },
@@ -592,6 +644,7 @@ export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
         neofloDense={dense}
         neofloSelected={selected ?? false}
         neofloBordered={bordered}
+        neofloColors={colors}
         {...rest}
       />
     );

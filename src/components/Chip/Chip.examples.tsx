@@ -47,6 +47,13 @@ export const data: ComponentExamplesData = {
         'Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size="sm"`.',
     },
     {
+      name: 'colors',
+      type: '{ bg?: ModeToken | string; border?: ModeToken | string; text?: ModeToken | string }',
+      default: 'undefined',
+      description:
+        'Overrides the three colours `variant` would paint, per key — pass one and the other two still come from the role. `size="sm"` only, and `border` shows only with `bordered`; `disabled` still wins over all three. Reach for a role first: a status column is read by meaning, and a reader cannot tell from a decorative hue which of two statuses is the bad one. This is for a colour the roles genuinely do not carry. Pass design tokens rather than hexes — a token is a `{ light, dark }` pair and resolves per scheme, where a bare hex is light-mode only by definition and paints the same colour on a near-black page.',
+    },
+    {
       name: 'bordered',
       type: 'boolean',
       default: 'false',
@@ -154,6 +161,25 @@ export const data: ComponentExamplesData = {
         '<Chip size="sm" variant="warning" bordered label="Matching" />',
         '<Chip size="sm" variant="success" bordered label="ERP Posting" />',
         '<Chip size="sm" variant="error" bordered label="Error" />',
+      ].join('\n'),
+    },
+    {
+      title: 'A status the roles have no colour for',
+      description:
+        'The escape hatch, and the last resort. `colors` takes the fill, the outline and the label separately, so a status the semantic roles do not cover can still be built out of tokens rather than hexes — which is what keeps it working in dark mode. Everything else about the chip is unchanged: same 20px box, same 4px radius, same hairline.',
+      code: [
+        "import { border, surface, text } from '@neofloai/atoms/tokens';",
+        '',
+        '<Chip',
+        '  size="sm"',
+        '  bordered',
+        '  label="Extraction"',
+        '  colors={{',
+        '    bg: surface.information.subtle,',
+        '    border: border.information.default,',
+        '    text: text.information[3],',
+        '  }}',
+        '/>',
       ].join('\n'),
     },
     {

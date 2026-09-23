@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T10:42:19.767Z",
+  "generatedAt": "2026-09-23T11:00:14.100Z",
   "components": [
     {
       "name": "Accordion",
@@ -940,6 +940,12 @@
           "description": "Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size=\"sm\"`."
         },
         {
+          "name": "colors",
+          "type": "{ bg?: ModeToken | string; border?: ModeToken | string; text?: ModeToken | string }",
+          "default": "undefined",
+          "description": "Overrides the three colours `variant` would paint, per key — pass one and the other two still come from the role. `size=\"sm\"` only, and `border` shows only with `bordered`; `disabled` still wins over all three. Reach for a role first: a status column is read by meaning, and a reader cannot tell from a decorative hue which of two statuses is the bad one. This is for a colour the roles genuinely do not carry. Pass design tokens rather than hexes — a token is a `{ light, dark }` pair and resolves per scheme, where a bare hex is light-mode only by definition and paints the same colour on a near-black page."
+        },
+        {
           "name": "bordered",
           "type": "boolean",
           "default": "false",
@@ -1013,6 +1019,11 @@
           "title": "Bordered status tags",
           "description": "A table’s Status column: the role’s fill with its own border token outlined over it. Pick the role for what the status means — `information` for in-flight, `success` for done, `error` for failed — and the colour follows from the token in both light and dark.",
           "code": "<Chip size=\"sm\" variant=\"information\" bordered label=\"Extraction\" />\n<Chip size=\"sm\" variant=\"warning\" bordered label=\"Matching\" />\n<Chip size=\"sm\" variant=\"success\" bordered label=\"ERP Posting\" />\n<Chip size=\"sm\" variant=\"error\" bordered label=\"Error\" />"
+        },
+        {
+          "title": "A status the roles have no colour for",
+          "description": "The escape hatch, and the last resort. `colors` takes the fill, the outline and the label separately, so a status the semantic roles do not cover can still be built out of tokens rather than hexes — which is what keeps it working in dark mode. Everything else about the chip is unchanged: same 20px box, same 4px radius, same hairline.",
+          "code": "import { border, surface, text } from '@neofloai/atoms/tokens';\n\n<Chip\n  size=\"sm\"\n  bordered\n  label=\"Extraction\"\n  colors={{\n    bg: surface.information.subtle,\n    border: border.information.default,\n    text: text.information[3],\n  }}\n/>"
         },
         {
           "title": "A status with a glyph",

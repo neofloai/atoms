@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { FunnelSimpleIcon, WarningCircleIcon } from '@/src/icons';
 import { Chip } from '@/src/components/Chip';
+import { border, surface, text } from '@/src/tokens';
 
 import type { ChipAppearance, ChipVariant } from '@/src/components/Chip';
 
@@ -222,6 +223,49 @@ export function ChipShowcase() {
             status without a hex at the call site and without a second set of
             colours to keep in step. It is taken out of the inline padding, so
             a bordered chip is exactly as wide as the plain one above it.
+          </Typography>
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard title="A status the roles have no colour for">
+        <Stack spacing={2}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+          >
+            <Chip
+              size="sm"
+              bordered
+              label="Extraction"
+              colors={{
+                bg: surface.information.subtle,
+                border: border.information.default,
+                text: text.information[3],
+              }}
+            />
+            <Chip
+              size="sm"
+              bordered
+              label="Review"
+              colors={{ text: text.default.b1 }}
+            />
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            <code>colors</code> takes the fill, the outline and the label
+            separately, and each falls back to the role — the second chip
+            above changes only its label and keeps <code>primary</code>
+            &apos;s fill and border. Reach for a role first: a status column
+            is read by meaning, and a reader cannot tell from a decorative hue
+            which of two statuses is the bad one. This is for a colour the
+            roles genuinely do not carry.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Pass tokens rather than hexes. A token is a{' '}
+            <code>{'{ light, dark }'}</code> pair and resolves per scheme; a
+            bare hex is light-mode only by definition, so it paints the same
+            colour on a near-black page. A string is accepted and widened to
+            both schemes, which is what a caller passing one has said.
           </Typography>
         </Stack>
       </PreviewCard>
