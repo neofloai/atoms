@@ -11,10 +11,11 @@ import { FOCUS_RING_WIDTH_PX, paired } from '../_shared/actionStyles';
 
 import { TabsContext } from './TabsContext';
 import {
-  BAR_HEIGHT_PX,
   TAB_COUNT_GAP_PX,
+  TAB_LABEL_LEADING_PX,
   TAB_PADDING_BLOCK_PX,
   TAB_PADDING_INLINE_PX,
+  hoverFill,
   ink,
   labelType,
   labelWeight,
@@ -26,13 +27,17 @@ import type { TabProps } from './Tabs.types';
 /**
  * Box and label geometry.
  *
- * The tab is the full height of the bar with its label centred: 8 above
- * the 24px line and 8 below, which is the 40 the sheet draws. Everything
- * that paints on a tab paints on this box, so it has to be the box a
- * highlight belongs on, and here the sheet and MUI already agree.
+ * The tab is its padding plus its label and nothing else: 12 above the
+ * 20px line and 12 below, which comes to 44. `min-height: 0` is
+ * deliberate and is the correction's own wording — MUI floors a tab at
+ * 48 and this removes the floor rather than replacing it with a
+ * different number, so a bar whose labels are shorter is shorter.
+ *
+ * Everything that paints on a tab paints on this box, which is what
+ * makes it the right box for the hover fill.
  */
 const geometry: CSSObject = {
-  minHeight: BAR_HEIGHT_PX,
+  minHeight: 0,
   // MUI reserves 90px per tab and caps it at 360. The sheet's is as wide
   // as its label plus 16 either side and no wider (73px for "Open"), and
   // the bar's rhythm comes out of it — a long row wants
@@ -40,15 +45,17 @@ const geometry: CSSObject = {
   minWidth: 0,
   maxWidth: 'none',
   padding: `${TAB_PADDING_BLOCK_PX}px ${TAB_PADDING_INLINE_PX}px`,
-  // Rounds the ripple and the focus ring. Invisible otherwise — a tab
-  // carries no fill and no border to round.
+  // Rounds the ripple, the focus ring and the hover fill. The
+  // indicator is not rounded with it: it is drawn by the bar, outside
+  // this box, and the correction asks for square corners flush to the
+  // strip's bottom edge.
   borderRadius: radius.xs,
   textTransform: 'none',
   fontFamily: fontFamilies.product.sans,
-  // The resting weight; `stateStyles` moves the selected tab to Medium.
-  fontWeight: fontWeights[labelWeight.unselected],
+  // One weight in every state — selection is carried by ink alone.
+  fontWeight: fontWeights[labelWeight],
   fontSize: labelType.size,
-  lineHeight: `${labelType.leading}px`,
+  lineHeight: `${TAB_LABEL_LEADING_PX}px`,
   letterSpacing: `${labelType.letterSpacing}em`,
   // One row that scrolls, rather than tabs that wrap and break the 40px
   // box. MUI's `wrapped` opts back in where a long label needs it, and
@@ -61,21 +68,31 @@ const geometry: CSSObject = {
 };
 
 /**
- * Ink and weight, in both schemes. There is still no fill and no border
- * — what moves is colour, and now the weight with it.
+ * Ink, in both schemes, plus the one fill this component has.
+ *
+ * Selection moves colour and nothing else — no weight, no border. The
+ * pointer moves the fill and leaves the colour alone, which is the
+ * opposite of what this bar used to do: hover used to promote the ink
+ * to the selected rung, so a hovered tab read as briefly selected.
  *
  * Specificity does the arbitration, which is why these are written as
  * four flat rules rather than nested branches — `&.Mui-selected` and
  * `&.Mui-disabled` (0,2,0) both out-rank `&:hover` (0,1,1), and
  * `disabled` comes last so a disabled *selected* tab reads as disabled.
- * Note that a disabled selected tab keeps the Medium weight: `disabled`
- * overrides the colour and says nothing about weight, so the tab still
- * reads as the one that is selected.
+ *
+ * Both of those two restate `&:hover` inside themselves, because the
+ * hover fill is set on a rule they out-rank on colour but not on
+ * background: without it a disabled tab would still light up under the
+ * pointer, and a selected one would take a fill on top of its
+ * indicator.
  */
 function stateStyles(theme: Theme): CSSObject {
   return {
     ...paired(theme, { color: ink.unselected }),
-    '&:hover': paired(theme, { color: ink.hover }),
+    '&:hover': paired(theme, {
+      color: ink.hover,
+      backgroundColor: hoverFill,
+    }),
     /*
      * Ring only, and inset.
      *
@@ -94,11 +111,17 @@ function stateStyles(theme: Theme): CSSObject {
     '&.Mui-focusVisible': {
       boxShadow: `inset 0 0 0 ${FOCUS_RING_WIDTH_PX}px currentColor`,
     },
+    // No fill on the selected tab, under the pointer or otherwise: the
+    // indicator is what says which tab this is, and a fill here would
+    // make hover and selection the same signal again.
     [`&.${tabClasses.selected}`]: {
       ...paired(theme, { color: ink.selected }),
-      fontWeight: fontWeights[labelWeight.selected],
+      '&:hover': { backgroundColor: 'transparent' },
     },
-    [`&.${tabClasses.disabled}`]: paired(theme, { color: ink.disabled }),
+    [`&.${tabClasses.disabled}`]: {
+      ...paired(theme, { color: ink.disabled }),
+      '&:hover': { backgroundColor: 'transparent' },
+    },
   };
 }
 
@@ -120,8 +143,7 @@ const TabLabel = styled('span')({
 });
 
 /**
- * One tab in a `Tabs` bar. Wraps MUI `Tab` with the Neoflo API from the
- * Revamp UI Figma (node 1367:48488).
+ * One tab in a `Tabs` bar. Wraps MUI `Tab` with the Neoflo API.
  *
  * `label` is the text and `value` is what `Tabs` matches its own `value`
  * against. A tab only works inside a `Tabs` — that is where selection,
@@ -134,6 +156,9 @@ const TabLabel = styled('span')({
  * - **`disabled` is inherited from the bar and cannot be undone.**
  *   `Tabs disabled` disables every tab; a tab can add its own on top,
  *   but not opt back in.
+ * - **The tab has no height of its own.** It is 12 of padding, its
+ *   label's 20px line, and 12 more — 44, and no floor under it, so a
+ *   bar set in something smaller is smaller.
  *
  * @example
  * <Tab label="Overview" value="overview" />

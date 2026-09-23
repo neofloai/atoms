@@ -1270,3 +1270,29 @@ The two label inks are a rounding difference — within three units of the rung 
 **Every fixed-width column in the system had to grow by 16.** The component gave each cell 16 more padding, which takes 16 of content room from any column whose width is pinned rather than flexed — five patterns and three docs pages between them. Each was widened by exactly the 16 it lost, so every column holds what it held before, which does make the fixed-layout tables genuinely wider: `matching`'s invoice panel goes from a 520px floor to 616, its GRN panel to 632, `extraction`'s line table from 620 to 700. That is the honest consequence of a 32px gutter and not a fault, but it is worth knowing before the next narrow panel is drawn. Two action columns were already overflowing their cells before this change and now fit.
 
 **There is no search field on this node.** The request named one and the frame is the table alone — header strip, fourteen rows, a pinned action column and a pagination footer. **Point at the node that has it** and it can follow the rest.
+
+### 63. Tabs ships a consuming app's correction over the Figma sheet, on four counts (added 23 September, source: Neoflo Self-Serve `WorkAreaPage.tsx`, 21 September, against Atoms 2.0.0)
+
+**This is the first entry whose source is an application rather than a Figma file, and that is the question.** Self-Serve built its Open/Closed strip on `Tabs`/`Tab` and then overrode the indicator, the tab's own rule, and its padding and height. Two days after that report was filed, Tabs was redrawn from Revamp UI node 1367:48487 (#59), which moved several of the same properties — in some cases the other way. Shipping the correction was an explicit call. **Say which is authoritative**, because the two cannot both be.
+
+**Where they disagree, and what ships:**
+
+| Property | Revamp UI 1367:48487 | Self-Serve | shipped |
+|---|---|---|---|
+| tab padding | 8 / 16 | 12 / 16 | 12 / 16 |
+| label leading | 24 (`Sans/H6`) | 20 | 20 |
+| tab height | 40 | 44, no floor | 44, no floor |
+| weight on select | Regular → Medium | no move | no move |
+| selected ink | `text/default/b1` | `text/default/heading` | heading |
+| indicator | 2px, `text/default/b1` | 1px, `border/layers/card 5` | 1px, card 5 |
+
+**Part of the report was already obsolete when it arrived, which is worth knowing about the format.** It describes the baseline as "MUI default ~48px tall tab bar, default padding" with an indicator in "primary role color, often rounded" — all true of 2.0.0 and none of it true after #59. Its own correction is also the *taller* of the two at 44 against 40, while describing itself as compact, because what it was measured against was untouched MUI rather than this library. A drift report carries a version; it needs reading against that version and not against `main`.
+
+**The label is 16/20 and the type scale has no such rung.** `Sans/H6` is 16/**24**, `headings.h5` is 20/28, `body.b1` is 13/20 — so neither the size nor the leading can be taken whole from one slot. The size and tracking come from `h6` and the leading is a literal, `TAB_LABEL_LEADING_PX`. Writing `body.b1.leading` would give the right number off a 13px rung that has nothing to do with this label, and would break silently the day `b1` is retuned. **Add a 16/20 rung** if this label is real. Same shape of gap as #61's `Sans/B3` and #62's 11/14.
+
+**Two of the changes contradict no sheet, because no sheet can answer them.** They are additions rather than reversals, and both came from the app:
+
+- **`divider={false}`.** The bar drew its own bottom rule unconditionally, so a bar inside a container that already has a `borderBottom` painted a second hairline on the same edge — which does not read as a double line, it reads as one line of the wrong weight. Figma never draws the container a component sits in, so it was never going to catch this. **Confirm the bar is meant to own that edge by default**; the alternative is that it never should have and every call site wraps it.
+- **A hover fill**, `surface/layers/card 2`. The bar used to answer the pointer by promoting the ink to the selected rung, so a hovered tab read as briefly selected — a derivation, and #59 already asked for a hovered cell to be drawn. An app independently reaching for a fill is the first evidence either way. **Draw the hovered tab**, and say whether the fill is right and whether a selected tab takes one too. It does not today, on the grounds that the indicator is the selection signal and a fill on top would make hover and selection the same thing again.
+
+**Dropping the weight change fixes the reflow #59 raised.** A tab is as wide as its label and Medium is wider than Regular, so under the sheet the row reflowed as selection moved along it. One weight in every state means it no longer does. That is an argument for the correction on this point specifically, independent of which file is authoritative.

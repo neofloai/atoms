@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -242,6 +243,28 @@ function NothingSelected() {
 
 NothingSelected.displayName = 'NothingSelected';
 
+/**
+ * A bar handing its bottom edge to the panel around it — the shape a
+ * consuming app reached for, and the reason `divider` exists.
+ */
+function WorkArea() {
+  const [tab, setTab] = React.useState('open');
+
+  return (
+    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Tabs
+        value={tab}
+        onChange={(_, next: string) => setTab(next)}
+        divider={false}
+        aria-label="Work area"
+      >
+        <Tab label="Open" value="open" />
+        <Tab label="Closed" value="closed" />
+      </Tabs>
+    </Box>
+  );
+}
+
 export function TabsShowcase() {
   return (
     <Stack spacing={5}>
@@ -257,6 +280,13 @@ export function TabsShowcase() {
         description="The Figma tag axis, rendered as the same Chip size=&quot;sm&quot; the design nests here."
       >
         <InvoiceStatus />
+      </PreviewCard>
+
+      <PreviewCard
+        title="Inside a panel that draws its own border"
+        description="divider={false} hands the bottom edge to the container. The indicator still draws — it belongs to the tab, not to the strip."
+      >
+        <WorkArea />
       </PreviewCard>
 
       <PreviewCard

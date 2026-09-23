@@ -6,8 +6,7 @@ import type {
 
 /**
  * Public API for the tab family — `Tabs` and `Tab`, the two components
- * MUI documents on one page, from the Product Design System Figma
- * (node 3463:12374).
+ * MUI documents on one page.
  *
  * MUI's prop surface survives almost whole. Two props are dropped, two
  * are added, and nothing is renamed.
@@ -16,16 +15,20 @@ import type {
  *
  * - `textColor`. MUI uses it to pick which palette colour the label
  *   takes. This design has no such axis: the label is neutral in every
- *   cell (`text/default/b1` selected, `b3` unselected) and colour
- *   appears only in the indicator. Leaving the prop in would let a
+ *   state (`text/default/heading` selected, `b3` unselected) and there
+ *   is no accent on the bar at all. Leaving the prop in would let a
  *   caller set a value the wrapper then paints over.
- * - `indicatorColor`. Same reason, from the other end — Figma draws one
- *   indicator colour (`border/primary/3`), so there is nothing to
+ * - `indicatorColor`. Same reason, from the other end — there is one
+ *   indicator colour (`border/layers/card 5`), so there is nothing to
  *   choose between. `Divider` and `Progress` narrow their MUI props the
  *   same way when the design ships a single value.
  *
  * ## Added
  *
+ * - `divider` on `Tabs`, which turns off the bar's own bottom rule for
+ *   a bar dropped into a container that already draws one. Not a Figma
+ *   axis — Figma never draws the container — but a real composition
+ *   problem, and the first thing a consuming app had to override.
  * - `disabled` on `Tabs`, which is the Figma `enabled` axis of the bar
  *   (node 3463:12630 draws the whole row disabled, not one tab). It
  *   cascades to every child through context, and a child can still
@@ -64,6 +67,23 @@ export interface TabsProps
    * @default false
    */
   disabled?: boolean;
+
+  /**
+   * Draws the bar's own hairline along its bottom edge.
+   *
+   * Turn it off when the bar sits inside something that already draws
+   * that border — a `Card`, a panel, a `Box` with its own
+   * `borderBottom`. Two hairlines on one edge do not stack into a
+   * visibly double line; they read as one line of the wrong weight,
+   * which is harder to spot and harder to explain.
+   *
+   * The selected tab's indicator is unaffected: it belongs to the tab,
+   * not to the strip, and is drawn whether or not there is a rule for
+   * it to sit on.
+   *
+   * @default true
+   */
+  divider?: boolean;
 }
 
 /**

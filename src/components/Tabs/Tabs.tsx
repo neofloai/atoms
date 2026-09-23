@@ -10,7 +10,6 @@ import { paired } from '../_shared/actionStyles';
 
 import { TabsContext } from './TabsContext';
 import {
-  BAR_HEIGHT_PX,
   INDICATOR_WIDTH_PX,
   RULE_WIDTH_PX,
   TAB_LIST_GAP_PX,
@@ -31,10 +30,16 @@ import type { TabsProps } from './Tabs.types';
  */
 const SCROLL_GLYPH_PX = 16;
 
-function barStyles(theme: Theme, disabled: boolean): CSSObject {
+function barStyles(
+  theme: Theme,
+  disabled: boolean,
+  divider: boolean
+): CSSObject {
   return {
     position: 'relative',
-    minHeight: BAR_HEIGHT_PX,
+    // No floor. MUI puts 48 here; the bar is as tall as its tabs, which
+    // are as tall as their padding and their label.
+    minHeight: 0,
 
     /*
      * The rule under the whole bar, as a pseudo-element rather than a
@@ -42,31 +47,40 @@ function barStyles(theme: Theme, disabled: boolean): CSSObject {
      *
      * A border sits outside the root's padding box, which puts it
      * *below* the indicator instead of behind it: the selected tab would
-     * show its 2px rule with a 1px grey one stacked under it, reading as
-     * a 3px line that thickens at the selection. `::before` is inserted
-     * ahead of the scroller in paint order, so the indicator covers it
-     * with no z-index needed, and the bar measures the 40px the design
-     * says it does rather than 41.
+     * show its rule with a grey one stacked under it, reading as one
+     * thick line that changes weight at the selection. `::before` is
+     * inserted ahead of the scroller in paint order, so the indicator
+     * covers it with no z-index needed, and the bar measures what its
+     * tabs measure rather than one pixel more.
+     *
+     * `divider={false}` drops it entirely, for a bar inside a container
+     * that draws its own bottom border — two hairlines on one edge read
+     * as a single slightly wrong line.
      */
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      inset: 'auto 0 0 0',
-      height: RULE_WIDTH_PX,
-      ...paired(theme, { backgroundColor: rule }),
-    },
+    ...(divider && {
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        inset: 'auto 0 0 0',
+        height: RULE_WIDTH_PX,
+        ...paired(theme, { backgroundColor: rule }),
+      },
+    }),
 
     [`& .${tabsClasses.list}`]: { gap: TAB_LIST_GAP_PX },
 
     /*
-     * MUI measures the indicator from the tab's box, which is exactly
-     * what this sheet draws: the rule under the selected tab is 73px
-     * wide where the label is 41px, so it spans the label plus the 16px
-     * either side of it. Nothing to correct — the default measurement is
-     * the specified one, and the 16px padding is what sets the width.
+     * MUI measures the indicator from the tab's box, so the 16px of
+     * padding either side of a label is what sets its width — nothing
+     * here has to compute it.
+     *
+     * `borderRadius: 0` is explicit: the correction asks for square
+     * corners flush to the strip's bottom edge, and at 1px a rounded
+     * cap would render as a faded end rather than a curve.
      */
     [`& .${tabsClasses.indicator}`]: {
       height: INDICATOR_WIDTH_PX,
+      borderRadius: 0,
       ...paired(theme, {
         backgroundColor: disabled ? indicatorDisabled : indicator,
       }),
@@ -101,7 +115,6 @@ function barStyles(theme: Theme, disabled: boolean): CSSObject {
       // 16 that sets a horizontal tab's width becomes the distance from
       // the rule, and the 8 becomes the space between stacked labels.
       [`& .${tabClasses.root}`]: {
-        minHeight: 0,
         padding: `${TAB_PADDING_BLOCK_PX}px ${TAB_PADDING_INLINE_PX}px`,
         // A column of centred text has no edge to read down.
         alignItems: 'flex-start',
@@ -113,12 +126,14 @@ function barStyles(theme: Theme, disabled: boolean): CSSObject {
 
 interface StyledTabsProps {
   neofloDisabled: boolean;
+  neofloDivider: boolean;
 }
 
 const StyledTabs = styled(MuiTabs, {
-  shouldForwardProp: (prop) => prop !== 'neofloDisabled',
-})<StyledTabsProps>(({ theme, neofloDisabled }) =>
-  barStyles(theme, neofloDisabled)
+  shouldForwardProp: (prop) =>
+    prop !== 'neofloDisabled' && prop !== 'neofloDivider',
+})<StyledTabsProps>(({ theme, neofloDisabled, neofloDivider }) =>
+  barStyles(theme, neofloDisabled, neofloDivider)
 );
 
 /*
@@ -138,13 +153,18 @@ EndCaret.displayName = 'TabsEndCaret';
 
 /**
  * A row of tabs that switches which panel is showing. Wraps MUI `Tabs`
- * with the Neoflo API from the Revamp UI Figma (node 1367:48487).
+ * with the Neoflo API.
  *
  * The bar is deliberately plain: a hairline along the bottom, labels at
- * heading size in neutral ink, and a 2px near-black rule under whichever
- * tab is selected, running the tab's full width rather than the label's.
- * No fills and no pills — selection is carried by that rule, by two
- * rungs of ink, and by the label stepping from Regular to Medium.
+ * 16/20 in one weight, and a 1px dark rule under whichever tab is
+ * selected, running the tab's full width rather than the label's. No
+ * fills, no pills, and no weight change — selection is carried by that
+ * rule and by two rungs of ink, which is what lets the row hold its
+ * width as selection moves along it.
+ *
+ * The pointer is answered separately, by a `surface/layers/card 2` fill
+ * on the tab under it. Hover and selection are two different signals
+ * and are drawn two different ways on purpose.
  *
  * MUI's selection model is untouched and is the point of the component:
  * `value` plus `onChange(event, value)`, matched against each child's
@@ -159,6 +179,10 @@ EndCaret.displayName = 'TabsEndCaret';
  * - **`variant` here is MUI's overflow behaviour**, not the house
  *   "colour role" meaning it has on `Button` and `Chip`. Use
  *   `variant="scrollable"` when the tabs can outgrow their container.
+ * - **`divider={false}` when the container draws the line.** The bar
+ *   owns its bottom edge by default; inside a panel that already has a
+ *   `borderBottom`, hand the edge over rather than painting a second
+ *   hairline on it.
  *
  * @example
  * <Tabs value={tab} onChange={(_, next) => setTab(next)}>
@@ -166,6 +190,14 @@ EndCaret.displayName = 'TabsEndCaret';
  *   <Tab label="Open" value="open" count={12} />
  *   <Tab label="Paid" value="paid" />
  * </Tabs>
+ *
+ * @example Inside a panel that draws its own bottom border
+ * <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+ *   <Tabs value={tab} onChange={handleChange} divider={false}>
+ *     <Tab label="Open" value="open" />
+ *     <Tab label="Closed" value="closed" />
+ *   </Tabs>
+ * </Box>
  *
  * @example Too many to fit
  * <Tabs value={tab} onChange={handleChange} variant="scrollable">
@@ -175,7 +207,7 @@ EndCaret.displayName = 'TabsEndCaret';
  * @see Related: Tab, Divider, Card, ToggleButtonGroup
  */
 export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
-  ({ disabled = false, slots, ...rest }, ref) => {
+  ({ disabled = false, divider = true, slots, ...rest }, ref) => {
     const barDefaults = React.useMemo(() => ({ disabled }), [disabled]);
 
     return (
@@ -183,6 +215,7 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
         <StyledTabs
           ref={ref}
           neofloDisabled={disabled}
+          neofloDivider={divider}
           {...rest}
           // Spread last so a caller replacing one slot keeps the other,
           // rather than dropping both carets by passing `slots` at all.

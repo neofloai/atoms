@@ -339,19 +339,23 @@ export type {
 } from './components/Accordion';
 
 /**
- * The tab family — MUI's `Tabs` and `Tab`, matching the two Figma
- * components (`tabs` 3463:12630 and `tab-items` 3463:12373). `Tabs` owns
- * the bar's rule, the 24px rhythm, and the indicator; `Tab` owns one
- * label and its optional count.
+ * The tab family — MUI's `Tabs` and `Tab`. `Tabs` owns the bar's rule
+ * and the indicator; `Tab` owns one label and its optional count.
  *
  * Two of MUI's props are dropped (`textColor`, `indicatorColor` — this
- * design has no colour axis) and two are added: `disabled` on the bar,
- * which is Figma's `enabled` axis, and `count` on a tab, which is its
- * `tag` axis. The panels are not part of it — MUI ships no `TabPanel`
- * and there is no Figma node for one. See
+ * design has no colour axis) and three are added: `disabled` on the
+ * bar, which is Figma's `enabled` axis; `divider`, which hands the
+ * bar's bottom edge to a container that draws its own; and `count` on a
+ * tab, which is its `tag` axis. The panels are not part of it — MUI
+ * ships no `TabPanel` and there is no Figma node for one. See
  * `src/components/Tabs/Tabs.types.ts`.
+ *
+ * `TABS_HEIGHT_PX` ships alongside because the bar has no height floor:
+ * it is as tall as its padding plus its label, so the 44 is an outcome
+ * rather than a setting, and a panel reserving space for a strip it has
+ * not rendered yet would otherwise redo the arithmetic.
  */
-export { Tab, Tabs } from './components/Tabs';
+export { TABS_HEIGHT_PX, Tab, Tabs } from './components/Tabs';
 export type { TabProps, TabsProps } from './components/Tabs';
 
 /**
