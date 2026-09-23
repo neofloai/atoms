@@ -1,11 +1,129 @@
 {
-  "generatedAt": "2026-09-09T08:25:01.938Z",
+  "generatedAt": "2026-09-23T12:43:04.804Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "2.0.0",
-  "currentTag": "v2.0.0",
+  "current": "2.1.0",
+  "currentTag": "v2.1.0",
   "minimumSupported": "2.0.0",
   "releases": [
+    {
+      "version": "2.1.0",
+      "tag": "v2.1.0",
+      "date": "2026-09-23",
+      "headline": "The table and the tab bar are redrawn, and a monospace ships with them. Nothing to change in your code; a lot to look at.",
+      "summary": "An additive release that will not compile any differently and will not look the same. Nothing was renamed or removed -- five exports and four props were added -- but `Table`, `DataGrid` and `Tabs` were all redrawn against new design sheets, so a screen built on 2.0.0 comes out visibly different after the bump. The table is the biggest of the three: columns sit 32 apart where they sat 16, the header strip is taller and filled, rows are opaque and their text is Medium, and the hairline moved a rung darker. DM Mono is now self-hosted and real, which changes the face on anything already using `fontFamilies.product.mono`. Read the migration list before upgrading a screen with fixed column widths -- they are the one thing that needs a number changed.",
+      "changes": [
+        {
+          "kind": "changed",
+          "summary": "`Table` and `DataGrid` are redrawn. A cell is padded 16 either side where it was 8, and the row inset dropped from 16 to 8 to compensate -- so the edges are still 24 from the table, but two columns are 32 apart where they used to be 16. The header strip is 40 tall (was 32) and carries a `surface.layers.card2` fill, rows carry `surface.layers.page` where they were transparent, and the hairline is `border.layers.card3` -- one rung darker than before, under the header and between rows alike. The last row no longer draws one: a rule divides two rows, and the last row has nothing under it.",
+          "scope": [
+            "Table",
+            "TableCell",
+            "TableRow",
+            "TableHead",
+            "DataGrid"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "Body cells are Medium (500) where they were Regular (400), in both `Table` and `DataGrid`. This touches every cell in every table rather than one column, so it is the change most likely to be noticed after the header. A cell's second line -- `TableCell secondary` -- is 11/13 where it was 12/16, and now sits 2px under the first rather than hard against it.",
+          "scope": [
+            "TableCell",
+            "DataGrid"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`TableCell`'s `icon` slot is 14px (was 16) and changes four things depending on what it sits beside. Next to one line it centres, takes a 6px gap and `icon.default.b2`; next to two it tops out, drops 2px onto the first line's cap height, takes 8px and the quieter `icon.default.b3`. Only the size is the same in both. A grid has no `icon` slot, so a `renderCell` doing the same job has to make those four decisions itself.",
+          "scope": [
+            "TableCell"
+          ]
+        },
+        {
+          "kind": "fixed",
+          "summary": "A sortable column's header label rendered in DM Sans while the plain column beside it rendered in DM Mono. `TableSortLabel` set its own `font-family`, which beat the family it should have inherited from the header cell.",
+          "scope": [
+            "TableSortLabel"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`TABLE_HEADER_ROW_HEIGHT_PX` is 40, and `DATA_GRID_HEADER_HEIGHT_PX` with it. The export did not move but its value did, so anything sizing a box from it -- `40 + rows * rowHeight` -- comes out 8px taller.",
+          "scope": [
+            "Table",
+            "DataGrid"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`Tabs` is redrawn. A tab is 12/16 padded with a 16/20 label and no height floor at all, so the bar is as tall as its content. Selection changes colour only -- the weight no longer moves, which is what stops the row reflowing as selection travels along it -- and the indicator is a 1px square `border.layers.card5OnColor` rule flush to the bottom. Hover is now a `surface.layers.card2` fill rather than a promotion of the ink, so a hovered tab no longer reads as briefly selected.",
+          "scope": [
+            "Tabs",
+            "Tab"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Tabs divider` turns off the bar's own bottom hairline, for a bar inside a container that already draws one. Two hairlines on the same edge do not read as a double line -- they read as one line of the wrong weight. Defaults to `true`, so nothing changes unless you ask.",
+          "scope": [
+            "Tabs"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Button appearance=\"prominent\"` -- the page's single call to action, 48 tall with a vertical gradient. Available on all five roles: the ramp is each role's own hover fill running into its resting fill, so it resolves in both colour schemes with nothing hardcoded. `size` does not apply to it.",
+          "scope": [
+            "Button"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Chip bordered` outlines the 20px tag in its role's own border token -- the treatment a table's Status column uses. `size=\"sm\"` only. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one and a column of mixed statuses still lines up.",
+          "scope": [
+            "Chip"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Chip colors` overrides the fill, the outline and the label independently, for a status the semantic roles have no colour for. `size=\"sm\"` only, each key optional and falling back to the `variant`. Takes a design token -- a `{ light, dark }` pair that resolves per scheme -- or a plain CSS colour, which is used in both. `ChipColors` and `ChipColorValue` ship with it.",
+          "scope": [
+            "Chip",
+            "@neofloai/atoms"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "DM Mono is self-hosted and real. `fontFamilies.product.mono` used to fall through to whatever monospace the machine had; it now resolves to a shipped DM Mono at 400 and 500. Anything already set in that family changes face on upgrade. Table and grid header labels are set in it at Medium 12/16, which is what now tells a header from its data -- the face, rather than the weight.",
+          "scope": [
+            "@neofloai/atoms/tokens",
+            "Table",
+            "DataGrid"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "Three constants that were being rebuilt at call sites: `TABS_HEIGHT_PX` (the bar has no height floor, so its 44 is an outcome rather than a setting), `TABLE_CELL_ICON_PX` (the `icon` slot is the caller's to fill, and this is the size to fill it at), and `tableAmountType` (the mono face and `tabular-nums` that line a money column up on its decimal -- pair it with `align=\"right\"`).",
+          "scope": [
+            "@neofloai/atoms"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "The invoice workflow patterns served by `get_pattern` carry a seven-status vocabulary with a colour per status, row actions pinned to one width per column, and the Status facet in a filter drawn with the same chip its column draws. Pattern code only -- no component API moved for any of it.",
+          "scope": [
+            "get_pattern"
+          ]
+        }
+      ],
+      "migration": [
+        "Nothing has to change for this to compile. Every export that existed in 2.0.0 still exists with the same name and the same type, and the four new props all default to the old behaviour. What follows is what to look at, not what to fix.",
+        "Check any table with fixed column widths. A cell gained 16px of padding, which comes straight out of the room a pinned column has for its content -- a `width: 140` column now holds 16px less than it did. Every fixed column in this repo's own patterns needed exactly 16 added back. Flex columns size themselves and need nothing.",
+        "Check anything using `fontFamilies.product.mono`. It was falling through to the system monospace and is now a real DM Mono, so the face changes even though the token did not.",
+        "Check any layout computing a height from `TABLE_HEADER_ROW_HEIGHT_PX` or `DATA_GRID_HEADER_HEIGHT_PX`. Both are 40 where they were 32.",
+        "Check any table sitting on a surface other than the page. Rows are opaque now (`surface.layers.page`) where they used to show whatever was behind them, so a table on a card no longer takes the card's colour. Say so with `sx` on the row if that is what you wanted.",
+        "Check any `Tabs` inside a container that draws its own bottom border -- you now want `divider={false}`, or you get two hairlines on one edge reading as a single heavy one."
+      ]
+    },
     {
       "version": "2.0.0",
       "tag": "v2.0.0",
@@ -142,8 +260,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^2.0.0",
-    "pin": "npm install github:neofloai/atoms#semver:^2.0.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^2.1.0",
+    "pin": "npm install github:neofloai/atoms#semver:^2.1.0"
   },
   "keywords": [
     "changelog",
