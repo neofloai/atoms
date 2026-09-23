@@ -296,7 +296,7 @@ function invoiceColumns(
       field: 'reference',
       headerName: 'Source ID/ Time',
       flex: 1.4,
-      minWidth: 168,
+      minWidth: 184,
       renderCell: ({ row }) => (
         <Box
           component="span"
@@ -332,7 +332,7 @@ function invoiceColumns(
       field: 'vendor',
       headerName: 'Vendor / Invoice#',
       flex: 1.6,
-      minWidth: 168,
+      minWidth: 184,
       renderCell: ({ row }) => (
         <TwoLine primary={row.vendor} secondary={row.invoiceNumber} />
       ),
@@ -340,7 +340,7 @@ function invoiceColumns(
     {
       field: 'stage',
       headerName: 'Status',
-      width: 148,
+      width: 164,
       sortable: false,
       renderCell: ({ row }) => {
         const meta = STAGE_META[row.stage];
@@ -358,14 +358,14 @@ function invoiceColumns(
       field: 'attachment',
       headerName: 'Invoice attachment',
       flex: 1.6,
-      minWidth: 176,
+      minWidth: 192,
       sortable: false,
       renderCell: ({ row }) => <AttachmentCell file={row.attachment} />,
     },
     {
       field: 'amount',
       headerName: 'Amount',
-      width: 148,
+      width: 164,
       align: 'right',
       headerAlign: 'right',
       renderCell: ({ row }) => <AmountCell amount={row.amount} />,
@@ -373,7 +373,7 @@ function invoiceColumns(
     {
       field: 'action',
       headerName: 'Action',
-      width: 172,
+      width: 188,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => <ActionCell invoice={row} onOpen={onOpen} />,

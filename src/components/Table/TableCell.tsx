@@ -4,17 +4,19 @@ import * as React from 'react';
 import { TableCell as MuiTableCell } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { border, surface, text } from '@/src/tokens';
+import { border, text } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
 import {
   TABLE_BORDER_WIDTH_PX,
   TABLE_CELL_GAP_PX,
   TABLE_CELL_PADDING_INLINE_PX,
+  TABLE_CELL_SECONDARY_GAP_PX,
   TABLE_CHECKBOX_CELL_WIDTH_PX,
   TABLE_EDGE_INSET_PX,
   tableCaptionType,
   tableCellType,
+  tableHeaderFill,
   tableHeaderType,
 } from './tableTokens';
 import { useTableContext } from './TableContext';
@@ -24,11 +26,11 @@ import type { TableCellProps } from './Table.types';
 
 interface CellStyleProps {
   neofloRegion: 'head' | 'body';
-  neofloSticky: boolean;
 }
 
 /**
- * The row's 16px inset, spent on the two cells that touch the edge.
+ * The row's 8px inset, spent on the two cells that touch the edge, on
+ * top of the 16 every cell already carries.
  *
  * `:first-child` rather than `:first-of-type`, so that a row-header
  * `<th>` followed by `<td>`s insets once rather than twice.
@@ -43,9 +45,8 @@ function edgeInsetStyles(inset: boolean): CSSObject {
 }
 
 const CellRoot = styled(MuiTableCell, {
-  shouldForwardProp: (prop) =>
-    prop !== 'neofloRegion' && prop !== 'neofloSticky',
-})<CellStyleProps>(({ theme, neofloRegion, neofloSticky, padding, align }) => {
+  shouldForwardProp: (prop) => prop !== 'neofloRegion',
+})<CellStyleProps>(({ theme, neofloRegion, padding, align }) => {
   const head = neofloRegion === 'head';
   const bare = padding === 'none';
 
@@ -78,7 +79,7 @@ const CellRoot = styled(MuiTableCell, {
     ...edgeInsetStyles(!bare),
 
     // A selection column is as narrow as its control, with the cell's own
-    // 8 either side and nothing else. The control's padding goes, which is
+    // padding either side and nothing else. The control's padding goes, which is
     // the same move MUI makes for its dense tables: it is a touch target
     // on a form, and here it is 9px of dead space in a 32px column.
     //
@@ -95,9 +96,11 @@ const CellRoot = styled(MuiTableCell, {
     // `align="right"` reach `TableSortLabel` through `flex-direction`.
     ...(align === 'center' && { justifyContent: 'center' }),
 
-    ...(head &&
-      neofloSticky &&
-      paired(theme, { backgroundColor: surface.layers.card1 })),
+    // The header strip's fill, whether or not it is pinned. It has to be
+    // opaque while it is — rows would otherwise scroll through it — and
+    // the design now gives it a fill regardless, so `stickyHeader` no
+    // longer changes how the strip looks, only where it sits.
+    ...(head && paired(theme, { backgroundColor: tableHeaderFill })),
   };
 });
 
@@ -128,16 +131,23 @@ const LeadingSlot = styled('span')({
 const TextColumn = styled('span')({
   display: 'flex',
   flexDirection: 'column',
+  gap: TABLE_CELL_SECONDARY_GAP_PX,
   minWidth: 0,
 });
 
 /**
- * The muted second line — 12/16 in `text/default/b3`, hard against the
- * line above it.
+ * The muted second line — 12/16 in `text/default/b3`, `Scale/100` under
+ * the line above it.
  *
- * No gap between the two: Figma's group is 36 tall for a 20px line and a
- * 16px one (`1 line=false` cells, 3206:122293 and 3206:122290), and the
- * two leadings already hold them apart.
+ * The gap is `TextColumn`'s and is new; the two lines used to sit on
+ * their leadings alone, from a 36px group holding a 20px line and a
+ * 16px one (`1 line=false` cells, 3206:122293 and 3206:122290). The
+ * Revamp UI row draws the 4 explicitly and the pair comes to 40, which
+ * still centres in a 48px row.
+ *
+ * The size does not follow it. That sheet sets the second line at 11/14
+ * on a `text/default/caption` the library has no rung for, so the line
+ * stays at `Sans/B2` — see DESIGNER_QUESTIONS.md #62.
  *
  * It carries `data-neoflo-table-secondary` so a disabled row can grey it
  * with the rest of its ink. Without that the line keeps its own colour —
@@ -160,8 +170,9 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  * like a MUI table:
  *
  *   - **the padding.** MUI pads a cell 16 on all four sides (6 and 16 at
- *     `size="small"`). The design pads 8 either side and nothing top or
- *     bottom, and leaves the height to the row.
+ *     `size="small"`). The design pads 16 either side and nothing top
+ *     or bottom, and leaves the height to the row — the two agree on
+ *     the inline number and on nothing else.
  *   - **the hairline.** MUI derives it by lightening `palette.divider`
  *     88% — a computed grey. The design names one:
  *     `border.layers.card1`.
@@ -170,11 +181,10 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  *     `Sans/B1/Regular` for data and DM Mono Medium 12/16
  *     for a header, so a header is told from its data by face and
  *     colour rather than by weight.
- *   - **the pinned fill.** A sticky header cell needs to be opaque or
- *     the rows scroll through it, and MUI reaches for
- *     `background.default` — the page. A table normally sits on a card,
- *     so this uses `surface.layers.card1`; a table on some other
- *     surface should say so with `sx`.
+ *   - **the header's fill.** MUI gives the strip none, and reaches for
+ *     `background.default` — the page — only once it is pinned. The
+ *     design fills it either way, with `surface.default.default`, so a
+ *     pinned header is opaque because every header is.
  *
  * ## The two props
  *
@@ -209,7 +219,7 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  */
 export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
   function TableCell({ icon, secondary, children, ...rest }, ref) {
-    const { region, stickyHeader } = useTableContext();
+    const { region } = useTableContext();
 
     const textBlock =
       secondary != null ? (
@@ -222,12 +232,7 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
       );
 
     return (
-      <CellRoot
-        ref={ref}
-        neofloRegion={region}
-        neofloSticky={stickyHeader}
-        {...rest}
-      >
+      <CellRoot ref={ref} neofloRegion={region} {...rest}>
         {icon != null ? (
           <CellLayout>
             <LeadingSlot>{icon}</LeadingSlot>

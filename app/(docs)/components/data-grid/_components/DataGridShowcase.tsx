@@ -158,7 +158,7 @@ export function DataGridShowcase() {
 
       <PreviewCard
         title="Three densities, one header"
-        description="sm is 48, md is 56, lg is 64, and the header strip stays 32 in all three. One prop sets both heights, which is what keeps a 48px row from ending up under a 56px header."
+        description="sm is 48, md is 56, lg is 64, and the header strip stays 40 in all three. One prop sets both heights, which is what keeps a 48px row from ending up under a 56px header."
       >
         <Stack spacing={4}>
           {SIZES.map(({ size, height }) => (

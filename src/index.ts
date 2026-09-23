@@ -602,7 +602,7 @@ export type {
  *     is a `Card`'s to draw.
  *   - **Density belongs to the table.** One `size` — 48, 56 or 64 —
  *     reaches every row through context, because MUI's own `size` holds
- *     two values where the design has three. The header stays 32 in all
+ *     two values where the design has three. The header stays 40 in all
  *     three: it is a label strip rather than a row of data.
  *   - **`State` is not one prop.** Four of the design's six row states
  *     are things MUI's row already models (`hover`, `selected`,
@@ -613,8 +613,12 @@ export type {
  * for the layout problems that need the number and cannot read it off the
  * DOM — a `Skeleton` standing in for a row while it loads, or a virtual
  * list that has to know a row's height before rendering one.
+ * `TABLE_CELL_ICON_PX` is there for a different reason: `icon` is a slot
+ * the caller fills, so the size of what goes in it is the caller's to
+ * set, and this is the number to set it to.
  */
 export {
+  TABLE_CELL_ICON_PX,
   TABLE_HEADER_ROW_HEIGHT_PX,
   TABLE_ROW_HEIGHT_PX,
   Table,

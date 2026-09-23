@@ -23,7 +23,7 @@ export const data: ComponentExamplesData = {
       type: "'sm' | 'md' | 'lg'",
       default: "'md'",
       description:
-        'Row height: `sm` 48, `md` 56, `lg` 64, with the header strip at 32 in all three. The same values `Table` takes, so a screen can move between the two without changing how dense it looks. Replaces MUI’s `rowHeight`, `columnHeaderHeight` and `density` — the same fact stated three ways, which disagree as soon as two of them are set.',
+        'Row height: `sm` 48, `md` 56, `lg` 64, with the header strip at 40 in all three. The same values `Table` takes, so a screen can move between the two without changing how dense it looks. Replaces MUI’s `rowHeight`, `columnHeaderHeight` and `density` — the same fact stated three ways, which disagree as soon as two of them are set.',
     },
     {
       name: 'rowState',

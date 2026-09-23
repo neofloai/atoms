@@ -27,7 +27,7 @@ declare module '@mui/x-data-grid' {
 
 /**
  * Row height, matching the table's `size` exactly: `sm` 48, `md` 56,
- * `lg` 64. The header strip stays 32 in all three.
+ * `lg` 64. The header strip stays 40 in all three.
  *
  * The same three values the Figma `Size` axis lists (3215:43435), and the
  * same prop name the table uses, so moving a screen from one to the other

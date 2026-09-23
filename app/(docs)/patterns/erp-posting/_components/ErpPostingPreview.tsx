@@ -367,7 +367,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'id',
       headerName: '#',
-      width: 56,
+      width: 72,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => <Index>{row.id}</Index>,
@@ -376,12 +376,12 @@ export function ErpPostingPreview(): React.JSX.Element {
       field: 'description',
       headerName: 'Description',
       flex: 1.6,
-      minWidth: 150,
+      minWidth: 166,
     },
     {
       field: 'lineTotal',
       headerName: 'Line Total',
-      width: 118,
+      width: 134,
       align: 'right',
       headerAlign: 'right',
       renderCell: ({ row }) => (
@@ -399,7 +399,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'vatCode',
       headerName: 'VAT Tax Code',
-      width: 148,
+      width: 164,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -429,7 +429,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'whtCode',
       headerName: 'WHT Tax Code',
-      width: 148,
+      width: 164,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -459,7 +459,7 @@ export function ErpPostingPreview(): React.JSX.Element {
     {
       field: 'actions',
       headerName: '',
-      width: 122,
+      width: 138,
       sortable: false,
       filterable: false,
       align: 'center',

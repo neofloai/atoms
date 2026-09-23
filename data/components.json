@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T08:52:37.266Z",
+  "generatedAt": "2026-09-23T09:24:38.952Z",
   "components": [
     {
       "name": "Accordion",
@@ -1279,7 +1279,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Row height: `sm` 48, `md` 56, `lg` 64, with the header strip at 32 in all three. The same values `Table` takes, so a screen can move between the two without changing how dense it looks. Replaces MUI’s `rowHeight`, `columnHeaderHeight` and `density` — the same fact stated three ways, which disagree as soon as two of them are set."
+          "description": "Row height: `sm` 48, `md` 56, `lg` 64, with the header strip at 40 in all three. The same values `Table` takes, so a screen can move between the two without changing how dense it looks. Replaces MUI’s `rowHeight`, `columnHeaderHeight` and `density` — the same fact stated three ways, which disagree as soon as two of them are set."
         },
         {
           "name": "rowState",
@@ -4385,13 +4385,13 @@
       "name": "Table",
       "category": "Data Display",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3215-52225&m=dev",
-      "tagline": "A table of records: a 32px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.",
+      "tagline": "A table of records: a 40px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.",
       "props": [
         {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 32 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes."
+          "description": "Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 40 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes."
         },
         {
           "name": "stickyHeader",
@@ -4474,18 +4474,23 @@
         },
         {
           "title": "Two lines in one row, and a leading glyph",
-          "description": "The richest cells are still cells. `secondary` puts a muted line under the first with no gap between them, and `icon` holds a node 8px clear of the text — a glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.",
+          "description": "The richest cells are still cells. `secondary` puts a muted line 4px under the first, and `icon` holds a node 4px clear of the text — a 16px glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.",
           "code": "<TableRow>\n  <TableCell icon={<UploadSimpleIcon size={16} />} secondary=\"14 Feb 2026 · 21:38\">\n    #1008\n  </TableCell>\n  <TableCell icon={<Avatar size=\"sm\">OP</Avatar>} secondary=\"administrator\">\n    Kaustav\n  </TableCell>\n  <TableCell icon={<PaperclipIcon size={16} />}>inv-so90-9333.pdf</TableCell>\n  <TableCell align=\"right\" secondary=\"$ 14,509.32\">\n    Total\n  </TableCell>\n</TableRow>"
         },
         {
           "title": "Selectable rows",
-          "description": "A checkbox column plus `selected` on the row. `padding=\"checkbox\"` narrows the cell to the design’s 32px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.",
+          "description": "A checkbox column plus `selected` on the row. `padding=\"checkbox\"` narrows the cell to the design’s 48px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.",
           "code": "const [picked, setPicked] = React.useState<string[]>([]);\n\n<TableBody>\n  {rows.map((row) => {\n    const isPicked = picked.includes(row.id);\n\n    return (\n      <TableRow key={row.id} hover selected={isPicked}>\n        <TableCell padding=\"checkbox\">\n          <Checkbox\n            checked={isPicked}\n            onChange={() => setPicked(toggle(picked, row.id))}\n          />\n        </TableCell>\n        <TableCell>{row.number}</TableCell>\n      </TableRow>\n    );\n  })}\n</TableBody>"
         },
         {
           "title": "Rows that carry an outcome",
           "description": "What `state` is for: the row’s colour comes from its data rather than from the pointer. Use it for a result the reader has to notice — a line that failed validation, one that cleared it — and leave every other row plain so the tinted ones stand out.",
           "code": "<TableBody>\n  <TableRow state=\"error\">\n    <TableCell>inv-mds1204</TableCell>\n    <TableCell>Vendor not on file</TableCell>\n  </TableRow>\n  <TableRow state=\"success\">\n    <TableCell>inv-mds1203</TableCell>\n    <TableCell>Matched</TableCell>\n  </TableRow>\n  <TableRow disabled>\n    <TableCell>inv-mds1202</TableCell>\n    <TableCell>Withdrawn</TableCell>\n  </TableRow>\n</TableBody>"
+        },
+        {
+          "title": "A column of actions",
+          "description": "Nothing in the table knows about this — a cell holds a `Button` the way it holds text. `size=\"sm\"` is the 32px control the design puts in a 56px row, and the low-emphasis appearance is what keeps a column of them from reading as louder than the data beside it. Pin it with `stickyHeader` and a `position: sticky` cell if the table scrolls sideways.",
+          "code": "<TableCell align=\"right\">\n  <Button size=\"sm\" appearance=\"outline\" variant=\"primary\">\n    Review\n  </Button>\n  <IconButton size=\"sm\" appearance=\"text\" aria-label=\"Open in a new tab\">\n    <ArrowSquareOutIcon />\n  </IconButton>\n</TableCell>"
         },
         {
           "title": "A sortable column",

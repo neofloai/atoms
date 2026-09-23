@@ -26,7 +26,7 @@ const TableRoot = styled(MuiTable)(({ theme }) => ({
 }));
 
 /**
- * A table of records: a 32px strip of column labels over rows of one
+ * A table of records: a 40px strip of column labels over rows of one
  * height, separated by hairlines. Wraps MUI `Table` with the geometry
  * the Figma `table-rows` section draws (node 3215:52225) and leaves the
  * groups, rows and cells inside it to `TableHead`, `TableBody`,

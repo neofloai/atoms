@@ -75,7 +75,7 @@ export function TableNotes() {
           than a row height, so it is replaced rather than mapped.
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          The header stays 32 in all three sizes. It is a label strip rather
+          The header stays 40 in all three sizes. It is a label strip rather
           than a row of data, and the design holds it while the data breathes.
         </Typography>
         <Typography variant="body2" color="text.secondary">

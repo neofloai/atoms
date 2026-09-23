@@ -25,11 +25,12 @@ import type { CSSObject } from '@mui/material/styles';
  * The numbers the two components share are imported from
  * `tableTokens.ts` rather than measured again, and that is the point: a
  * grid and a table render the same design. A row is 48 / 56 / 64, the
- * header strip is 32, a cell is padded 8 either side with the row's 16
- * spent on the two that touch the edge, the hairline is 1px, and the
- * type is `Sans/B1/Regular` for data under a DM Mono Medium header. If
- * one of those ever moves it moves for both, which is what a single
- * source is for.
+ * header strip is a filled 40, a cell is padded 16 either side with the
+ * row's 8 spent on the two that touch the edge, the hairline is 1px,
+ * and the type is `Sans/B1/Regular` for data under a DM Mono Medium
+ * header. If one of those ever moves it moves for both, which is what a
+ * single source is for — the Revamp UI redraw (node 879:22095) moved
+ * four of them at once and this file needed no arithmetic for any.
  *
  * What is measured here is the three pieces the plain table left alone
  * because they belong to a grid: the pagination strip under the rows,
@@ -37,10 +38,10 @@ import type { CSSObject } from '@mui/material/styles';
  */
 
 /**
- * Row height per size, and the header's flat 32.
+ * Row height per size, and the header's flat 40.
  *
  * Re-exported under grid names because a caller sizing the box around a
- * grid needs them — `height: 32 + rows * DATA_GRID_ROW_HEIGHT_PX.sm` —
+ * grid needs them — `height: 40 + rows * DATA_GRID_ROW_HEIGHT_PX.sm` —
  * and should not have to import a table constant to size a grid. Same
  * objects, so the two can never drift.
  */
@@ -85,11 +86,11 @@ export const dataGridCellType: CSSObject = {
 
 /**
  * How far a cell's content sits from the grid's own edge — 24, the same
- * `8 + 16` the table lands on.
+ * `16 + 8` the table lands on.
  *
  * Written as `calc` rather than a number because in a grid that edge is
  * conditional. `--DataGrid-hasScrollX` is 0 or 1, set on the root by the
- * grid's own measuring pass, so the 16 is added only while the columns
+ * grid's own measuring pass, so the 8 is added only while the columns
  * fit. Once they do not, the first and last column are against a
  * *viewport* edge that scrolls rather than the grid's edge, and an inset
  * there would slide away from the thing it was insetting from.
@@ -104,8 +105,10 @@ export const DATA_GRID_EDGE_INSET_CALC = `calc(${TABLE_CELL_PADDING_INLINE_PX}px
  * run y=46..65 inside a row spanning 32..79, so 14 above and 14 below a
  * 20px bar in a 48px row. Horizontally they fill the cell's content box
  * exactly — the first starts at x=24, and consecutive bars are 16 apart,
- * the same `8 + 16` inset and the same pair of 8s between columns that
- * the data rows use.
+ * the same 24 of inset the data rows use. The pair of paddings between
+ * two columns has since doubled to 16 each, so consecutive bars are now
+ * 32 apart; the measurement that produced this constant was of the bar,
+ * not of the gutter, and is unaffected.
  *
  * The tint is the one place this parts company with `Skeleton`, which
  * paints a translucent grey so it can sit on any surface. This one is a
@@ -147,9 +150,8 @@ export const DATA_GRID_FOOTER_HEIGHT_PX = 48;
  * which is the padding the control carries around its own 16px box.
  *
  * `Checkbox` ships a 32px round target (`SELECTOR_TARGET_SIZE_PX`), the
- * same box as the `sm` `IconButton` in the footer and exactly the height
- * of the header strip, so the grid has nothing to say about the halo any
- * more — it used to set the padding itself, back when the control was a
+ * same box as the `sm` `IconButton` in the footer, so the grid has
+ * nothing to say about the halo any more — it used to set the padding itself, back when the control was a
  * 24px glyph with MUI's 9 around it.
  *
  * What is still the grid's business is where the *glyph* starts. Left

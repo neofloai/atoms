@@ -413,7 +413,7 @@ export default function ErpPostingPage() {
     {
       field: 'id',
       headerName: '#',
-      width: 56,
+      width: 72,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => <IndexCell value={row.id} />,
@@ -422,12 +422,12 @@ export default function ErpPostingPage() {
       field: 'description',
       headerName: 'Description',
       flex: 1.6,
-      minWidth: 180,
+      minWidth: 196,
     },
     {
       field: 'lineTotal',
       headerName: 'Line Total',
-      width: 140,
+      width: 156,
       align: 'right',
       headerAlign: 'right',
       renderCell: ({ row }) => <AmountCell value={row.lineTotal} />,
@@ -435,7 +435,7 @@ export default function ErpPostingPage() {
     {
       field: 'vatCode',
       headerName: 'VAT Tax Code',
-      width: 200,
+      width: 216,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -465,7 +465,7 @@ export default function ErpPostingPage() {
     {
       field: 'whtCode',
       headerName: 'WHT Tax Code',
-      width: 200,
+      width: 216,
       sortable: false,
       filterable: false,
       renderHeader: () => (
@@ -498,7 +498,7 @@ export default function ErpPostingPage() {
       // of the two states happened to be more common.
       field: 'actions',
       headerName: '',
-      width: 122,
+      width: 138,
       sortable: false,
       filterable: false,
       align: 'center',

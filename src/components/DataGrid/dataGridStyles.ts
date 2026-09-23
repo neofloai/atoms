@@ -18,6 +18,7 @@ import {
   TABLE_SORT_TINT_HEIGHT_PX,
   TABLE_SORT_TINT_PADDING_PX,
   TABLE_SORT_TINT_RADIUS_PX,
+  tableHeaderFill,
 } from '../Table/tableTokens';
 import {
   DATA_GRID_CHECKBOX_INSET_PULL_PX,
@@ -219,12 +220,12 @@ export function dataGridStyles(theme: Theme): CSSObject {
     },
 
     // ── The header strip ──────────────────────────────────────────
-    // Filled, because the header is always pinned over a scrolling body
-    // and a transparent one would have rows moving through it. It takes
-    // the card surface, on the assumption a grid sits on a card; a grid
-    // somewhere else says so with `sx`.
+    // Filled with the design's own header surface, which also answers
+    // the practical requirement: a grid header is always pinned over a
+    // scrolling body, and a transparent one would have rows moving
+    // through it. Shared with `Table`, so the two strips match.
     [`& .${c.columnHeaders}, & .${c.columnHeader}`]: paired(theme, {
-      backgroundColor: surface.layers.card1,
+      backgroundColor: tableHeaderFill,
     }),
     [`& .${c.columnHeader}`]: {
       ...dataGridHeaderType,
@@ -262,8 +263,11 @@ export function dataGridStyles(theme: Theme): CSSObject {
     [`& .${c['columnHeader--alignCenter']} .${c.columnHeaderTitleContainer}`]: {
       marginInline: 'auto',
     },
+    // One rung down from the strip's own fill, for the reason
+    // `TableSortLabel` gives: the tint and the header used to be
+    // different surfaces and are now the same one.
     [`& .${c['columnHeader--sortable']}:hover .${c.columnHeaderTitleContainer}`]:
-      paired(theme, { backgroundColor: surface.default.default }),
+      paired(theme, { backgroundColor: surface.default.defaultHover }),
 
     // The glyphs inside that tint are the design's 16px ones with no
     // chrome of their own: the tint is the affordance, so a second hover
@@ -311,7 +315,7 @@ export function dataGridStyles(theme: Theme): CSSObject {
     },
 
     // ── The edge inset ────────────────────────────────────────────
-    // The row's 16px, spent on the two columns that touch the edge
+    // The row's 8px, spent on the two columns that touch the edge
     // exactly as the table spends it. `[aria-colindex='1']` picks up the
     // first header and the first cell in one selector, including a
     // selection column, which the design also insets. The last cell is

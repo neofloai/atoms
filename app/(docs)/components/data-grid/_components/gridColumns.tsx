@@ -149,7 +149,7 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
   {
     field: 'reference',
     headerName: 'Invoice',
-    width: 148,
+    width: 164,
     renderCell: ({ row }) => (
       <RecordCell
         icon={<UploadSimpleIcon size={CELL_ICON_PX} />}
@@ -162,7 +162,7 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
     field: 'vendor',
     headerName: 'Vendor',
     flex: 1,
-    minWidth: 120,
+    minWidth: 136,
     renderCell: ({ row }) => (
       <RecordCell primary={row.vendor} secondary={row.vendorRef} />
     ),
@@ -170,7 +170,7 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
   {
     field: 'status',
     headerName: 'Status',
-    width: 116,
+    width: 132,
     sortable: false,
     renderCell: ({ row }) => (
       <Chip size="sm" variant={row.statusVariant} label={row.status} />
@@ -179,7 +179,7 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
   {
     field: 'attachment',
     headerName: 'Attachment',
-    width: 152,
+    width: 168,
     renderCell: ({ row }) => (
       <RecordCell
         icon={<PaperclipIcon size={CELL_ICON_PX} />}
@@ -191,13 +191,13 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
     field: 'amount',
     headerName: 'Amount',
     type: 'number',
-    width: 112,
+    width: 128,
     valueFormatter: (value: number) => money(value),
   },
   {
     field: 'actions',
     headerName: 'Action',
-    width: 172,
+    width: 188,
     align: 'right',
     headerAlign: 'right',
     sortable: false,
@@ -222,31 +222,31 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
 
 /** The three column types whose sort menus Figma words differently. */
 export const TYPED_COLUMNS: GridColDef<GridInvoice>[] = [
-  { field: 'vendor', headerName: 'Vendor', flex: 1, minWidth: 180 },
+  { field: 'vendor', headerName: 'Vendor', flex: 1, minWidth: 196 },
   {
     field: 'received',
     headerName: 'Received',
     type: 'date',
-    width: 160,
+    width: 176,
     valueFormatter: (value: Date) => formatDay(value),
   },
   {
     field: 'amount',
     headerName: 'Amount',
     type: 'number',
-    width: 150,
+    width: 166,
     valueFormatter: (value: number) => money(value),
   },
 ];
 
 /** A person column, for the row-state preview. */
 export const OWNER_COLUMNS: GridColDef<GridInvoice>[] = [
-  { field: 'reference', headerName: 'Invoice', width: 120 },
+  { field: 'reference', headerName: 'Invoice', width: 136 },
   {
     field: 'owner',
     headerName: 'Owner',
     flex: 1,
-    minWidth: 200,
+    minWidth: 216,
     renderCell: ({ row }) => (
       <RecordCell
         icon={<Avatar size="sm">{initials(row.owner)}</Avatar>}
@@ -259,7 +259,7 @@ export const OWNER_COLUMNS: GridColDef<GridInvoice>[] = [
     field: 'amount',
     headerName: 'Amount',
     type: 'number',
-    width: 150,
+    width: 166,
     valueFormatter: (value: number) => money(value),
   },
 ];

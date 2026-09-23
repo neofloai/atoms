@@ -3,6 +3,7 @@ import {
   fontWeights,
   radius,
   spacing,
+  surface,
   typography,
 } from '@/src/tokens';
 
@@ -10,36 +11,57 @@ import type { CSSObject } from '@mui/material/styles';
 import type { TableSize } from './Table.types';
 
 /**
- * Geometry and type shared by the parts of the table, transcribed from
- * the Figma `table-rows` section (node 3215:52225) — the row component
- * set 3215:43435, the cell set `table-body` 3206:122297, the header cell
- * set `table-header` 3206:122038, and the assembled `table` frame
- * 3223:61898.
+ * Geometry and type shared by the parts of the table.
+ *
+ * Two sheets feed this file. The row heights, the hairline and the sort
+ * affordance come from the Product Design System `table-rows` section
+ * (node 3215:52225) — the row set 3215:43435, the cell set `table-body`
+ * 3206:122297, the header set `table-header` 3206:122038. The cell
+ * padding, the header strip and the header's fill were redrawn by the
+ * Revamp UI assembled table (node 879:22095), and where the two
+ * disagree the newer one wins.
  *
  * The whole design falls out of four numbers, and every measurement in
  * every variant was checked against them:
  *
- *   - `Scale/200` (8)  — padding either side of a cell's content.
- *   - `Scale/300` (16) — the row's own inset, left and right.
- *   - `Scale/100` (4)  — the gap and padding inside a sortable header's
- *                        hover tint, and that tint's corner radius.
- *   - three row heights — 48 / 56 / 64, one per size.
+ *   - `Scale/300` (16) — padding either side of a cell's content.
+ *   - `Scale/200` (8)  — the row's own inset on top of that, left and
+ *                        right, which lands the edge columns at 24.
+ *   - `Scale/100` (4)  — the gap between a cell's glyph and its text,
+ *                        between a two-line cell's two lines, and
+ *                        inside a sortable header's hover tint.
+ *   - three row heights — 48 / 56 / 64, one per size, under a flat 40px
+ *                         header.
  *
  * Which makes the assembled table arithmetic rather than opinion:
- * 3223:61897 is 320 tall for a header and six `small` rows, and
- * 32 + 6 × 48 = 320 exactly. No gap between rows, no padding around the
- * set, and no outer border or radius — a table here is a stack of bands
- * on whatever surface it is dropped onto.
+ * 879:22095 stacks a 40px header on fourteen 56px rows, and every
+ * column boundary in it falls on a multiple of those two paddings. No
+ * gap between rows, no padding around the set, and no outer border or
+ * radius — a table here is a stack of bands on whatever surface it is
+ * dropped onto.
  *
- * ## Where the row's 16px inset goes
+ * ## What the 11 September redraw moved
  *
- * Onto the first and last cell, added to their own 8. Figma's row is an
- * auto-layout frame with `padding: 0 16` holding cells that carry 8
- * either side, so the leading text lands 24 from the row's edge and
- * adjacent columns are 16 apart. An HTML `<tr>` cannot be padded — the
- * only elements in a table row that take padding are the cells — so the
- * inset is spent on the two cells that touch the edge. Same pixels,
- * different owner.
+ * Four things, and none of them is a colour on the data:
+ *
+ *   - **the cell's inline padding doubled**, 8 to 16. Adjacent columns
+ *     are now 32 apart where they were 16.
+ *   - **the row's inset halved**, 16 to 8, so the two edge columns land
+ *     at the same 24 they always did. The air moved inward rather than
+ *     outward: the table is no wider, its columns are further apart.
+ *   - **the header strip grew**, 32 to 40, and **took a fill**.
+ *   - **a two-line cell's two lines separated** by `Scale/100`, where
+ *     they used to sit hard against each other on their leadings alone.
+ *
+ * ## Where the row's inset goes
+ *
+ * Onto the first and last cell, added to their own 16. Figma's row is
+ * an auto-layout frame holding cells that carry their own padding, and
+ * its edge cells are drawn 8 wider on the outside — `pl-24` on the
+ * first header cell, `pr-24` on the last body cell. An HTML `<tr>`
+ * cannot be padded — the only elements in a table row that take padding
+ * are the cells — so the inset is spent on the two cells that touch the
+ * edge. Same pixels, different owner.
  */
 
 /**
@@ -60,64 +82,108 @@ export const TABLE_ROW_HEIGHT_PX: Record<TableSize, number> = {
 };
 
 /**
- * Height of the header row — 32, and the same 32 in all three sizes
- * (`Size=small, State=header` 3215:52223, `medium` 3223:59801, `large`
- * 3223:59857 are identical boxes).
+ * Height of the header row — 40, and the same 40 whatever the table's
+ * `size` is.
  *
- * So `size` does not scale the header. It is a label strip rather than a
+ * `size` does not scale the header. It is a label strip rather than a
  * row of data, and the design holds it at one height while the data
- * breathes.
+ * breathes — that much is unchanged from the original sheet, where the
+ * three `State=header` symbols (3215:52223, 3223:59801, 3223:59857) are
+ * identical boxes.
+ *
+ * What changed is the number. It was 32; the Revamp UI header cell is
+ * `Scale/250` above and below a 16px label box, which is 40, and the
+ * frame's first row starts at y=40. The label itself did not grow — the
+ * strip did, and it now has room for the 32px controls a header cell
+ * sometimes holds without them touching the hairline.
  */
-export const TABLE_HEADER_ROW_HEIGHT_PX = 32;
-
-/** `Scale/200` — padding either side of every cell's content. */
-export const TABLE_CELL_PADDING_INLINE_PX = spacing.component.xs;
+export const TABLE_HEADER_ROW_HEIGHT_PX = 40;
 
 /**
- * The row's own inset, spent on the first and last cell.
+ * `Scale/300` — padding either side of every cell's content.
  *
  * A named literal rather than a token, for the reason `Card`'s and
  * `Accordion`'s 16s are: the component spacing ladder runs 0, 4, 8, 12,
  * 24, 48, 64, 96, so it skips `Scale/300` entirely. `radius.lg` is also
  * 16, but borrowing a radius for a distance reads as a radius at the
  * call site.
+ *
+ * It was `Scale/200` until the Revamp UI redraw. A pair of them is what
+ * separates two columns, so doubling this doubled the gutter from 16 to
+ * 32 — which is the single most visible thing about the new table, and
+ * the reason a column that used to fit its label may now truncate.
  */
-export const TABLE_EDGE_INSET_PX = 16;
+export const TABLE_CELL_PADDING_INLINE_PX = 16;
+
+/**
+ * The row's own inset, spent on the first and last cell — `Scale/200`.
+ *
+ * Halved from 16 as the cell padding doubled, which holds the edge
+ * columns at the 24 they were already at: the sheet draws `pl-24` on
+ * its first header cell and `pr-24` on its last body cell, and 16 + 8
+ * is how those are reached from a cell that is otherwise padded 16.
+ */
+export const TABLE_EDGE_INSET_PX = spacing.component.xs;
 
 /** The hairline under every row, and under the header. */
 export const TABLE_BORDER_WIDTH_PX = 1;
 
 /**
- * `Scale/200` — gap between a cell's leading slot and its text.
+ * `Scale/100` — gap between a cell's leading slot and its text.
  *
- * The design reaches this twice with different maths, and only one of
- * them survives the trip into code. Its icon cell puts a 16px glyph in a
- * 20px instance box and leaves 8 after it, landing the text 36 from the
- * cell's edge; its person cell puts a bare 36px avatar there and leaves
- * 8, landing the text at 52. A bare 16px glyph with this gap lands the
- * text at 32 — 4 short of the icon cell, exact for the avatar. Padding
- * the slot out to 20 would fix the glyph and break the avatar by the
- * same 4. One gap wins, and an instance box's own padding does not
- * travel into a component.
+ * From the `cell-body` component (549:9682), which is the design
+ * system's own definition of a cell with a glyph in it: a 16px icon, 4
+ * after it, then the label.
+ *
+ * The assembled frame contradicts it in one column — its first cell is
+ * an ad-hoc frame holding a 14px glyph 8 from the text — and the
+ * component is followed instead, on the grounds that a component set
+ * outranks a page layout for that component's own geometry. Logged as
+ * DESIGNER_QUESTIONS.md #62, together with the consequence: `icon`
+ * takes any node, so an `Avatar` in that slot now sits 4 from its label
+ * where the older sheet drew 8.
  */
-export const TABLE_CELL_GAP_PX = spacing.component.xs;
+export const TABLE_CELL_GAP_PX = spacing.component.xxs;
 
 /**
- * Width of a checkbox column — 32 (8 + a 16px box + 8), from the
- * `checkbox=True` rows, which are exactly 32 wider than their
- * `checkbox=False` twins (1204 against 1172).
+ * `Scale/100` — between the two lines of a two-line cell.
  *
- * As the first column it comes out at 48 once the row's inset is added,
- * which is the width MUI reserves for `padding="checkbox"` anyway.
+ * New: the lines used to sit hard against each other, held apart by
+ * their leadings alone, on a reading of a 36px group holding a 20px
+ * line and a 16px one. The Revamp UI row draws the gap explicitly
+ * (`gap-[4px]` on every `Vendor / Invoice #` cell), which makes the
+ * pair 40 tall and still centres inside every row height the table has.
+ */
+export const TABLE_CELL_SECONDARY_GAP_PX = spacing.component.xxs;
+
+/**
+ * The glyph in a cell's leading slot — 16.
+ *
+ * Exported because a caller fills that slot and has to size what goes
+ * in it; `<PaperclipIcon size={TABLE_CELL_ICON_PX} />` is the whole of
+ * it. The cell does not impose the size, because the slot also takes an
+ * `Avatar`, which carries its own.
+ */
+export const TABLE_CELL_ICON_PX = 16;
+
+/**
+ * Width of a checkbox column — 48 (16 + a 16px box + 16).
+ *
+ * As the first column it comes out at 56 once the row's 8 of inset is
+ * added, which is exactly the `cell-body` the Revamp UI frame reserves
+ * for its (hidden) selection column: 56 wide with a 16px square at
+ * x=24. Two independent readings of the padding agreeing on the edge
+ * column is the best confirmation the sheet offers that the 16 and the
+ * 8 are the right way round.
  *
  * It is a floor rather than the finished number, and in practice the
  * column comes out wider: the table sheet draws a 16px box, and the
  * house `Checkbox` is a 24px one with no size axis to shrink it. So the
- * cell contributes its 8 either side, the control keeps its own size,
- * and the column lands at 40 instead of 32. Squaring the two sheets is
+ * cell contributes its 16 either side, the control keeps its own size,
+ * and the column lands at 56 instead of 48. Squaring the two sheets is
  * DESIGNER_QUESTIONS.md #48.
  */
-export const TABLE_CHECKBOX_CELL_WIDTH_PX = 32;
+export const TABLE_CHECKBOX_CELL_WIDTH_PX = 48;
 
 /**
  * Tracking on the header label — -0.12px, the sheet's own figure.
@@ -127,6 +193,21 @@ export const TABLE_CHECKBOX_CELL_WIDTH_PX = 32;
  * division. See `tableHeaderType`.
  */
 export const TABLE_HEADER_LETTER_SPACING_PX = -0.12;
+
+/**
+ * The fill behind the header strip — `surface/default/default`, which
+ * the sheet binds on every `cell-header` and which resolves to the
+ * `#f5f5f3` it draws, exactly.
+ *
+ * New, and it does two jobs at once. The strip now reads as a strip
+ * rather than as a row that happens to be labelled, which is what the
+ * mono face started and this finishes. And a pinned header has to be
+ * opaque or the rows scroll through it, which the table used to solve
+ * by reaching for `surface.layers.card1` only while `stickyHeader` was
+ * set — a fill that appeared and disappeared with an unrelated prop.
+ * One named fill, always on, covers both.
+ */
+export const tableHeaderFill = surface.default.default;
 
 /** The sort glyph in a header cell — the house small glyph. */
 export const TABLE_SORT_ICON_PX = 16;

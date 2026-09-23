@@ -15,14 +15,14 @@ export const data: ComponentExamplesData = {
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3215-52225&m=dev',
   tagline:
-    'A table of records: a 32px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.',
+    'A table of records: a 40px strip of column labels over rows of 48, 56 or 64, separated by hairlines. Wraps MUI’s Table with the design’s paddings, inks and row states. Reach for the data grid instead when the table needs virtualising, filtering or inline editing.',
   props: [
     {
       name: 'size',
       type: "'sm' | 'md' | 'lg'",
       default: "'md'",
       description:
-        'Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 32 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes.',
+        'Row height: `sm` 48, `md` 56, `lg` 64. Passed down to every row, so it is set once on the table rather than per row. The header stays 40 in all three — it is a label strip rather than a row of data, and the design holds it while the data breathes.',
     },
     {
       name: 'stickyHeader',
@@ -142,7 +142,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Two lines in one row, and a leading glyph',
       description:
-        'The richest cells are still cells. `secondary` puts a muted line under the first with no gap between them, and `icon` holds a node 8px clear of the text — a glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.',
+        'The richest cells are still cells. `secondary` puts a muted line 4px under the first, and `icon` holds a node 4px clear of the text — a 16px glyph for a file, an `Avatar` for a person. Both stay centred against the row, so the row keeps one height.',
       code: [
         '<TableRow>',
         '  <TableCell icon={<UploadSimpleIcon size={16} />} secondary="14 Feb 2026 · 21:38">',
@@ -161,7 +161,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Selectable rows',
       description:
-        'A checkbox column plus `selected` on the row. `padding="checkbox"` narrows the cell to the design’s 32px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.',
+        'A checkbox column plus `selected` on the row. `padding="checkbox"` narrows the cell to the design’s 48px, and `hover` goes on because the rows are now interactive. Selection is bracketed by two primary hairlines rather than a heavier fill.',
       code: [
         'const [picked, setPicked] = React.useState<string[]>([]);',
         '',
@@ -203,6 +203,21 @@ export const data: ComponentExamplesData = {
         '    <TableCell>Withdrawn</TableCell>',
         '  </TableRow>',
         '</TableBody>',
+      ].join('\n'),
+    },
+    {
+      title: 'A column of actions',
+      description:
+        'Nothing in the table knows about this — a cell holds a `Button` the way it holds text. `size="sm"` is the 32px control the design puts in a 56px row, and the low-emphasis appearance is what keeps a column of them from reading as louder than the data beside it. Pin it with `stickyHeader` and a `position: sticky` cell if the table scrolls sideways.',
+      code: [
+        '<TableCell align="right">',
+        '  <Button size="sm" appearance="outline" variant="primary">',
+        '    Review',
+        '  </Button>',
+        '  <IconButton size="sm" appearance="text" aria-label="Open in a new tab">',
+        '    <ArrowSquareOutIcon />',
+        '  </IconButton>',
+        '</TableCell>',
       ].join('\n'),
     },
     {

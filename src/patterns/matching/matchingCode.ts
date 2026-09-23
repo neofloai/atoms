@@ -549,9 +549,9 @@ const MONO = { fontFamily: fontFamilies.product.mono };
  */
 const TABLE_LAYOUT = { tableLayout: 'fixed' };
 
-const INVOICE_COLS = { check: 64, itemNo: 80, description: 150, qty: 70 };
+const INVOICE_COLS = { check: 80, itemNo: 96, description: 166, qty: 86 };
 
-const GRN_COLS = { check: 64, poNo: 100, grnNo: 80, description: 150, qty: 70 };
+const GRN_COLS = { check: 80, poNo: 116, grnNo: 96, description: 166, qty: 86 };
 
 /**
  * The design's own placeholder for an item number a line does not have - the
@@ -580,7 +580,7 @@ const truncate = { overflow: 'hidden', textOverflow: 'ellipsis' };
  * a readable width rather than splitting the remainder evenly with the PO
  * column, because the PO column also carries the row's decision.
  */
-const DETAILS_COLS = { field: 250, invoice: 320 };
+const DETAILS_COLS = { field: 266, invoice: 336 };
 
 /**
  * The label column, and the header strip above it.
@@ -862,7 +862,7 @@ function FieldDecision({ field, acknowledged, onAcknowledge }) {
 function InvoiceDetailsTab({ acknowledged, onAcknowledge }) {
   return (
     <TableContainer sx={{ height: '100%', overflow: 'auto' }}>
-      <Table size="sm" sx={{ minWidth: 720 }}>
+      <Table size="sm" sx={{ minWidth: 768 }}>
         <TableHead>
           <TableRow>
             <TableCell sx={[labelCell, { width: DETAILS_COLS.field }]}>

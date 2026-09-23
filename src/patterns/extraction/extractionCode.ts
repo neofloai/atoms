@@ -610,8 +610,8 @@ const DEFAULT_ZOOM_INDEX = 2;
 /** A quarter turn, which is the only rotation a page viewer needs. */
 const QUARTER_TURN_DEG = 90;
 
-const DETAILS_COLS = { field: 250 };
-const DETAILS_TABLE_MIN_PX = 560;
+const DETAILS_COLS = { field: 266 };
+const DETAILS_TABLE_MIN_PX = 592;
 
 /**
  * Every metadata row, whether it holds text or an input.
@@ -650,8 +650,8 @@ const VALUE_INPUT_WIDTH_PX = 280;
  * input carrying the error border.
  */
 
-const LINE_COLS = { itemNo: 132, qty: 64 };
-const LINE_TABLE_MIN_PX = 620;
+const LINE_COLS = { itemNo: 148, qty: 80 };
+const LINE_TABLE_MIN_PX = 700;
 
 /** Highlight stroke on the page, and the inset that keeps it clear of the ink. */
 const HIGHLIGHT_WIDTH_PX = 2;

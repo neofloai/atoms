@@ -319,7 +319,7 @@ export const INVOICE_COLUMNS: GridColDef<Invoice>[] = [
     field: 'reference',
     headerName: 'Source ID/ Time',
     flex: 1.4,
-    minWidth: 152,
+    minWidth: 168,
     renderCell: ({ row }) => (
       <Row>
         {/* The channel it arrived on: the same answer for most rows, so a
@@ -342,7 +342,7 @@ export const INVOICE_COLUMNS: GridColDef<Invoice>[] = [
     field: 'vendor',
     headerName: 'Vendor / Invoice#',
     flex: 1.6,
-    minWidth: 150,
+    minWidth: 166,
     renderCell: ({ row }) => (
       <TwoLine primary={row.vendor} secondary={row.invoiceNumber} />
     ),
@@ -350,7 +350,7 @@ export const INVOICE_COLUMNS: GridColDef<Invoice>[] = [
   {
     field: 'stage',
     headerName: 'Status',
-    width: 132,
+    width: 148,
     sortable: false,
     renderCell: ({ row }) => {
       const meta = stageMeta(row.stage);
@@ -368,7 +368,7 @@ export const INVOICE_COLUMNS: GridColDef<Invoice>[] = [
     field: 'attachment',
     headerName: 'Invoice attachment',
     flex: 1.5,
-    minWidth: 152,
+    minWidth: 168,
     sortable: false,
     renderCell: ({ row }) => (
       <Attachment>
@@ -380,7 +380,7 @@ export const INVOICE_COLUMNS: GridColDef<Invoice>[] = [
   {
     field: 'amount',
     headerName: 'Amount',
-    width: 124,
+    width: 140,
     align: 'right',
     headerAlign: 'right',
     renderCell: ({ row }) => (

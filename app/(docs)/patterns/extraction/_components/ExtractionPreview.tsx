@@ -108,8 +108,8 @@ const DEFAULT_ZOOM_INDEX = 2;
 const QUARTER_TURN_DEG = 90;
 
 /** The field column, at the width the design sets it. */
-const DETAILS_COLS = { field: 250 } as const;
-const DETAILS_TABLE_MIN_PX = 560;
+const DETAILS_COLS = { field: 266 } as const;
+const DETAILS_TABLE_MIN_PX = 592;
 
 /**
  * Every metadata row, whether it holds text or an input.
@@ -137,8 +137,8 @@ const ROW_HEIGHT_PX = 48;
 const VALUE_INPUT_WIDTH_PX = 280;
 
 /** The line table's fixed columns; description and the two amounts flex. */
-const LINE_COLS = { itemNo: 132, qty: 64 } as const;
-const LINE_TABLE_MIN_PX = 620;
+const LINE_COLS = { itemNo: 148, qty: 80 } as const;
+const LINE_TABLE_MIN_PX = 700;
 
 /** Highlight stroke on the page, and the inset that keeps it clear of the ink. */
 const HIGHLIGHT_WIDTH_PX = 2;

@@ -236,7 +236,7 @@ export function TableShowcase() {
 
       <PreviewCard
         title="Three densities, one header"
-        description="sm is 48, md is 56, lg is 64 — and the header strip stays 32 in all three, because it labels the columns rather than carrying data. Density is one prop on the table, so a row never disagrees with its neighbour."
+        description="sm is 48, md is 56, lg is 64 — and the header strip stays 40 in all three, because it labels the columns rather than carrying data. Density is one prop on the table, so a row never disagrees with its neighbour."
       >
         <Stack spacing={4}>
           {SIZES.map(({ size, height }) => (

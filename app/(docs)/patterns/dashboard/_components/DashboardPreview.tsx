@@ -60,11 +60,11 @@ const EMPTY: FilterValue = {};
  */
 const PREVIEW_COLUMN_FLEX: Record<string, { flex: number; minWidth: number }> =
   {
-    reference: { flex: 1.5, minWidth: 136 },
-    vendor: { flex: 2.5, minWidth: 128 },
-    status: { flex: 1.4, minWidth: 136 },
-    entity: { flex: 1.1, minWidth: 96 },
-    assignee: { flex: 1.5, minWidth: 148 },
+    reference: { flex: 1.5, minWidth: 152 },
+    vendor: { flex: 2.5, minWidth: 144 },
+    status: { flex: 1.4, minWidth: 152 },
+    entity: { flex: 1.1, minWidth: 112 },
+    assignee: { flex: 1.5, minWidth: 164 },
   };
 
 const PREVIEW_COLUMNS: GridColDef<QueryRecord>[] = QUERY_COLUMNS.filter(

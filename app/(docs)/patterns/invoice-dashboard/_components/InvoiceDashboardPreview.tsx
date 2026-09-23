@@ -131,10 +131,10 @@ const PREVIEW_COLUMN_SIZING: Record<
   string,
   { flex?: number; width?: number; minWidth?: number }
 > = {
-  reference: { flex: 1.4, minWidth: 140 },
-  vendor: { flex: 1.6, minWidth: 100 },
-  stage: { width: 124 },
-  amount: { width: 110 },
+  reference: { flex: 1.4, minWidth: 156 },
+  vendor: { flex: 1.6, minWidth: 116 },
+  stage: { width: 140 },
+  amount: { width: 126 },
 };
 
 const PREVIEW_COLUMNS: GridColDef<Invoice>[] = [
@@ -151,7 +151,7 @@ const PREVIEW_COLUMNS: GridColDef<Invoice>[] = [
     // column that belongs to the screen rather than to the data.
     field: 'action',
     headerName: 'Action',
-    width: 168,
+    width: 184,
     sortable: false,
     filterable: false,
     renderCell: ({ row }) => <ActionCell invoice={row} />,

@@ -122,13 +122,13 @@ const RowRoot = styled(MuiTableRow, {
  * ## Height lives here, and vertical padding does not
  *
  * The row is what the design fixes — 48, 56 or 64, from the table's
- * `size`, and a flat 32 in the header regardless of it. So the height is
+ * `size`, and a flat 40 in the header regardless of it. So the height is
  * set on the `<tr>` and the cells inside it carry no vertical padding at
  * all: they inherit `vertical-align: middle` from this element, which
  * centres one line or two without either being told which it is. A cell
- * with a 20px line and a 16px one under it comes to 36 and centres in
- * all three heights, which is how the design's two-line variants fit a
- * 48px row.
+ * with a 20px line, `Scale/100`, and a 16px one under it comes to 40
+ * and centres in all three heights, which is how the design's two-line
+ * variants fit a 48px row.
  *
  * ## Selection is a bracket, not a fill
  *
