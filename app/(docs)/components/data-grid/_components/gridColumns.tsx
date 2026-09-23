@@ -6,6 +6,16 @@ import { styled } from '@mui/material/styles';
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
 import { Chip } from '@/src/components/Chip';
+import {
+  TABLE_CELL_GAP_PX,
+  TABLE_CELL_GAP_TWO_LINE_PX,
+  TABLE_CELL_ICON_OFFSET_PX,
+  TABLE_CELL_ICON_PX,
+  TABLE_CELL_SECONDARY_GAP_PX,
+  TABLE_SECONDARY_LEADING_PX,
+  TABLE_SECONDARY_SIZE_PX,
+  tableIconInk,
+} from '@/src/components/Table/tableTokens';
 import { IconButton } from '@/src/components/IconButton';
 import {
   ArrowSquareOutIcon,
@@ -20,7 +30,7 @@ import type { GridColDef } from '@mui/x-data-grid';
 import type { InvoiceRecord } from '../../table/_components/records';
 
 /** The glyph size the design's cells use. */
-const CELL_ICON_PX = 16;
+const CELL_ICON_PX = TABLE_CELL_ICON_PX;
 
 /** A row, with the real `Date` a sortable, filterable column needs. */
 export interface GridInvoice extends InvoiceRecord {
@@ -80,25 +90,49 @@ export const GRID_ROWS: readonly GridInvoice[] = Array.from(
 );
 
 /** Vertically centred, because a grid cell centres one line with `line-height`. */
-const Stack = styled('span')({
+/**
+ * The four things a leading glyph changes when it sits beside two lines
+ * rather than one: it tops out instead of centring, drops 2px onto the
+ * first line's cap height, takes 8 of gap rather than 6, and goes one
+ * rung quieter. Only its 14px size is the same in both.
+ *
+ * `TableCell` does this for a caller. A grid has one seam for cell
+ * content, so a `renderCell` has to do it itself — which is why the
+ * numbers are imported rather than written again.
+ */
+const Stack = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'neofloTwoLine',
+})<{ neofloTwoLine: boolean }>(({ theme, neofloTwoLine }) => ({
   display: 'flex',
-  alignItems: 'center',
-  gap: CELL_ICON_PX / 2,
+  alignItems: neofloTwoLine ? 'flex-start' : 'center',
+  gap: neofloTwoLine ? TABLE_CELL_GAP_TWO_LINE_PX : TABLE_CELL_GAP_PX,
   minWidth: 0,
   lineHeight: 'normal',
-});
+  '& > svg': {
+    marginBlockStart: neofloTwoLine ? TABLE_CELL_ICON_OFFSET_PX : 0,
+    color: neofloTwoLine
+      ? tableIconInk.twoLine.light
+      : tableIconInk.oneLine.light,
+    ...theme.applyStyles('dark', {
+      color: neofloTwoLine
+        ? tableIconInk.twoLine.dark
+        : tableIconInk.oneLine.dark,
+    }),
+  },
+}));
 
 const Lines = styled('span')({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
+  gap: TABLE_CELL_SECONDARY_GAP_PX,
   minWidth: 0,
   lineHeight: `${typography.body.b1.leading}px`,
 });
 
 const Secondary = styled('span')(({ theme }) => ({
-  fontSize: typography.body.b2.size,
-  lineHeight: `${typography.body.b2.leading}px`,
+  fontSize: TABLE_SECONDARY_SIZE_PX,
+  lineHeight: `${TABLE_SECONDARY_LEADING_PX}px`,
   color: text.default.b3.light,
   ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));
@@ -122,7 +156,7 @@ function RecordCell({
   secondary?: React.ReactNode;
 }) {
   return (
-    <Stack>
+    <Stack neofloTwoLine={secondary != null}>
       {icon}
       <Lines>
         {primary}
@@ -203,7 +237,7 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
     sortable: false,
     filterable: false,
     renderCell: ({ row }) => (
-      <Stack sx={{ justifyContent: 'flex-end', gap: '4px' }}>
+      <Stack neofloTwoLine={false} sx={{ justifyContent: 'flex-end', gap: '4px' }}>
         <Button appearance="outline" variant="secondary" size="sm">
           Review
         </Button>

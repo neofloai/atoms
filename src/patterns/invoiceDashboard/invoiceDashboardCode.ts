@@ -256,12 +256,18 @@ function AttachmentCell({ file }: { file: string }) {
       component="span"
       sx={(theme) => ({
         display: 'flex',
+        // Beside one line the glyph centres, takes 6 of gap, and is one
+        // rung stronger than the glyph beside a two-line cell.
         alignItems: 'center',
-        gap: 0.5,
+        gap: '6px',
         minWidth: 0,
         lineHeight: 'normal',
         color: text.default.b3.light,
         ...theme.applyStyles('dark', { color: text.default.b3.dark }),
+        '& > svg': {
+          color: icon.default.b2.light,
+          ...theme.applyStyles('dark', { color: icon.default.b2.dark }),
+        },
       })}
     >
       <PaperclipIcon size={14} style={{ flexShrink: 0 }} />
@@ -397,13 +403,22 @@ function invoiceColumns(
       renderCell: ({ row }) => (
         <Box
           component="span"
-          sx={{
+          sx={(theme) => ({
             display: 'flex',
-            alignItems: 'center',
+            // Beside two lines the glyph tops out rather than centring,
+            // drops 2px onto the first line's cap height, takes 8 of gap
+            // and the quieter of the two icon rungs. Centred against the
+            // block it would read as drifting between the lines.
+            alignItems: 'flex-start',
             gap: 1,
             minWidth: 0,
             lineHeight: 'normal',
-          }}
+            '& > svg': {
+              marginBlockStart: '2px',
+              color: icon.default.b3.light,
+              ...theme.applyStyles('dark', { color: icon.default.b3.dark }),
+            },
+          })}
         >
           {/* The channel the invoice arrived on. A glyph rather than a
               column, because it is the same answer for most rows. */}

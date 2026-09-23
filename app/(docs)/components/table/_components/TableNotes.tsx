@@ -109,10 +109,14 @@ export function TableNotes() {
           the same reason.
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          The two interact. Given both, the glyph stops centring and aligns to
-          the first line&apos;s cap height instead, with 8px of gap rather than
-          6 — centred against a two-line block it floats between the lines and
-          reads as belonging to neither.
+          The two interact, and four things change at once. Given both, the
+          glyph tops out rather than centring, drops 2px onto the first
+          line&apos;s cap height, takes 8px of gap rather than 6, and goes one
+          rung quieter — <code>icon.default.b3</code> against{' '}
+          <code>icon.default.b2</code>. A glyph beside one line is part of that
+          line; beside two it is a marker on a block, and should not compete
+          with the line it is aligned to. Only the 14px size is the same in
+          both.
         </Typography>
       </Stack>
 

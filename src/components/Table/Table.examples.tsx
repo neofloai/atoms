@@ -142,7 +142,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Two lines in one row, and a leading glyph',
       description:
-        'The richest cells are still cells. `secondary` puts a muted 11/13 line 2px under the first, and `icon` holds a 14px node clear of the text. Given both, the glyph stops centring and aligns to the first line’s cap height instead — centred against a two-line block it floats between the lines and reads as belonging to neither.',
+        'The richest cells are still cells. `secondary` puts a muted 11/13 line 2px under the first, and `icon` holds a 14px node clear of the text. Given both, four things change at once: the glyph tops out rather than centring, drops 2px onto the first line’s cap height, takes 8px of gap rather than 6, and goes one rung quieter. A glyph beside one line is part of that line; beside two it is a marker on a block.',
       code: [
         '<TableRow>',
         '  <TableCell icon={<UploadSimpleIcon size={14} />} secondary="14 Feb 2026 · 21:38">',

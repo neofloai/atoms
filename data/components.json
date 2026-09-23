@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T11:00:14.100Z",
+  "generatedAt": "2026-09-23T11:27:29.304Z",
   "components": [
     {
       "name": "Accordion",
@@ -4485,7 +4485,7 @@
         },
         {
           "title": "Two lines in one row, and a leading glyph",
-          "description": "The richest cells are still cells. `secondary` puts a muted 11/13 line 2px under the first, and `icon` holds a 14px node clear of the text. Given both, the glyph stops centring and aligns to the first line’s cap height instead — centred against a two-line block it floats between the lines and reads as belonging to neither.",
+          "description": "The richest cells are still cells. `secondary` puts a muted 11/13 line 2px under the first, and `icon` holds a 14px node clear of the text. Given both, four things change at once: the glyph tops out rather than centring, drops 2px onto the first line’s cap height, takes 8px of gap rather than 6, and goes one rung quieter. A glyph beside one line is part of that line; beside two it is a marker on a block.",
           "code": "<TableRow>\n  <TableCell icon={<UploadSimpleIcon size={14} />} secondary=\"14 Feb 2026 · 21:38\">\n    #1008\n  </TableCell>\n  <TableCell icon={<Avatar size=\"sm\">OP</Avatar>} secondary=\"administrator\">\n    Kaustav\n  </TableCell>\n  <TableCell icon={<PaperclipIcon size={14} />}>inv-so90-9333.pdf</TableCell>\n  <TableCell align=\"right\" secondary=\"$ 14,509.32\">\n    Total\n  </TableCell>\n</TableRow>"
         },
         {

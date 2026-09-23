@@ -17,6 +17,7 @@ import {
   TABLE_CELL_GAP_TWO_LINE_PX,
   TABLE_CELL_ICON_OFFSET_PX,
   tableCellType,
+  tableIconInk,
   tableHeaderFill,
   tableHeaderType,
   tableRule,
@@ -131,16 +132,33 @@ const CellLayout = styled('span', {
   minWidth: 0,
 }));
 
-/** Holds its size against a long label in the next column. */
+/**
+ * Holds its size against a long label in the next column, and carries the
+ * glyph's ink.
+ *
+ * The ink is one rung quieter beside two lines than beside one — a glyph
+ * next to a single line is part of that line, and a glyph next to a block
+ * is a marker on it. It reaches only what uses `currentColor`, so a glyph
+ * follows it and an `Avatar` in the same slot keeps its own colours.
+ *
+ * `data-neoflo-table-icon` is how a disabled row greys it. Without that
+ * the glyph would hold `b2`/`b3` while the text around it went to the
+ * disabled ink — and `b2` is *darker* than that ink, so a greyed row
+ * would come out with its glyph the loudest thing in it. Exactly the
+ * problem the second line already has.
+ */
 const LeadingSlot = styled('span', {
   shouldForwardProp: (prop) => prop !== 'neofloTwoLine',
-})<{ neofloTwoLine: boolean }>(({ neofloTwoLine }) => ({
+})<{ neofloTwoLine: boolean }>(({ theme, neofloTwoLine }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   flexShrink: 0,
   // The 2 that lands a top-aligned glyph on the first line's cap
   // height rather than on its line box.
   marginBlockStart: neofloTwoLine ? TABLE_CELL_ICON_OFFSET_PX : 0,
+  ...paired(theme, {
+    color: neofloTwoLine ? tableIconInk.twoLine : tableIconInk.oneLine,
+  }),
 }));
 
 const TextColumn = styled('span')({
@@ -217,11 +235,13 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  * under the first (`secondary`). `NavbarTitle` exists for the same
  * reason.
  *
- * The two interact. Given both, the glyph stops centring and aligns to
- * the top instead — nudged 2px down onto the first line's cap height,
- * with 8px of gap rather than 6 — because a glyph centred against a
- * two-line block floats between the lines and reads as belonging to
- * neither.
+ * The two interact, and four things change at once. Given both, the
+ * glyph tops out rather than centring, drops 2px onto the first line's
+ * cap height, takes 8px of gap rather than 6, and goes one rung quieter
+ * (`icon/default/b3` against `b2`). A glyph beside one line is part of
+ * that line and reads with it; beside two it is a marker on a block and
+ * should not compete with the line it is aligned to. Only the 14px size
+ * is the same in both.
  *
  * `tableAmountType` is the third piece of geometry and is not a prop,
  * because a money column is content: put it on the cell's contents with
@@ -270,7 +290,9 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
       <CellRoot ref={ref} neofloRegion={region} {...rest}>
         {icon != null ? (
           <CellLayout neofloTwoLine={twoLine}>
-            <LeadingSlot neofloTwoLine={twoLine}>{icon}</LeadingSlot>
+            <LeadingSlot neofloTwoLine={twoLine} data-neoflo-table-icon>
+              {icon}
+            </LeadingSlot>
             {textBlock}
           </CellLayout>
         ) : (

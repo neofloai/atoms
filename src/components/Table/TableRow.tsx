@@ -131,13 +131,14 @@ const RowRoot = styled(MuiTableRow, {
         color: text.disabled.default,
         borderBottomColor: border.disabled.default,
       }),
-      // A cell's second line paints its own muted ink, so it does not
-      // inherit this one — and that ink is *darker* than the disabled
-      // grey, which would leave a greyed row with its quietest line the
-      // loudest thing in it.
-      '& [data-neoflo-table-secondary]': paired(theme, {
-        color: text.disabled.default,
-      }),
+      // A cell's second line and its leading glyph both paint their own
+      // ink, so neither inherits this one — and both of those inks are
+      // *darker* than the disabled grey, which would leave a greyed row
+      // with its quietest parts the loudest things in it.
+      '& [data-neoflo-table-secondary], & [data-neoflo-table-icon]': paired(
+        theme,
+        { color: text.disabled.default }
+      ),
     }),
   })
 );

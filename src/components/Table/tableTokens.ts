@@ -2,6 +2,7 @@ import {
   border,
   fontFamilies,
   fontWeights,
+  icon,
   radius,
   spacing,
   surface,
@@ -9,6 +10,7 @@ import {
 } from '@/src/tokens';
 
 import type { CSSObject } from '@mui/material/styles';
+import type { ModeToken } from '@/src/tokens';
 import type { TableSize } from './Table.types';
 
 /**
@@ -173,6 +175,29 @@ export const TABLE_CELL_ICON_OFFSET_PX = 2;
  * Not on the component ladder, which starts at 4, so it is a literal.
  */
 export const TABLE_CELL_SECONDARY_GAP_PX = 2;
+
+/**
+ * The ink a cell's leading glyph takes, and it depends on how many lines
+ * it sits beside.
+ *
+ * A glyph next to one line is part of that line and reads with it, so it
+ * takes `icon/default/b2`. A glyph next to two lines is a marker on a
+ * block rather than a word in a sentence, and one rung quieter —
+ * `icon/default/b3` — keeps it from competing with the primary line it
+ * is aligned to.
+ *
+ * It is set on the slot rather than inherited, which is the whole point:
+ * before this the glyph took the cell's own ink and was therefore the
+ * same weight as the text in both shapes.
+ *
+ * Only reaches what uses `currentColor`, so a glyph follows it and an
+ * `Avatar` in the same slot does not — an avatar carries its own
+ * colours and should.
+ */
+export const tableIconInk = {
+  oneLine: icon.default.b2,
+  twoLine: icon.default.b3,
+} as const satisfies Record<string, ModeToken>;
 
 /**
  * The glyph in a cell's leading slot — 14.

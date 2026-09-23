@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { Button } from '@/src/components/Button';
 import { Chip } from '@/src/components/Chip';
+import { TABLE_CELL_ICON_PX } from '@/src/components/Table';
 import { IconButton } from '@/src/components/IconButton';
 import {
   Table,
@@ -24,7 +25,7 @@ import { INVOICES, money } from './records';
 import type { TableSize } from '@/src/components/Table';
 
 /** The glyph size the design's cells use. */
-const CELL_ICON_PX = 16;
+const CELL_ICON_PX = TABLE_CELL_ICON_PX;
 
 /**
  * The assembled table from the Figma set (node 3223:61897), rebuilt from

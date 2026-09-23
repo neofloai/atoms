@@ -7,6 +7,14 @@ import { Link } from '@/src/components/Link';
 import { Tooltip } from '@/src/components/Tooltip';
 import { border, fontFamilies, icon, surface, text, typography } from '@/src/tokens';
 import {
+  TABLE_CELL_GAP_PX,
+  TABLE_CELL_GAP_TWO_LINE_PX,
+  TABLE_CELL_ICON_OFFSET_PX,
+  TABLE_SECONDARY_LEADING_PX,
+  TABLE_SECONDARY_SIZE_PX,
+  tableIconInk,
+} from '@/src/components/Table/tableTokens';
+import {
   CheckCircleIcon,
   HeadsetIcon,
   PaperclipIcon,
@@ -405,29 +413,48 @@ const Secondary = styled('span')(({ theme }) => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
-  fontSize: typography.body.b2.size,
-  lineHeight: `${typography.body.b2.leading}px`,
-  color: text.default.b2.light,
-  ...theme.applyStyles('dark', { color: text.default.b2.dark }),
+  fontSize: TABLE_SECONDARY_SIZE_PX,
+  lineHeight: `${TABLE_SECONDARY_LEADING_PX}px`,
+  color: text.default.b3.light,
+  ...theme.applyStyles('dark', { color: text.default.b3.dark }),
 }));
 
-const Row = styled('span')({
+/**
+ * A glyph beside a two-line block: top-aligned rather than centred,
+ * nudged onto the first line's cap height, 8 of gap, and the quieter of
+ * the two icon rungs. The same four decisions `TableCell` makes for its
+ * own `icon` slot — a grid cell has to make them itself.
+ */
+const Row = styled('span')(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
-  gap: 8,
+  alignItems: 'flex-start',
+  gap: TABLE_CELL_GAP_TWO_LINE_PX,
   minWidth: 0,
   lineHeight: 'normal',
-});
+  '& > svg': {
+    marginBlockStart: TABLE_CELL_ICON_OFFSET_PX,
+    color: tableIconInk.twoLine.light,
+    ...theme.applyStyles('dark', { color: tableIconInk.twoLine.dark }),
+  },
+}));
 
-/** The filename, in placeholder ink — it is provenance, not news. */
+/**
+ * The filename, in placeholder ink — it is provenance, not news. Its
+ * glyph sits beside one line, so it centres, takes 6 of gap, and is one
+ * rung stronger than the glyph beside a two-line cell.
+ */
 const Attachment = styled('span')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: 4,
+  gap: TABLE_CELL_GAP_PX,
   minWidth: 0,
   lineHeight: 'normal',
   color: text.default.b3.light,
   ...theme.applyStyles('dark', { color: text.default.b3.dark }),
+  '& > svg': {
+    color: tableIconInk.oneLine.light,
+    ...theme.applyStyles('dark', { color: tableIconInk.oneLine.dark }),
+  },
 }));
 
 /**
