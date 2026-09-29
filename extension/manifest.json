@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Atoms Inspector",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Inspect any page for Atoms components, props, spacing and token names, and edit captured designs in Atoms Studio.",
   "action": {
     "default_title": "Atoms Inspector (Alt+Shift+I)"

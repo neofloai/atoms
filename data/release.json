@@ -1,11 +1,50 @@
 {
-  "generatedAt": "2026-09-23T12:43:04.804Z",
+  "generatedAt": "2026-09-29T19:30:40.011Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "2.1.0",
-  "currentTag": "v2.1.0",
-  "minimumSupported": "2.0.0",
+  "current": "2.2.0",
+  "currentTag": "v2.2.0",
+  "minimumSupported": "2.2.0",
   "releases": [
+    {
+      "version": "2.2.0",
+      "tag": "v2.2.0",
+      "date": "2026-09-30",
+      "headline": "Development builds now name the token behind every colour, for the Atoms Inspector. Production builds are unchanged.",
+      "summary": "An additive release for the Atoms Inspector, the Chrome extension that inspects a running page for Atoms components and tokens. In a development build, every colour a component paints now carries the token it came from as a CSS custom property, which is how the inspector names tokens exactly and flags where an `sx`, a `style` or an outside stylesheet overrode one. Production and test builds carry none of it, and the build fails if a mark reaches one. One export was added, `atomsRegion`, and the patterns served by `get_pattern` use it -- so pattern code now needs 2.2.0. Nothing was renamed or removed, and no colour, size or spacing moved.",
+      "changes": [
+        {
+          "kind": "added",
+          "summary": "In a development build (`NODE_ENV=development`), every colour applied through the library's colour helpers writes `--atoms-<property>: \"<token>\"` beside its value, plus `--atoms-v` with the release that drew it. For example, `--atoms-background-color: \"surface.primary.default\"`. The marks follow every state the value does -- hover, focus, disabled -- and are CSS only, so nothing changes in the DOM and nothing needs hydrating. Production and test builds contain none of it: `npm run check:dev-marks` checks the built package, and `build:lib` fails if a mark gets through."
+        },
+        {
+          "kind": "added",
+          "summary": "`atomsRegion(pattern, region)` marks a region of a page so the Atoms Inspector can name it and export it on its own. Spread it onto the region's root, as in `<Stack {...atomsRegion('dashboard', 'toolbar')}>`. It returns `data-atoms-pattern` and `data-atoms-region` in a development build and an empty object otherwise, so it adds nothing to production markup.",
+          "scope": [
+            "@neofloai/atoms"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "The six patterns served by `get_pattern` mark their regions with `atomsRegion` (shell, navbar, title, toolbar, table, filter and so on). Because they import it, pattern code needs 2.2.0 or later, and `check_version` now treats anything older as unsupported for served code. No layout or component in a pattern changed.",
+          "scope": [
+            "get_pattern"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`build_from_json` is a new MCP tool. It reads an Atoms JSON export (`.atoms.json`, written by the Atoms Inspector and by Atoms Studio) and returns a React file built from Atoms components, layout primitives and tokens. It also lists the components to look up, the handlers left to wire, and each place the design went outside the library. Restyles of a component are left out of the code and listed as gaps, rather than copied back as `sx`.",
+          "scope": [
+            "build_from_json"
+          ]
+        }
+      ],
+      "migration": [
+        "Most projects only need the version bump: `npm install github:neofloai/atoms#semver:^2.2.0`. No export was renamed or removed, and nothing renders differently in production.",
+        "Before pasting pattern code from `get_pattern`, upgrade: it imports `atomsRegion`, which 2.1.0 does not export. If you already pasted a pattern from an earlier release, it keeps working. Add `atomsRegion` to its regions only if you want the inspector to name them.",
+        "In development, computed styles now include `--atoms-*` custom properties. This matters only for a test that compares full computed styles while running in development mode. Under `NODE_ENV=test` nothing is marked."
+      ]
+    },
     {
       "version": "2.1.0",
       "tag": "v2.1.0",
@@ -260,8 +299,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^2.1.0",
-    "pin": "npm install github:neofloai/atoms#semver:^2.1.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^2.2.0",
+    "pin": "npm install github:neofloai/atoms#semver:^2.2.0"
   },
   "keywords": [
     "changelog",

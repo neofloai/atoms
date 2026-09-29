@@ -113,7 +113,13 @@ export const release: ReleaseGuide = {
   repo: 'neofloai/atoms',
   current: CURRENT.version,
   currentTag: CURRENT.tag,
-  // Moved to 2.0.0, which is what this field is for. It held at 1.0.0
+  // Moved to 2.2.0. Every pattern `get_pattern` serves now imports
+  // `atomsRegion`, which 2.2.0 added, so pasted into 2.1.0 the import
+  // fails. The code needs nothing else from 2.2.0, and 2.1.0 to 2.2.0 is
+  // a version bump with no edits. So the cost of refusing 2.1.0 is one
+  // install, and the cost of serving it is a broken import.
+  //
+  // Before that it moved to 2.0.0. It held at 1.0.0
   // through 1.0.1 because that release changed how the package is bundled
   // and moved no API, so served code ran unchanged on either version.
   // 2.0.0 renamed every `text` and `icon` token key, and the examples
@@ -123,7 +129,7 @@ export const release: ReleaseGuide = {
   // So a caller on 1.0.x now has to read as `unsupported` rather than
   // `behind`: the difference is between being offered an upgrade and
   // being refused code that would break, and here it would break.
-  minimumSupported: '2.0.0',
+  minimumSupported: '2.2.0',
   releases: RELEASES,
   commands: COMMANDS,
   keywords: SEARCH_KEYWORDS,
