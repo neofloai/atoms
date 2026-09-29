@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { registerBuildFromJson } from './tools/build-from-json';
 import { registerCheckVersion } from './tools/check-version';
 import { registerGetComponent } from './tools/get-component';
 import { registerGetInstallation } from './tools/get-installation';
@@ -38,6 +39,8 @@ Order of operations, and it matters:
 
 7. Import only from \`@neofloai/atoms\`, \`@neofloai/atoms/icons\`, \`@neofloai/atoms/tokens\` and \`@neofloai/atoms/theme\`. Importing from \`@mui/material\` resolves and silently bypasses the design system.
 
+8. If the user gives you an Atoms JSON export (a \`.atoms.json\` file from the Atoms Inspector or Atoms Studio), call \`build_from_json\` with it rather than reading it by hand. It returns the code, the components to look up and the gaps.
+
 Use \`search_docs\` when you are not sure which of these to reach for; it also answers brand questions inline.`;
 
 /**
@@ -50,10 +53,9 @@ export function createAtomsMcpServer(): McpServer {
   const server = new McpServer(
     {
       name: 'atoms',
-      // Minor: `check_version` added, and `installedVersion` added as an
-      // optional input on `get_component` and `get_pattern`. Nothing an
-      // existing client called stopped working, so this is not a major.
-      version: '1.2.0',
+      // Minor: `build_from_json` added. Nothing an existing client called
+      // changed, so this is not a major.
+      version: '1.3.0',
     },
     { instructions: INSTRUCTIONS }
   );
@@ -67,6 +69,7 @@ export function createAtomsMcpServer(): McpServer {
   registerGetPattern(server);
   registerSearchDocs(server);
   registerGetInstallation(server);
+  registerBuildFromJson(server);
 
   return server;
 }

@@ -15,6 +15,7 @@ import {
 } from '@/src/tokens';
 
 import { paired, pairedFocusRing } from '../_shared/actionStyles';
+import { modePair } from '../_shared/devMarks';
 import { IconButton } from '../IconButton';
 import {
   DIALOG_PADDING_INLINE_PX,
@@ -137,14 +138,8 @@ const IconBadge = styled('div')(({ theme }) => ({
  */
 const closeFill = {
   rest: surface.layers.card2,
-  hover: {
-    light: surface.default.defaultHover.light,
-    dark: surface.layers.card3.dark,
-  },
-  pressed: {
-    light: surface.default.defaultPressed.light,
-    dark: surface.layers.card3.dark,
-  },
+  hover: modePair(surface.default.defaultHover, surface.layers.card3),
+  pressed: modePair(surface.default.defaultPressed, surface.layers.card3),
 } as const;
 
 /**

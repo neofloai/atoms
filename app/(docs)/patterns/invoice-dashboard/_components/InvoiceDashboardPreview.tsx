@@ -15,6 +15,7 @@ import { Navbar } from '@/src/components/Navbar';
 import { Tab, Tabs } from '@/src/components/Tabs';
 import { TextField } from '@/src/components/TextField';
 import { Tooltip } from '@/src/components/Tooltip';
+import { atomsRegion } from '@/src/components/_shared/devMarks';
 import {
   ArrowSquareOutIcon,
   FadersHorizontalIcon,
@@ -220,6 +221,7 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
 
   return (
     <Stack
+      {...atomsRegion('invoice-dashboard', 'shell')}
       direction="row"
       sx={{
         height: FRAME_HEIGHT_PX,
@@ -232,7 +234,7 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
       <AppRail collapsed={collapsed} active="dashboard" />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
-        <Navbar>
+        <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
@@ -246,6 +248,7 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
 
         <Stack sx={{ flex: 1, minHeight: 0 }}>
           <Stack
+            {...atomsRegion('invoice-dashboard', 'title')}
             direction="row"
             sx={{
               px: 3,
@@ -273,6 +276,7 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
             onChange={(_, next: Queue) => setQueue(next)}
             aria-label="Invoice queue"
             sx={{ px: 2 }}
+            {...atomsRegion('invoice-dashboard', 'tabs')}
           >
             {TABS.map((item) => (
               <Tab key={item.value} label={item.label} value={item.value} />
@@ -281,6 +285,7 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
           <Divider />
 
           <Stack
+            {...atomsRegion('invoice-dashboard', 'toolbar')}
             direction="row"
             sx={{
               px: 3,
@@ -321,7 +326,10 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
               definite height to be 100% of. `minHeight: 0` is what makes
               `flex: 1` mean "what is left" rather than "at least the
               rows", which would push the footer past the bottom edge. */}
-          <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Box
+            {...atomsRegion('invoice-dashboard', 'table')}
+            sx={{ flex: 1, minHeight: 0 }}
+          >
             <DataGrid
               size="sm"
               rows={rows}
@@ -339,6 +347,7 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
       </Stack>
 
       <Filter
+        {...atomsRegion('invoice-dashboard', 'filter')}
         groups={INVOICE_FILTER_GROUPS}
         value={selection}
         onChange={setSelection}

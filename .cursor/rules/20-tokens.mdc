@@ -81,6 +81,7 @@ dark hex as before. This is a rename only.
 2. Update `src/theme/index.ts` if the token name changed (rare)
 3. Run `npm run generate` to refresh MCP data
 4. No component changes needed — they reference theme keys, not raw values
+5. The Atoms Inspector reads tokens at build time: `npm run pack:extension` with a bumped `extension/manifest.json` version, no edit in `extension/`. `src/tokens/paths.ts` names colour tokens from the token objects, so renames follow; a new colour category (beyond surface, border, text, icon) must be added there (`30-components.mdc` section 6)
 
 ## Hardcoded values are NEVER allowed
 

@@ -50,6 +50,7 @@ const COMPONENTS_DIR = path.join(ROOT, 'src', 'components');
 interface ComponentManifest {
   generatedAt: string;
   components: ComponentExamplesData[];
+  exports: string[];
 }
 
 interface TokenManifest {
@@ -92,6 +93,24 @@ async function collectComponents(): Promise<ComponentExamplesData[]> {
   }
 
   return components.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/**
+ * Every component the package exports by name, sub-components included
+ * (`Tab`, `MenuItem`, `NeofloLogo`) — read off the barrel, so it is the
+ * same list a consumer can import. `build_from_json` checks an export's
+ * component names against it.
+ */
+async function collectExports(): Promise<string[]> {
+  const barrel = await fs.readFile(path.join(ROOT, 'src', 'index.ts'), 'utf8');
+  const names = new Set<string>();
+  for (const match of barrel.matchAll(/export\s*\{([^}]*)\}\s*from/g)) {
+    for (const part of match[1].split(',')) {
+      const name = part.replace(/\/\/.*$/gm, '').trim().split(/\s+as\s+/).pop()?.trim();
+      if (name && !name.startsWith('type ') && /^[A-Z][a-z]/.test(name)) names.add(name);
+    }
+  }
+  return [...names].sort();
 }
 
 /**
@@ -178,6 +197,7 @@ async function main(): Promise<void> {
 
   const components: Omit<ComponentManifest, 'generatedAt'> = {
     components: await collectComponents(),
+    exports: await collectExports(),
   };
   const tokens: Omit<TokenManifest, 'generatedAt'> = {
     tokens: {

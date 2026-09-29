@@ -63,6 +63,11 @@ export interface PatternData {
 export interface ComponentManifest {
   generatedAt: string;
   components: ComponentData[];
+  /**
+   * Every component the package exports by name, sub-components included.
+   * Optional so a manifest generated before it existed still loads.
+   */
+  exports?: string[];
 }
 
 export interface TokenManifest {

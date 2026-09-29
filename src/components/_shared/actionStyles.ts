@@ -1,5 +1,7 @@
 import { border, surface, text } from '@/src/tokens';
 
+import { focusRingMark, modePair, tokenMarks } from './devMarks';
+
 import type { CSSObject, Theme } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
 
@@ -175,10 +177,7 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     // button and for the same reason: below `grey/900` the neutral scale
     // jumps to `grey/800`. Two components now short a rung.
     soft: bothControls({
-      hover: {
-        light: surface.default.defaultHover.light,
-        dark: surface.default.defaultPressed.dark,
-      },
+      hover: modePair(surface.default.defaultHover, surface.default.defaultPressed),
       pressed: surface.default.defaultPressed,
       outlineText: text.default.b1,
     }),
@@ -255,7 +254,7 @@ export function paired(
   styles: Record<string, ModeToken>
 ): CSSObject {
   const [light, dark] = splitModes(styles);
-  return { ...light, ...theme.applyStyles('dark', dark) };
+  return { ...light, ...tokenMarks(styles), ...theme.applyStyles('dark', dark) };
 }
 
 /**
@@ -283,6 +282,7 @@ export function focusRing(
 ): CSSObject {
   return {
     boxShadow: ringShadow(token.light, placement),
+    ...focusRingMark(token),
     ...theme.applyStyles('dark', {
       boxShadow: ringShadow(token.dark, placement),
     }),
@@ -309,7 +309,12 @@ export function pairedFocusRing(
   const [light, dark] = splitModes(styles);
   light.boxShadow = ringShadow(ring.light, placement);
   dark.boxShadow = ringShadow(ring.dark, placement);
-  return { ...light, ...theme.applyStyles('dark', dark) };
+  return {
+    ...light,
+    ...tokenMarks(styles),
+    ...focusRingMark(ring),
+    ...theme.applyStyles('dark', dark),
+  };
 }
 
 /**
@@ -468,6 +473,13 @@ export function prominentStyles(
       role.containedBg.light
     ),
     color: role.containedText.light,
+    // The gradient is two rungs painted as an image, which `paired` cannot
+    // express; its stops and label are marked by hand instead.
+    ...tokenMarks({
+      color: role.containedText,
+      gradientFrom: role.containedBgHover,
+      gradientTo: role.containedBg,
+    }),
     ...theme.applyStyles('dark', {
       backgroundImage: prominentGradient(
         role.containedBgHover.dark,

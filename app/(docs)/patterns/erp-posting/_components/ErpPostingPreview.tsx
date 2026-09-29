@@ -23,6 +23,7 @@ import { Select } from '@/src/components/Select';
 import { TextField } from '@/src/components/TextField';
 import { Tooltip } from '@/src/components/Tooltip';
 import { Typography } from '@/src/components/Typography';
+import { atomsRegion } from '@/src/components/_shared/devMarks';
 import { spacing } from '@/src/tokens';
 import {
   ArrowRightIcon,
@@ -502,6 +503,7 @@ export function ErpPostingPreview(): React.JSX.Element {
 
   return (
     <Stack
+      {...atomsRegion('erp-posting', 'shell')}
       sx={{
         height: FRAME_HEIGHT_PX,
         overflow: 'hidden',
@@ -513,7 +515,10 @@ export function ErpPostingPreview(): React.JSX.Element {
       {/* A page header, not an app bar: it spans the whole width and names the
           record, so the hamburger at its leading edge reads as "the
           navigation" rather than as the strip below it. */}
-      <Navbar size="md">
+      <Navbar
+        {...atomsRegion('erp-posting', 'navbar')}
+        size="md"
+      >
         <IconButton
           variant="secondary"
           appearance="text"
@@ -548,7 +553,11 @@ export function ErpPostingPreview(): React.JSX.Element {
 
         <Box sx={{ flex: 1 }} />
 
-        <Stack direction="row" sx={{ gap: ACTION_GAP, flexShrink: 0 }}>
+        <Stack
+          {...atomsRegion('erp-posting', 'actions')}
+          direction="row"
+          sx={{ gap: ACTION_GAP, flexShrink: 0 }}
+        >
           <Button variant="error" appearance="contained" size="sm">
             Reject
           </Button>
@@ -616,6 +625,7 @@ export function ErpPostingPreview(): React.JSX.Element {
               name a specific line further down the page. */}
           {(findings.length > 0 || posted) && (
             <Stack
+              {...atomsRegion('erp-posting', 'findings')}
               sx={{
                 gap: 1,
                 px: 3,
@@ -645,7 +655,10 @@ export function ErpPostingPreview(): React.JSX.Element {
             </Stack>
           )}
 
-          <Box sx={{ px: 3, py: 2.5, flexShrink: 0 }}>
+          <Box
+            {...atomsRegion('erp-posting', 'fields')}
+            sx={{ px: 3, py: 2.5, flexShrink: 0 }}
+          >
             <Grid container spacing={2.5}>
               {HEADER_FIELDS.map((field) => (
                 <Grid key={field.key} size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -714,7 +727,10 @@ export function ErpPostingPreview(): React.JSX.Element {
           {/* The grid is `height: 100%`, so it needs a parent with a definite
               height to be 100% of. `minHeight: 0` is what makes `flex: 1`
               mean "what is left" rather than "at least the rows". */}
-          <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Box
+            {...atomsRegion('erp-posting', 'table')}
+            sx={{ flex: 1, minHeight: 0 }}
+          >
             <DataGrid
               size="sm"
               rows={lines as LineItem[]}

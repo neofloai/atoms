@@ -14,7 +14,14 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Generated library build output (tsup).
     "dist/**",
+    // Atoms Inspector extension build output.
+    "extension/dist/**",
   ]),
+  {
+    // Atoms Studio is a Chrome extension page, not a Next app: next/image does not exist there.
+    files: ["extension/**"],
+    rules: { "@next/next/no-img-element": "off" },
+  },
 ]);
 
 export default eslintConfig;

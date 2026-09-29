@@ -41,6 +41,7 @@ import {
   ToggleButtonGroup,
   Tooltip,
   Typography,
+  atomsRegion,
 } from '@neofloai/atoms';
 import {
   ArrowDownIcon,
@@ -1444,6 +1445,7 @@ export function ReportingScreen() {
 
   return (
     <Stack
+      {...atomsRegion('reporting', 'shell')}
       direction="row"
       sx={{
         height: FRAME_HEIGHT_PX,
@@ -1456,7 +1458,7 @@ export function ReportingScreen() {
       <AppRail collapsed={collapsed} active="analytics" />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
-        <Navbar>
+        <Navbar {...atomsRegion('reporting', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
@@ -1469,7 +1471,10 @@ export function ReportingScreen() {
         </Navbar>
 
         <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-          <Box sx={{ px: 6, pt: 5, pb: 3 }}>
+          <Box
+            {...atomsRegion('reporting', 'title')}
+            sx={{ px: 6, pt: 5, pb: 3 }}
+          >
             <Typography variant="h3" component="h2">
               Analytics
             </Typography>
@@ -1479,6 +1484,7 @@ export function ReportingScreen() {
               bands under it scroll — a window you cannot see is a window you
               will forget you chose. */}
           <Stack
+            {...atomsRegion('reporting', 'toolbar')}
             direction="row"
             sx={(theme) => ({
               position: 'sticky',
@@ -1553,7 +1559,10 @@ export function ReportingScreen() {
           </Stack>
 
           <Stack sx={{ px: 6, py: 5, gap: SECTION_GAP }}>
-            <Stack sx={{ gap: 2.5 }}>
+            <Stack
+              {...atomsRegion('reporting', 'outcomes')}
+              sx={{ gap: 2.5 }}
+            >
               <SectionHeading section={SECTIONS[0]} />
               <Stack direction="row" sx={{ gap: CARD_GAP }}>
                 {SECTIONS[0].metrics.map((metric) => (
@@ -1568,7 +1577,10 @@ export function ReportingScreen() {
 
             {/* Performance: the accuracy and timing grid, the coverage card
                 beside it, and the adoption bar under both. */}
-            <Stack sx={{ gap: 2.5 }}>
+            <Stack
+              {...atomsRegion('reporting', 'performance')}
+              sx={{ gap: 2.5 }}
+            >
               <SectionHeading section={SECTIONS[1]} />
               <Stack
                 direction="row"
@@ -1599,7 +1611,10 @@ export function ReportingScreen() {
               <AdoptionCard bands={adoption} />
             </Stack>
 
-            <Stack sx={{ gap: 2.5 }}>
+            <Stack
+              {...atomsRegion('reporting', 'security')}
+              sx={{ gap: 2.5 }}
+            >
               <SectionHeading section={SECTIONS[2]} />
               <Stack direction="row" sx={{ gap: CARD_GAP }}>
                 {SECTIONS[2].metrics.map((metric) => (
@@ -1616,6 +1631,7 @@ export function ReportingScreen() {
                 where the work went and why, which is a question about all
                 three bands above rather than a fourth band. */}
             <Stack
+              {...atomsRegion('reporting', 'breakdowns')}
               direction="row"
               sx={{ gap: CARD_GAP, alignItems: 'stretch' }}
             >

@@ -44,6 +44,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  atomsRegion,
 } from '@neofloai/atoms';
 import {
   ArrowRightIcon,
@@ -1194,11 +1195,17 @@ export default function MatchingPage() {
   const blocked = openLines.length > 0 || openFields.length > 0;
 
   return (
-    <Stack sx={{ height: '100vh', overflow: 'hidden' }}>
+    <Stack
+      {...atomsRegion('matching', 'shell')}
+      sx={{ height: '100vh', overflow: 'hidden' }}
+    >
       {/* A page header, not an app bar: it spans the whole width and names the
           record, so the hamburger at its leading edge reads as "the
           navigation" rather than as the strip below it. */}
-      <Navbar size="md">
+      <Navbar
+        {...atomsRegion('matching', 'navbar')}
+        size="md"
+      >
         <IconButton
           variant="secondary"
           appearance="text"
@@ -1231,7 +1238,11 @@ export default function MatchingPage() {
 
         <Box sx={{ flex: 1 }} />
 
-        <Stack direction="row" sx={{ gap: 1.5, flexShrink: 0 }}>
+        <Stack
+          {...atomsRegion('matching', 'actions')}
+          direction="row"
+          sx={{ gap: 1.5, flexShrink: 0 }}
+        >
           <Button
             variant="secondary"
             appearance="outline"
@@ -1298,6 +1309,7 @@ export default function MatchingPage() {
               page: each says how much of its own half is still open, so the user
               can see the work behind the tab they are not looking at. */}
           <Tabs
+            {...atomsRegion('matching', 'tabs')}
             value={tab}
             onChange={(event, value) => setTab(value)}
             sx={{ px: 3, flexShrink: 0 }}
@@ -1324,7 +1336,10 @@ export default function MatchingPage() {
           )}
 
           {tab === 'details' ? (
-            <Box sx={{ flex: 1, minHeight: 0 }}>
+            <Box
+              {...atomsRegion('matching', 'fields')}
+              sx={{ flex: 1, minHeight: 0 }}
+            >
               <InvoiceDetailsTab
                 acknowledged={acknowledged}
                 onAcknowledge={(key) =>
@@ -1336,7 +1351,10 @@ export default function MatchingPage() {
             <Stack direction="row" sx={{ flex: 1, minHeight: 0 }}>
               {/* The invoice: one row per line, and the question each row asks.
                   Clicking a line is what points the panel beside it. */}
-              <Stack sx={{ flex: 1, minWidth: 0, minHeight: 0 }}>
+              <Stack
+                {...atomsRegion('matching', 'invoice-side')}
+                sx={{ flex: 1, minWidth: 0, minHeight: 0 }}
+              >
                 <PanelHeader
                   title="INVOICE"
                   query={invoiceQuery}
@@ -1422,7 +1440,10 @@ export default function MatchingPage() {
               {/* The receipts, grouped by the invoice line each one is a
                   candidate for. The checkbox is the allocation, and the row that
                   closes each group is what it adds up to. */}
-              <Stack sx={{ flex: 1.1, minWidth: 0, minHeight: 0 }}>
+              <Stack
+                {...atomsRegion('matching', 'grn-side')}
+                sx={{ flex: 1.1, minWidth: 0, minHeight: 0 }}
+              >
                 <PanelHeader
                   title="GRN"
                   query={grnQuery}
@@ -1540,6 +1561,7 @@ export default function MatchingPage() {
               about the document, and neither half of the comparison owns the
               answer. */}
           <Stack
+            {...atomsRegion('matching', 'summary')}
             direction="row"
             sx={{
               gap: 5,

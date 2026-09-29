@@ -16,6 +16,7 @@ import { LinearProgress } from '@/src/components/Progress';
 import { Select } from '@/src/components/Select';
 import { ToggleButton, ToggleButtonGroup } from '@/src/components/ToggleButton';
 import { Tooltip } from '@/src/components/Tooltip';
+import { atomsRegion } from '@/src/components/_shared/devMarks';
 import { border, icon, surface } from '@/src/tokens';
 import {
   ArrowDownIcon,
@@ -730,6 +731,7 @@ export function ReportingPreview(): React.JSX.Element {
 
   return (
     <Stack
+      {...atomsRegion('reporting', 'shell')}
       direction="row"
       sx={{
         height: FRAME_HEIGHT_PX,
@@ -742,7 +744,7 @@ export function ReportingPreview(): React.JSX.Element {
       <AppRail collapsed={collapsed} active="analytics" />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
-        <Navbar>
+        <Navbar {...atomsRegion('reporting', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
@@ -755,7 +757,10 @@ export function ReportingPreview(): React.JSX.Element {
         </Navbar>
 
         <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-          <Box sx={{ px: 6, pt: 5, pb: 3 }}>
+          <Box
+            {...atomsRegion('reporting', 'title')}
+            sx={{ px: 6, pt: 5, pb: 3 }}
+          >
             <Typography variant="h3" component="h2">
               Analytics
             </Typography>
@@ -765,6 +770,7 @@ export function ReportingPreview(): React.JSX.Element {
               bands under it scroll — a window you cannot see is a window you
               will forget you chose. */}
           <Stack
+            {...atomsRegion('reporting', 'toolbar')}
             direction="row"
             sx={(theme) => ({
               position: 'sticky',
@@ -840,7 +846,10 @@ export function ReportingPreview(): React.JSX.Element {
 
           <Stack sx={{ px: 6, py: 5, gap: SECTION_GAP }}>
             {/* Outcomes */}
-            <Stack sx={{ gap: 2.5 }}>
+            <Stack
+              {...atomsRegion('reporting', 'outcomes')}
+              sx={{ gap: 2.5 }}
+            >
               <SectionHeading section={SECTIONS[0]} />
               <Stack direction="row" sx={{ gap: CARD_GAP }}>
                 {SECTIONS[0].metrics.map((metric) => (
@@ -855,7 +864,10 @@ export function ReportingPreview(): React.JSX.Element {
 
             {/* Performance: the accuracy and timing grid, the coverage card
                 beside it, and the adoption bar under both. */}
-            <Stack sx={{ gap: 2.5 }}>
+            <Stack
+              {...atomsRegion('reporting', 'performance')}
+              sx={{ gap: 2.5 }}
+            >
               <SectionHeading section={SECTIONS[1]} />
               <Stack direction="row" sx={{ gap: CARD_GAP, alignItems: 'stretch' }}>
                 <Stack sx={{ flex: 1, minWidth: 0, gap: CARD_GAP }}>
@@ -884,7 +896,10 @@ export function ReportingPreview(): React.JSX.Element {
             </Stack>
 
             {/* Security & accuracy */}
-            <Stack sx={{ gap: 2.5 }}>
+            <Stack
+              {...atomsRegion('reporting', 'security')}
+              sx={{ gap: 2.5 }}
+            >
               <SectionHeading section={SECTIONS[2]} />
               <Stack direction="row" sx={{ gap: CARD_GAP }}>
                 {SECTIONS[2].metrics.map((metric) => (
@@ -900,7 +915,11 @@ export function ReportingPreview(): React.JSX.Element {
             {/* The two breakdowns, under no heading of their own — they
                 answer "where did the work go" and "why", which is a question
                 about all three bands above rather than a fourth band. */}
-            <Stack direction="row" sx={{ gap: CARD_GAP, alignItems: 'stretch' }}>
+            <Stack
+              {...atomsRegion('reporting', 'breakdowns')}
+              direction="row"
+              sx={{ gap: CARD_GAP, alignItems: 'stretch' }}
+            >
               <PanelCard
                 title="Automation by intent type"
                 caption="Share auto-answered against routed to the helpdesk"

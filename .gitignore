@@ -18,6 +18,10 @@
 # library build output (regenerated on install via the `prepare` script)
 /dist
 
+# Atoms Inspector extension build and release zips
+/extension/dist
+/extension/release
+
 # misc
 .DS_Store
 *.pem

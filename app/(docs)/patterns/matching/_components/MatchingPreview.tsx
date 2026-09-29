@@ -29,6 +29,7 @@ import { Tab, Tabs } from '@/src/components/Tabs';
 import { TextField } from '@/src/components/TextField';
 import { Tooltip } from '@/src/components/Tooltip';
 import { Typography } from '@/src/components/Typography';
+import { atomsRegion } from '@/src/components/_shared/devMarks';
 import { icon, surface, text } from '@/src/tokens';
 import {
   ArrowRightIcon,
@@ -878,6 +879,7 @@ export function MatchingPreview() {
 
   return (
     <Stack
+      {...atomsRegion('matching', 'shell')}
       sx={{
         height: FRAME_HEIGHT_PX,
         overflow: 'hidden',
@@ -886,7 +888,10 @@ export function MatchingPreview() {
         borderColor: 'divider',
       }}
     >
-      <Navbar size="md">
+      <Navbar
+        {...atomsRegion('matching', 'navbar')}
+        size="md"
+      >
         <IconButton
           variant="secondary"
           appearance="text"
@@ -919,7 +924,11 @@ export function MatchingPreview() {
 
         <Box sx={{ flex: 1 }} />
 
-        <Stack direction="row" sx={{ gap: ACTION_GAP, flexShrink: 0 }}>
+        <Stack
+          {...atomsRegion('matching', 'actions')}
+          direction="row"
+          sx={{ gap: ACTION_GAP, flexShrink: 0 }}
+        >
           {/* The frame paints this label with a primary-to-purple gradient.
               Atoms has no gradient type and no assistant variant, so it is a
               stock outline button — see the gaps section on the docs page. */}
@@ -982,6 +991,7 @@ export function MatchingPreview() {
               page: each says how much of its own half is still open, so the
               user can see the work behind the tab they are not looking at. */}
           <Tabs
+            {...atomsRegion('matching', 'tabs')}
             value={tab}
             onChange={(_event, value: 'details' | 'lines') => setTab(value)}
             sx={{ px: 3, flexShrink: 0 }}
@@ -1008,7 +1018,10 @@ export function MatchingPreview() {
           )}
 
           {tab === 'details' ? (
-            <Box sx={{ flex: 1, minHeight: 0 }}>
+            <Box
+              {...atomsRegion('matching', 'fields')}
+              sx={{ flex: 1, minHeight: 0 }}
+            >
               <InvoiceDetailsTab
                 acknowledged={acknowledged}
                 onAcknowledge={(key) =>
@@ -1020,7 +1033,10 @@ export function MatchingPreview() {
             <Stack direction="row" sx={{ flex: 1, minHeight: 0 }}>
               {/* The invoice: one row per line, and the question each row
                   asks. Clicking a line is what points the panel beside it. */}
-              <Stack sx={{ flex: 1, minWidth: 0, minHeight: 0 }}>
+              <Stack
+                {...atomsRegion('matching', 'invoice-side')}
+                sx={{ flex: 1, minWidth: 0, minHeight: 0 }}
+              >
                 <PanelHeader
                   title="INVOICE"
                   query={invoiceQuery}
@@ -1109,7 +1125,10 @@ export function MatchingPreview() {
               {/* The receipts, grouped by the invoice line each one is a
                   candidate for. The checkbox is the allocation, and the row
                   that closes each group is what it adds up to. */}
-              <Stack sx={{ flex: 1.1, minWidth: 0, minHeight: 0 }}>
+              <Stack
+                {...atomsRegion('matching', 'grn-side')}
+                sx={{ flex: 1.1, minWidth: 0, minHeight: 0 }}
+              >
                 <PanelHeader
                   title="GRN"
                   query={grnQuery}
@@ -1231,6 +1250,7 @@ export function MatchingPreview() {
               it is about the document, and neither half of the comparison
               owns the answer. */}
           <Stack
+            {...atomsRegion('matching', 'summary')}
             direction="row"
             sx={{
               gap: 5,

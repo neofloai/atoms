@@ -35,8 +35,9 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build:lib": "tsup && npm run check:icons",
+    "build:lib": "tsup && npm run check:icons && npm run check:dev-marks",
     "check:icons": "node scripts/check-icon-leak.mjs",
+    "check:dev-marks": "node scripts/check-dev-marks.mjs",
     "prepare": "npm run build:lib",
     "prebuild": "npm run generate",
     "build": "next build",
@@ -44,7 +45,11 @@
     "lint": "eslint",
     "check:imports": "node scripts/check-docs-imports.mjs",
     "generate": "tsx scripts/generate.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:extension": "node extension/build.mjs",
+    "dev:extension": "node extension/build.mjs --watch",
+    "pack:extension": "node extension/build.mjs --pack",
+    "typecheck:extension": "tsc --noEmit -p extension"
   },
   "engines": {
     "node": ">=22"
@@ -70,9 +75,11 @@
     "@modelcontextprotocol/sdk": "^1.0.4",
     "@mui/icons-material": "^9.2.0",
     "@mui/material-nextjs": "^9.1.1",
+    "@types/chrome": "^0.3.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "next": "16.2.6",

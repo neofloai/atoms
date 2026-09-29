@@ -94,6 +94,51 @@ export const Button = (...) => { /* ... */ };
 
 The MCP generator reads JSDoc and includes it in `get_component` responses.
 
+### 5. Colours go through `paired`, and name their tokens
+
+Every mode-aware colour is applied with `paired`, `pairedFocusRing` or
+`focusRing` from `_shared/actionStyles.ts`, passing the token object itself
+(`surface.primary.default`, never `.light` / `.dark` by hand). In a
+development build those helpers also write `--atoms-<property>: "<token>"`
+next to the value, which is how the Atoms Inspector names tokens exactly
+and flags drift. A colour written any other way renders fine and is
+invisible to it.
+
+- A pair built from two different rungs uses `modePair(lightFrom, darkFrom)`
+  from `_shared/devMarks.ts`, not an object literal, so both names survive.
+- A colour painted as an image (a gradient, a dotted track) spreads
+  `tokenMarks({ backgroundImage: token })` beside it.
+- A plain value set on purpose (`transparent`, `inherit`) needs nothing —
+  the inspector reads an unmarked winning rule as the component's choice.
+- Gate any new development-only output on
+  `process.env.NODE_ENV === 'development'` written inline, never through a
+  shared constant; bundlers only fold the literal expression.
+  `npm run check:dev-marks` fails the library build if a mark reaches a
+  production or test bundle.
+
+### 6. Check what the Atoms Inspector needs
+
+The Atoms Inspector extension (`extension/`) bundles this library when it is
+built: component names, prop controls, tokens and the components Studio
+renders all come from here. So most component changes reach it by a rebuild
+and need no edit in `extension/`. Before finishing a change under
+`src/components/`, go down this table and tell the user which rows applied —
+including "the extension needs only a rebuild".
+
+| You changed | What the extension needs |
+|---|---|
+| Anything that ships — a fix, a restyle, a prop, a token | No code. Before the extension's next release, bump `extension/manifest.json` `version` and run `npm run pack:extension`, so Studio draws the new component and the inspector holds the new tokens. |
+| Added a component | `displayName`, the `src/index.ts` export and `npm run generate` are enough: the inspector, Studio's palette and prop controls, and `build_from_json` pick it up. If it renders nothing without props, add a starter to `STARTERS` in `extension/src/studio/Insert.tsx`. |
+| Renamed or removed a component, or a prop a starter passes | Update `STARTERS` in `extension/src/studio/Insert.tsx`. Exports captured earlier keep the old name and props: `build_from_json` flags a name Atoms no longer exports and warns when the capture version differs from the project's, so say it in the changelog `scope`. |
+| A component that clones its children and injects props into them (as Tooltip and Tabs do) | Add it to `CLONED` in `src/mcp/screen-code.ts`, or the generated code copies the injected props onto the child. |
+| A component that draws content from data rather than children (as DataGrid draws cells) | Capture and replay are written for each one: `gridCells` in `extension/src/inspector/handover.ts`, `withCells` in `extension/src/studio/render.tsx`, the cell samples in `src/mcp/screen-code.ts`. A new one is extension work — tell the user it will not be exported until it is done. |
+| `_shared/devMarks.ts`, `src/tokens/paths.ts`, or a pattern's `data-atoms-pattern` / `data-atoms-region` | This is the inspector's contract. Change the readers in the same change (`extension/src/inspector/tokens.ts`, `drift.ts`, `handover.ts`, `panel.ts`; `extension/src/studio/tokens.ts`), then run `npm run build:lib` (it runs `check:dev-marks`) and `npm run typecheck:extension`. A renamed region stops matching `node` in `build_from_json` for older exports. |
+| The MUI part class a Studio override targets (`.MuiInputBase-input`, `.MuiButton-startIcon > *`) | Overrides saved earlier keep the old selector and stop applying. Note it in the changelog. |
+| A colour written without `paired`, `modePair` or `tokenMarks` | Nothing in the extension. It cannot name that colour, so use the helpers (section 5). |
+
+When the extension gains a new special case for one component, add its row
+here in the same change (see `90-extension.mdc`).
+
 ## Examples file — required
 
 Every component must have a `<ComponentName>.examples.tsx` file:

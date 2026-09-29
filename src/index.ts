@@ -71,6 +71,10 @@ export { neofloTheme } from './theme';
 // changelog, and none of that belongs in a consumer's bundle.
 export { ATOMS_VERSION } from './release/version';
 
+// Marks a pattern region for the Atoms Inspector. Development builds get
+// two `data-atoms-*` attributes; production builds get an empty object.
+export { atomsRegion } from './components/_shared/devMarks';
+
 export { NeofloLogo } from './brand';
 export type { NeofloLogoProps, NeofloLogoVariant } from './brand';
 
