@@ -9,7 +9,7 @@ The MCP (Model Context Protocol) server exposes the design system to AI editors.
 
 ## Available tools
 
-The MCP server exposes exactly these nine tools — no more, no less:
+The MCP server exposes exactly these ten tools — no more, no less:
 
 | Tool | Purpose |
 |------|---------|
@@ -22,6 +22,7 @@ The MCP server exposes exactly these nine tools — no more, no less:
 | `get_pattern` | Returns full page layout code |
 | `search_docs` | Searches across components, patterns, guidelines, changelog |
 | `get_installation` | Returns framework-specific setup steps (nextjs, react) |
+| `build_from_json` | Turns an Atoms JSON export (`.atoms.json`, from the Atoms Inspector or Atoms Studio) into a React file, with the components to look up, what to wire, and the gaps |
 
 If you need to add a tool, get approval first — every tool added is a new prompt-time API surface.
 
@@ -39,6 +40,15 @@ Props, taglines, do/don't lists, token values and related-component pointers go 
 - Four of the seven statuses block, and only one is "too old". The other three are forms of not knowing, which is the common case for a git install.
 - A new code-serving tool must take `installedVersionSchema` and call `gateVersion`. Both are exported from `version-gate.ts` so no tool writes its own copy of the wording.
 
+## `build_from_json`
+
+The translation lives in `src/mcp/screen-code.ts`; the tool in `tools/build-from-json.ts` only parses, gates and formats. It reads the export format from `extension/src/shared/schema.ts` — the one place that format is defined — and checks names against `exports` in `data/components.json`, which `scripts/generate.ts` reads off the `src/index.ts` barrel.
+
+- **Translate, never restyle.** Components get the props the design passed. What restyled one (an `sx` restyle, a `style`, a Studio override) is left out of the code and listed as a numbered gap, per `VISUAL_KEY`. Off-token values in a layout's own `sx` or the design's own markup are kept, marked ⚠.
+- **A layout is its `sx` plus the styles the `sx` does not cover.** Studio replaces the `sx` key a designer edits with a style, so the styles are the edits.
+- **What a function did is written down, not guessed.** Handlers become no-ops listed under Wire up; a grid column's renderer becomes a TODO carrying what it drew and how its cells read.
+- **Lists are data.** A `repeat` whose items differ only in plain values becomes a `const … as const` array and a `.map`; anything else is written out.
+
 ## Releasing
 
 A release bumps three things in one commit, and `scripts/generate.ts` fails the build if they disagree:
@@ -48,6 +58,8 @@ A release bumps three things in one commit, and `scripts/generate.ts` fails the 
 3. A new entry at the top of `src/release/changelog.ts`
 
 Then tag it — `git tag v<version> && git push --tags` — or a `#semver:` install cannot resolve it. Set `scope` on any change that moves a component's API: that is what lets `check_version` tell a caller which of the things they are about to use changed, without a `since` field on every component.
+
+Then ship the extension built on it: bump `extension/manifest.json` `version` and run `npm run pack:extension`. Until then the inspector says a page on the new release does not match its tokens, and Studio draws the previous components. The component-level checks are in section 6 of `30-components.mdc`.
 
 Bump `minimumSupported` in `src/release/index.ts` only when a release actually removes or renames something the served code uses. It is the oldest version that code still runs on, not the oldest version anyone should be on.
 

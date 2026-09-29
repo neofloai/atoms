@@ -16,6 +16,7 @@ Project rules are shared with Cursor and live in `.cursor/rules/` — that folde
 - Next.js App Router → `.cursor/rules/40-nextjs.mdc` — `app/**`, `next.config.ts`
 - Documentation → `.cursor/rules/50-docs.mdc` — `*.examples.tsx`, `app/(docs)/**`
 - MCP server → `.cursor/rules/60-mcp.mdc` — `src/mcp/**`, `app/mcp/**`, `scripts/generate.ts`
+- Atoms Inspector extension → `.cursor/rules/90-extension.mdc` — `extension/**`
 
 ## Workflow for adding a component
 

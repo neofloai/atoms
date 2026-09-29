@@ -29,6 +29,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  atomsRegion,
   countActiveFilters,
 } from '@neofloai/atoms';
 import {
@@ -567,11 +568,15 @@ export default function InvoiceDashboardPage() {
   /* The rail runs the full height and the bar starts where it ends, so the
      outer box is a row: rail, then a column. */
   return (
-    <Stack direction="row" sx={{ height: '100vh' }}>
+    <Stack
+      {...atomsRegion('invoice-dashboard', 'shell')}
+      direction="row"
+      sx={{ height: '100vh' }}
+    >
       <AppRail collapsed={collapsed} active="dashboard" />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
-        <Navbar>
+        <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
@@ -587,6 +592,7 @@ export default function InvoiceDashboardPage() {
             elastic, so the footer lands on the bottom edge at any height. */}
         <Stack sx={{ flex: 1, minHeight: 0 }}>
           <Stack
+            {...atomsRegion('invoice-dashboard', 'title')}
             direction="row"
             sx={{
               px: 3,
@@ -620,6 +626,7 @@ export default function InvoiceDashboardPage() {
             onChange={(_, next) => setTab(next)}
             aria-label="Invoice queue"
             sx={{ px: 2 }}
+            {...atomsRegion('invoice-dashboard', 'tabs')}
           >
             {TABS.map((item) => (
               <Tab key={item.value} label={item.label} value={item.value} />
@@ -628,6 +635,7 @@ export default function InvoiceDashboardPage() {
           <Divider />
 
           <Stack
+            {...atomsRegion('invoice-dashboard', 'toolbar')}
             direction="row"
             sx={{
               px: 3,
@@ -667,7 +675,10 @@ export default function InvoiceDashboardPage() {
           {/* A definite height for the grid to be 100% of. Without the
               minHeight the rows would push the column past the bottom of
               the screen instead of scrolling inside it. */}
-          <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Box
+            {...atomsRegion('invoice-dashboard', 'table')}
+            sx={{ flex: 1, minHeight: 0 }}
+          >
             <DataGrid
               size="sm"
               rows={rows}
@@ -686,6 +697,7 @@ export default function InvoiceDashboardPage() {
       {/* The trigger sits at the right end of the toolbar, so the panel
           hangs off its right edge. */}
       <Filter
+        {...atomsRegion('invoice-dashboard', 'filter')}
         groups={INVOICE_FILTER_GROUPS}
         value={selection}
         onChange={setSelection}

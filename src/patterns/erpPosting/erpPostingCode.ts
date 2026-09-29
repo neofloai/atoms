@@ -39,6 +39,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  atomsRegion,
 } from '@neofloai/atoms';
 import {
   ArrowRightIcon,
@@ -556,8 +557,14 @@ export default function ErpPostingPage() {
      record, so the hamburger at its leading edge reads as "the navigation"
      rather than as the strip below it. */
   return (
-    <Stack sx={{ height: '100vh', overflow: 'hidden' }}>
-      <Navbar size="md">
+    <Stack
+      {...atomsRegion('erp-posting', 'shell')}
+      sx={{ height: '100vh', overflow: 'hidden' }}
+    >
+      <Navbar
+        {...atomsRegion('erp-posting', 'navbar')}
+        size="md"
+      >
         <IconButton
           variant="secondary"
           appearance="text"
@@ -592,7 +599,11 @@ export default function ErpPostingPage() {
 
         <Box sx={{ flex: 1 }} />
 
-        <Stack direction="row" sx={{ gap: ACTION_GAP, flexShrink: 0 }}>
+        <Stack
+          {...atomsRegion('erp-posting', 'actions')}
+          direction="row"
+          sx={{ gap: ACTION_GAP, flexShrink: 0 }}
+        >
           <Button variant="error" appearance="contained" size="sm">
             Reject
           </Button>
@@ -662,7 +673,10 @@ export default function ErpPostingPage() {
               produced them: they are about the record, and the ones that name
               a line name one further down the page. */}
           {(findings.length > 0 || posted) && (
-            <Stack sx={{ gap: 1, px: 3, pt: 2, flexShrink: 0 }}>
+            <Stack
+              {...atomsRegion('erp-posting', 'findings')}
+              sx={{ gap: 1, px: 3, pt: 2, flexShrink: 0 }}
+            >
               {posted && (
                 <Alert severity="success" floating>
                   Posted to the ERP as document 5100004821.
@@ -685,7 +699,10 @@ export default function ErpPostingPage() {
             </Stack>
           )}
 
-          <Box sx={{ px: 3, py: 2.5, flexShrink: 0 }}>
+          <Box
+            {...atomsRegion('erp-posting', 'fields')}
+            sx={{ px: 3, py: 2.5, flexShrink: 0 }}
+          >
             {/* Eleven boxes, four across. Two kinds of field: the ones
                 extraction and matching established, which are read-only here,
                 and the ones the ERP needs that no earlier stage supplies. An
@@ -761,7 +778,10 @@ export default function ErpPostingPage() {
               height to be 100% of. minHeight: 0 is what makes flex: 1 mean
               "what is left" rather than "at least the rows", which would push
               the footer past the bottom edge. */}
-          <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Box
+            {...atomsRegion('erp-posting', 'table')}
+            sx={{ flex: 1, minHeight: 0 }}
+          >
             <DataGrid
               size="sm"
               rows={lines as LineItem[]}

@@ -27,6 +27,7 @@ import { Tab, Tabs } from '@/src/components/Tabs';
 import { TextField } from '@/src/components/TextField';
 import { Tooltip } from '@/src/components/Tooltip';
 import { Typography } from '@/src/components/Typography';
+import { atomsRegion } from '@/src/components/_shared/devMarks';
 import { border, surface, text, typography } from '@/src/tokens';
 import {
   ArrowClockwiseIcon,
@@ -461,6 +462,7 @@ function DocumentPane({
 
   return (
     <Stack
+      {...atomsRegion('extraction', 'document')}
       sx={(theme) => ({
         width: DOC_PANE_WIDTH_PX,
         flexShrink: 0,
@@ -511,6 +513,7 @@ function DocumentPane({
       <Divider />
 
       <Stack
+        {...atomsRegion('extraction', 'toolbar')}
         direction="row"
         sx={{
           alignItems: 'center',
@@ -991,6 +994,7 @@ export function ExtractionPreview() {
 
   return (
     <Stack
+      {...atomsRegion('extraction', 'shell')}
       sx={{
         height: FRAME_HEIGHT_PX,
         overflow: 'hidden',
@@ -999,7 +1003,10 @@ export function ExtractionPreview() {
         borderColor: 'divider',
       }}
     >
-      <Navbar size="md">
+      <Navbar
+        {...atomsRegion('extraction', 'navbar')}
+        size="md"
+      >
         <IconButton
           variant="secondary"
           appearance="text"
@@ -1032,7 +1039,11 @@ export function ExtractionPreview() {
 
         <Box sx={{ flex: 1 }} />
 
-        <Stack direction="row" sx={{ gap: ACTION_GAP, flexShrink: 0 }}>
+        <Stack
+          {...atomsRegion('extraction', 'actions')}
+          direction="row"
+          sx={{ gap: ACTION_GAP, flexShrink: 0 }}
+        >
           {/* The frame paints this label with a primary-to-purple gradient.
               Atoms has no gradient type and no assistant variant, so it is a
               stock outline button — see the gaps section on the docs page. */}
@@ -1095,6 +1106,7 @@ export function ExtractionPreview() {
         />
 
         <Stack
+          {...atomsRegion('extraction', 'fields')}
           sx={(theme) => ({
             flex: 1,
             minWidth: 0,
@@ -1106,7 +1118,10 @@ export function ExtractionPreview() {
             }),
           })}
         >
-          <Stack sx={{ px: 3, pt: 2, gap: 2, flexShrink: 0 }}>
+          <Stack
+            {...atomsRegion('extraction', 'summary')}
+            sx={{ px: 3, pt: 2, gap: 2, flexShrink: 0 }}
+          >
             <Typography variant="h5">Extracted data</Typography>
 
             {issues.length > 0 && (
@@ -1141,6 +1156,7 @@ export function ExtractionPreview() {
           </Stack>
 
           <Tabs
+            {...atomsRegion('extraction', 'tabs')}
             value={tab}
             onChange={(_event, value: 'metadata' | 'lines') => setTab(value)}
             sx={{ px: 3, flexShrink: 0 }}

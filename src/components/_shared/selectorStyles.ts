@@ -1,5 +1,7 @@
 import { border, icon, surface } from '@/src/tokens';
 
+import { modePair } from './devMarks';
+
 import type { ModeToken } from '@/src/tokens';
 
 /**
@@ -80,10 +82,12 @@ export function selectorInsetPx(size: SelectorSize): number {
  * in light and `primary/600` in dark — two dark blues — so the tick
  * keeps its light value in both rather than turning black on the second.
  */
-const onAccent: ModeToken = {
-  light: icon.default['heading on-color'].light,
-  dark: icon.default['heading on-color'].light,
-};
+const onAccent: ModeToken = modePair(
+  icon.default['heading on-color'],
+  icon.default['heading on-color'],
+  'light',
+  'light'
+);
 
 /**
  * Every colour either selector paints, in both schemes.

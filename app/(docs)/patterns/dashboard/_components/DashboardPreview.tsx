@@ -13,6 +13,7 @@ import { Filter, countActiveFilters } from '@/src/components/Filter';
 import { IconButton } from '@/src/components/IconButton';
 import { Navbar } from '@/src/components/Navbar';
 import { TextField } from '@/src/components/TextField';
+import { atomsRegion } from '@/src/components/_shared/devMarks';
 import {
   FadersHorizontalIcon,
   MagnifyingGlassIcon,
@@ -123,6 +124,7 @@ export function DashboardPreview(): React.JSX.Element {
 
   return (
     <Stack
+      {...atomsRegion('dashboard', 'shell')}
       direction="row"
       sx={{
         height: FRAME_HEIGHT_PX,
@@ -135,7 +137,7 @@ export function DashboardPreview(): React.JSX.Element {
       <AppRail collapsed={collapsed} />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
-        <Navbar>
+        <Navbar {...atomsRegion('dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
@@ -148,7 +150,10 @@ export function DashboardPreview(): React.JSX.Element {
         </Navbar>
 
         <Stack sx={{ flex: 1, minHeight: 0 }}>
-          <Box sx={{ px: 3, py: 3 }}>
+          <Box
+            {...atomsRegion('dashboard', 'title')}
+            sx={{ px: 3, py: 3 }}
+          >
             <Typography variant="h3" component="h2">
               Query Log
             </Typography>
@@ -156,6 +161,7 @@ export function DashboardPreview(): React.JSX.Element {
           <Divider />
 
           <Stack
+            {...atomsRegion('dashboard', 'toolbar')}
             direction="row"
             sx={{
               px: 3,
@@ -205,7 +211,10 @@ export function DashboardPreview(): React.JSX.Element {
               definite height to be 100% of. `minHeight: 0` is what makes
               `flex: 1` mean "what is left" rather than "at least the
               rows", which would push the footer past the bottom edge. */}
-          <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Box
+            {...atomsRegion('dashboard', 'table')}
+            sx={{ flex: 1, minHeight: 0 }}
+          >
             <DataGrid
               size="sm"
               rows={rows}
@@ -222,6 +231,7 @@ export function DashboardPreview(): React.JSX.Element {
       </Stack>
 
       <Filter
+        {...atomsRegion('dashboard', 'filter')}
         groups={groups}
         value={selection}
         onChange={setSelection}

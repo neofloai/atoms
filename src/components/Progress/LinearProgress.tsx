@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 import { radius } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
+import { tokenMarks } from '../_shared/devMarks';
 
 import { indicatorTokens, muiColorMap, TRACK_TOKEN } from './progressTokens';
 
@@ -97,12 +98,16 @@ const StyledLinearProgress = styled(MuiLinearProgress, {
     [`&.${linearProgressClasses.buffer}.${linearProgressClasses.root}`]: {
       backgroundColor: 'transparent',
     },
-    [`& .${linearProgressClasses.dashed}`]: paired(theme, {
-      backgroundImage: {
-        light: dashedDots(TRACK_TOKEN.light),
-        dark: dashedDots(TRACK_TOKEN.dark),
-      },
-    }),
+    [`& .${linearProgressClasses.dashed}`]: {
+      ...paired(theme, {
+        backgroundImage: {
+          light: dashedDots(TRACK_TOKEN.light),
+          dark: dashedDots(TRACK_TOKEN.dark),
+        },
+      }),
+      // The dots are drawn from the track token; name it for the inspector.
+      ...tokenMarks({ backgroundImage: TRACK_TOKEN }),
+    },
     /*
      * The filled bar. `bar1` is the value in every variant; `bar2` is
      * the second indeterminate sweep, so it takes the same colour —

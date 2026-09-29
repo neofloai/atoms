@@ -64,6 +64,11 @@ const tools: readonly McpTool[] = [
     name: 'get_installation',
     purpose: 'Framework-specific setup steps (Next.js, React) for installing the package',
   },
+  {
+    name: 'build_from_json',
+    purpose:
+      'Turns a JSON export from the Atoms Inspector or Atoms Studio into a React file built from Atoms, with the components to look up, the handlers to wire, and every place the design went outside the library',
+  },
 ];
 
 const cursorConfig = `{

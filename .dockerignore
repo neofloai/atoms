@@ -26,3 +26,6 @@ README.md
 DESIGNER_QUESTIONS.md
 .cursor
 .vscode
+extension
+# The Atoms MCP's build_from_json reads the export format from here.
+!extension/src/shared/schema.ts

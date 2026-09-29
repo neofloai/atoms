@@ -34,6 +34,7 @@ import {
   ToggleButton,
   Tooltip,
   Typography,
+  atomsRegion,
   countActiveFilters,
 } from '@neofloai/atoms';
 import {
@@ -628,13 +629,17 @@ export default function QueryLogPage() {
   /* The rail runs the full height and the bar starts where it ends, so
      the outer box is a row: rail, then a column. */
   return (
-    <Stack direction="row" sx={{ height: '100vh' }}>
+    <Stack
+      {...atomsRegion('dashboard', 'shell')}
+      direction="row"
+      sx={{ height: '100vh' }}
+    >
       <NavRail collapsed={collapsed} active={active} onNavigate={setActive} />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         {/* The bar holds the one control whose position does not move when
             the rail folds. Per-page actions go in the space after it. */}
-        <Navbar>
+        <Navbar {...atomsRegion('dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
@@ -650,7 +655,10 @@ export default function QueryLogPage() {
             is in them and the grid takes everything left, so the footer
             lands on the bottom edge of the screen at any height. */}
         <Stack sx={{ flex: 1, minHeight: 0 }}>
-          <Box sx={{ px: 3, py: 3 }}>
+          <Box
+            {...atomsRegion('dashboard', 'title')}
+            sx={{ px: 3, py: 3 }}
+          >
             <Typography variant="h3" component="h1">
               Query Log
             </Typography>
@@ -658,6 +666,7 @@ export default function QueryLogPage() {
           <Divider />
 
           <Stack
+            {...atomsRegion('dashboard', 'toolbar')}
             direction="row"
             sx={{
               px: 3,
@@ -706,7 +715,10 @@ export default function QueryLogPage() {
           {/* A definite height for the grid to be 100% of. Without the
               minHeight the rows would push the column taller than the
               screen instead of scrolling inside it. */}
-          <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Box
+            {...atomsRegion('dashboard', 'table')}
+            sx={{ flex: 1, minHeight: 0 }}
+          >
             <DataGrid
               size="sm"
               rows={rows}
@@ -725,6 +737,7 @@ export default function QueryLogPage() {
           hangs off its right edge — left-aligned it would run off the
           page and be pushed back in, lining up with nothing. */}
       <Filter
+        {...atomsRegion('dashboard', 'filter')}
         groups={FILTER_GROUPS}
         value={selection}
         onChange={setSelection}
