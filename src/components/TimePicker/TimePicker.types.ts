@@ -50,6 +50,13 @@ import type { TimePickerProps as MuiTimePickerProps } from '@mui/x-date-pickers'
  */
 export type TimePickerStatus = 'error' | 'success' | 'warning';
 
+/**
+ * Field height: `md` = 36px, `lg` = 40px — `TextField`'s two heights, so
+ * a picker lines up with the text fields beside it. Only the field grows;
+ * the popover is the same at both.
+ */
+export type TimePickerSize = 'md' | 'lg';
+
 export interface TimePickerProps extends MuiTimePickerProps {
   /**
    * Validation state — colours the field's border and its label and helper
@@ -61,6 +68,8 @@ export interface TimePickerProps extends MuiTimePickerProps {
    * own validation still behave as documented.
    */
   status?: TimePickerStatus;
+  /** Field height. @default 'md' */
+  size?: TimePickerSize;
   /**
    * Text under the field. Takes the status colour when `status` is set,
    * exactly as it does on `TextField`.

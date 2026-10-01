@@ -36,7 +36,14 @@ export const data: ComponentExamplesData = {
       type: "'error' | 'success' | 'warning'",
       default: '—',
       description:
-        'Validation status. Colours the border and helper text. Omit for the neutral state.',
+        'Validation status. Tints the field and colours its border, helper text and caret; the label stays neutral. Omit for the neutral state.',
+    },
+    {
+      name: 'size',
+      type: "'md' | 'lg'",
+      default: "'md'",
+      description:
+        'Field height: 36px or 40px — the same two heights as `TextField`, so a select lines up with the text fields beside it. Use one height per form.',
     },
     {
       name: 'helperText',
@@ -108,7 +115,8 @@ export const data: ComponentExamplesData = {
   ],
   donts: [
     "Don't rely on border colour alone to communicate validation — set `helperText` too",
-    "Don't override the 1px border or 8px radius — they are part of the field identity",
+    "Don't override the 1px border or 4px radius — they are part of the field identity",
+    "Don't mix `md` and `lg` fields in one form row — pick one height per form",
   ],
   relatedComponents: ['TextField'],
 };

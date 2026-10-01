@@ -217,11 +217,16 @@ export { InputAdornment, TextField } from './components/TextField';
 export type {
   InputAdornmentProps,
   TextFieldProps,
+  TextFieldSize,
   TextFieldStatus,
 } from './components/TextField';
 
 export { Select } from './components/Select';
-export type { SelectProps, SelectStatus } from './components/Select';
+export type {
+  SelectProps,
+  SelectSize,
+  SelectStatus,
+} from './components/Select';
 
 /**
  * The two components built on MUI **X** rather than MUI Material, because
@@ -250,12 +255,14 @@ export type { SelectProps, SelectStatus } from './components/Select';
 export { DatePicker } from './components/DatePicker';
 export type {
   DatePickerProps,
+  DatePickerSize,
   DatePickerStatus,
 } from './components/DatePicker';
 
 export { TimePicker } from './components/TimePicker';
 export type {
   TimePickerProps,
+  TimePickerSize,
   TimePickerStatus,
 } from './components/TimePicker';
 

@@ -24,7 +24,14 @@ export const data: ComponentExamplesData = {
       type: "'error' | 'success' | 'warning'",
       default: '—',
       description:
-        'Validation state, on the same three-status axis and the same tokens as `TextField`: it colours the field’s border and its label and helper text. Lifted from `slotProps.textField.error`, which is only a boolean — `status="error"` sets that too, so MUI’s own validation still behaves as documented.',
+        'Validation state, on the same three-status axis and the same tokens as `TextField`: it tints the field and colours its border, helper text and buttons, and leaves the label neutral. Lifted from `slotProps.textField.error`, which is only a boolean — `status="error"` sets that too, so MUI’s own validation still behaves as documented.',
+    },
+    {
+      name: 'size',
+      type: "'md' | 'lg'",
+      default: "'md'",
+      description:
+        'Field height: 36px or 40px — the same two heights as `TextField`, so a picker lines up with the text fields beside it. Use one height per form.',
     },
     {
       name: 'helperText',
@@ -164,7 +171,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Validation, in the house statuses',
       description:
-        'The same three-status axis as `TextField`, colouring the border and the label and helper text.',
+        'The same three-status axis as `TextField`: a tinted field, a coloured border and helper text, and a neutral label.',
       code: `<DatePicker
   label="Departure"
   status="error"

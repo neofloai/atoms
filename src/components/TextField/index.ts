@@ -3,5 +3,6 @@ export { InputAdornment } from './InputAdornment';
 export type {
   InputAdornmentProps,
   TextFieldProps,
+  TextFieldSize,
   TextFieldStatus,
 } from './TextField.types';

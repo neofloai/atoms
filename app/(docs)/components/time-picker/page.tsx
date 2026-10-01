@@ -149,8 +149,8 @@ export default function TimePickerDocsPage() {
             Two of its three surfaces are specified, just under another name,
             and both are now shared with the date picker rather than copied.
             The <strong>field</strong> is a text field, read off{' '}
-            <code>TextField</code> — the same 8px inset, 8px corners, 1px
-            border, bottom-edge focus accent, and the same three statuses. The{' '}
+            <code>TextField</code> — the same two heights, 4px corners, 1px
+            hairline, full-border focus, and the same three statuses. The{' '}
             <strong>popover</strong> is a floating panel, read off{' '}
             <code>Menu</code>: <code>card 2</code> fill and border, 16px
             corners, <code>Shadow/medium</code>.

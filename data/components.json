@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T06:23:07.943Z",
+  "generatedAt": "2026-10-01T08:07:44.976Z",
   "components": [
     {
       "name": "Accordion",
@@ -1424,7 +1424,13 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation state, on the same three-status axis and the same tokens as `TextField`: it colours the field’s border and its label and helper text. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+          "description": "Validation state, on the same three-status axis and the same tokens as `TextField`: it tints the field and colours its border, helper text and buttons, and leaves the label neutral. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px — the same two heights as `TextField`, so a picker lines up with the text fields beside it. Use one height per form."
         },
         {
           "name": "helperText",
@@ -1542,7 +1548,7 @@
         },
         {
           "title": "Validation, in the house statuses",
-          "description": "The same three-status axis as `TextField`, colouring the border and the label and helper text.",
+          "description": "The same three-status axis as `TextField`: a tinted field, a coloured border and helper text, and a neutral label.",
           "code": "<DatePicker\n  label=\"Departure\"\n  status=\"error\"\n  helperText=\"Pick a date to continue\"\n/>"
         },
         {
@@ -3555,7 +3561,13 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation status. Colours the border and helper text. Omit for the neutral state."
+          "description": "Validation status. Tints the field and colours its border, helper text and caret; the label stays neutral. Omit for the neutral state."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px — the same two heights as `TextField`, so a select lines up with the text fields beside it. Use one height per form."
         },
         {
           "name": "helperText",
@@ -3607,7 +3619,8 @@
       ],
       "donts": [
         "Don't rely on border colour alone to communicate validation — set `helperText` too",
-        "Don't override the 1px border or 8px radius — they are part of the field identity"
+        "Don't override the 1px border or 4px radius — they are part of the field identity",
+        "Don't mix `md` and `lg` fields in one form row — pick one height per form"
       ],
       "relatedComponents": [
         "TextField"
@@ -4735,7 +4748,7 @@
     {
       "name": "TextField",
       "category": "Inputs",
-      "tagline": "Text input with a static label, validation statuses, helper text, and single or multi-line entry.",
+      "tagline": "Text input with a static label, two heights, validation statuses, helper text, and single or multi-line entry.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3179-106156",
       "props": [
         {
@@ -4754,13 +4767,19 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation status. Colours the border and helper text. Omit for the neutral state."
+          "description": "Validation status. Tints the field and colours its border, helper text and adornment glyphs; the label stays neutral. Omit for the neutral state."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px. Label, helper text and input type are the same at both — only the field box grows. Use `lg` where a field stands alone or leads a page (a search bar, a sign-in form); `md` in dense forms and filter rows."
         },
         {
           "name": "helperText",
           "type": "ReactNode",
           "default": "—",
-          "description": "Supporting text below the field. Coloured by `status` when one is set."
+          "description": "Supporting text below the field. Coloured by `status` when one is set. Accepts a node, so a leading icon can sit before the text — it is sized to 14px."
         },
         {
           "name": "startAdornment",
@@ -4817,6 +4836,11 @@
           "code": "<TextField\n  label=\"Email\"\n  placeholder=\"you@neoflo.ai\"\n  helperText=\"Work email preferred\"\n/>"
         },
         {
+          "title": "Large field",
+          "description": "The 40px field, for a search bar or a sign-in form where the field stands on its own.",
+          "code": "<TextField size=\"lg\" label=\"Work email\" placeholder=\"you@neoflo.ai\" />"
+        },
+        {
           "title": "Validation error",
           "code": "<TextField\n  label=\"Amount\"\n  status=\"error\"\n  helperText=\"Amount is required\"\n/>"
         },
@@ -4856,7 +4880,8 @@
       "donts": [
         "Don't use placeholder text as a substitute for a label",
         "Don't rely on border colour alone to communicate validation — set `helperText` too",
-        "Don't override the 1px border or 8px radius — they are part of the field identity",
+        "Don't override the 1px border or 4px radius — they are part of the field identity",
+        "Don't mix `md` and `lg` fields in one form row — pick one height per form",
         "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended"
       ],
       "relatedComponents": [
@@ -4873,7 +4898,13 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation state, on the same three-status axis and the same tokens as `TextField` and `DatePicker`: it colours the field’s border and its label and helper text. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+          "description": "Validation state, on the same three-status axis and the same tokens as `TextField` and `DatePicker`: it tints the field and colours its border, helper text and buttons, and leaves the label neutral. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px — the same two heights as `TextField`, so a picker lines up with the text fields beside it. Use one height per form."
         },
         {
           "name": "helperText",
@@ -5032,7 +5063,7 @@
         },
         {
           "title": "Validation, in the house statuses",
-          "description": "The same three-status axis as `TextField`, colouring the border and the label and helper text.",
+          "description": "The same three-status axis as `TextField`: a tinted field, a coloured border and helper text, and a neutral label.",
           "code": "<TimePicker\n  label=\"Starts at\"\n  status=\"error\"\n  helperText=\"Pick a time to continue\"\n/>"
         },
         {

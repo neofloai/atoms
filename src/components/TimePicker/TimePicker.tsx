@@ -26,17 +26,21 @@ import {
   pickerFieldStyles,
 } from '../_shared/pickerStyles';
 import {
-  FIELD_RADIUS,
+  CELL_RADIUS,
   HAIRLINE_WIDTH_PX,
   cell,
-  fieldType,
+  cellType,
   panel,
 } from '../_shared/pickerTokens';
 import { clockFace } from './timePickerTokens';
 
 import type { PaperProps } from '@mui/material/Paper';
 import type { CSSObject, Theme } from '@mui/material/styles';
-import type { TimePickerProps, TimePickerStatus } from './TimePicker.types';
+import type {
+  TimePickerProps,
+  TimePickerSize,
+  TimePickerStatus,
+} from './TimePicker.types';
 
 const HOUSE_ICONS = {
   openPickerIcon: glyph(ClockIcon, 'TimePickerOpenIcon'),
@@ -72,8 +76,8 @@ const HOUSE_ICONS = {
  */
 function clockItem(theme: Theme): CSSObject {
   return {
-    ...fieldType,
-    borderRadius: FIELD_RADIUS,
+    ...cellType,
+    borderRadius: CELL_RADIUS,
     padding: spacing.component.xs,
     // Flush vertically; the 4px each side is the panel's own inset, carried
     // in on the item because the scrolling column cannot pad itself.
@@ -184,7 +188,7 @@ const PanelPaper = styled(Paper)(({ theme }) => ({
     borderColor: cell.selectedBackground,
   }),
   [`& .${clockNumberClasses.root}`]: {
-    ...fieldType,
+    ...cellType,
     ...paired(theme, { color: cell.ink }),
     [`&.${clockNumberClasses.selected}`]: paired(theme, {
       color: cell.selectedInk,
@@ -210,7 +214,7 @@ const PanelPaper = styled(Paper)(({ theme }) => ({
       }),
     },
   },
-  [`& .${clockClasses.meridiemText}`]: fieldType,
+  [`& .${clockClasses.meridiemText}`]: cellType,
   // The hours/minutes arrows above the face, which are MUI `IconButton`s
   // rather than the house one.
   [`& .${timeClockClasses.arrowSwitcher} .${iconButtonClasses.root}`]: {
@@ -228,12 +232,13 @@ const PanelPaper = styled(Paper)(({ theme }) => ({
 
 interface StyledTimePickerProps {
   neofloStatus?: TimePickerStatus;
+  neofloSize: TimePickerSize;
 }
 
 const StyledTimePicker = styled(MuiTimePicker, {
-  shouldForwardProp: (prop) => prop !== 'neofloStatus',
-})<StyledTimePickerProps>(({ theme, neofloStatus }) =>
-  pickerFieldStyles(theme, neofloStatus)
+  shouldForwardProp: (prop) => prop !== 'neofloStatus' && prop !== 'neofloSize',
+})<StyledTimePickerProps>(({ theme, neofloStatus, neofloSize }) =>
+  pickerFieldStyles(theme, { status: neofloStatus, size: neofloSize })
 );
 
 /* ------------------------------------------------------------------ *
@@ -320,13 +325,23 @@ const StyledTimePicker = styled(MuiTimePicker, {
  */
 export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
   function TimePicker(
-    { status, helperText, fullWidth, clearable, slots, slotProps, ...rest },
+    {
+      status,
+      size = 'md',
+      helperText,
+      fullWidth,
+      clearable,
+      slots,
+      slotProps,
+      ...rest
+    },
     ref
   ) {
     return (
       <StyledTimePicker
         ref={ref}
         neofloStatus={status}
+        neofloSize={size}
         slots={{
           desktopPaper: PanelPaper,
           mobilePaper: PanelPaper,
