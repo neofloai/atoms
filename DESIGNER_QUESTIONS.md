@@ -191,6 +191,9 @@ Also note: the sheet's `skeleton` variant (three placeholder bars) was not imple
 ---
 
 ### 16. Avatar — colour, mid-radius, and badge assumptions — PARTIALLY RESOLVED (29 July, node 981:16471 sync)
+
+> **Superseded 1 October by #70.** The redrawn set (node 978:17187) adds colour as a real axis, a fourth size, and pins the `mid` corner to 4px; what follows is the 29 July reading, kept for the record.
+
 The Avatar component set was resynced against an updated sheet (node 981:16471), which defines the same four variant axes — `badge` (true/false), `content` (text/icon/img), `size` (large 40 / medium 32 / small 24), and `roundness` (round/mid/sharp) — and re-confirmed the Code Connect mapping (round → circular, mid → rounded, sharp → square). This resolved most of the original assumptions below:
 
 - **Default fill — RESOLVED, and it changed.** The updated sheet fills every text/icon variant with a subtle primary tint (`surface/primary/subtle` `#f3f4fb` + `text or icon /primary/4` `#5f6aea`, i.e. `primary/50` bg + `primary/400` fg) — not the `orange/500` the older sheet (978:17187) showed. `color="accent"` now maps to this confirmed combo; `primary/400` was also missing from `text.primary.onColorHover` / `icon.primary.onColorHover` (which resolved to `primary/500`) and has been corrected (light mode only — dark unconfirmed). `orange` (DESIGNER_QUESTIONS #4) is no longer consumed by any component.
@@ -1464,3 +1467,23 @@ Shipped as `ToggleButtonGroup appearance="segmented"`: a `surface/layers/card 3`
 3. **One size, neutral only.** The frame draws one height and no colour roles, so `size` and `color` are ignored at `segmented`. Is a 32px or 36px segmented control expected beside the 32/36px buttons and fields?
 4. **States were composed.** Only `Default` and `Active` are drawn. Hover steps an off label to `text/default/b2`, press to `b1`; the thumb ignores the pointer; focus is the house ring; disabled greys the ink, and a disabled button that is on keeps its thumb with a `border/disabled/default` hairline.
 5. **The label changes weight on selection,** so a button grows by about a pixel when chosen (the frame's own items measure 106 and 107). Kept as drawn; a fixed-width layout would need the Medium width reserved.
+
+---
+
+### 70. Avatar — the 1 October redraw: eight hues, four sizes, a 4px `mid`, and no dark scheme (added 1 October, node 978:17187)
+The Avatar set was redrawn with five axes — `content` (text / icon / img), `size` (lg 44 / md 36 / sm 24 / xs 20), `Shape` (circle / sharp / square), `Show Online Badge`, and `Color` (primary / purple / blue / green / yellow / orange / red / grey). This answers three of #16's open points: colour is now an axis, `mid` (the sheet's `square`) binds a 4px `borderradius` and ships at `radius.xs` rather than MUI's 8px `rounded`, and the dot is drawn in one colour (`green/400`). What changed in code:
+
+- **Sizes.** `lg` 40 → 44, `md` 32 → 36, `sm` unchanged at 24, new `xs` at 20. Initials are Medium, at H6 (16/24) / B1 (14/20) / B3 (10/12) / B3. Glyphs 24 / 16 / 16 / 14.
+- **Colour roles.** `accent` is gone; the default is `primary`. The eight hues are named as `Chip`'s small tag names them: blue = `information`, green = `success`, yellow = `warning`, red = `error`, grey = `secondary`. Each draws a pale fill, a `/300` hairline and a dark ink.
+- **Photos** drop the role and sit in a `border/default/1` hairline.
+
+**Confirm:**
+1. **There is no dark avatar.** Seven hues bind raw ramp steps (`primary/100`, `primary/300`, …), which have one value. The light scheme renders exactly those steps, through the semantic token with the same light value. Dark was composed with one rule for every hue — fill at the hue's `/800`, line at `/700`, ink at the `text/<role>/1` dark rung — because the tokens' own dark halves land each hue on a different rung (`primary` a saturated `/600`, blue a near-black `/1000`) and drop the line on `primary` and `red`, where it equals the fill. Is a dark sheet coming, and should these become named avatar tokens?
+2. **`purple/300` has no token.** The purple hairline is `purple/200` (`surface/purple/default pressed`), as the small chip's is. Should `border/purple` exist?
+3. **Blue is inked in `text/primary/1`,** not `text/information/1` — every other hue uses its own ladder. Followed as drawn; is it a slip?
+4. **The hairline is 0.5px, and 0.25px at `sm` and `xs`.** Both ship at 0.5: no browser paints thinner than one device pixel, so on a 2x screen they are the same line and on a 1x screen both round up to 1px. The small chip ships its 0.5 outline at 1px (#61); the avatar keeps 0.5 because at 20–24px a full pixel of `/300` reads as a ring rather than an edge.
+5. **Initials go Regular when the badge is on.** Every `Show Online Badge=True` text cell sets the label in Regular where its `False` twin is Medium. Read as a slip; Medium throughout.
+6. **The dot is placed differently in nearly every cell.** On a circle the sheet insets it 1.5px at `lg` (3.5 in one icon cell), overhangs 0.5 at `md` and 0.25 at `sm`, and insets 0.75 at `xs`; on the cornered shapes it overhangs 0.5 at `lg`/`md` (4.5 to the right in one sharp cell, 3.25 in one `sm` cell). The common value per size and shape ships; `xs` cornered was not sampled and follows `sm`. The dot is 8px with a 1px `border/layers/page` ring at `lg`/`md`, 6px and 4px with a 0.5px ring below.
+7. **Every dot binds `surface/primary/default`** in its variable, but renders `green/400` — one cell binds `green/400` directly. Shipped green (`icon/success/4`), with `warning`/`error`/`neutral` on the same rung of their ladders for the presence conventions the sheet does not draw.
+8. **`xs` holds one initial.** Every `xs` text cell shows a single letter; the docs say so, the component does not truncate.
+

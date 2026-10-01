@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T09:03:51.084Z",
+  "generatedAt": "2026-10-01T09:22:01.788Z",
   "components": [
     {
       "name": "Accordion",
@@ -268,7 +268,7 @@
       "name": "Avatar",
       "category": "Data Display",
       "tagline": "Represents a user or entity with initials, an icon, or a photo, plus an optional status badge.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=981-16471",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=978-17187",
       "props": [
         {
           "name": "children",
@@ -290,21 +290,21 @@
         },
         {
           "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
+          "type": "'xs' | 'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Diameter: 24px, 32px, or 40px."
+          "description": "Diameter: 20px, 24px, 36px, or 44px. `xs` holds a single initial."
         },
         {
           "name": "shape",
           "type": "'round' | 'mid' | 'sharp'",
           "default": "'round'",
-          "description": "Corner treatment: full circle, rounded square, or square."
+          "description": "Corner treatment: a full circle, a square with 4px corners, or a square with none."
         },
         {
           "name": "color",
-          "type": "'accent' | 'primary' | 'secondary' | 'success' | 'error' | 'warning'",
-          "default": "'accent'",
-          "description": "Background colour role for text / icon content. Ignored when an image renders."
+          "type": "'primary' | 'purple' | 'information' | 'success' | 'warning' | 'orange' | 'error' | 'secondary'",
+          "default": "'primary'",
+          "description": "Colour role for initials and icon content: a pale fill, a hairline a step deeper, and a dark ink, all of one hue. `secondary` is the neutral grey. Ignored when an image renders, which keeps only a neutral hairline."
         },
         {
           "name": "badge",
@@ -330,7 +330,13 @@
         },
         {
           "title": "Icon content",
-          "code": "<Avatar color=\"primary\">\n  <UserIcon />\n</Avatar>"
+          "description": "An icon takes the role ink, the same as initials.",
+          "code": "<Avatar color=\"success\">\n  <UserIcon />\n</Avatar>"
+        },
+        {
+          "title": "Colour roles",
+          "description": "Eight hues. Give the same person the same role everywhere they appear, so the colour helps them be recognised.",
+          "code": "<Avatar color=\"primary\">AV</Avatar>\n<Avatar color=\"purple\">AV</Avatar>\n<Avatar color=\"information\">AV</Avatar>\n<Avatar color=\"success\">AV</Avatar>\n<Avatar color=\"warning\">AV</Avatar>\n<Avatar color=\"orange\">AV</Avatar>\n<Avatar color=\"error\">AV</Avatar>\n<Avatar color=\"secondary\">AV</Avatar>"
         },
         {
           "title": "Shapes",
@@ -338,7 +344,7 @@
         },
         {
           "title": "Sizes",
-          "code": "<Avatar size=\"sm\">OP</Avatar>\n<Avatar size=\"md\">OP</Avatar>\n<Avatar size=\"lg\">OP</Avatar>"
+          "code": "<Avatar size=\"xs\">O</Avatar>\n<Avatar size=\"sm\">OP</Avatar>\n<Avatar size=\"md\">OP</Avatar>\n<Avatar size=\"lg\">OP</Avatar>"
         },
         {
           "title": "Status badge",
@@ -358,8 +364,9 @@
         "Use the `badge` dot for presence or status, not for counts"
       ],
       "donts": [
-        "Don't put more than two characters of text inside an avatar",
+        "Don't put more than two characters of text inside an avatar, or more than one at `xs`",
         "Don't hardcode background colours — use the `color` role so both colour schemes work",
+        "Don't use `error` or `warning` to say something about the person — in an avatar they are only hues",
         "Don't mix sizes within a single avatar group or stack",
         "Don't rely on the badge colour alone to convey status — pair it with text elsewhere"
       ],

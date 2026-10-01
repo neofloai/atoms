@@ -1,32 +1,35 @@
 import type { AvatarProps as MuiAvatarProps } from '@mui/material';
 
 /**
- * Avatar diameter, mapped from the Figma `size` axis (node 981:16471):
- * `lg` = 40px, `md` = 32px, `sm` = 24px.
+ * Avatar diameter, mapped from the Figma `size` axis (node 978:17187):
+ * `lg` = 44px, `md` = 36px, `sm` = 24px, `xs` = 20px. `xs` holds a
+ * single initial — two letters do not fit at 10px in a 20px box.
  */
-export type AvatarSize = 'sm' | 'md' | 'lg';
+export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg';
 
 /**
- * Corner treatment, mapped from the Figma `roundness` axis. Matches the
- * design's own Code Connect mapping onto MUI Avatar variants:
- * `round` -> circular, `mid` -> rounded, `sharp` -> square.
+ * Corner treatment, mapped from the Figma `Shape` axis: `round` is the
+ * sheet's `circle`, `mid` its `square` (4px corners) and `sharp` its
+ * `sharp` (none).
  */
 export type AvatarShape = 'round' | 'mid' | 'sharp';
 
 /**
- * Background colour role for text / icon avatars (ignored when `src`
- * renders an image). `accent` is the Figma default (a subtle primary
- * tint — confirmed against node 981:16471, replacing the orange fill
- * assumed from the older sheet); the rest mirror the semantic palette
- * used across action controls.
+ * Colour role for initials and icon avatars — a pale fill, a hairline a
+ * rung deeper, and a dark ink, all from one hue. Ignored when an image
+ * renders. Named as `Chip`'s small tag names the same eight hues: the
+ * sheet's blue is `information`, green `success`, yellow `warning`, red
+ * `error` and grey `secondary`.
  */
 export type AvatarColor =
-  | 'accent'
   | 'primary'
-  | 'secondary'
+  | 'purple'
+  | 'information'
   | 'success'
+  | 'warning'
+  | 'orange'
   | 'error'
-  | 'warning';
+  | 'secondary';
 
 /** Colour of the status `badge` dot. */
 export type AvatarBadgeColor = 'success' | 'error' | 'warning' | 'neutral';
@@ -43,7 +46,7 @@ export interface AvatarProps extends Omit<MuiAvatarProps, 'variant'> {
   size?: AvatarSize;
   /** Corner treatment. @default 'round' */
   shape?: AvatarShape;
-  /** Background colour role for text / icon content. @default 'accent' */
+  /** Colour role for initials and icon content. @default 'primary' */
   color?: AvatarColor;
   /** Show a status dot at the bottom-right. @default false */
   badge?: boolean;
