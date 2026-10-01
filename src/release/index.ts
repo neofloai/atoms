@@ -113,7 +113,12 @@ export const release: ReleaseGuide = {
   repo: 'neofloai/atoms',
   current: CURRENT.version,
   currentTag: CURRENT.tag,
-  // Moved to 2.2.0. Every pattern `get_pattern` serves now imports
+  // Moved to 3.0.0. The component examples these tools serve use
+  // `size="xl"` on `Button`, `size="lg"` on the fields, the eight
+  // `Avatar` hues and `appearance="segmented"`, none of which 2.2.0 has,
+  // so pasted into 2.2.0 they fail to compile.
+  //
+  // Before that it moved to 2.2.0. Every pattern `get_pattern` serves now imports
   // `atomsRegion`, which 2.2.0 added, so pasted into 2.1.0 the import
   // fails. The code needs nothing else from 2.2.0, and 2.1.0 to 2.2.0 is
   // a version bump with no edits. So the cost of refusing 2.1.0 is one
@@ -129,7 +134,7 @@ export const release: ReleaseGuide = {
   // So a caller on 1.0.x now has to read as `unsupported` rather than
   // `behind`: the difference is between being offered an upgrade and
   // being refused code that would break, and here it would break.
-  minimumSupported: '2.2.0',
+  minimumSupported: '3.0.0',
   releases: RELEASES,
   commands: COMMANDS,
   keywords: SEARCH_KEYWORDS,

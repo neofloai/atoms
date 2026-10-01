@@ -1,11 +1,111 @@
 {
-  "generatedAt": "2026-09-29T19:30:40.011Z",
+  "generatedAt": "2026-10-01T09:42:16.802Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "2.2.0",
-  "currentTag": "v2.2.0",
-  "minimumSupported": "2.2.0",
+  "current": "3.0.0",
+  "currentTag": "v3.0.0",
+  "minimumSupported": "3.0.0",
   "releases": [
+    {
+      "version": "3.0.0",
+      "tag": "v3.0.0",
+      "date": "2026-10-01",
+      "headline": "Button, the four form fields, the small chip, the toggle group and Avatar follow the October redraw. `appearance=\"prominent\"` and `color=\"accent\"` are removed.",
+      "summary": "A breaking release driven by the Product Design System redraw. Two values are gone, and TypeScript finds both: `Button`'s `appearance=\"prominent\"` (use `size=\"xl\"`) and `Avatar`'s `color=\"accent\"` (the default is now `primary`). Everything else is additive or visual. Buttons are 4px shorter at every size, avatars are larger, and the text field, `Select`, `DatePicker` and `TimePicker` now share one field design with a new `lg` size. New: a social sign-in button, a segmented toggle group, a `muted` small chip, an `xs` avatar and eight avatar hues. No token was renamed or retuned.",
+      "changes": [
+        {
+          "kind": "breaking",
+          "summary": "`Button` `appearance=\"prominent\"` is removed, along with its gradient. `size=\"xl\"` replaces it: the same 48px box with a heading-sized label, flat-filled, on every `variant` and `appearance`.",
+          "scope": [
+            "Button"
+          ]
+        },
+        {
+          "kind": "breaking",
+          "summary": "`Avatar` `color=\"accent\"` is removed and the default is `primary`. The roles are now the eight hues of the redraw -- `primary`, `purple`, `information`, `success`, `warning`, `orange`, `error`, `secondary` -- each a pale fill, a 0.5px hairline a step deeper and a dark ink. `primary`, `success`, `error` and `warning` were saturated fills with white text and are now pale.",
+          "scope": [
+            "Avatar"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`Button` heights are 28 / 32 / 40 at `sm` / `md` / `lg` (were 32 / 36 / 44), with 8 / 12 / 16 side padding. The `md` glyph is 16px (was 20) and the `lg` label is 16/24. Outline borders on `primary` and `warning` move a rung, and every role keeps its own border while pressed. `IconButton` is unchanged.",
+          "scope": [
+            "Button"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Button` `appearance=\"social\"`, the sign-in button: a near-white card in a neutral hairline, neutral only. It defaults to `size=\"lg\"` and to the Google mark, and `GoogleLogoColorIcon` is exported from `@neofloai/atoms/icons`.",
+          "scope": [
+            "Button",
+            "@neofloai/atoms/icons"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`TextField`, `Select`, `DatePicker` and `TimePicker` share one field design: 12px inset, 4px corners, a card-1 fill in a card-3 hairline and 14px input type. Focus is a full dark hairline (was a primary bottom edge), and a status tints the field and colours its border, helper text and adornments while the label stays neutral. Adornment glyphs are held at 16px.",
+          "scope": [
+            "TextField",
+            "Select",
+            "DatePicker",
+            "TimePicker"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`size` on `TextField`, `Select`, `DatePicker` and `TimePicker`: `md` (36px, the default) or `lg` (40px). The `TextFieldSize`, `SelectSize`, `DatePickerSize` and `TimePickerSize` types are exported.",
+          "scope": [
+            "TextField",
+            "Select",
+            "DatePicker",
+            "TimePicker"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "The 20px `Chip` tag pads 4px on every side (inline was 8) and labels in B2 Medium. With `bordered`, the `warning` and `orange` outlines move a rung, `primary`'s fill deepens, and the `success`, `error` and `purple` labels darken a step. The delete glyph is 12px.",
+          "scope": [
+            "Chip"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Chip` `variant=\"muted\"`: a paler grey tag for metadata that should recede, such as a file type. It is drawn at `size=\"sm\"` only.",
+          "scope": [
+            "Chip"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`ToggleButtonGroup` `appearance=\"segmented\"`: labelled buttons on a grey track, with the selected one raised as a thumb. It comes in one size and is neutral only, so `size` and `color` do not apply. The joined `outline` group and the `text` toolbar are unchanged.",
+          "scope": [
+            "ToggleButtonGroup",
+            "ToggleButton"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`Avatar` sizes are 44 / 36 / 24 at `lg` / `md` / `sm` (were 40 / 32 / 24), with Medium initials. `shape=\"mid\"` is a 4px corner (was 8). A photo keeps only a neutral hairline, and the status dot is sized and placed for each size and shape.",
+          "scope": [
+            "Avatar"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Avatar` `size=\"xs\"`, 20px, for a single initial.",
+          "scope": [
+            "Avatar"
+          ]
+        }
+      ],
+      "migration": [
+        "Replace `appearance=\"prominent\"` with `size=\"xl\"` on `Button`. Keep `variant` and `appearance` as they were, or omit them for the primary contained default.",
+        "Remove `color=\"accent\"` from `Avatar`, or pick one of the eight hues. If you relied on the old saturated `primary`, `success`, `error` or `warning` avatar, they are now pale.",
+        "TypeScript finds both: `prominent` and `accent` are no longer in the prop types. Upgrade, run `tsc` and fix each error.",
+        "Check any layout that pinned a width or height to a button or an avatar. Buttons are 4px shorter at every size, and `lg` and `md` avatars are 4px larger."
+      ]
+    },
     {
       "version": "2.2.0",
       "tag": "v2.2.0",
@@ -299,8 +399,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^2.2.0",
-    "pin": "npm install github:neofloai/atoms#semver:^2.2.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^3.0.0",
+    "pin": "npm install github:neofloai/atoms#semver:^3.0.0"
   },
   "keywords": [
     "changelog",
