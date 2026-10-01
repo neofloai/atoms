@@ -15,6 +15,9 @@
 # production
 /build
 
+# docs search index (written by `npm run build:search` after `next build`)
+/public/pagefind
+
 # library build output (regenerated on install via the `prepare` script)
 /dist
 

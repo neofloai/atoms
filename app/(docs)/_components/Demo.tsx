@@ -33,7 +33,8 @@ export function Demo({ demo }: { demo: ComponentDemo }) {
           </Typography>
         )}
       </Stack>
-      <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+      {/* Sample UI, not documentation: kept out of the search index. */}
+      <Paper variant="outlined" data-pagefind-ignore sx={{ p: 3, borderRadius: 2 }}>
         {demo.preview}
       </Paper>
       <CodeBlock>{demo.code}</CodeBlock>
