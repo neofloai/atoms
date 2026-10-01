@@ -42,6 +42,13 @@ import type {
  * expresses the same thing by restyling the group, which is what its
  * own "Customized dividers" demo does; this makes it a prop so the
  * toolbar does not need a `styled()` call at every call site.
+ *
+ * `segmented` is the third value, from a later component (node
+ * 4272:15006): a labelled toggle group drawn as a track with the
+ * selected button raised out of it. It is a different object from the
+ * joined `outline` group rather than a redraw of it — the icon toggles
+ * and their joined groups are still on the sheet beside it — so it is
+ * added as an appearance instead of replacing one.
  */
 
 /**
@@ -66,12 +73,21 @@ export type ToggleButtonColor =
 export type ToggleButtonSize = 'sm' | 'md';
 
 /**
- * How much chrome the control carries at rest. `outline` draws the 1px
- * neutral border; `text` draws none and relies on the selected fill
- * alone, which is how the toolbar sample stacks toggles beside a
- * divider.
+ * How much chrome the control carries at rest.
+ *
+ *   - `outline`   — the 1px neutral border; grouped, the buttons share
+ *                   one outline and one hairline between each
+ *   - `text`      — no border, relying on the selected fill alone, which
+ *                   is how the toolbar sample stacks toggles beside a
+ *                   divider
+ *   - `segmented` — a grey track holding the buttons, the selected one
+ *                   raised out of it as a white thumb with a hairline.
+ *                   Labelled, one size (a 28px track around 24px
+ *                   buttons), neutral only. Set it on the group; the
+ *                   track is drawn by the group, so a standalone toggle
+ *                   at `segmented` is only a thumb
  */
-export type ToggleButtonAppearance = 'outline' | 'text';
+export type ToggleButtonAppearance = 'outline' | 'text' | 'segmented';
 
 /**
  * `ToggleButton` props. Everything not listed here is MUI's, unchanged:
@@ -83,7 +99,8 @@ export type ToggleButtonAppearance = 'outline' | 'text';
 export interface ToggleButtonProps
   extends Omit<MuiToggleButtonProps, 'color' | 'size'> {
   /**
-   * Colour of the selected state.
+   * Colour of the selected state. Ignored at `appearance="segmented"`,
+   * which is drawn neutral only.
    *
    * Inherited from a parent `ToggleButtonGroup` when not set here.
    *
@@ -91,7 +108,8 @@ export interface ToggleButtonProps
    */
   color?: ToggleButtonColor;
   /**
-   * Control size.
+   * Control size. Ignored at `appearance="segmented"`, which is drawn at
+   * one size.
    *
    * Inherited from a parent `ToggleButtonGroup` when not set here.
    *
@@ -122,13 +140,14 @@ export interface ToggleButtonProps
 export interface ToggleButtonGroupProps
   extends Omit<MuiToggleButtonGroupProps, 'color' | 'size'> {
   /**
-   * Colour of the selected state, for every child.
+   * Colour of the selected state, for every child. Ignored at
+   * `appearance="segmented"`.
    *
    * @default 'secondary'
    */
   color?: ToggleButtonColor;
   /**
-   * Control size, for every child.
+   * Control size, for every child. Ignored at `appearance="segmented"`.
    *
    * @default 'md'
    */
@@ -136,7 +155,8 @@ export interface ToggleButtonGroupProps
   /**
    * Resting chrome, for every child. `text` also spaces the children
    * 4px apart and gives each one its own corners back, since there are
-   * no borders left to share.
+   * no borders left to share. `segmented` does the same inside a track
+   * the group draws around them.
    *
    * @default 'outline'
    */

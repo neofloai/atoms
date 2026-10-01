@@ -1,4 +1,4 @@
-import { border, icon, spacing, surface, typography } from '@/src/tokens';
+import { border, icon, spacing, surface, text, typography } from '@/src/tokens';
 
 import type {
   ToggleButtonGroupProps as MuiToggleButtonGroupProps,
@@ -197,3 +197,46 @@ export const roleTokens: Record<ToggleButtonColor, RoleTokens> = {
     focusRing: border.information.focus,
   },
 };
+
+/**
+ * The segmented control — node 4272:15006, read 1 October.
+ *
+ * A track (`surface.layers.card3` inside a `border.layers.card3`
+ * hairline, 2px of inset, 4px between buttons) holding labelled buttons
+ * at 4px x 8px padding with an 8px gap and 14px glyphs. Off, a button
+ * has no chrome and a `b3` Regular label; on, it is a `surface.layers.page`
+ * thumb in the same hairline as the track, with a `b1` Medium label.
+ * Figma binds the label to `text/default/*` and the glyphs to
+ * `icon/default/*`; the two hold the same value at both rungs, so one
+ * `color` drives both through `currentColor`.
+ *
+ * Drawn at one size and in one colour, which is why `size` and `color`
+ * do not reach it.
+ */
+export const SEGMENTED = {
+  /** Track inset — `Scale/50`, which has no rung on the component ladder. */
+  trackInsetPx: 2,
+  trackGapPx: spacing.component.xxs,
+  trackBg: surface.layers.card3,
+  trackBorder: border.layers.card3,
+  paddingBlockPx: spacing.component.xxs,
+  paddingInlinePx: spacing.component.xs,
+  gapPx: spacing.component.xs,
+  glyphPx: 14,
+  label: typography.body.b2,
+  /** Sans/B2/Medium's -1%, on the selected label only. */
+  selectedTrackingEm: -0.01,
+  ink: text.default.b3,
+  selectedInk: text.default.b1,
+  thumbBg: surface.layers.page,
+  thumbBorder: border.layers.card3,
+  /**
+   * Composed, not transcribed — the component draws only `Default` and
+   * `Active`. Under the pointer an off button's label steps one rung
+   * toward the selected ink, and held it reaches it; the thumb stays the
+   * one signal for "on", so nothing but the selected button is filled.
+   */
+  hoverInk: text.default.b2,
+  pressedInk: text.default.b1,
+  focusRing: border.default.defaultPressed,
+} as const;

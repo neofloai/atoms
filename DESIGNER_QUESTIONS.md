@@ -1454,3 +1454,13 @@ The fourth is not a rung but a rule: `outlineStyles` recolours the label on hove
 - **The solid cell's label is Regular; the outlined cell's, and every other cell's, is Medium.** Shipped at Medium.
 
 **The trailing glyph is now in the set, and it is MUI's delete slot.** Every cell draws a 12px glyph on both sides. The leading one is `icon`, already 12; the trailing one is where `onDelete` renders, which was unsized and drew at MUI's 22px — taller than the chip. It is now held at 12 on the tag. The pill's delete glyph was not touched. #61's question about the status sheet's 14px slot is unchanged: this sheet still draws 12.
+
+### 69. The segmented toggle group arrives beside the joined one, not in place of it (added 1 October, source: Product Design System node 4272:15006)
+
+Shipped as `ToggleButtonGroup appearance="segmented"`: a `surface/layers/card 3` track inside a `border/layers/card 3` hairline with 2px of inset and 4px between buttons; 24px buttons at 4 x 8 padding with an 8px gap and 14px glyphs; off is a `text/default/b3` Sans/B2/Regular label with no chrome, on is a `surface/layers/page` thumb in the track's own hairline with a `text/default/b1` Sans/B2/Medium label. Every value matches the frame in light mode. The icon toggles (node 3763:4790) and their joined groups are still on the sheet next to it, so `outline` and `text` are untouched and nothing is removed. Open points:
+
+1. **Is this meant to replace the joined `outline` group?** It was read as an addition because the older sheet is still there. If the joined group is retired, `segmented` becomes the group default and the Reporting pattern's two range pickers move onto it.
+2. **The thumb sinks in dark mode.** `surface/layers/page` is grey/1075 in dark and the track's `card 3` is grey/900, so the selected button is *darker* than the track around it — a well rather than a raised thumb. Shipped as bound. Is that intended, or should the dark thumb take a `card` rung above the track?
+3. **One size, neutral only.** The frame draws one height and no colour roles, so `size` and `color` are ignored at `segmented`. Is a 32px or 36px segmented control expected beside the 32/36px buttons and fields?
+4. **States were composed.** Only `Default` and `Active` are drawn. Hover steps an off label to `text/default/b2`, press to `b1`; the thumb ignores the pointer; focus is the house ring; disabled greys the ink, and a disabled button that is on keeps its thumb with a `border/disabled/default` hairline.
+5. **The label changes weight on selection,** so a button grows by about a pixel when chosen (the frame's own items measure 106 and 107). Kept as drawn; a fixed-width layout would need the Medium width reserved.

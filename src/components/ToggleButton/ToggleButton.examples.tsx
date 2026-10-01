@@ -44,10 +44,10 @@ export const data: ComponentExamplesData = {
     },
     {
       name: 'appearance',
-      type: "'outline' | 'text'",
+      type: "'outline' | 'text' | 'segmented'",
       default: "'outline'",
       description:
-        'How much chrome at rest: the 1px neutral border, or none. `text` is for toggles inside a surface that already has an edge, like a floating toolbar.',
+        'How much chrome at rest: the 1px neutral border, or none. `text` is for toggles inside a surface that already has an edge, like a floating toolbar. `segmented` is set on the group: a grey track around labelled buttons, the selected one raised out of it as a white thumb. It is one size (a 28px track) and neutral only, so `size` and `color` do not reach it.',
     },
     {
       name: 'exclusive',
@@ -196,6 +196,43 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
+      title: 'A segmented control',
+      description:
+        '`appearance="segmented"` on the group draws a track and raises the selected button out of it — the compact way to switch a filter, a range or a view in a toolbar or a card header. Labels keep the case you write them in, and a glyph either side of the label sits at 14px.',
+      code: [
+        'const [range, setRange] = React.useState("30d");',
+        '',
+        '<ToggleButtonGroup',
+        '  appearance="segmented"',
+        '  exclusive',
+        '  value={range}',
+        '  onChange={(_, next) => next && setRange(next)}',
+        '  aria-label="Reporting window"',
+        '>',
+        '  <ToggleButton value="7d">7d</ToggleButton>',
+        '  <ToggleButton value="30d">30d</ToggleButton>',
+        '  <ToggleButton value="90d">90d</ToggleButton>',
+        '</ToggleButtonGroup>',
+      ].join('\n'),
+    },
+    {
+      title: 'Segmented, with glyphs',
+      description:
+        'Children are arbitrary here too. A glyph beside each label says what the view looks like before it is chosen.',
+      code: [
+        '<ToggleButtonGroup',
+        '  appearance="segmented"',
+        '  exclusive',
+        '  value={view}',
+        '  onChange={(_, next) => next && setView(next)}',
+        '  aria-label="Result layout"',
+        '>',
+        '  <ToggleButton value="list"><ListIcon />List</ToggleButton>',
+        '  <ToggleButton value="grid"><GridFourIcon />Grid</ToggleButton>',
+        '</ToggleButtonGroup>',
+      ].join('\n'),
+    },
+    {
       title: 'Stacked',
       description:
         '`orientation="vertical"` for a rail beside a canvas. The shared borders and squared corners follow the axis.',
@@ -291,6 +328,7 @@ export const data: ComponentExamplesData = {
     'Pass `appearance="text"` when the toggles sit on a surface that already has a border and a shadow, so the row does not draw a second box inside the first',
     'Reach for `Checkbox` instead when the choice belongs in a form and will be submitted with it, and for `Tabs` when the choice swaps a whole panel of content',
     'Keep the glyphs in a group from one family and one weight, since they are compared against each other at 20px',
+    'Use `appearance="segmented"` for a short, labelled, exclusive choice that changes what is on screen — a date range, an entity, a view — and keep one selected by refusing `null`',
     'Use it for the rows of an app navigation rail — a stacked group inside a `permanent` Drawer, one row per destination, `selected` on the current one. It is the rail in the Dashboard pattern because it already carries the selected tint and survives the fold to icons; `List` is for navigation inside a page',
   ],
   donts: [
@@ -299,6 +337,8 @@ export const data: ComponentExamplesData = {
     "Don't use a group of one. A single toggle needs no `value` comparison, so `selected` on a standalone `ToggleButton` says the same thing with less machinery",
     "Don't put more than about five toggles in a row before considering a `Select` — a row of icons has no room for the labels that would explain them",
     "Don't mix `size` within a group; the shared borders assume the buttons are the same height",
+    "Don't build a segmented control out of icon-only buttons. Its thumb is drawn for a label, and a row of bare glyphs belongs in an `outline` or `text` group",
+    "Don't set `appearance=\"segmented\"` on a standalone `ToggleButton`. The track is drawn by the group, so a lone one is a thumb with nothing around it",
     "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control",
   ],
   relatedComponents: ['IconButton', 'Chip', 'Checkbox', 'Divider', 'Drawer'],

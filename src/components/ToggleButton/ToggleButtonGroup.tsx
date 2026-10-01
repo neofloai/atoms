@@ -3,16 +3,19 @@
 import * as React from 'react';
 import {
   ToggleButtonGroup as MuiToggleButtonGroup,
+  toggleButtonClasses,
   toggleButtonGroupClasses,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { radius, spacing } from '@/src/tokens';
 
-import { ToggleButtonGroupContext } from './ToggleButtonGroupContext';
-import { muiColorMap, muiSizeMap } from './toggleButtonTokens';
+import { OUTLINE_BORDER_WIDTH_PX, paired } from '../_shared/actionStyles';
 
-import type { CSSObject } from '@mui/material/styles';
+import { ToggleButtonGroupContext } from './ToggleButtonGroupContext';
+import { SEGMENTED, muiColorMap, muiSizeMap } from './toggleButtonTokens';
+
+import type { CSSObject, Theme } from '@mui/material/styles';
 import type {
   ToggleButtonAppearance,
   ToggleButtonGroupProps,
@@ -42,10 +45,69 @@ interface StyledToggleButtonGroupProps {
  *   there is nothing to collapse, and touching borderless buttons would
  *   read as one wide button. This is the toolbar in node 3763:5099, and
  *   it is what MUI's own "Customized dividers" demo hand-writes.
+ *
+ * `appearance="segmented"` is the one appearance where the group does
+ * draw something: the track. See `segmentedTrackStyles`.
  */
+/**
+ * Undoes MUI's collapse, so each child keeps all four corners and both
+ * of its edges. Both margins take back the 1px overlap in either
+ * orientation.
+ */
+const ungroupedChildren: CSSObject = {
+  [[
+    `& .${toggleButtonGroupClasses.firstButton}`,
+    `& .${toggleButtonGroupClasses.middleButton}`,
+    `& .${toggleButtonGroupClasses.lastButton}`,
+  ].join(', ')]: {
+    borderRadius: radius.xs,
+    marginLeft: 0,
+    marginTop: 0,
+  },
+};
+
+/**
+ * The segmented track: node 4272:15006's `Toggle group` frame.
+ *
+ * The padding is the frame's 2px inset with the 1px border taken out of
+ * it, because Figma strokes inside the frame — so the track measures
+ * 1 + 1 + 24 + 1 + 1 = 28, as drawn.
+ *
+ * One MUI rule outranks the button's own styles and has to be answered
+ * here: two *adjacent* selected buttons (a non-exclusive group) have the
+ * second one's leading edge removed outright, width and all. Each
+ * thumb is a separate raised button with its own hairline, so the edge
+ * is put back.
+ */
+function segmentedTrackStyles(theme: Theme): CSSObject {
+  const adjacentSelected = `& .${toggleButtonGroupClasses.grouped}.${toggleButtonClasses.selected} + .${toggleButtonGroupClasses.grouped}.${toggleButtonClasses.selected}`;
+  return {
+    borderRadius: radius.xs,
+    gap: SEGMENTED.trackGapPx,
+    padding: SEGMENTED.trackInsetPx - OUTLINE_BORDER_WIDTH_PX,
+    border: `${OUTLINE_BORDER_WIDTH_PX}px solid`,
+    ...paired(theme, {
+      backgroundColor: SEGMENTED.trackBg,
+      borderColor: SEGMENTED.trackBorder,
+    }),
+    ...ungroupedChildren,
+    [adjacentSelected]: {
+      borderWidth: OUTLINE_BORDER_WIDTH_PX,
+      borderStyle: 'solid',
+      marginLeft: 0,
+      marginTop: 0,
+      ...paired(theme, { borderColor: SEGMENTED.thumbBorder }),
+    },
+  };
+}
+
 const StyledToggleButtonGroup = styled(MuiToggleButtonGroup, {
   shouldForwardProp: (prop) => prop !== 'neofloAppearance',
-})<StyledToggleButtonGroupProps>(({ neofloAppearance }) => {
+})<StyledToggleButtonGroupProps>(({ theme, neofloAppearance }) => {
+  if (neofloAppearance === 'segmented') {
+    return segmentedTrackStyles(theme);
+  }
+
   // Matches the buttons' own corner, which the group has to do at every
   // appearance: the buttons paint the outer corners, so a group rounded
   // differently would either clip them or leave a sliver of frame
@@ -59,25 +121,14 @@ const StyledToggleButtonGroup = styled(MuiToggleButtonGroup, {
   return {
     ...base,
     gap: spacing.component.xxs,
-    [[
-      `& .${toggleButtonGroupClasses.firstButton}`,
-      `& .${toggleButtonGroupClasses.middleButton}`,
-      `& .${toggleButtonGroupClasses.lastButton}`,
-    ].join(', ')]: {
-      // Both undo MUI's collapse: the shorthand takes back all four
-      // corners it squared, and the margins take back the 1px overlap in
-      // either orientation.
-      borderRadius: radius.xs,
-      marginLeft: 0,
-      marginTop: 0,
-    },
+    ...ungroupedChildren,
   };
 });
 
 /**
  * A row or column of `ToggleButton`s that share one selection. Wraps MUI
  * `ToggleButtonGroup` with the Neoflo API from the Product Design System
- * Figma (node 3763:5334).
+ * Figma (node 3763:5334), plus the segmented track from node 4272:15006.
  *
  * MUI's selection model is untouched, and it is the whole point of the
  * component: `value` plus `onChange(event, value)`, with `exclusive`
@@ -95,6 +146,18 @@ const StyledToggleButtonGroup = styled(MuiToggleButtonGroup, {
  * >
  *   <ToggleButton value="left" aria-label="Align left"><TextAlignLeftIcon /></ToggleButton>
  *   <ToggleButton value="center" aria-label="Align centre"><TextAlignCenterIcon /></ToggleButton>
+ * </ToggleButtonGroup>
+ *
+ * @example A segmented control — labelled, on a track
+ * <ToggleButtonGroup
+ *   appearance="segmented"
+ *   exclusive
+ *   value={range}
+ *   onChange={(_, next) => next && setRange(next)}
+ *   aria-label="Reporting window"
+ * >
+ *   <ToggleButton value="7d">7d</ToggleButton>
+ *   <ToggleButton value="30d">30d</ToggleButton>
  * </ToggleButtonGroup>
  *
  * @example Any number at once
