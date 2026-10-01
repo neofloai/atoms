@@ -6,7 +6,7 @@
 ARG NODE_VERSION=22
 
 # Base image shared by every stage so the toolchain stays identical.
-FROM node:${NODE_VERSION}-alpine AS base
+FROM public.ecr.aws/docker/library/node:${NODE_VERSION}-alpine AS base
 # libc6-compat lets the prebuilt Next.js/SWC binaries run on Alpine musl.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
