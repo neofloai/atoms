@@ -38,3 +38,13 @@
  */
 
 export * from '@phosphor-icons/react';
+
+/**
+ * Brand marks, which Phosphor does not carry in brand colours.
+ *
+ * Named exports rather than a second star: esbuild can resolve these
+ * statically, and an explicit name also makes the one collision
+ * visible — Phosphor's `GoogleLogoIcon` is a monochrome glyph and stays
+ * exactly where it was.
+ */
+export { GoogleLogoColorIcon } from './brand/GoogleLogo';

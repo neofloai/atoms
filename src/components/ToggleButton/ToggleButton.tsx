@@ -28,6 +28,7 @@ import { ToggleButtonGroupContext } from './ToggleButtonGroupContext';
 import {
   HOVER_BG,
   PRESSED_BG,
+  SEGMENTED,
   TOGGLE_BORDER_TOKEN,
   TOGGLE_PADDING_PX,
   UNSELECTED_INK,
@@ -142,6 +143,76 @@ function stateStyles(
   };
 }
 
+/**
+ * The whole of `appearance="segmented"`, geometry and colour together —
+ * it shares no size or role with the other two appearances, so it does
+ * not go through `sizeStyles` or `stateStyles`.
+ *
+ * Under `&&` so the selected thumb's hairline is one class more specific
+ * than the transparent left (or top) edge MUI's group puts on every
+ * button after the first to collapse it against its neighbour. A
+ * segmented button has nothing to collapse, and without this the thumb
+ * would lose its left edge whenever it is not the first button.
+ */
+function segmentedStyles(theme: Theme): CSSObject {
+  const label = SEGMENTED.label;
+  return {
+    '&&': {
+      // The border is reserved at rest so selecting a button does not
+      // move it, and comes out of the padding — Figma strokes inside the
+      // 24px box. 3 + 1 + 16 + 1 + 3 = 24.
+      paddingBlock: SEGMENTED.paddingBlockPx - OUTLINE_BORDER_WIDTH_PX,
+      paddingInline: SEGMENTED.paddingInlinePx - OUTLINE_BORDER_WIDTH_PX,
+      border: `${OUTLINE_BORDER_WIDTH_PX}px solid transparent`,
+      borderRadius: radius.xs,
+      gap: SEGMENTED.gapPx,
+      fontFamily: fontFamilies.product.sans,
+      fontWeight: fontWeights.regular,
+      fontSize: label.size,
+      lineHeight: `${label.leading}px`,
+      letterSpacing: `${label.letterSpacing}em`,
+      // MUI's `button` ramp uppercases; the design's labels keep their
+      // case, and a unit like `7d` means something else as `7D`.
+      textTransform: 'none',
+      whiteSpace: 'nowrap',
+      backgroundColor: 'transparent',
+      '& > svg': { width: SEGMENTED.glyphPx, height: SEGMENTED.glyphPx },
+      ...paired(theme, { color: SEGMENTED.ink }),
+      '&:hover': {
+        backgroundColor: 'transparent',
+        ...paired(theme, { color: SEGMENTED.hoverInk }),
+      },
+      '&:active': paired(theme, { color: SEGMENTED.pressedInk }),
+      '&.Mui-focusVisible': focusRing(theme, SEGMENTED.focusRing),
+      [`&.${toggleButtonClasses.selected}`]: {
+        fontWeight: fontWeights.medium,
+        letterSpacing: `${SEGMENTED.selectedTrackingEm}em`,
+        ...paired(theme, {
+          backgroundColor: SEGMENTED.thumbBg,
+          borderColor: SEGMENTED.thumbBorder,
+          color: SEGMENTED.selectedInk,
+        }),
+        // The thumb is already the strongest state a button can reach,
+        // so the pointer leaves it alone.
+        '&:hover': paired(theme, {
+          backgroundColor: SEGMENTED.thumbBg,
+          color: SEGMENTED.selectedInk,
+        }),
+      },
+      [`&.${toggleButtonClasses.disabled}`]: paired(theme, {
+        color: text.disabled.default,
+      }),
+      // A disabled button that is still on keeps its thumb, or it would
+      // read as off; only the ink and the hairline go grey.
+      [`&.${toggleButtonClasses.disabled}.${toggleButtonClasses.selected}`]:
+        paired(theme, {
+          borderColor: border.disabled.default,
+          color: text.disabled.default,
+        }),
+    },
+  };
+}
+
 interface StyledToggleButtonProps {
   neofloColor: ToggleButtonColor;
   neofloSize: ToggleButtonSize;
@@ -154,10 +225,13 @@ const StyledToggleButton = styled(MuiToggleButton, {
     prop !== 'neofloSize' &&
     prop !== 'neofloAppearance',
 })<StyledToggleButtonProps>(
-  ({ theme, neofloColor, neofloSize, neofloAppearance }) => ({
-    ...sizeStyles(neofloSize),
-    ...stateStyles(theme, neofloColor, neofloAppearance),
-  })
+  ({ theme, neofloColor, neofloSize, neofloAppearance }) =>
+    neofloAppearance === 'segmented'
+      ? segmentedStyles(theme)
+      : {
+          ...sizeStyles(neofloSize),
+          ...stateStyles(theme, neofloColor, neofloAppearance),
+        }
 );
 
 /**
@@ -181,6 +255,9 @@ const StyledToggleButton = styled(MuiToggleButton, {
  *
  * @example Borderless, for a toolbar
  * <ToggleButton value="italic" appearance="text" aria-label="Italic"><TextItalicIcon /></ToggleButton>
+ *
+ * `appearance="segmented"` is set on the group, which draws the track;
+ * see `ToggleButtonGroup`.
  *
  * @see Related: ToggleButtonGroup, IconButton, Chip, Checkbox
  */

@@ -31,17 +31,21 @@ import {
   pickerFieldStyles,
 } from '../_shared/pickerStyles';
 import {
-  FIELD_RADIUS,
+  CELL_RADIUS,
   HAIRLINE_WIDTH_PX,
   cell,
-  fieldType,
+  cellType,
   headerType,
-  labelType,
+  cellLabelType,
 } from '../_shared/pickerTokens';
 import { today } from './datePickerTokens';
 
 import type { PaperProps } from '@mui/material/Paper';
-import type { DatePickerProps, DatePickerStatus } from './DatePicker.types';
+import type {
+  DatePickerProps,
+  DatePickerSize,
+  DatePickerStatus,
+} from './DatePicker.types';
 
 const HOUSE_ICONS = {
   openPickerIcon: glyph(CalendarBlankIcon, 'DatePickerOpenIcon'),
@@ -95,18 +99,18 @@ const PanelPaper = styled(Paper)(({ theme }) => ({
 
   // --- The weekday row ---
   [`& .${dayCalendarClasses.weekDayLabel}`]: {
-    ...labelType,
+    ...cellLabelType,
     ...paired(theme, { color: cell.muted }),
   },
   [`& .${dayCalendarClasses.weekNumberLabel}, & .${dayCalendarClasses.weekNumber}`]:
     {
-      ...labelType,
+      ...cellLabelType,
       ...paired(theme, { color: cell.muted }),
     },
 
   // --- Day cells ---
   [`& .${pickerDayClasses.root}`]: {
-    ...fieldType,
+    ...cellType,
     ...paired(theme, { color: cell.ink }),
     '&:hover': paired(theme, { backgroundColor: cell.hover }),
     '&:active': paired(theme, { backgroundColor: cell.pressed }),
@@ -167,8 +171,8 @@ const PanelPaper = styled(Paper)(({ theme }) => ({
 
   // --- Month and year cells, in the `month` and `year` views ---
   [`& .${monthCalendarClasses.button}, & .${yearCalendarClasses.button}`]: {
-    ...fieldType,
-    borderRadius: FIELD_RADIUS,
+    ...cellType,
+    borderRadius: CELL_RADIUS,
     ...paired(theme, { color: cell.ink }),
     '&:hover': paired(theme, { backgroundColor: cell.hover }),
     '&:active': paired(theme, { backgroundColor: cell.pressed }),
@@ -216,12 +220,13 @@ const PanelPaper = styled(Paper)(({ theme }) => ({
 
 interface StyledDatePickerProps {
   neofloStatus?: DatePickerStatus;
+  neofloSize: DatePickerSize;
 }
 
 const StyledDatePicker = styled(MuiDatePicker, {
-  shouldForwardProp: (prop) => prop !== 'neofloStatus',
-})<StyledDatePickerProps>(({ theme, neofloStatus }) =>
-  pickerFieldStyles(theme, neofloStatus)
+  shouldForwardProp: (prop) => prop !== 'neofloStatus' && prop !== 'neofloSize',
+})<StyledDatePickerProps>(({ theme, neofloStatus, neofloSize }) =>
+  pickerFieldStyles(theme, { status: neofloStatus, size: neofloSize })
 );
 
 /* ------------------------------------------------------------------ *
@@ -291,13 +296,23 @@ const StyledDatePicker = styled(MuiDatePicker, {
  */
 export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
   function DatePicker(
-    { status, helperText, fullWidth, clearable, slots, slotProps, ...rest },
+    {
+      status,
+      size = 'md',
+      helperText,
+      fullWidth,
+      clearable,
+      slots,
+      slotProps,
+      ...rest
+    },
     ref
   ) {
     return (
       <StyledDatePicker
         ref={ref}
         neofloStatus={status}
+        neofloSize={size}
         slots={{
           desktopPaper: PanelPaper,
           mobilePaper: PanelPaper,

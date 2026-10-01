@@ -20,10 +20,17 @@ export type InputAdornmentProps = MuiInputAdornmentProps;
 export type TextFieldStatus = 'error' | 'success' | 'warning';
 
 /**
+ * Field height: `md` = 36px, `lg` = 40px. Label, helper text and the
+ * input's type are the same at both; only the field box grows.
+ */
+export type TextFieldSize = 'md' | 'lg';
+
+/**
  * Props for the Neoflo `TextField`.
  *
  * Extends MUI's `TextFieldProps` minus the props we remap or manage
- * internally (`variant`, `color`, `error`, `size`, `slotProps`).
+ * internally (`variant`, `color`, `error`, `size`, `slotProps`) —
+ * `size` is replaced by the Neoflo `md` / `lg` ladder.
  * Everything else — `label`, `placeholder`, `helperText`, `value`,
  * `onChange`, `multiline`, `rows`, `minRows`, `maxRows`, `fullWidth`,
  * `disabled`, `sx` — passes through.
@@ -33,8 +40,13 @@ export interface TextFieldProps
     MuiTextFieldProps,
     'variant' | 'color' | 'error' | 'size' | 'slotProps'
   > {
-  /** Validation status. Colours the border and helper text. */
+  /**
+   * Validation status. Tints the field and colours its border, helper
+   * text and adornment glyphs; the label stays neutral.
+   */
   status?: TextFieldStatus;
+  /** Field height. @default 'md' */
+  size?: TextFieldSize;
   /** Element rendered at the start of the input, inside the border. */
   startAdornment?: React.ReactNode;
   /** Element rendered at the end of the input, inside the border. */

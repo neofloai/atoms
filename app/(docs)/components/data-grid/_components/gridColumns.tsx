@@ -36,8 +36,8 @@ const CELL_ICON_PX = TABLE_CELL_ICON_PX;
  * The row action's width, held down the column.
  *
  * A call-site number rather than a `Button` size — the component hugs its
- * content by design and a table wants one width. The 32px height is
- * `size="sm"`.
+ * content by design and a table wants one width. The height is whatever
+ * `size="sm"` is — 28px since the September redraw.
  */
 const CTA_WIDTH_PX = 96;
 

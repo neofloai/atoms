@@ -13,11 +13,14 @@ import type { ModeToken } from '@/src/tokens';
  *
  * They no longer agree on every *value*, though. The 11 August update
  * moved `Button`'s low-emphasis treatment and left `IconButton`'s
- * alone, so two things still depend on which control is asking:
- * `primary`'s soft fills and `primary`'s resting `outline` label. Call
- * sites pass their `ActionControl` so those stay in this one table
- * rather than leaking into the components. Both were read off
- * `IconButton`'s own component set, not assumed from `Button`'s.
+ * alone, and the 30 September redraw (node 4137:10437) moved `Button`'s
+ * `outline` border on two roles while `button-icon` stayed on its
+ * 10 August publish. So the low-emphasis half of every role is now
+ * per-control: soft fills, the resting `outline` label, and the
+ * `outline` border. Call sites pass their `ActionControl` so those stay
+ * in this one table rather than leaking into the components. Every
+ * `iconButton` value was read off `IconButton`'s own component set, not
+ * assumed from `Button`'s.
  *
  * The third disagreement is closed by decision rather than by an
  * export: that update also had a hovered `text` Button mark itself with
@@ -84,6 +87,26 @@ interface SoftSpec {
    * resting label darker than the hovered one.
    */
   readonly outlineText: ModeToken;
+  /**
+   * Resting, hover and focus border for `outline` — constant across all
+   * three.
+   *
+   * Per-control because the September redraw took `Button`'s `primary`
+   * and `warning` borders off the role's tier-1 rung and left
+   * `IconButton`'s where they were.
+   */
+  readonly outlineBorder: ModeToken;
+  /**
+   * The same border while held.
+   *
+   * On `iconButton` every role but `primary` drops to the neutral
+   * border here, which reads oddly on `error` and is the open question
+   * in DESIGNER_QUESTIONS.md #29. The September redraw answers it for
+   * `button`: all five roles now keep their own border pressed, so on
+   * that control this is always equal to `outlineBorder` and the
+   * property stays only because the two sheets still disagree.
+   */
+  readonly outlineBorderPressed: ModeToken;
 }
 
 interface RoleTokens {
@@ -92,18 +115,6 @@ interface RoleTokens {
   containedBgPressed: ModeToken;
   containedText: ModeToken;
   accentText: ModeToken;
-  /**
-   * Resting, hover and focus border for `outline` — constant across all
-   * three, on the role's own tier-1 border.
-   */
-  outlineBorder: ModeToken;
-  /**
-   * Pressed border for `outline`. Every role but `primary` drops to the
-   * neutral border while held. That reads oddly on `error`, but both
-   * component sets draw it independently on the same roles, so it is a
-   * spec rather than a stray copy-paste. See DESIGNER_QUESTIONS.md #29.
-   */
-  outlineBorderPressed: ModeToken;
   focusRing: ModeToken;
   soft: Record<ActionControl, SoftSpec>;
 }
@@ -132,24 +143,31 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBgPressed: surface.primary.defaultPressed,
     containedText: text.default['heading on-color'],
     accentText: text.primary[2],
-    outlineBorder: border.primary.default,
-    // The one role that keeps its own border while held.
-    outlineBorderPressed: border.primary.default,
     focusRing: border.primary.focus,
-    // The only role where the two sets disagree. Button's soft fills
+    // The role where the two sets disagree most. Button's soft fills
     // sit one rung lighter than IconButton's, and its `outline` rests
     // on the darker `body` label before lightening to `caption` on
     // interaction (nodes 983:17174 resting, 983:17166 hovered).
+    //
+    // The September redraw then darkened Button's `outline` border one
+    // rung, from `border/primary/1` to `border/primary/2` — a 1px
+    // #d5d8f7 hairline was close enough to the page to read as no
+    // border at all. `IconButton` still draws the lighter one.
     soft: {
       button: {
         hover: surface.primary.subtle,
         pressed: surface.primary.subtleHover,
         outlineText: text.primary[1],
+        outlineBorder: border.primary.defaultHover,
+        outlineBorderPressed: border.primary.defaultHover,
       },
       iconButton: {
         hover: surface.primary.subtleHover,
         pressed: surface.primary.subtlePressed,
         outlineText: text.primary[2],
+        // The one role IconButton already kept its own border on.
+        outlineBorderPressed: border.primary.default,
+        outlineBorder: border.primary.default,
       },
     },
   },
@@ -159,9 +177,6 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBgPressed: surface.default.defaultPressed,
     containedText: text.default.b1,
     accentText: text.default.b1,
-    outlineBorder: border.default.default,
-    // Already the neutral border, so the pressed swap is a no-op here.
-    outlineBorderPressed: border.default.default,
     focusRing: border.default.defaultPressed,
     // The neutral group has no separate `subtle` ladder, and its first
     // rung is already the *filled* resting fill — so the soft states
@@ -180,6 +195,10 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
       hover: modePair(surface.default.defaultHover, surface.default.defaultPressed),
       pressed: surface.default.defaultPressed,
       outlineText: text.default.b1,
+      outlineBorder: border.default.default,
+      // Already the neutral border, so the pressed swap was a no-op here
+      // and the two controls never differed.
+      outlineBorderPressed: border.default.default,
     }),
   },
   success: {
@@ -188,14 +207,23 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBgPressed: surface.success.defaultPressed,
     containedText: text.success[2],
     accentText: text.success[2],
-    outlineBorder: border.success.default,
-    outlineBorderPressed: border.default.default,
     focusRing: border.success.focus,
-    soft: bothControls({
-      hover: surface.success.subtleHover,
-      pressed: surface.success.subtlePressed,
-      outlineText: text.success[2],
-    }),
+    soft: {
+      button: {
+        hover: surface.success.subtleHover,
+        pressed: surface.success.subtlePressed,
+        outlineText: text.success[2],
+        outlineBorder: border.success.default,
+        outlineBorderPressed: border.success.default,
+      },
+      iconButton: {
+        hover: surface.success.subtleHover,
+        pressed: surface.success.subtlePressed,
+        outlineText: text.success[2],
+        outlineBorder: border.success.default,
+        outlineBorderPressed: border.default.default,
+      },
+    },
   },
   error: {
     containedBg: surface.error.default,
@@ -203,14 +231,23 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBgPressed: surface.error.defaultPressed,
     containedText: text.error[2],
     accentText: text.error[2],
-    outlineBorder: border.error.default,
-    outlineBorderPressed: border.default.default,
     focusRing: border.error.focus,
-    soft: bothControls({
-      hover: surface.error.subtleHover,
-      pressed: surface.error.subtlePressed,
-      outlineText: text.error[2],
-    }),
+    soft: {
+      button: {
+        hover: surface.error.subtleHover,
+        pressed: surface.error.subtlePressed,
+        outlineText: text.error[2],
+        outlineBorder: border.error.default,
+        outlineBorderPressed: border.error.default,
+      },
+      iconButton: {
+        hover: surface.error.subtleHover,
+        pressed: surface.error.subtlePressed,
+        outlineText: text.error[2],
+        outlineBorder: border.error.default,
+        outlineBorderPressed: border.default.default,
+      },
+    },
   },
   warning: {
     containedBg: surface.warning.default,
@@ -218,14 +255,29 @@ const roleTokens: Record<ActionVariant, RoleTokens> = {
     containedBgPressed: surface.warning.defaultPressed,
     containedText: text.warning[2],
     accentText: text.warning[2],
-    outlineBorder: border.warning.default,
-    outlineBorderPressed: border.default.default,
     focusRing: border.warning.focus,
-    soft: bothControls({
-      hover: surface.warning.subtleHover,
-      pressed: surface.warning.subtlePressed,
-      outlineText: text.warning[2],
-    }),
+    // The second role the September redraw moved, and it moved further
+    // than `primary` did: `border/warning/1` (`yellow/400`, a pale
+    // butter) to `border/warning/3` (`yellow/600`). Yellow is the one
+    // ramp whose light rungs carry almost no contrast against a white
+    // page, so an outlined warning button had a border you could only
+    // find by looking for it. `IconButton` still draws `yellow/400`.
+    soft: {
+      button: {
+        hover: surface.warning.subtleHover,
+        pressed: surface.warning.subtlePressed,
+        outlineText: text.warning[2],
+        outlineBorder: border.warning.focus,
+        outlineBorderPressed: border.warning.focus,
+      },
+      iconButton: {
+        hover: surface.warning.subtleHover,
+        pressed: surface.warning.subtlePressed,
+        outlineText: text.warning[2],
+        outlineBorder: border.warning.default,
+        outlineBorderPressed: border.default.default,
+      },
+    },
   },
 };
 
@@ -358,18 +410,18 @@ export function appearanceStyles(
       borderStyle: 'solid',
       ...paired(theme, {
         color: soft.outlineText,
-        borderColor: role.outlineBorder,
+        borderColor: soft.outlineBorder,
       }),
       '&:hover': paired(theme, {
         backgroundColor: soft.hover,
         color: role.accentText,
       }),
-      // Press is the only state that moves the border off the role —
-      // see `RoleTokens.outlineBorderPressed`.
+      // On `iconButton` press is still the one state that moves the
+      // border off the role — see `SoftSpec.outlineBorderPressed`.
       '&:active': paired(theme, {
         backgroundColor: soft.pressed,
         color: role.accentText,
-        borderColor: role.outlineBorderPressed,
+        borderColor: soft.outlineBorderPressed,
       }),
       '&.Mui-focusVisible': pairedFocusRing(
         theme,
@@ -415,100 +467,64 @@ export function appearanceStyles(
 }
 
 /**
- * The angle the gradient runs at.
+ * `social` — the sign-in CTA, the one action treatment drawn with a fill
+ * *and* a border at the same time (node 4149:5558).
  *
- * The sheet exports 178.28deg, which is 180 plus the rounding a frame
- * picks up from being drawn by hand. Straight down is what it means and
- * what ships -- a 1.7deg lean on a 48px box moves the ramp by under a
- * pixel and costs the value its legibility.
+ * It is not a colour role and not an emphasis level, which is why it
+ * lives here rather than in `roleTokens`. Figma puts it on the `type`
+ * axis beside primary/secondary/success/error/warning, but it is drawn
+ * for exactly one of them — neutral — and for exactly one `style`,
+ * outline. A role that exists in one style is a treatment wearing a
+ * role's clothes, so `ButtonAppearance` carries it instead and
+ * `variant` has no effect on it.
+ *
+ * ## Why a fill and a border
+ *
+ * Every other neutral control in the system picks one or the other: a
+ * `secondary` `contained` button is a grey fill with no border, a
+ * `secondary` `outline` button is a border over the page. This one is
+ * a near-white card (`surface/layers/card 1`) inside the standard
+ * neutral hairline, which is the same pair `Card` uses. It is drawn to
+ * sit in a login column where there is no surrounding chrome to
+ * separate it from the page, and where the label it carries belongs to
+ * someone else — "Continue with Google", "Continue with Microsoft" —
+ * so the button has to stay visually quiet enough not to compete with
+ * a brand logo sitting inside it.
+ *
+ * The hover and press fills walk the neutral ladder down from that
+ * card rather than up, so the control darkens under the pointer the
+ * way `secondary` does; in dark mode the same three rungs run
+ * `grey/1000`, `grey/950`, `grey/900`.
+ *
+ * Disabled is the only state that moves the border: the fill stays put
+ * and the hairline lightens to `border/layers/card 2`, so a disabled
+ * one reads as a card that has stopped being a button rather than as a
+ * greyed-out box.
  */
-const PROMINENT_GRADIENT_ANGLE = '180deg';
-
-function prominentGradient(from: string, to: string): string {
-  return `linear-gradient(${PROMINENT_GRADIENT_ANGLE}, ${from} 0%, ${to} 100%)`;
-}
-
-/**
- * `prominent` — the one page-level call to action, painted as a vertical
- * gradient rather than a flat fill.
- *
- * Kept out of `ActionAppearance` on purpose. That union is shared with
- * `IconButton` and everything else built on `appearanceStyles`, and this
- * treatment is drawn for a labelled button only: a 20px glyph in a 48px
- * square has no room for a ramp to read across. `ButtonAppearance` widens
- * the union locally instead, so adding this costs the other controls
- * nothing.
- *
- * ## The gradient is two rungs the role already owns
- *
- * It runs from the role's *hover* fill at the top down to its *resting*
- * fill at the bottom, which is exactly what the sheet draws for primary:
- * `primary/400` (#5f6aea, our `surface.primary.defaultHover`) into
- * `primary/500`, and our resting primary is within a hair of that. So
- * nothing is invented, and the rule generalises -- every role has both
- * rungs, so `variant="error"` gets its own ramp rather than a primary
- * one or a crash.
- *
- * It also means the resting button already carries its own hover colour
- * along the top edge. Hover therefore *flattens* to that colour rather
- * than darkening: the button resolves to the lighter end of the ramp it
- * was already showing, which reads as lifting toward the pointer. Press
- * and focus follow `contained` exactly.
- *
- * Every state that is not the resting one sets `backgroundImage: 'none'`
- * explicitly. A `background-color` does not replace a
- * `background-image` -- the image paints over it -- so without this the
- * gradient would sit on top of every hover, press, focus and disabled
- * fill and none of them would show.
- */
-export function prominentStyles(
-  theme: Theme,
-  variant: ActionVariant
-): CSSObject {
-  const role = roleTokens[variant];
-
+export function socialStyles(theme: Theme): CSSObject {
   return {
-    backgroundImage: prominentGradient(
-      role.containedBgHover.light,
-      role.containedBg.light
+    borderWidth: OUTLINE_BORDER_WIDTH_PX,
+    borderStyle: 'solid',
+    ...paired(theme, {
+      backgroundColor: surface.layers.card1,
+      borderColor: border.default.default,
+      color: text.default.b1,
+    }),
+    '&:hover': paired(theme, {
+      backgroundColor: surface.default.defaultHover,
+    }),
+    '&:active': paired(theme, {
+      backgroundColor: surface.default.defaultPressed,
+    }),
+    '&.Mui-focusVisible': pairedFocusRing(
+      theme,
+      { backgroundColor: surface.default.defaultHover },
+      border.default.defaultPressed
     ),
-    color: role.containedText.light,
-    // The gradient is two rungs painted as an image, which `paired` cannot
-    // express; its stops and label are marked by hand instead.
-    ...tokenMarks({
-      color: role.containedText,
-      gradientFrom: role.containedBgHover,
-      gradientTo: role.containedBg,
+    '&.Mui-disabled': paired(theme, {
+      backgroundColor: surface.layers.card1,
+      borderColor: border.layers.card2,
+      color: text.disabled.default,
     }),
-    ...theme.applyStyles('dark', {
-      backgroundImage: prominentGradient(
-        role.containedBgHover.dark,
-        role.containedBg.dark
-      ),
-      color: role.containedText.dark,
-    }),
-    '&:hover': {
-      backgroundImage: 'none',
-      ...paired(theme, { backgroundColor: role.containedBgHover }),
-    },
-    '&:active': {
-      backgroundImage: 'none',
-      ...paired(theme, { backgroundColor: role.containedBgPressed }),
-    },
-    '&.Mui-focusVisible': {
-      backgroundImage: 'none',
-      ...pairedFocusRing(
-        theme,
-        { backgroundColor: role.containedBgHover },
-        role.focusRing
-      ),
-    },
-    '&.Mui-disabled': {
-      backgroundImage: 'none',
-      ...paired(theme, {
-        backgroundColor: surface.disabled.default,
-        color: text.disabled.default,
-      }),
-    },
   };
 }

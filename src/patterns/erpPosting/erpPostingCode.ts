@@ -227,8 +227,10 @@ function TaxHeader({
  * button jumps as the eye goes down it — the same problem a fixed CTA
  * width solves on the invoice queue, and the same answer. 104 rather
  * than that screen's 96 because the number is per column: it is sized
- * to its own longest label, and "Fix value" with a 14px wrench needs
- * 96 of the 96 exactly.
+ * to its own longest label. "Fix value" with a 14px wrench measured
+ * 96 of the 96 when this was pinned; the September redraw took the
+ * button's side padding from 12 to 8, so it now measures 90 and the
+ * column keeps its width with room to spare.
  *
  * \`ActionSlot\` is what holds it for the icon-button case, which has no
  * width of its own to pin.

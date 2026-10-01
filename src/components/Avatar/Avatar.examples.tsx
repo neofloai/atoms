@@ -10,7 +10,7 @@ export const data: ComponentExamplesData = {
   tagline:
     'Represents a user or entity with initials, an icon, or a photo, plus an optional status badge.',
   figmaUrl:
-    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=981-16471',
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=978-17187',
   props: [
     {
       name: 'children',
@@ -35,23 +35,24 @@ export const data: ComponentExamplesData = {
     },
     {
       name: 'size',
-      type: "'sm' | 'md' | 'lg'",
+      type: "'xs' | 'sm' | 'md' | 'lg'",
       default: "'md'",
-      description: 'Diameter: 24px, 32px, or 40px.',
+      description:
+        'Diameter: 20px, 24px, 36px, or 44px. `xs` holds a single initial.',
     },
     {
       name: 'shape',
       type: "'round' | 'mid' | 'sharp'",
       default: "'round'",
       description:
-        'Corner treatment: full circle, rounded square, or square.',
+        'Corner treatment: a full circle, a square with 4px corners, or a square with none.',
     },
     {
       name: 'color',
-      type: "'accent' | 'primary' | 'secondary' | 'success' | 'error' | 'warning'",
-      default: "'accent'",
+      type: "'primary' | 'purple' | 'information' | 'success' | 'warning' | 'orange' | 'error' | 'secondary'",
+      default: "'primary'",
       description:
-        'Background colour role for text / icon content. Ignored when an image renders.',
+        'Colour role for initials and icon content: a pale fill, a hairline a step deeper, and a dark ink, all of one hue. `secondary` is the neutral grey. Ignored when an image renders, which keeps only a neutral hairline.',
     },
     {
       name: 'badge',
@@ -77,7 +78,23 @@ export const data: ComponentExamplesData = {
     },
     {
       title: 'Icon content',
-      code: ['<Avatar color="primary">', '  <UserIcon />', '</Avatar>'].join('\n'),
+      description: 'An icon takes the role ink, the same as initials.',
+      code: ['<Avatar color="success">', '  <UserIcon />', '</Avatar>'].join('\n'),
+    },
+    {
+      title: 'Colour roles',
+      description:
+        'Eight hues. Give the same person the same role everywhere they appear, so the colour helps them be recognised.',
+      code: [
+        '<Avatar color="primary">AV</Avatar>',
+        '<Avatar color="purple">AV</Avatar>',
+        '<Avatar color="information">AV</Avatar>',
+        '<Avatar color="success">AV</Avatar>',
+        '<Avatar color="warning">AV</Avatar>',
+        '<Avatar color="orange">AV</Avatar>',
+        '<Avatar color="error">AV</Avatar>',
+        '<Avatar color="secondary">AV</Avatar>',
+      ].join('\n'),
     },
     {
       title: 'Shapes',
@@ -90,6 +107,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Sizes',
       code: [
+        '<Avatar size="xs">O</Avatar>',
         '<Avatar size="sm">OP</Avatar>',
         '<Avatar size="md">OP</Avatar>',
         '<Avatar size="lg">OP</Avatar>',
@@ -120,8 +138,9 @@ export const data: ComponentExamplesData = {
     'Use the `badge` dot for presence or status, not for counts',
   ],
   donts: [
-    "Don't put more than two characters of text inside an avatar",
+    "Don't put more than two characters of text inside an avatar, or more than one at `xs`",
     "Don't hardcode background colours — use the `color` role so both colour schemes work",
+    "Don't use `error` or `warning` to say something about the person — in an avatar they are only hues",
     "Don't mix sizes within a single avatar group or stack",
     "Don't rely on the badge colour alone to convey status — pair it with text elsewhere",
   ],

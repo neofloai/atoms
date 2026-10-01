@@ -20,10 +20,10 @@ export const data: ComponentExamplesData = {
     },
     {
       name: 'variant',
-      type: "'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'information' | 'orange' | 'purple'",
+      type: "'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'information' | 'orange' | 'purple' | 'muted'",
       default: "'primary'",
       description:
-        '`information`/`orange`/`purple` are only drawn at `size="sm"`; at `size="md"` they fall back to the `secondary` look.',
+        '`information`/`orange`/`purple`/`muted` are only drawn at `size="sm"`; at `size="md"` they fall back to the `secondary` look. `muted` is a paler grey than `secondary` with a lighter label, for metadata that should recede — a file type beside a file name. It is not `information`, which is blue.',
     },
     {
       name: 'appearance',
@@ -37,7 +37,7 @@ export const data: ComponentExamplesData = {
       type: "'sm' | 'md'",
       default: "'md'",
       description:
-        '`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (eight roles, no states).',
+        '`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (nine roles, no states).',
     },
     {
       name: 'dense',
@@ -58,7 +58,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size="sm"` only; the pill already carries a border on `appearance="outline"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one.',
+        'Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size="sm"` only; the pill already carries a border on `appearance="outline"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. On `success`, `error` and `purple` the label also steps a rung darker to hold against the outline. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one.',
     },
     {
       name: 'selected',
@@ -201,11 +201,29 @@ export const data: ComponentExamplesData = {
     {
       title: 'Flat tag colours',
       description:
-        '`size="sm"` adds three colour roles with no pill equivalent.',
+        '`size="sm"` adds four colour roles with no pill equivalent.',
       code: [
         '<Chip size="sm" variant="information" label="Info" />',
         '<Chip size="sm" variant="orange" label="Orange" />',
         '<Chip size="sm" variant="purple" label="Purple" />',
+        '<Chip size="sm" variant="muted" label="Muted" />',
+      ].join('\n'),
+    },
+    {
+      title: 'A tag with glyphs',
+      description:
+        'The tag holds a 12px glyph on either side: `icon` leads, and `onDelete` puts its affordance on the trailing side at the same size. Both inherit the label colour.',
+      code: [
+        "import { FilePdfIcon, XIcon } from '@neofloai/atoms/icons';",
+        '',
+        '<Chip',
+        '  size="sm"',
+        '  variant="muted"',
+        '  icon={<FilePdfIcon />}',
+        '  label="invoice.pdf"',
+        '  onDelete={handleRemove}',
+        '  deleteIcon={<XIcon />}',
+        '/>',
       ].join('\n'),
     },
   ],
@@ -221,7 +239,8 @@ export const data: ComponentExamplesData = {
     "Don't rely on colour alone to communicate status — the label must carry the meaning",
     "Don't mix sizes within one group of chips",
     "Don't hardcode background or border colours — the variant covers both colour schemes",
-    "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
+    "Don't use `information`/`orange`/`purple`/`muted` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
+    "Don't use `muted` for a status — it is drawn to recede, and a status is what a reader scans the column for",
     "Don't use `selected` to mean \"active nav item\" — it reads as a toggle, not a location",
     "Don't mix `dense` and default pills in the same row — the 4px difference reads as misalignment",
   ],

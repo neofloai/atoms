@@ -6,7 +6,13 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { FunnelSimpleIcon, WarningCircleIcon } from '@/src/icons';
+import {
+  CubeIcon,
+  FilePdfIcon,
+  FunnelSimpleIcon,
+  WarningCircleIcon,
+  XIcon,
+} from '@/src/icons';
 import { Chip } from '@/src/components/Chip';
 import { border, surface, text } from '@/src/tokens';
 
@@ -29,6 +35,7 @@ const smallVariants: readonly ChipVariant[] = [
   'orange',
   'error',
   'information',
+  'muted',
 ];
 
 const appearances: readonly ChipAppearance[] = ['contained', 'outline'];
@@ -219,10 +226,62 @@ export function ChipShowcase() {
           </Stack>
           <Typography variant="body2" color="text.secondary">
             <code>bordered</code> outlines the role&apos;s fill with the
-            role&apos;s own border token, so every one of the eight reads as a
+            role&apos;s own border token, so every one of the nine reads as a
             status without a hex at the call site and without a second set of
-            colours to keep in step. It is taken out of the inline padding, so
-            a bordered chip is exactly as wide as the plain one above it.
+            colours to keep in step. On <code>success</code>,{' '}
+            <code>error</code> and <code>purple</code> the label steps a rung
+            darker with it. It is taken out of the inline padding, so a
+            bordered chip is exactly as wide as the plain one above it.
+          </Typography>
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard title="Tags with glyphs">
+        <Stack spacing={2}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+          >
+            {smallVariants.map((variant) => (
+              <Chip
+                key={variant}
+                size="sm"
+                variant={variant}
+                icon={<CubeIcon />}
+                label="chip"
+                onDelete={() => {}}
+                deleteIcon={<CubeIcon />}
+              />
+            ))}
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+          >
+            <Chip
+              size="sm"
+              variant="muted"
+              icon={<FilePdfIcon />}
+              label="invoice.pdf"
+              onDelete={() => {}}
+              deleteIcon={<XIcon />}
+            />
+            <Chip
+              size="sm"
+              variant="muted"
+              bordered
+              icon={<FilePdfIcon />}
+              label="invoice.pdf"
+            />
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            The tag holds a 12px glyph on either side. <code>icon</code> leads;
+            the trailing slot is where <code>onDelete</code> puts its
+            affordance, held at the same size. Both inherit the label colour.{' '}
+            <code>muted</code> is the quiet grey for metadata like a file type,
+            paler than <code>secondary</code> and meant to recede.
           </Typography>
         </Stack>
       </PreviewCard>

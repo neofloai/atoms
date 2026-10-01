@@ -43,6 +43,13 @@ import type { DatePickerProps as MuiDatePickerProps } from '@mui/x-date-pickers'
  */
 export type DatePickerStatus = 'error' | 'success' | 'warning';
 
+/**
+ * Field height: `md` = 36px, `lg` = 40px — `TextField`'s two heights, so
+ * a picker lines up with the text fields beside it. Only the field grows;
+ * the popover is the same at both.
+ */
+export type DatePickerSize = 'md' | 'lg';
+
 export interface DatePickerProps extends MuiDatePickerProps {
   /**
    * Validation state — colours the field's border and its label and helper
@@ -54,6 +61,8 @@ export interface DatePickerProps extends MuiDatePickerProps {
    * own validation still behave as documented.
    */
   status?: DatePickerStatus;
+  /** Field height. @default 'md' */
+  size?: DatePickerSize;
   /**
    * Text under the field. Takes the status colour when `status` is set,
    * exactly as it does on `TextField`.

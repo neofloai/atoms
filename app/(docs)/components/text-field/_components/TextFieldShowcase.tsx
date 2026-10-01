@@ -37,7 +37,7 @@ function handleNoop(): void {
 
 /**
  * Live rendering of the TextField variants from the Figma component
- * sets: resting / disabled states, the three validation statuses,
+ * sets: resting / disabled states, the two sizes, the three validation statuses,
  * adornments, and the multi-line behaviours.
  */
 export function TextFieldShowcase() {
@@ -59,6 +59,29 @@ export function TextFieldShowcase() {
           />
           <TextField label="Label" defaultValue="Payment due" disabled />
           <TextField placeholder="No label" aria-label="No label example" />
+        </Box>
+      </PreviewCard>
+
+      <PreviewCard title="Sizes">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+            gap: 3,
+            alignItems: 'start',
+          }}
+        >
+          <TextField
+            size="lg"
+            label="Large"
+            placeholder="40px field"
+            helperText='size="lg"'
+          />
+          <TextField
+            label="Medium"
+            placeholder="36px field"
+            helperText='size="md" — the default'
+          />
         </Box>
       </PreviewCard>
 

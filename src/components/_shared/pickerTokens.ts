@@ -62,35 +62,18 @@ import type { ModeToken } from '@/src/tokens';
  */
 
 /**
- * Validation state of a picker's field, on the same three-status axis the
- * house `TextField` carries.
- *
- * The public `DatePickerStatus` / `TimePickerStatus` are written out as
- * literal unions rather than aliased to this, so the published `.d.ts`
- * never has to name an internal module.
+ * The glyph size inside the panel's buttons and the field's — the same 16px
+ * every field adornment uses. The field itself is `fieldStyles.ts`'s; see
+ * `pickerFieldStyles`.
  */
-export type PickerStatus = 'error' | 'success' | 'warning';
+export { ADORNMENT_GLYPH_PX as GLYPH_SIZE_PX } from './fieldStyles';
 
 /**
- * Inset from the field's border on every edge, and the gap between the
- * value and the button beside it (`Scale/200`); the field's content-row
- * height; and the glyph size inside its buttons. All three come from the
- * shared field geometry, so a picker's field and `TextField` cannot drift.
- *
- * `FIELD_CONTENT_HEIGHT_PX` is the one value a picker has to *restate*
- * rather than inherit: MUI X gives its sections container a `1.4375em`
- * line height, which on the 13px `B1` ramp resolves to 18.69px and lands
- * the field on 34.7px — close enough to look right on its own and clearly
- * wrong beside a text field.
+ * A month or year cell's corners — 8px. These were the field's corners too
+ * until the 1 October redraw took the field to 4; the cells were not
+ * redrawn, so they keep theirs.
  */
-export {
-  FIELD_PADDING_PX,
-  FIELD_CONTENT_HEIGHT_PX,
-  ADORNMENT_GLYPH_PX as GLYPH_SIZE_PX,
-} from './fieldStyles';
-
-/** Field corners — 8px, matching `TextField`. */
-export const FIELD_RADIUS = radius.sm;
+export const CELL_RADIUS = radius.sm;
 
 /** The popover's corners and inset, matching `Menu`. */
 export const PANEL_RADIUS = radius.lg;
@@ -103,10 +86,11 @@ export const PANEL_ELEVATION = elevation.medium;
 export const HAIRLINE_WIDTH_PX = 1;
 
 /**
- * The value in the field, and the number in a day or time cell —
- * `Sans/B1/Regular`, 13/20. `TextField` sets the same on its input.
+ * The number in a day or time cell — `Sans/B1/Regular`, 13/20. This was
+ * also the field's value type until the 1 October redraw moved the field
+ * to 14px; the panel was not redrawn, so its cells keep 13.
  */
-export const fieldType: CSSObject = {
+export const cellType: CSSObject = {
   fontFamily: fontFamilies.product.sans,
   fontWeight: fontWeights.regular,
   fontSize: typography.body.b1.size,
@@ -115,23 +99,15 @@ export const fieldType: CSSObject = {
 };
 
 /**
- * The label above the field, and the weekday initials across the top of a
- * calendar grid — `Sans/B2/Regular`, 12/16. `TextField`'s label type.
+ * The weekday initials across the top of a calendar grid, and its week
+ * numbers — `Sans/B2/Regular`, 12/16. This was the field label's type too
+ * until the 1 October redraw moved the label to Medium.
  */
-export const labelType: CSSObject = {
+export const cellLabelType: CSSObject = {
   fontFamily: fontFamilies.product.sans,
   fontWeight: fontWeights.regular,
   fontSize: typography.body.b2.size,
   lineHeight: `${typography.body.b2.leading}px`,
-};
-
-/** Helper text under the field — `Sans/Caption/Regular`, matching `TextField`. */
-export const helperType: CSSObject = {
-  fontFamily: fontFamilies.product.sans,
-  fontWeight: fontWeights.regular,
-  fontSize: typography.body.caption.size,
-  lineHeight: `${typography.body.caption.leading}px`,
-  letterSpacing: `${typography.body.caption.letterSpacing}em`,
 };
 
 /**
@@ -141,44 +117,9 @@ export const helperType: CSSObject = {
  * beside it when nothing else changes.
  */
 export const headerType: CSSObject = {
-  ...fieldType,
+  ...cellType,
   fontWeight: fontWeights.medium,
 };
-
-/** The field, at rest and in each state. Mirrors `TextField` token for token. */
-export const field = {
-  ink: text.default.b1,
-  background: surface.layers.page,
-  border: border.layers.card1,
-  /** Focus recolours the bottom edge only — Figma 3179:106156's focused cell. */
-  borderFocus: border.primary.focus,
-  /** Hover, and "has a value", both take the same subtle tint. */
-  backgroundHover: surface.layers.card1,
-  disabledInk: text.disabled.default,
-  disabledBackground: surface.disabled.default,
-  disabledBorder: border.layers.card2,
-  /** The label above the field and the helper text under it. */
-  label: text.default.b3,
-  /** The format placeholder shown in an empty section (`MM/DD/YYYY`, `hh:mm aa`). */
-  placeholder: text.default.b3,
-} as const satisfies Record<string, ModeToken>;
-
-/**
- * Border colour per validation status, and the ink its label and helper
- * text take. Both tables are `TextField`'s, unchanged — a status has to
- * read identically whichever field it is on.
- */
-export const statusBorder = {
-  error: border.error.focus,
-  success: border.success.focus,
-  warning: border.warning.focus,
-} as const satisfies Record<PickerStatus, ModeToken>;
-
-export const statusInk = {
-  error: text.error[4],
-  success: text.success[4],
-  warning: text.warning[2],
-} as const satisfies Record<PickerStatus, ModeToken>;
 
 /** The popover. `Menu`'s panel, token for token. */
 export const panel = {

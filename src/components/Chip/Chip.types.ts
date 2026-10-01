@@ -10,10 +10,20 @@ import type {
  * 986:18006) only defines `primary` / `secondary` / `success` /
  * `error` / `warning`, mirroring `ButtonVariant`. `size="sm"` (the
  * 20px flat tag, node 3156:83830) adds `information` / `orange` /
- * `purple`, which have no pill equivalent yet — passing one of those
- * three at `size="md"` falls back to the `secondary` look.
+ * `purple` / `muted`, which have no pill equivalent yet — passing one
+ * of those four at `size="md"` falls back to the `secondary` look.
+ *
+ * `muted` is a paler grey than `secondary` with a lighter label: the
+ * tag for metadata that should recede, like a file type beside a file
+ * name. Figma names the swatch `info`; it is not `information`, which
+ * is blue.
  */
-export type ChipVariant = ActionVariant | 'information' | 'orange' | 'purple';
+export type ChipVariant =
+  | ActionVariant
+  | 'information'
+  | 'orange'
+  | 'purple'
+  | 'muted';
 
 /**
  * Visual emphasis of the chip, mapped from the Figma `filled` axis:
@@ -26,7 +36,7 @@ export type ChipAppearance = Exclude<ActionAppearance, 'text'>;
 /**
  * Chip size: `md` = the pill (node 986:18006) — five colour roles,
  * contained/outline emphasis, full interaction states, and two heights
- * via `dense`. `sm` = the 20px flat tag (node 3156:83830) — eight colour
+ * via `dense`. `sm` = the 20px flat tag (node 3156:83830) — nine colour
  * roles, no emphasis axis, no interaction states.
  *
  * Figma's pill set carries its own height axis as a `small` boolean
@@ -77,7 +87,9 @@ export interface ChipProps
    * fill — the treatment the status sheet uses in a table's Status
    * column. Every role has one, so a bordered chip is still picked by
    * meaning (`variant="information"`) rather than by colour, and it
-   * resolves in both schemes with no hex at the call site.
+   * resolves in both schemes with no hex at the call site. On
+   * `success`, `error` and `purple` the label also steps a rung darker,
+   * as the outline is drawn.
    *
    * `size="sm"` only. The pill already carries a border on
    * `appearance="outline"`, and stacking a second axis on top of it

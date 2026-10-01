@@ -194,6 +194,9 @@ export function ToggleButtonShowcase() {
   const [period, setPeriod] = React.useState<string>('week');
   const [tool, setTool] = React.useState<string>('draw');
   const [dense, setDense] = React.useState<string | null>('sm');
+  const [range, setRange] = React.useState<string>('30d');
+  const [layout, setLayout] = React.useState<string>('list');
+  const [section, setSection] = React.useState<string>('overview');
   const [roleSelection, setRoleSelection] = React.useState<
     Record<string, string[]>
   >(() => Object.fromEntries(COLORS.map((color) => [color, ['on']])));
@@ -303,6 +306,78 @@ export function ToggleButtonShowcase() {
               Grid
             </ToggleButton>
           </Sample>
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard
+        title="Segmented"
+        description={'`appearance="segmented"` on the group draws a grey track and raises the selected button out of it as a white thumb with a hairline; the label turns Medium and darkens. One size — 24px buttons in a 28px track — and neutral only, so `size` and `color` do not reach it. Labels keep their case, glyphs sit at 14px either side, and a disabled button that is still on keeps its thumb.'}
+      >
+        <Stack
+          direction="row"
+          spacing={4}
+          sx={{ flexWrap: 'wrap', rowGap: 3, alignItems: 'flex-start' }}
+        >
+          <Sample label={`labels — ${range}`}>
+            <ToggleButtonGroup
+              appearance="segmented"
+              exclusive
+              value={range}
+              onChange={(_, next: string | null) => next && setRange(next)}
+              aria-label="Reporting window"
+            >
+              <ToggleButton value="7d">7d</ToggleButton>
+              <ToggleButton value="30d">30d</ToggleButton>
+              <ToggleButton value="90d">90d</ToggleButton>
+            </ToggleButtonGroup>
+          </Sample>
+          <Sample label={`glyphs — ${layout}`}>
+            <ToggleButtonGroup
+              appearance="segmented"
+              exclusive
+              value={layout}
+              onChange={(_, next: string | null) => next && setLayout(next)}
+              aria-label="Result layout"
+            >
+              <ToggleButton value="list">
+                <ListIcon />
+                List
+              </ToggleButton>
+              <ToggleButton value="grid">
+                <GridFourIcon />
+                Grid
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Sample>
+          <Sample label="disabled">
+            <ToggleButtonGroup
+              appearance="segmented"
+              disabled
+              exclusive
+              value="week"
+              aria-label="Example, disabled segmented"
+            >
+              <ToggleButton value="day">Day</ToggleButton>
+              <ToggleButton value="week">Week</ToggleButton>
+              <ToggleButton value="month">Month</ToggleButton>
+            </ToggleButtonGroup>
+          </Sample>
+          <Box sx={{ width: '100%', maxWidth: 420 }}>
+            <Sample label="fullWidth">
+              <ToggleButtonGroup
+                appearance="segmented"
+                fullWidth
+                exclusive
+                value={section}
+                onChange={(_, next: string | null) => next && setSection(next)}
+                aria-label="Section"
+              >
+                <ToggleButton value="overview">Overview</ToggleButton>
+                <ToggleButton value="activity">Activity</ToggleButton>
+                <ToggleButton value="files">Files</ToggleButton>
+              </ToggleButtonGroup>
+            </Sample>
+          </Box>
         </Stack>
       </PreviewCard>
 

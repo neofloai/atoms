@@ -1,6 +1,7 @@
 import {
   buttonClasses,
   formHelperTextClasses,
+  formLabelClasses,
   iconButtonClasses,
   inputAdornmentClasses,
   inputLabelClasses,
@@ -11,32 +12,37 @@ import {
   pickersOutlinedInputClasses,
 } from '@mui/x-date-pickers';
 
-import { spacing } from '@/src/tokens';
+import { fontWeights } from '@/src/tokens';
 
 import { appearanceStyles, paired } from './actionStyles';
-import { adornmentBox, adornmentButton } from './fieldStyles';
 import {
+  FIELD_BOX_RADIUS,
   FIELD_CONTENT_HEIGHT_PX,
-  FIELD_PADDING_PX,
-  FIELD_RADIUS,
+  FIELD_GAP_PX,
+  FIELD_INSET_INLINE_PX,
+  FIELD_ROW_INSET_PX,
+  FIELD_STACK_GAP_PX,
+  adornmentBox,
+  adornmentButton,
+  fieldBlockPadding,
+  fieldInk,
+  fieldStatusInk,
+  fieldType,
+  rowGlyph,
+} from './fieldStyles';
+import {
   GLYPH_SIZE_PX,
   HAIRLINE_WIDTH_PX,
   PANEL_ELEVATION,
   PANEL_PADDING_PX,
   PANEL_RADIUS,
   cell,
-  field,
-  fieldType,
-  helperType,
-  labelType,
   panel,
-  statusBorder,
-  statusInk,
 } from './pickerTokens';
 
 import type * as React from 'react';
 import type { CSSObject, Theme } from '@mui/material/styles';
-import type { PickerStatus } from './pickerTokens';
+import type { FieldStyleOptions } from './fieldStyles';
 
 /**
  * The CSS every MUI X picker in the library shares: its field, and the
@@ -149,8 +155,8 @@ export function panelSurface(theme: Theme): CSSObject {
 }
 
 /**
- * The picker's field: a restatement of `TextField`'s Figma node
- * (3179:106156) against MUI X's parallel class tree.
+ * The picker's field: `TextField`'s field, against MUI X's parallel class
+ * tree.
  *
  * ## Why it is restated rather than shared with `TextField`
  *
@@ -168,148 +174,142 @@ export function panelSurface(theme: Theme): CSSObject {
  * (`enableAccessibleFieldDOMStructure={false}`), so this is the only field
  * MUI X has.
  *
- * Both copies read from the same tokens, and the geometry from the same
- * module. If the Figma field changes, both have to move — that is the
- * cost, and it is recorded here rather than left to be discovered.
+ * So the selectors are restated, but not the design: every size, colour and
+ * type treatment below is imported from `fieldStyles.ts`, the module
+ * `TextField` and `Select` read too. Before the 1 October redraw this file
+ * carried its own copy of the tokens, and that copy is how the pickers came
+ * to be drawing the previous sheet beside a redrawn text field.
  */
 export function pickerFieldStyles(
   theme: Theme,
-  status?: PickerStatus
+  { status, size }: FieldStyleOptions
 ): CSSObject {
-  const styles: CSSObject = {
-    // Static label above the field rather than MUI's floating one, which
-    // is what the house field does (node 3179:106156).
+  const tone = status ? fieldStatusInk[status] : undefined;
+  const restingBorder = tone ? tone.border : fieldInk.border;
+  const root = pickersOutlinedInputClasses.root;
+  const outline = pickersOutlinedInputClasses.notchedOutline;
+  const focused = pickersOutlinedInputClasses.focused;
+  const disabled = pickersOutlinedInputClasses.disabled;
+
+  return {
+    // Static label above the field rather than MUI's floating one.
     [`& .${inputLabelClasses.root}`]: {
       position: 'static',
       transform: 'none',
       maxWidth: 'none',
-      padding: `0 ${FIELD_PADDING_PX}px`,
-      marginBottom: spacing.component.xxs,
-      ...labelType,
-      ...paired(theme, { color: field.label }),
-      // MUI colours a focused label with the theme primary; the house
-      // label stays neutral unless a status recolours it below.
-      [`&.${inputLabelClasses.focused}`]: paired(theme, { color: field.label }),
+      display: 'flex',
+      alignItems: 'center',
+      gap: FIELD_STACK_GAP_PX,
+      padding: `0 ${FIELD_ROW_INSET_PX}px`,
+      marginBottom: FIELD_STACK_GAP_PX,
+      ...fieldType.label,
+      ...rowGlyph(theme, fieldInk.glyph),
+      ...paired(theme, { color: fieldInk.label }),
+      // MUI colours a focused or errored label from the theme palette; the
+      // house label stays neutral in every state but disabled.
+      [`&.${inputLabelClasses.focused}, &.${inputLabelClasses.error}`]:
+        paired(theme, { color: fieldInk.label }),
       [`&.${inputLabelClasses.disabled}`]: paired(theme, {
-        color: field.disabledInk,
+        color: fieldInk.disabledInk,
       }),
+      [`& .${formLabelClasses.asterisk}`]: {
+        fontWeight: fontWeights.regular,
+        ...paired(theme, { color: fieldInk.asterisk }),
+      },
     },
-    [`& .${pickersOutlinedInputClasses.root}`]: {
-      borderRadius: FIELD_RADIUS,
-      padding: FIELD_PADDING_PX,
-      gap: FIELD_PADDING_PX,
-      ...fieldType,
+    [`& .${root}`]: {
+      borderRadius: FIELD_BOX_RADIUS,
+      paddingBlock: fieldBlockPadding(size),
+      paddingInline: FIELD_INSET_INLINE_PX,
+      gap: FIELD_GAP_PX,
+      ...fieldType.input,
       ...paired(theme, {
-        color: field.ink,
-        backgroundColor: field.background,
+        color: fieldInk.value,
+        backgroundColor: tone ? tone.fill : fieldInk.fill,
       }),
-      [`& .${pickersOutlinedInputClasses.notchedOutline}`]: {
+      [`& .${outline}`]: {
         borderWidth: HAIRLINE_WIDTH_PX,
-        ...paired(theme, { borderColor: field.border }),
+        ...paired(theme, { borderColor: restingBorder }),
         // The label sits outside the field, so there is no notch to cut.
         '& legend': { width: 0 },
       },
-      // Focus keeps the resting border on three sides and recolours only
-      // the bottom edge. MUI X sets its own focused border colour and
-      // doubles the width, so both are cancelled first — and the two
-      // colours go in one `paired` call, `borderColor` before
-      // `borderBottomColor`, so the override wins in both schemes.
-      //
-      // `.Mui-focused` is repeated to break a specificity tie. MUI X's own
+      // MUI X doubles the border on focus and recolours it from the theme.
+      // `.Mui-focused` is repeated to break a specificity tie: MUI X's own
       // rule is `&.Mui-focused:not(.Mui-error) .notchedOutline`, whose
       // `:not()` contributes its argument's weight — four classes, the same
-      // as this selector had, so MUI X won on injection order and painted
-      // the primary colour on all four edges.
-      [`&.${pickersOutlinedInputClasses.focused}.${pickersOutlinedInputClasses.focused} .${pickersOutlinedInputClasses.notchedOutline}`]:
-        {
-          borderWidth: HAIRLINE_WIDTH_PX,
-          ...paired(theme, {
-            borderColor: field.border,
-            borderBottomColor: field.borderFocus,
-          }),
-        },
-      [`&.${pickersOutlinedInputClasses.disabled}`]: {
-        ...paired(theme, {
-          color: field.disabledInk,
-          backgroundColor: field.disabledBackground,
+      // as a single `.Mui-focused` here, so MUI X won on injection order.
+      [`&:hover .${outline}, &.${focused}.${focused} .${outline}`]: {
+        borderWidth: HAIRLINE_WIDTH_PX,
+        ...paired(theme, { borderColor: restingBorder }),
+      },
+      // Neutral hover and focus: one step down the layer ladder, and on
+      // focus a full-strength hairline on all four sides. A status keeps its
+      // own tint and border through both.
+      ...(!tone && {
+        [`&:hover:not(.${disabled}), &.${focused}`]: paired(theme, {
+          backgroundColor: fieldInk.fillActive,
         }),
-        [`& .${pickersOutlinedInputClasses.notchedOutline}`]: paired(theme, {
-          borderColor: field.disabledBorder,
+        [`&.${focused}.${focused} .${outline}`]: {
+          borderWidth: HAIRLINE_WIDTH_PX,
+          ...paired(theme, { borderColor: fieldInk.borderFocus }),
+        },
+      }),
+      [`&.${disabled}`]: {
+        ...paired(theme, {
+          color: fieldInk.disabledInk,
+          backgroundColor: fieldInk.disabledFill,
+        }),
+        [`& .${outline}`]: paired(theme, {
+          borderColor: fieldInk.disabledBorder,
         }),
       },
-      // v9 underlines the section being edited. The house field carries
-      // its focus on the bottom border instead, and two accents on one
-      // edge read as a rendering fault rather than as emphasis.
+      // v9 underlines the section being edited. The house field carries its
+      // focus on the border instead, and two accents read as a fault.
       [`& .${pickersInputBaseClasses.activeBar}`]: { display: 'none' },
     },
-    // MUI X pads the sections container to make room for a floating
-    // label; the padding is on the root here, as it is on `TextField`.
-    // Its line height is restated for the reason given on
-    // `FIELD_CONTENT_HEIGHT_PX` — MUI X's `1.4375em` resolves to 18.69px
-    // on this ramp and would leave the field 1.3px shorter than the text
-    // field beside it.
+    // MUI X pads the sections container to make room for a floating label;
+    // the padding is on the root here, as it is on `TextField`. Its line
+    // height is restated because MUI X's `1.4375em` resolves to 20.13px at
+    // 14px and would leave the field a fraction taller than the text field
+    // beside it.
     [`& .${pickersInputBaseClasses.sectionsContainer}`]: {
       padding: 0,
       height: FIELD_CONTENT_HEIGHT_PX,
       lineHeight: `${FIELD_CONTENT_HEIGHT_PX}px`,
     },
-    [`& .${pickersInputBaseClasses.root}`]: fieldType,
+    [`& .${pickersInputBaseClasses.root}`]: fieldType.input,
     [`& .${formHelperTextClasses.root}`]: {
-      margin: `${spacing.component.xxs}px 0 0`,
-      padding: `0 ${FIELD_PADDING_PX}px`,
-      ...helperType,
-      ...paired(theme, { color: field.label }),
+      margin: `${FIELD_STACK_GAP_PX}px 0 0`,
+      padding: `${FIELD_STACK_GAP_PX}px ${FIELD_ROW_INSET_PX}px`,
+      display: 'flex',
+      alignItems: 'center',
+      gap: FIELD_STACK_GAP_PX,
+      ...fieldType.helper,
+      ...rowGlyph(theme),
+      ...paired(theme, { color: tone ? tone.helper : fieldInk.helper }),
+      [`&.${formHelperTextClasses.error}`]: paired(theme, {
+        color: tone ? tone.helper : fieldInk.helper,
+      }),
       [`&.${formHelperTextClasses.disabled}`]: paired(theme, {
-        color: field.disabledInk,
+        color: fieldInk.disabledInk,
       }),
     },
-    [`& .${inputAdornmentClasses.root}`]: adornmentBox(),
+    [`& .${inputAdornmentClasses.root}`]: {
+      ...adornmentBox(),
+      ...paired(theme, { color: tone ? tone.glyph : fieldInk.glyph }),
+    },
     // The open-picker button and the clear button beside it, on exactly the
     // geometry `TextField`'s adornment buttons use — same circular target,
     // same ripple, and no effect on the field's height.
     [`& .${iconButtonClasses.root}`]: {
       ...adornmentButton(theme),
+      ...(tone && paired(theme, { color: tone.glyph })),
       '&:hover': paired(theme, { backgroundColor: cell.hover }),
       [`&.${iconButtonClasses.disabled}`]: paired(theme, {
-        color: field.disabledInk,
+        color: fieldInk.disabledGlyph,
       }),
     },
   };
-
-  if (!status) {
-    // No status: a subtle tint carries hover, matching the house field's
-    // `hover` cell. Skipped once a status owns the border instead.
-    styles[`& .${pickersOutlinedInputClasses.root}`] = {
-      ...(styles[`& .${pickersOutlinedInputClasses.root}`] as CSSObject),
-      [`&:hover:not(.${pickersOutlinedInputClasses.focused}):not(.${pickersOutlinedInputClasses.disabled})`]:
-        paired(theme, { backgroundColor: field.backgroundHover }),
-    };
-
-    return styles;
-  }
-
-  // Status colour wins over the resting, hover and focused borders, and
-  // recolours the label and helper text.
-  styles[
-    [
-      `& .${pickersOutlinedInputClasses.root} .${pickersOutlinedInputClasses.notchedOutline}`,
-      `& .${pickersOutlinedInputClasses.root}:hover .${pickersOutlinedInputClasses.notchedOutline}`,
-      `& .${pickersOutlinedInputClasses.root}.${pickersOutlinedInputClasses.focused} .${pickersOutlinedInputClasses.notchedOutline}`,
-    ].join(', ')
-  ] = paired(theme, { borderColor: statusBorder[status] });
-  // Merged into the existing selectors rather than added as separate
-  // rules, so each nested `.Mui-disabled` override stays one class more
-  // specific and keeps winning regardless of declaration order.
-  styles[`& .${inputLabelClasses.root}`] = {
-    ...(styles[`& .${inputLabelClasses.root}`] as CSSObject),
-    ...paired(theme, { color: statusInk[status] }),
-  };
-  styles[`& .${formHelperTextClasses.root}`] = {
-    ...(styles[`& .${formHelperTextClasses.root}`] as CSSObject),
-    ...paired(theme, { color: statusInk[status] }),
-  };
-
-  return styles;
 }
 
 /**

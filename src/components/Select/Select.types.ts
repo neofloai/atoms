@@ -3,10 +3,16 @@ import type { TextFieldProps as MuiTextFieldProps } from '@mui/material';
 
 /**
  * Validation status of the field, mapped from the Figma `textFiled`
- * axis (error / success / warning variants). Colours the border and
- * helper text. Omit for the neutral state.
+ * axis (error / success / warning variants). Tints the field and
+ * colours its border, helper text and caret. Omit for the neutral state.
  */
 export type SelectStatus = 'error' | 'success' | 'warning';
+
+/**
+ * Field height: `md` = 36px, `lg` = 40px — the same two heights as
+ * `TextField`, so a select and a text field line up in one form row.
+ */
+export type SelectSize = 'md' | 'lg';
 
 /**
  * Props for the Neoflo `Select`.
@@ -34,8 +40,10 @@ export interface SelectProps
     | 'minRows'
     | 'maxRows'
   > {
-  /** Validation status. Colours the border and helper text. */
+  /** Validation status. Tints the field and colours its border and helper text. */
   status?: SelectStatus;
+  /** Field height. @default 'md' */
+  size?: SelectSize;
   /** `MenuItem` options rendered in the dropdown. */
   children: React.ReactNode;
   /** Allows selecting more than one option; `value` must be an array. */

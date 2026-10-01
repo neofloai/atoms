@@ -8,7 +8,7 @@ export const data: ComponentExamplesData = {
   name: 'TextField',
   category: 'Inputs',
   tagline:
-    'Text input with a static label, validation statuses, helper text, and single or multi-line entry.',
+    'Text input with a static label, two heights, validation statuses, helper text, and single or multi-line entry.',
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3179-106156',
   props: [
@@ -30,14 +30,21 @@ export const data: ComponentExamplesData = {
       type: "'error' | 'success' | 'warning'",
       default: '—',
       description:
-        'Validation status. Colours the border and helper text. Omit for the neutral state.',
+        'Validation status. Tints the field and colours its border, helper text and adornment glyphs; the label stays neutral. Omit for the neutral state.',
+    },
+    {
+      name: 'size',
+      type: "'md' | 'lg'",
+      default: "'md'",
+      description:
+        'Field height: 36px or 40px. Label, helper text and input type are the same at both — only the field box grows. Use `lg` where a field stands alone or leads a page (a search bar, a sign-in form); `md` in dense forms and filter rows.',
     },
     {
       name: 'helperText',
       type: 'ReactNode',
       default: '—',
       description:
-        'Supporting text below the field. Coloured by `status` when one is set.',
+        'Supporting text below the field. Coloured by `status` when one is set. Accepts a node, so a leading icon can sit before the text — it is sized to 14px.',
     },
     {
       name: 'startAdornment',
@@ -103,6 +110,12 @@ export const data: ComponentExamplesData = {
         '  helperText="Work email preferred"',
         '/>',
       ].join('\n'),
+    },
+    {
+      title: 'Large field',
+      description:
+        'The 40px field, for a search bar or a sign-in form where the field stands on its own.',
+      code: '<TextField size="lg" label="Work email" placeholder="you@neoflo.ai" />',
     },
     {
       title: 'Validation error',
@@ -194,7 +207,8 @@ export const data: ComponentExamplesData = {
   donts: [
     "Don't use placeholder text as a substitute for a label",
     "Don't rely on border colour alone to communicate validation — set `helperText` too",
-    "Don't override the 1px border or 8px radius — they are part of the field identity",
+    "Don't override the 1px border or 4px radius — they are part of the field identity",
+    "Don't mix `md` and `lg` fields in one form row — pick one height per form",
     "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended",
   ],
   relatedComponents: ['Button', 'IconButton'],

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-28T12:51:27.206Z",
+  "generatedAt": "2026-10-01T09:22:01.788Z",
   "components": [
     {
       "name": "Accordion",
@@ -268,7 +268,7 @@
       "name": "Avatar",
       "category": "Data Display",
       "tagline": "Represents a user or entity with initials, an icon, or a photo, plus an optional status badge.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=981-16471",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=978-17187",
       "props": [
         {
           "name": "children",
@@ -290,21 +290,21 @@
         },
         {
           "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
+          "type": "'xs' | 'sm' | 'md' | 'lg'",
           "default": "'md'",
-          "description": "Diameter: 24px, 32px, or 40px."
+          "description": "Diameter: 20px, 24px, 36px, or 44px. `xs` holds a single initial."
         },
         {
           "name": "shape",
           "type": "'round' | 'mid' | 'sharp'",
           "default": "'round'",
-          "description": "Corner treatment: full circle, rounded square, or square."
+          "description": "Corner treatment: a full circle, a square with 4px corners, or a square with none."
         },
         {
           "name": "color",
-          "type": "'accent' | 'primary' | 'secondary' | 'success' | 'error' | 'warning'",
-          "default": "'accent'",
-          "description": "Background colour role for text / icon content. Ignored when an image renders."
+          "type": "'primary' | 'purple' | 'information' | 'success' | 'warning' | 'orange' | 'error' | 'secondary'",
+          "default": "'primary'",
+          "description": "Colour role for initials and icon content: a pale fill, a hairline a step deeper, and a dark ink, all of one hue. `secondary` is the neutral grey. Ignored when an image renders, which keeps only a neutral hairline."
         },
         {
           "name": "badge",
@@ -330,7 +330,13 @@
         },
         {
           "title": "Icon content",
-          "code": "<Avatar color=\"primary\">\n  <UserIcon />\n</Avatar>"
+          "description": "An icon takes the role ink, the same as initials.",
+          "code": "<Avatar color=\"success\">\n  <UserIcon />\n</Avatar>"
+        },
+        {
+          "title": "Colour roles",
+          "description": "Eight hues. Give the same person the same role everywhere they appear, so the colour helps them be recognised.",
+          "code": "<Avatar color=\"primary\">AV</Avatar>\n<Avatar color=\"purple\">AV</Avatar>\n<Avatar color=\"information\">AV</Avatar>\n<Avatar color=\"success\">AV</Avatar>\n<Avatar color=\"warning\">AV</Avatar>\n<Avatar color=\"orange\">AV</Avatar>\n<Avatar color=\"error\">AV</Avatar>\n<Avatar color=\"secondary\">AV</Avatar>"
         },
         {
           "title": "Shapes",
@@ -338,7 +344,7 @@
         },
         {
           "title": "Sizes",
-          "code": "<Avatar size=\"sm\">OP</Avatar>\n<Avatar size=\"md\">OP</Avatar>\n<Avatar size=\"lg\">OP</Avatar>"
+          "code": "<Avatar size=\"xs\">O</Avatar>\n<Avatar size=\"sm\">OP</Avatar>\n<Avatar size=\"md\">OP</Avatar>\n<Avatar size=\"lg\">OP</Avatar>"
         },
         {
           "title": "Status badge",
@@ -358,8 +364,9 @@
         "Use the `badge` dot for presence or status, not for counts"
       ],
       "donts": [
-        "Don't put more than two characters of text inside an avatar",
+        "Don't put more than two characters of text inside an avatar, or more than one at `xs`",
         "Don't hardcode background colours — use the `color` role so both colour schemes work",
+        "Don't use `error` or `warning` to say something about the person — in an avatar they are only hues",
         "Don't mix sizes within a single avatar group or stack",
         "Don't rely on the badge colour alone to convey status — pair it with text elsewhere"
       ],
@@ -576,8 +583,8 @@
     {
       "name": "Button",
       "category": "Inputs",
-      "tagline": "Branded action button with five colour roles, three emphasis levels, and three sizes.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=983-17180",
+      "tagline": "Branded action button with five colour roles, four emphasis levels, and four sizes.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4137-10437",
       "props": [
         {
           "name": "variant",
@@ -587,15 +594,15 @@
         },
         {
           "name": "appearance",
-          "type": "'prominent' | 'contained' | 'outline' | 'text'",
+          "type": "'contained' | 'outline' | 'text' | 'social'",
           "default": "'contained'",
-          "description": "Visual emphasis, highest first: a gradient fill at heading size, a solid fill, a 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label. `prominent` is the page’s single call to action: 48px tall, drawn to sit beside a page title, and the one appearance that ignores `size`."
+          "description": "Visual emphasis, highest first: a solid fill, a 1px border, or label-only. `text` takes the role’s soft fill on hover, press and focus — the same fill `outline` uses — and is inset less than the other two so that fill has room around the label. `social` sits outside the ladder: a near-white card inside a neutral hairline for sign-in buttons, neutral only, so it ignores `variant`."
         },
         {
           "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "default": "'md'",
-          "description": "Control height: 32px, 36px, or 44px. No effect on `appearance=\"prominent\"`, which has one height of its own (48px) — it is a page-level call to action, and a small one would be a contradiction."
+          "type": "'sm' | 'md' | 'lg' | 'xl'",
+          "default": "'md' ('lg' for social)",
+          "description": "Control height: 28px, 32px, 40px, or 48px. Each size sets its own inline padding (8 / 12 / 16 / 12px) and glyph size (16 / 16 / 20 / 20px; `social` keeps its mark at 16 throughout); `lg` and `xl` take a heading-sized label, `sm` and `md` a body-sized one. `xl` is the page-level size — the one action a screen exists for, beside its title — and works with every `variant` and `appearance`. With `appearance=\"social\"` the default is `lg` (40px), the size the sign-in button is drawn at — omit `size` to get it, and pass `md` or `sm` only when a layout genuinely needs a smaller one."
         },
         {
           "name": "loading",
@@ -637,12 +644,17 @@
         },
         {
           "title": "The action a page exists for",
-          "description": "A gradient fill at heading size, 48px tall, sitting beside the page title rather than in a row of controls. The ramp runs from the role’s hover colour down to its resting one, so every role has one; `size` does not apply.",
-          "code": "import { UploadSimpleIcon } from '@neofloai/atoms/icons';\n\n<Button appearance=\"prominent\" startIcon={<UploadSimpleIcon />}>\n  Add Invoice\n</Button>"
+          "description": "`size=\"xl\"` — 48px tall with a heading-sized label, sitting beside the page title rather than in a row of controls. It paints like any other size, so pick the role with `variant` and the emphasis with `appearance`.",
+          "code": "import { UploadSimpleIcon } from '@neofloai/atoms/icons';\n\n<Button size=\"xl\" startIcon={<UploadSimpleIcon />}>\n  Add Invoice\n</Button>"
+        },
+        {
+          "title": "Sign in with a third party",
+          "description": "A near-white card inside a neutral hairline, quiet enough that someone else’s logo can sit inside it without competing. Neutral only — `variant` does not apply — and normally full width in a login column. It is large (40px) by default, so leave `size` off. It carries the Google mark in Google’s colours without being asked; pass your own `startIcon` for another provider, or `null` for none.",
+          "code": "<Button appearance=\"social\" fullWidth>Continue with Google</Button>"
         },
         {
           "title": "Sizes",
-          "code": "<Button size=\"sm\">Small</Button>\n<Button size=\"md\">Medium</Button>\n<Button size=\"lg\">Large</Button>"
+          "code": "<Button size=\"sm\">Small</Button>\n<Button size=\"md\">Medium</Button>\n<Button size=\"lg\">Large</Button>\n<Button size=\"xl\">Extra large</Button>"
         },
         {
           "title": "With icons",
@@ -658,15 +670,18 @@
         "Use `variant=\"error\"` for irreversible actions (delete, remove)",
         "Use `appearance=\"outline\"` or `appearance=\"text\"` for secondary actions",
         "Pair `variant=\"secondary\"` with a primary button for cancel/back actions",
-        "Use `appearance=\"prominent\"` for the one action a screen exists for, beside its title"
+        "Use `size=\"xl\"` for the one action a screen exists for, beside its title",
+        "Use `appearance=\"social\"` for sign-in buttons that carry a third-party logo, at its default `lg` size — omit `size`"
       ],
       "donts": [
         "Don't use multiple `primary` contained buttons in the same section",
         "Don't use `variant=\"error\"` for cancel or dismiss actions",
         "Don't override button colours with `sx` — pick the right variant instead",
         "Don't use `size=\"sm\"` for primary page-level CTAs",
-        "Don't put two `prominent` buttons on one screen — it is the page's single call to action, and a second one cancels the first",
-        "Don't reach for `prominent` inside a card, a toolbar, a dialog or a table row; it is sized for a page header"
+        "Don't put two `xl` buttons on one screen — it is the page's single call to action, and a second one cancels the first",
+        "Don't reach for `size=\"xl\"` inside a card, a toolbar, a dialog or a table row; it is sized for a page header",
+        "Don't pass `variant` alongside `appearance=\"social\"` expecting a colour — it is drawn neutral only",
+        "Don't pass Phosphor's monochrome `GoogleLogoIcon` to a social button — the default mark is already the right one"
       ],
       "relatedComponents": [
         "IconButton"
@@ -917,9 +932,9 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'information' | 'orange' | 'purple'",
+          "type": "'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'information' | 'orange' | 'purple' | 'muted'",
           "default": "'primary'",
-          "description": "`information`/`orange`/`purple` are only drawn at `size=\"sm\"`; at `size=\"md\"` they fall back to the `secondary` look."
+          "description": "`information`/`orange`/`purple`/`muted` are only drawn at `size=\"sm\"`; at `size=\"md\"` they fall back to the `secondary` look. `muted` is a paler grey than `secondary` with a lighter label, for metadata that should recede — a file type beside a file name. It is not `information`, which is blue."
         },
         {
           "name": "appearance",
@@ -931,7 +946,7 @@
           "name": "size",
           "type": "'sm' | 'md'",
           "default": "'md'",
-          "description": "`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (eight roles, no states)."
+          "description": "`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (nine roles, no states)."
         },
         {
           "name": "dense",
@@ -949,7 +964,7 @@
           "name": "bordered",
           "type": "boolean",
           "default": "false",
-          "description": "Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size=\"sm\"` only; the pill already carries a border on `appearance=\"outline\"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one."
+          "description": "Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size=\"sm\"` only; the pill already carries a border on `appearance=\"outline\"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. On `success`, `error` and `purple` the label also steps a rung darker to hold against the outline. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one."
         },
         {
           "name": "selected",
@@ -1032,8 +1047,13 @@
         },
         {
           "title": "Flat tag colours",
-          "description": "`size=\"sm\"` adds three colour roles with no pill equivalent.",
-          "code": "<Chip size=\"sm\" variant=\"information\" label=\"Info\" />\n<Chip size=\"sm\" variant=\"orange\" label=\"Orange\" />\n<Chip size=\"sm\" variant=\"purple\" label=\"Purple\" />"
+          "description": "`size=\"sm\"` adds four colour roles with no pill equivalent.",
+          "code": "<Chip size=\"sm\" variant=\"information\" label=\"Info\" />\n<Chip size=\"sm\" variant=\"orange\" label=\"Orange\" />\n<Chip size=\"sm\" variant=\"purple\" label=\"Purple\" />\n<Chip size=\"sm\" variant=\"muted\" label=\"Muted\" />"
+        },
+        {
+          "title": "A tag with glyphs",
+          "description": "The tag holds a 12px glyph on either side: `icon` leads, and `onDelete` puts its affordance on the trailing side at the same size. Both inherit the label colour.",
+          "code": "import { FilePdfIcon, XIcon } from '@neofloai/atoms/icons';\n\n<Chip\n  size=\"sm\"\n  variant=\"muted\"\n  icon={<FilePdfIcon />}\n  label=\"invoice.pdf\"\n  onDelete={handleRemove}\n  deleteIcon={<XIcon />}\n/>"
         }
       ],
       "dos": [
@@ -1048,7 +1068,8 @@
         "Don't rely on colour alone to communicate status — the label must carry the meaning",
         "Don't mix sizes within one group of chips",
         "Don't hardcode background or border colours — the variant covers both colour schemes",
-        "Don't use `information`/`orange`/`purple` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
+        "Don't use `information`/`orange`/`purple`/`muted` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
+        "Don't use `muted` for a status — it is drawn to recede, and a status is what a reader scans the column for",
         "Don't use `selected` to mean \"active nav item\" — it reads as a toggle, not a location",
         "Don't mix `dense` and default pills in the same row — the 4px difference reads as misalignment"
       ],
@@ -1416,7 +1437,13 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation state, on the same three-status axis and the same tokens as `TextField`: it colours the field’s border and its label and helper text. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+          "description": "Validation state, on the same three-status axis and the same tokens as `TextField`: it tints the field and colours its border, helper text and buttons, and leaves the label neutral. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px — the same two heights as `TextField`, so a picker lines up with the text fields beside it. Use one height per form."
         },
         {
           "name": "helperText",
@@ -1534,7 +1561,7 @@
         },
         {
           "title": "Validation, in the house statuses",
-          "description": "The same three-status axis as `TextField`, colouring the border and the label and helper text.",
+          "description": "The same three-status axis as `TextField`: a tinted field, a coloured border and helper text, and a neutral label.",
           "code": "<DatePicker\n  label=\"Departure\"\n  status=\"error\"\n  helperText=\"Pick a date to continue\"\n/>"
         },
         {
@@ -3547,7 +3574,13 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation status. Colours the border and helper text. Omit for the neutral state."
+          "description": "Validation status. Tints the field and colours its border, helper text and caret; the label stays neutral. Omit for the neutral state."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px — the same two heights as `TextField`, so a select lines up with the text fields beside it. Use one height per form."
         },
         {
           "name": "helperText",
@@ -3599,7 +3632,8 @@
       ],
       "donts": [
         "Don't rely on border colour alone to communicate validation — set `helperText` too",
-        "Don't override the 1px border or 8px radius — they are part of the field identity"
+        "Don't override the 1px border or 4px radius — they are part of the field identity",
+        "Don't mix `md` and `lg` fields in one form row — pick one height per form"
       ],
       "relatedComponents": [
         "TextField"
@@ -4727,7 +4761,7 @@
     {
       "name": "TextField",
       "category": "Inputs",
-      "tagline": "Text input with a static label, validation statuses, helper text, and single or multi-line entry.",
+      "tagline": "Text input with a static label, two heights, validation statuses, helper text, and single or multi-line entry.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3179-106156",
       "props": [
         {
@@ -4746,13 +4780,19 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation status. Colours the border and helper text. Omit for the neutral state."
+          "description": "Validation status. Tints the field and colours its border, helper text and adornment glyphs; the label stays neutral. Omit for the neutral state."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px. Label, helper text and input type are the same at both — only the field box grows. Use `lg` where a field stands alone or leads a page (a search bar, a sign-in form); `md` in dense forms and filter rows."
         },
         {
           "name": "helperText",
           "type": "ReactNode",
           "default": "—",
-          "description": "Supporting text below the field. Coloured by `status` when one is set."
+          "description": "Supporting text below the field. Coloured by `status` when one is set. Accepts a node, so a leading icon can sit before the text — it is sized to 14px."
         },
         {
           "name": "startAdornment",
@@ -4809,6 +4849,11 @@
           "code": "<TextField\n  label=\"Email\"\n  placeholder=\"you@neoflo.ai\"\n  helperText=\"Work email preferred\"\n/>"
         },
         {
+          "title": "Large field",
+          "description": "The 40px field, for a search bar or a sign-in form where the field stands on its own.",
+          "code": "<TextField size=\"lg\" label=\"Work email\" placeholder=\"you@neoflo.ai\" />"
+        },
+        {
           "title": "Validation error",
           "code": "<TextField\n  label=\"Amount\"\n  status=\"error\"\n  helperText=\"Amount is required\"\n/>"
         },
@@ -4848,7 +4893,8 @@
       "donts": [
         "Don't use placeholder text as a substitute for a label",
         "Don't rely on border colour alone to communicate validation — set `helperText` too",
-        "Don't override the 1px border or 8px radius — they are part of the field identity",
+        "Don't override the 1px border or 4px radius — they are part of the field identity",
+        "Don't mix `md` and `lg` fields in one form row — pick one height per form",
         "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended"
       ],
       "relatedComponents": [
@@ -4865,7 +4911,13 @@
           "name": "status",
           "type": "'error' | 'success' | 'warning'",
           "default": "—",
-          "description": "Validation state, on the same three-status axis and the same tokens as `TextField` and `DatePicker`: it colours the field’s border and its label and helper text. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+          "description": "Validation state, on the same three-status axis and the same tokens as `TextField` and `DatePicker`: it tints the field and colours its border, helper text and buttons, and leaves the label neutral. Lifted from `slotProps.textField.error`, which is only a boolean — `status=\"error\"` sets that too, so MUI’s own validation still behaves as documented."
+        },
+        {
+          "name": "size",
+          "type": "'md' | 'lg'",
+          "default": "'md'",
+          "description": "Field height: 36px or 40px — the same two heights as `TextField`, so a picker lines up with the text fields beside it. Use one height per form."
         },
         {
           "name": "helperText",
@@ -5024,7 +5076,7 @@
         },
         {
           "title": "Validation, in the house statuses",
-          "description": "The same three-status axis as `TextField`, colouring the border and the label and helper text.",
+          "description": "The same three-status axis as `TextField`: a tinted field, a coloured border and helper text, and a neutral label.",
           "code": "<TimePicker\n  label=\"Starts at\"\n  status=\"error\"\n  helperText=\"Pick a time to continue\"\n/>"
         },
         {
@@ -5101,9 +5153,9 @@
         },
         {
           "name": "appearance",
-          "type": "'outline' | 'text'",
+          "type": "'outline' | 'text' | 'segmented'",
           "default": "'outline'",
-          "description": "How much chrome at rest: the 1px neutral border, or none. `text` is for toggles inside a surface that already has an edge, like a floating toolbar."
+          "description": "How much chrome at rest: the 1px neutral border, or none. `text` is for toggles inside a surface that already has an edge, like a floating toolbar. `segmented` is set on the group: a grey track around labelled buttons, the selected one raised out of it as a white thumb. It is one size (a 28px track) and neutral only, so `size` and `color` do not reach it."
         },
         {
           "name": "exclusive",
@@ -5175,6 +5227,16 @@
           "code": "<ToggleButtonGroup exclusive value={period} onChange={(_, next) => next && setPeriod(next)} aria-label=\"Period\">\n  <ToggleButton value=\"day\">Day</ToggleButton>\n  <ToggleButton value=\"week\">Week</ToggleButton>\n  <ToggleButton value=\"month\">Month</ToggleButton>\n</ToggleButtonGroup>"
         },
         {
+          "title": "A segmented control",
+          "description": "`appearance=\"segmented\"` on the group draws a track and raises the selected button out of it — the compact way to switch a filter, a range or a view in a toolbar or a card header. Labels keep the case you write them in, and a glyph either side of the label sits at 14px.",
+          "code": "const [range, setRange] = React.useState(\"30d\");\n\n<ToggleButtonGroup\n  appearance=\"segmented\"\n  exclusive\n  value={range}\n  onChange={(_, next) => next && setRange(next)}\n  aria-label=\"Reporting window\"\n>\n  <ToggleButton value=\"7d\">7d</ToggleButton>\n  <ToggleButton value=\"30d\">30d</ToggleButton>\n  <ToggleButton value=\"90d\">90d</ToggleButton>\n</ToggleButtonGroup>"
+        },
+        {
+          "title": "Segmented, with glyphs",
+          "description": "Children are arbitrary here too. A glyph beside each label says what the view looks like before it is chosen.",
+          "code": "<ToggleButtonGroup\n  appearance=\"segmented\"\n  exclusive\n  value={view}\n  onChange={(_, next) => next && setView(next)}\n  aria-label=\"Result layout\"\n>\n  <ToggleButton value=\"list\"><ListIcon />List</ToggleButton>\n  <ToggleButton value=\"grid\"><GridFourIcon />Grid</ToggleButton>\n</ToggleButtonGroup>"
+        },
+        {
           "title": "Stacked",
           "description": "`orientation=\"vertical\"` for a rail beside a canvas. The shared borders and squared corners follow the axis.",
           "code": "<ToggleButtonGroup\n  orientation=\"vertical\"\n  exclusive\n  value={tool}\n  onChange={(_, next) => next && setTool(next)}\n  aria-label=\"Tool\"\n>\n  <ToggleButton value=\"select\" aria-label=\"Select\"><CursorIcon /></ToggleButton>\n  <ToggleButton value=\"draw\" aria-label=\"Draw\"><PencilSimpleIcon /></ToggleButton>\n  <ToggleButton value=\"erase\" aria-label=\"Erase\"><EraserIcon /></ToggleButton>\n</ToggleButtonGroup>"
@@ -5197,6 +5259,7 @@
         "Pass `appearance=\"text\"` when the toggles sit on a surface that already has a border and a shadow, so the row does not draw a second box inside the first",
         "Reach for `Checkbox` instead when the choice belongs in a form and will be submitted with it, and for `Tabs` when the choice swaps a whole panel of content",
         "Keep the glyphs in a group from one family and one weight, since they are compared against each other at 20px",
+        "Use `appearance=\"segmented\"` for a short, labelled, exclusive choice that changes what is on screen — a date range, an entity, a view — and keep one selected by refusing `null`",
         "Use it for the rows of an app navigation rail — a stacked group inside a `permanent` Drawer, one row per destination, `selected` on the current one. It is the rail in the Dashboard pattern because it already carries the selected tint and survives the fold to icons; `List` is for navigation inside a page"
       ],
       "donts": [
@@ -5205,6 +5268,8 @@
         "Don't use a group of one. A single toggle needs no `value` comparison, so `selected` on a standalone `ToggleButton` says the same thing with less machinery",
         "Don't put more than about five toggles in a row before considering a `Select` — a row of icons has no room for the labels that would explain them",
         "Don't mix `size` within a group; the shared borders assume the buttons are the same height",
+        "Don't build a segmented control out of icon-only buttons. Its thumb is drawn for a label, and a row of bare glyphs belongs in an `outline` or `text` group",
+        "Don't set `appearance=\"segmented\"` on a standalone `ToggleButton`. The track is drawn by the group, so a lone one is a thumb with nothing around it",
         "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control"
       ],
       "relatedComponents": [

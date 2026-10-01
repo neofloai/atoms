@@ -113,8 +113,8 @@ export default function DatePickerDocsPage() {
           <Typography variant="body2" color="text.secondary">
             Two of its three surfaces are specified, just under another name.
             The <strong>field</strong> is a text field, and every value in it
-            is read off <code>TextField</code> — the same 8px inset, 8px
-            corners, 1px border, bottom-edge focus accent, and the same three
+            is read off <code>TextField</code> — the same two heights, 4px
+            corners, 1px hairline, full-border focus, and the same three
             statuses. The <strong>popover</strong> is a floating panel, read
             off <code>Menu</code>: <code>card 2</code> fill and border, 16px
             corners, <code>Shadow/medium</code>.
