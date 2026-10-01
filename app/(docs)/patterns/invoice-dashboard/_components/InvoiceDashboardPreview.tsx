@@ -71,7 +71,9 @@ const TABS: readonly { value: Queue; label: string }[] = [
  *
  * 96 is a call-site number, not a `Button` size: the component is
  * content-hugging by design and a table wants one width down the column.
- * The 32px height is `size="sm"`, unchanged.
+ * The height is whatever `size="sm"` is — 28px since the September
+ * redraw, which also took 4px off each side, so the pinned 96 now
+ * carries more slack around the label than it did.
  */
 const CTA_WIDTH_PX = 96;
 

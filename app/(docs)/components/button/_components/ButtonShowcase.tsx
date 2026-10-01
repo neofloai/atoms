@@ -52,8 +52,9 @@ PreviewCard.displayName = 'PreviewCard';
 
 /**
  * Live rendering of every Button variant from the Figma component set:
- * the variant x appearance matrix, `prominent` in the context it is
- * drawn for, the three sizes, and the disabled / loading states.
+ * the variant x appearance matrix, `xl` in the context it is drawn
+ * for, the social sign-in button, the four sizes, and the disabled /
+ * loading states.
  */
 export function ButtonShowcase() {
   return (
@@ -81,7 +82,7 @@ export function ButtonShowcase() {
         </Box>
       </PreviewCard>
 
-      <PreviewCard title="Prominent — the page's one call to action">
+      <PreviewCard title="Extra large — the page's one call to action">
         <Stack spacing={2.5}>
           <Stack
             direction="row"
@@ -91,35 +92,52 @@ export function ButtonShowcase() {
             <Typography variant="h5" sx={{ fontWeight: 700 }}>
               Invoice Dashboard
             </Typography>
-            <Button
-              appearance="prominent"
-              startIcon={<UploadSimpleIcon />}
-            >
+            <Button size="xl" startIcon={<UploadSimpleIcon />}>
               Add Invoice
             </Button>
           </Stack>
           <Typography variant="body2" color="text.secondary">
-            A gradient fill running from the role&apos;s hover colour down
-            to its resting one, at heading size and 48px tall. It sits
-            beside a page title rather than in a row of controls, and{' '}
-            <code>size</code> does not apply to it. One per screen — a page
-            with two of these has neither.
+            <code>size=&quot;xl&quot;</code> is 48px tall with a heading-sized
+            label, for the one action a screen exists for, beside its title
+            rather than in a row of controls. It paints like every other
+            size — pick the role with <code>variant</code> and the emphasis
+            with <code>appearance</code>.
           </Typography>
           <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap', gap: 2 }}>
             {variants.map((variant) => (
-              <Button
-                key={variant}
-                variant={variant}
-                appearance="prominent"
-              >
+              <Button key={variant} variant={variant} size="xl">
                 {variant}
               </Button>
             ))}
           </Stack>
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard title="Social — the sign-in CTA">
+        <Stack spacing={2.5}>
+          <Stack spacing={1.5} sx={{ maxWidth: 360 }}>
+            {(['lg', 'md', 'sm'] as const).map((size) => (
+              <Button key={size} appearance="social" size={size} fullWidth>
+                Continue with Google
+              </Button>
+            ))}
+            <Button appearance="social" size="lg" fullWidth disabled>
+              Continue with Google
+            </Button>
+          </Stack>
           <Typography variant="body2" color="text.secondary">
-            Every role has both rungs the ramp is built from, so the
-            treatment carries across all five rather than being pinned to
-            primary.
+            The one treatment drawn with a fill and a border at the same
+            time: a near-white card inside the standard neutral hairline,
+            quiet enough that someone else&apos;s logo can sit inside it
+            without competing. It is neutral only, so <code>variant</code>{' '}
+            does not apply; <code>size</code> does, and it is normally full
+            width in a login column. It defaults to <code>size=&quot;lg&quot;</code>,
+            the size it is drawn at; medium and small are shown below it for
+            layouts that need them, and the mark stays 16px at all three. None of them passes
+            an icon — the Google mark is what this appearance carries unless
+            you hand it something else. Disabled is the only state that moves the
+            hairline rather than the fill, and the mark keeps its own
+            colours through it, because they are not ours to grey out.
           </Typography>
         </Stack>
       </PreviewCard>
@@ -129,6 +147,7 @@ export function ButtonShowcase() {
           <Button size="sm">Small</Button>
           <Button size="md">Medium</Button>
           <Button size="lg">Large</Button>
+          <Button size="xl">Extra large</Button>
         </Stack>
       </PreviewCard>
 
@@ -136,9 +155,6 @@ export function ButtonShowcase() {
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
           <Button disabled>Disabled</Button>
           <Button appearance="outline" disabled>
-            Disabled
-          </Button>
-          <Button appearance="prominent" disabled>
             Disabled
           </Button>
           <Button loading>Processing</Button>

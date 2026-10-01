@@ -13,26 +13,28 @@ export type ButtonVariant = ActionVariant;
 
 /**
  * Visual emphasis of the button. `contained`, `outline` and `text` come
- * from the Figma `style` axis; `prominent` sits above all three.
+ * from the Figma `style` axis; `social` sits outside the ladder
+ * entirely.
  *
- *   - `prominent` — gradient fill at heading size, highest emphasis
- *   - `contained` — solid fill
+ *   - `contained` — solid fill, highest emphasis
  *   - `outline`   — 1px border, transparent fill
  *   - `text`      — label only, lowest emphasis
+ *   - `social`    — near-white card inside a neutral hairline; the
+ *                   sign-in CTA, neutral only
  *
  * Wider than `ActionAppearance` by exactly one value. That union is
- * shared with `IconButton`, and `prominent` is drawn for a labelled
- * button only, so it is added here rather than there.
+ * shared with `IconButton`, and `social` is drawn for a labelled button
+ * only, so it is added here rather than there.
  */
-export type ButtonAppearance = ActionAppearance | 'prominent';
+export type ButtonAppearance = ActionAppearance | 'social';
 
 /**
- * Control height: `sm` = 32px, `md` = 36px, `lg` = 44px.
+ * Control height: `sm` = 28px, `md` = 32px, `lg` = 40px, `xl` = 48px.
  *
- * `appearance="prominent"` has one height of its own (48) and ignores
- * this — see `ButtonProps.size`.
+ * `xl` is the page-level size — the one action a screen exists for,
+ * beside its title. It is not a size for rows of controls.
  */
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 /**
  * Props for the Neoflo `Button`.
@@ -43,16 +45,25 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
  */
 export interface ButtonProps
   extends Omit<MuiButtonProps, 'variant' | 'size' | 'color'> {
-  /** Colour role. @default 'primary' */
+  /**
+   * Colour role. Ignored when `appearance="social"`, which is drawn in
+   * one neutral treatment only — it is the button a brand logo sits
+   * inside, and a coloured one would compete with it.
+   *
+   * @default 'primary'
+   */
   variant?: ButtonVariant;
   /** Visual emphasis. @default 'contained' */
   appearance?: ButtonAppearance;
   /**
-   * Control size. Ignored when `appearance="prominent"`, which is drawn
-   * at one size only — it is the page's single call to action, and a
-   * small one would be a contradiction.
+   * Control size. `xl` is for the page's single call to action, beside
+   * its title; `sm`–`lg` are the ladder a caller walks to fit a control
+   * into a row.
    *
-   * @default 'md'
+   * Defaults to `'lg'` when `appearance="social"`, the size the sign-in
+   * button is drawn at; `'md'` for every other appearance.
+   *
+   * @default 'md' ('lg' for appearance="social")
    */
   size?: ButtonSize;
 }

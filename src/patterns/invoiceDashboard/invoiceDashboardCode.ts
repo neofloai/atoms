@@ -208,7 +208,9 @@ const TABS = [
  *
  * A call-site number rather than a Button size: the component hugs its
  * content by design, and a table wants one width down the column. The
- * 32px height is \`size="sm"\`, unchanged.
+ * height is whatever \`size="sm"\` is — 28px since the September redraw,
+ * which also took 4px off each side, so the pinned 96 now carries more
+ * slack around the label than it did.
  */
 const CTA_WIDTH_PX = 96;
 
@@ -392,7 +394,7 @@ function ActionCell({
         loading={busy}
         // \`center\` rather than \`start\`: the specification pins this
         // control to 96 in every state, and "Processing" beside a 14px
-        // indicator needs 112 at 13/500. The label stays in the DOM for
+        // indicator needs 104 at 13/500. The label stays in the DOM for
         // the accessible name and the indicator sits over it, so the
         // width holds and the row still announces what it is doing.
         loadingPosition="center"
