@@ -39,12 +39,21 @@ const muiVariantMap: Record<ChipAppearance, 'filled' | 'outlined'> = {
 
 /**
  * Figma label spec, resynced against the pill (node 986:18006,
- * Sans/B1/Medium) and the 20px tag (node 3156:83830, Sans/B2/Regular).
- * Both pill heights share this ramp — Figma's `small` axis changes only
- * the vertical padding, not the type.
+ * Sans/B1/Medium) and the 20px tag (node 3156:83830, Sans/B2/Medium
+ * since the 1 October redraw — it was Regular). Both pill heights share
+ * this ramp — Figma's `small` axis changes only the vertical padding,
+ * not the type.
  */
 const bigLabelType = typography.body.b1;
 const smallLabelType = typography.body.b2;
+
+/**
+ * `Sans/B2/Medium` tracks -1% where `Sans/B2/Regular` tracks 0, and the
+ * type tokens carry one `b2` with one tracking value — so the tag's
+ * tracking is a literal, the same one the text field's label uses. See
+ * DESIGNER_QUESTIONS.md #67 and #68.
+ */
+const SMALL_LABEL_TRACKING_EM = -0.01;
 
 /** The two pill heights, from the `small` axis of node 986:18006. */
 const PILL_HEIGHT_PX = 36;
@@ -101,8 +110,11 @@ const TAG_BORDER_WIDTH_PX = 1;
  * `bordered` adds. A separate component set from the pill: its own type
  * ramp, radius, and colour roles.
  *
- * The original set drew no border on any swatch, which is why this was a
- * flat `border: none` until the status sheet turned up wanting one.
+ * The 1 October redraw pads `Scale/100` on every side, where the
+ * original set padded 8 inline, and draws its own `Outline` property —
+ * which is what `bordered` is. 4 + 16 + 4 is 24, so the pinned 20px
+ * height is what wins on the block axis, exactly as the sheet clips the
+ * label's line box to its fixed frame.
  *
  * A bordered tag gives its two border widths back out of the inline
  * padding, the same trade `Button`'s `outline` makes: a CSS border sits
@@ -116,21 +128,24 @@ function tagSizeStyles(bordered: boolean): CSSObject {
     height: 20,
     paddingBlock: spacing.component.xxs,
     paddingInline: bordered
-      ? spacing.component.xs - TAG_BORDER_WIDTH_PX
-      : spacing.component.xs,
+      ? spacing.component.xxs - TAG_BORDER_WIDTH_PX
+      : spacing.component.xxs,
     gap: spacing.component.xxs,
     borderRadius: radius.xs,
     ...(bordered
       ? { borderWidth: TAG_BORDER_WIDTH_PX, borderStyle: 'solid' }
       : { border: 'none' }),
     fontSize: smallLabelType.size,
-    fontWeight: fontWeights.regular,
+    fontWeight: fontWeights.medium,
     lineHeight: `${smallLabelType.leading}px`,
-    letterSpacing: `${smallLabelType.letterSpacing}em`,
+    letterSpacing: `${SMALL_LABEL_TRACKING_EM}em`,
   };
 }
 
-/** Icon glyph size per chip size, from the two Figma component sets. */
+/**
+ * Icon glyph size per chip size, from the two Figma component sets. The
+ * tag's slot is still 12 after the 1 October redraw, on both sides.
+ */
 const iconSizeStyles: Record<ChipSize, CSSObject> = {
   md: { width: 20, height: 20 },
   sm: { width: 12, height: 12 },
@@ -247,21 +262,30 @@ interface SmallRoleTokens {
   bg: ModeToken;
   text: ModeToken;
   /**
-   * Drawn only when `bordered` is set. `border/<role>/default` wherever
-   * the collection has one; `orange` and `purple` have no border ramp at
-   * all, so they take the darkest rung of their own `default` surface
-   * ladder, which is the nearest thing to the separation the named
-   * border tokens give the other six. See DESIGNER_QUESTIONS.md #61.
+   * The label once `bordered` is set, where the sheet draws it a rung
+   * darker than the flat swatch's — `success`, `error` and `purple` only.
+   * Every other role keeps `text`.
+   */
+  borderedText?: ModeToken;
+  /**
+   * Drawn only when `bordered` is set. Named by the sheet's `Outline`
+   * property, cell by cell: `border/<role>/1` for most roles, a rung up
+   * on `warning`. `orange` and `purple` have no border ramp in the
+   * collection, and the sheet binds raw `orange/200` and `purple/200`
+   * for them; those are the light halves of `surface/orange/default
+   * hover` and `surface/purple/default pressed`, which are used instead
+   * so the outline has a dark half. See DESIGNER_QUESTIONS.md #61, #68.
    */
   border: ModeToken;
 }
 
 /**
- * Colour roles for the 20px flat tag (node 3156:83830). The sheet draws
- * no hover/pressed/focus/selected states — every swatch is a single flat
- * colour — and each role picks a different rung of its own ladder (not a
- * uniform "always subtle" or "always default" rule), so these are copied
- * literally per role rather than derived from a pattern.
+ * Colour roles for the 20px flat tag (node 3156:83830, resynced
+ * 1 October). The sheet draws no hover/pressed/focus/selected states —
+ * every swatch is a single flat colour — and each role picks a different
+ * rung of its own ladder (not a uniform "always subtle" or "always
+ * default" rule), so these are copied literally per role rather than
+ * derived from a pattern.
  *
  * The token names below are Figma's own, so a rung in the sheet is the
  * rung in the code: `text/information/3` is `text.information[3]`. The
@@ -277,33 +301,37 @@ const smallRoleTokens: Record<ChipVariant, SmallRoleTokens> = {
     border: border.default.default,
   },
   primary: {
-    bg: surface.primary.subtle,
+    // A rung deeper than the pill's primary fill since the redraw.
+    bg: surface.primary.subtleHover,
     text: text.primary[3],
     border: border.primary.default,
   },
   warning: {
     bg: surface.warning.subtleHover,
     text: text.warning[2],
-    border: border.warning.default,
+    border: border.warning.defaultHover,
   },
   purple: {
     bg: surface.purple.default,
     text: text.purple[4],
+    borderedText: text.purple[3],
     border: surface.purple.defaultPressed,
   },
   success: {
     bg: surface.success.subtleHover,
     text: text.success[4],
+    borderedText: text.success[3],
     border: border.success.default,
   },
   orange: {
     bg: surface.orange.default,
     text: text.orange[3],
-    border: surface.orange.defaultPressed,
+    border: surface.orange.defaultHover,
   },
   error: {
     bg: surface.error.subtlePressed,
     text: text.error[4],
+    borderedText: text.error[3],
     border: border.error.default,
   },
   information: {
@@ -311,13 +339,23 @@ const smallRoleTokens: Record<ChipVariant, SmallRoleTokens> = {
     text: text.information[3],
     border: border.information.default,
   },
+  muted: {
+    // The sheet fills this one with raw `grey/125`, which no semantic
+    // token carries. `card 2` is the nearest (`grey/100`, 2 points of
+    // lightness away) and has a dark half. Its outline is drawn in
+    // `border/information/1`, a blue hairline round a grey chip, and is
+    // followed as drawn. See DESIGNER_QUESTIONS.md #68.
+    bg: surface.layers.card2,
+    text: text.default.b3,
+    border: border.information.default,
+  },
 };
 
 const bigRoleFallback = bigRoleTokens.secondary;
 
 /**
- * Full state styling for the pill. `information` / `orange` / `purple`
- * have no pill drawn in Figma yet, so they fall back to the `secondary`
+ * Full state styling for the pill. `information` / `orange` / `purple` /
+ * `muted` have no pill drawn in Figma yet, so they fall back to the `secondary`
  * look rather than rendering unstyled.
  *
  * `selected` is applied as the base rather than layered on top, because
@@ -339,7 +377,10 @@ function bigChipStyles(
   selected: boolean
 ): CSSObject {
   const role =
-    variant === 'information' || variant === 'orange' || variant === 'purple'
+    variant === 'information' ||
+    variant === 'orange' ||
+    variant === 'purple' ||
+    variant === 'muted'
       ? bigRoleFallback
       : bigRoleTokens[variant];
 
@@ -434,7 +475,8 @@ function smallChipStyles(
   // `colors` overrides per key rather than wholesale, so a caller can
   // recolour the fill and leave the label on its role.
   const fill = colors?.bg ? asModeToken(colors.bg) : role.bg;
-  const ink = colors?.text ? asModeToken(colors.text) : role.text;
+  const roleInk = bordered ? (role.borderedText ?? role.text) : role.text;
+  const ink = colors?.text ? asModeToken(colors.text) : roleInk;
   const line = colors?.border ? asModeToken(colors.border) : role.border;
 
   // One `paired` call per selector: two of them spread into the same
@@ -533,6 +575,12 @@ const StyledChip = styled(MuiChip, {
     '& .MuiChip-icon, & .MuiChip-avatar': {
       ...iconSizeStyles[neofloSize],
     },
+    // The tag draws a 12px glyph on both sides, and the trailing one is
+    // where MUI puts the delete affordance — left unsized it renders at
+    // MUI's 22px, taller than the chip.
+    ...(neofloSize === 'sm'
+      ? { '& .MuiChip-deleteIcon': iconSizeStyles.sm }
+      : {}),
     '& .MuiChip-avatar': {
       margin: 0,
     },
@@ -561,7 +609,7 @@ const StyledChip = styled(MuiChip, {
  *   with a pale/subtle tint and its own accent colour as the label —
  *   not a saturated fill with a white label like Button's `contained`.
  * - `size="sm"` — the 20px flat tag (node 3156:83830): adds
- *   `information` / `orange` / `purple`, no emphasis axis, no
+ *   `information` / `orange` / `purple` / `muted`, no emphasis axis, no
  *   interaction states (every swatch is a single flat colour), and a
  *   `bordered` flag that outlines the fill in the role's own border
  *   token — the Status column treatment. `dense` and `selected` do not
