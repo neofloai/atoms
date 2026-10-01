@@ -61,11 +61,13 @@ The docs-site build is deliberately ordered so generated data can never go stale
 npm run build
   └─ prebuild  → npm run generate   # writes data/*.json from src/
   └─ build     → next build         # emits .next/standalone
+  └─ postbuild → npm run build:search  # indexes the prerendered pages into public/pagefind
 ```
 
 - `npm run generate` (`scripts/generate.ts`) reads `src/components/*/*.examples.tsx`, `src/tokens/`, and `src/patterns/` and writes the canonical `data/*.json` manifests consumed by the MCP server.
 - `prebuild` is an npm lifecycle hook — it runs automatically before `build`. **Never edit `data/*.json` by hand.**
 - CI additionally fails if the committed `data/*.json` differs from a fresh `npm run generate` (see [GitHub Actions](#github-actions-ci)).
+- `npm run build:search` (`scripts/build-search-index.mjs`) runs Pagefind over `.next/server/app/**/*.html` and writes the docs search index to `public/pagefind` (gitignored), which the Docker runner copies with the rest of `public/`. Every page the build renders is searchable; nothing is registered per page. It fails the build if it finds no pages or a page without the shell's `data-pagefind-body` mark. Next reads `public/` when the server starts, so the index must exist before then — it does in the image. Pagefind is a dev dependency and never reaches `dist/`.
 
 > Runtime data loading: the MCP server reads `data/*.json` at request time via `fs.readFile(process.cwd()/data/...)`. This is a dynamic read, so the `data/` directory is copied into the image explicitly (see Dockerfile) rather than relying on Next's file tracing.
 

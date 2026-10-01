@@ -14,6 +14,7 @@ import { ColorModeToggle } from './ColorModeToggle';
 import { NeofloLogo } from '@/src/brand';
 import { APP_BAR_HEIGHT, DRAWER_WIDTH } from './navigation';
 import { DocsSidebar } from './DocsSidebar';
+import { DocsSearch } from './DocsSearch';
 
 interface DocsShellProps {
   children: React.ReactNode;
@@ -77,6 +78,7 @@ export function DocsShell({ children }: DocsShellProps) {
             </Typography>
           </Stack>
           <Box sx={{ flex: 1 }} />
+          <DocsSearch />
           <ColorModeToggle />
           <IconButton
             aria-label="GitHub"
@@ -132,10 +134,16 @@ export function DocsShell({ children }: DocsShellProps) {
 
       <Box
         component="main"
+        // The search index reads only this slot, so the sidebar and top
+        // bar never show up as matches (see scripts/build-search-index.mjs).
+        data-pagefind-body
         sx={{
           flexGrow: 1,
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
           minHeight: '100vh',
+          // Search results link to `#section` anchors on every page; land
+          // them below the fixed top bar rather than behind it.
+          '& [id]': { scrollMarginTop: APP_BAR_HEIGHT + 16 },
         }}
       >
         <Toolbar sx={{ minHeight: APP_BAR_HEIGHT }} />
