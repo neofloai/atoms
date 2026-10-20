@@ -3,6 +3,7 @@
 import * as React from 'react';
 import {
   MenuItem as MuiMenuItem,
+  avatarClasses,
   listClasses,
   listItemIconClasses,
   listItemTextClasses,
@@ -10,9 +11,17 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { border, radius, spacing, surface, text } from '@/src/tokens';
+import {
+  border,
+  fontWeights,
+  radius,
+  spacing,
+  surface,
+  text,
+} from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
+import { modePair } from '../_shared/devMarks';
 
 import type { ExtendButtonBase } from '@mui/material';
 import type { ModeToken } from '@/src/tokens';
@@ -26,23 +35,46 @@ import type {
  * Figma tone -> label colour.
  *
  * One token per tone drives both the label and the glyph. The design
- * gives `text/*` and `icon/*` the same value in all three tones
- * (`b1` `#31302e`, `b2` `#6d6b68`, `primary/3`), and Phosphor icons
- * paint with `currentColor`, so a single `color` on the root covers
- * both — no separate icon rule, and no icon token this system does not
- * already have.
+ * gives `text/*` and `icon/*` the same value in every tone (`b1`
+ * `#31302e`, `b2` `#6d6b68`, `primary/3`, `error/4` `#cc337f`), and
+ * Phosphor icons paint with `currentColor`, so a single `color` on the
+ * root covers both — no separate icon rule, and no icon token this
+ * system does not already have.
  *
  * `action` maps to `text.primary[3]` (`colors.primary[500]`,
  * `#4949dc`). That value was briefly out of step with the Figma board;
  * the 11 August primitive export settled it and the raw scale now
  * carries it (DESIGNER_QUESTIONS.md #22). Referencing the token rather
  * than the hex is what made that a no-op here.
+ *
+ * `error` is the account flyout's "Sign out" row (node 4564:6199),
+ * which binds `text/error/4` and `icon/error/4` — the same rung in both
+ * modes, so it needs no pairing of its own.
  */
 const toneTokens: Record<MenuItemVariant, ModeToken> = {
   primary: text.default.b1,
   secondary: text.default.b2,
   action: text.primary[3],
+  error: text.error[4],
 };
+
+/**
+ * The selected fill — `surface/default/2`, the rung the navigation sheet
+ * (4564:6085) puts behind the current workspace in its switcher and
+ * behind the current page in the rail.
+ *
+ * Its light half is `surface.default.defaultHover` (`grey/200`), the
+ * token whose light value the sheet binds. Its dark half is
+ * `grey/950`, which is the exact fill of the `card 2` panel this row
+ * sits in — selected would be invisible in dark mode. The dark half
+ * moves one rung up the same ladder to `defaultPressed` (`grey/900`),
+ * the first step that reads against the panel. The sheet draws no dark
+ * mode; see DESIGNER_QUESTIONS.md #71.
+ */
+const SELECTED_FILL = modePair(
+  surface.default.defaultHover,
+  surface.default.defaultPressed
+);
 
 interface StyledMenuItemProps {
   neofloVariant: MenuItemVariant;
@@ -51,17 +83,24 @@ interface StyledMenuItemProps {
 const StyledMenuItem = styled(MuiMenuItem, {
   shouldForwardProp: (prop) => prop !== 'neofloVariant',
 })<StyledMenuItemProps>(({ theme, neofloVariant }) => ({
-  borderRadius: radius.sm,
-  // Figma spaces the glyph from the label with `Scale/100`; MUI does it
-  // with a 36px `ListItemIcon` column instead, which is neutralised
-  // below so both compositions land on the same 4px gap.
-  gap: spacing.component.xxs,
-  paddingBlock: spacing.component.xs,
-  // The design's item is 36px tall: 8 + 20 (B1 leading) + 8. MUI floors
-  // items at 48px and only releases that to `auto` from `sm` up, so
-  // without this the item would be 12px taller on a phone than in the
-  // spec — the one place MUI's Material density would show through.
+  borderRadius: radius.xs,
+  // `Scale/250` between the glyph and the label. MUI does it with a 36px
+  // `ListItemIcon` column instead, which is neutralised below so both
+  // compositions land on the same 12px gap.
+  gap: spacing.component.sm,
+  // A 28px row: 4 + 20 (B1 leading) + 4. The flyout (4564:6122) draws
+  // `Scale/200` padding inside a fixed 28px box, which a 20px line
+  // cannot honour on the block axis — the box wins, so the 8px is
+  // horizontal only and 4px is what is left above and below.
+  //
+  // `minHeight: auto` because MUI floors items at 48px and only releases
+  // that from `sm` up, so without it the row would be 20px taller on a
+  // phone than in the spec.
+  paddingBlock: spacing.component.xxs,
   minHeight: 'auto',
+  // Every row in the flyout is `Sans/B1/Medium`. The theme's `body1` —
+  // which MUI gives a menu item — is the Regular rung of the same size.
+  fontWeight: fontWeights.medium,
   // Figma gives the label `word-break: break-word` over `min-width: 0`,
   // so a long label wraps inside the panel. MUI defaults to `nowrap`,
   // which instead widens the panel to fit — and cannot be rescued with
@@ -80,10 +119,9 @@ const StyledMenuItem = styled(MuiMenuItem, {
     paddingInline: spacing.component.xs,
   },
   // The design specifies one density, so `dense` is MUI's knob rather
-  // than a Neoflo variant, and it changes the type only: the 8px inset
-  // is held at both densities, which lands a dense row on 8 + 16 + 8 =
-  // 32px — exactly MUI's documented dense height, without inventing a
-  // second inset value the design never specified.
+  // than a Neoflo variant, and it changes the type only: the 4px block
+  // inset is held at both densities, which lands a dense row on 4 + 16 +
+  // 4 = 24px.
   //
   // Asserted explicitly, and against two selectors, for two reasons.
   // Without it the result would depend on stylesheet insertion order
@@ -96,6 +134,13 @@ const StyledMenuItem = styled(MuiMenuItem, {
   // Matching on the list's class as well covers the inherited case, so
   // both routes produce the same row.
   [`&.${menuItemClasses.dense}, .${listClasses.dense} &`]: {
+    paddingBlock: spacing.component.xxs,
+  },
+  // A row that leads with an avatar — a workspace, a person — takes the
+  // full `Scale/200` inset on every side, as the switcher draws it
+  // (4564:6374): 8 + 24 + 8 = 40. The 28px text row only gives up its
+  // block padding because a 20px line cannot fill it; a 24px avatar can.
+  [`&:has(> .${avatarClasses.root})`]: {
     paddingBlock: spacing.component.xs,
   },
   // MUI draws `divider` from `palette.divider`, which in dark mode is
@@ -112,14 +157,12 @@ const StyledMenuItem = styled(MuiMenuItem, {
     ...paired(theme, { borderBottomColor: border.layers.card2 }),
   },
 
-  // Hover deliberately departs from the Figma value. The `menu-item`
-  // sheet tints hover with `surface.layers.card2` — the same token the
-  // panel it sits in is filled with (node 3228:62331), so inside a Menu
-  // that hover is exactly invisible. The item sheet was drawn on the
-  // page surface, where that tint reads fine; the composed menu
-  // is what ships. Moving one rung up the same ladder to `card3`
-  // preserves the intent (hover is one layer above its surface) with
-  // the smallest possible deviation. Tracked in DESIGNER_QUESTIONS.md #23.
+  // Hover is `card 3`, one layer above whatever the panel is. The
+  // navigation flyouts draw no hover at all, and the older `menu-item`
+  // sheet tinted it with `card 2` — the panel's own dark fill, so it
+  // vanished inside a Menu. `card 3` keeps the intent (hover is one rung
+  // above its surface) on both the flyout's near-white and the dark
+  // `card 2`. Tracked in DESIGNER_QUESTIONS.md #23.
   '&:hover': {
     ...paired(theme, { backgroundColor: surface.layers.card3 }),
     // Matches MUI: a touch device has no hover to leave behind.
@@ -132,15 +175,16 @@ const StyledMenuItem = styled(MuiMenuItem, {
   [`&.${menuItemClasses.focusVisible}`]: paired(theme, {
     backgroundColor: surface.layers.card3,
   }),
+  // Selected is a neutral fill, not a primary tint: the flyout marks the
+  // current workspace with `surface/default/2` and a trailing check, and
+  // the rail marks the current page with the same fill. The fill holds
+  // under the pointer — a selected row does not have a hover state of
+  // its own in the design, and dropping back to the hover tint would read
+  // as the selection going away.
   [`&.${menuItemClasses.selected}`]: {
-    ...paired(theme, { backgroundColor: surface.primary.subtle }),
-    // Stay in the primary family once selected, instead of dropping
-    // back to the neutral hover tint.
+    ...paired(theme, { backgroundColor: SELECTED_FILL }),
     [`&:hover, &.${menuItemClasses.focusVisible}`]: {
-      ...paired(theme, { backgroundColor: surface.primary.subtleHover }),
-      '@media (hover: none)': {
-        ...paired(theme, { backgroundColor: surface.primary.subtle }),
-      },
+      ...paired(theme, { backgroundColor: SELECTED_FILL }),
     },
   },
   // MUI fades the whole row to 38% opacity. This system has a disabled
@@ -152,7 +196,7 @@ const StyledMenuItem = styled(MuiMenuItem, {
   },
 
   // MUI's icon slot reserves a 36px column and paints from
-  // `palette.action.active`. The design puts the glyph 4px from the
+  // `palette.action.active`. The design puts the glyph 12px from the
   // label (the root `gap` above) and tints it with the item's tone.
   [`& .${listItemIconClasses.root}`]: {
     minWidth: 0,
@@ -166,9 +210,10 @@ const StyledMenuItem = styled(MuiMenuItem, {
 
 /**
  * Branded menu item. Wraps MUI `MenuItem` with the Neoflo API from the
- * Product Design System Figma (node 3204:121756): three label tones,
- * 8px corners, an 8px inset, a 4px glyph gap, and hover / selected /
- * focus / disabled styling in both colour schemes.
+ * Product Design System Figma — the row the navigation flyouts draw
+ * (node 4564:6122): four label tones, a 28px row on 4px corners, an 8px
+ * inset, a 12px glyph gap, `Sans/B1/Medium` labels, and hover / selected
+ * / focus / disabled styling in both colour schemes.
  *
  * The full MUI prop surface is intact — `variant` is additive, since
  * MUI has no `variant` on `MenuItem`. `selected`, `disabled`, `dense`,
@@ -188,22 +233,28 @@ const StyledMenuItem = styled(MuiMenuItem, {
  * Glyphs are 16px in the design. Icons are consumer content, so no size
  * is forced on arbitrary children — pass `size={16}` on the Phosphor
  * icon, or use `ListItemIcon`, which is styled here to give the same
- * 4px gap.
+ * 12px gap. A row that leads with a `size="sm"` `Avatar` grows to 40px
+ * on its own, which is how the workspace switcher draws it.
  *
- * @example A menu with all three tones
+ * @example An account menu
  * <Menu anchorEl={anchorEl} open={open} onClose={close}>
- *   <MenuItem selected onClick={close}>
- *     <PencilSimpleIcon size={16} />
- *     Rename
+ *   <MenuItem onClick={close}>
+ *     <GearSixIcon size={16} />
+ *     Settings
  *   </MenuItem>
- *   <MenuItem variant="secondary" disabled>
- *     Last edited 2 days ago
- *   </MenuItem>
- *   <MenuItem variant="action" onClick={close}>
- *     <PlusIcon size={16} />
- *     New folder
+ *   <Divider />
+ *   <MenuItem variant="error" onClick={signOut}>
+ *     <SignOutIcon size={16} />
+ *     Sign out
  *   </MenuItem>
  * </Menu>
+ *
+ * @example A switcher with the current choice marked
+ * <MenuItem selected onClick={close}>
+ *   <Avatar size="sm" shape="mid">FI</Avatar>
+ *   <Box component="span" sx={{ flex: 1 }}>Finance</Box>
+ *   <CheckCircleIcon size={16} />
+ * </MenuItem>
  *
  * @example A row that navigates
  * <MenuItem component="a" href="/tokens" target="_blank" rel="noreferrer">

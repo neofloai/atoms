@@ -8,6 +8,8 @@ import type {
   ListItemTextProps as MuiListItemTextProps,
   ListItemTypeMap as MuiListItemTypeMap,
   ListProps as MuiListProps,
+  ListSubheaderProps as MuiListSubheaderProps,
+  ListSubheaderTypeMap as MuiListSubheaderTypeMap,
   ListTypeMap as MuiListTypeMap,
 } from '@mui/material';
 
@@ -62,13 +64,12 @@ import type {
  *
  * The removals are typed as an `Omit`, so they fail at compile time.
  *
- * ## What is not here
+ * ## The subheader
  *
- * `ListSubheader`. MUI ships one and the design does not draw one, so
- * wrapping it would mean inventing its type, colour, and inset. `List`
- * still takes MUI's `subheader` prop, so a caller who needs a heading
- * can pass any node and style it themselves. Logged in
- * DESIGNER_QUESTIONS.md #51.
+ * `ListSubheader` was left out while no design drew one. The navigation
+ * sheet (4564:6085) now does — a mono section label over the switcher's
+ * rows and the sidebar's — so it is wrapped, and `List`'s `subheader`
+ * prop takes it. See `ListSubheader.tsx`.
  */
 
 /** Removed from `List`. Documented above. */
@@ -191,3 +192,36 @@ export type ListItemIconProps = MuiListItemIconProps;
  * Identical to MUI's.
  */
 export type ListItemAvatarProps = MuiListItemAvatarProps;
+
+/** Removed from `ListSubheader`. See `ListSubheader.tsx`. */
+type LockedSubheaderProp = 'color';
+
+/**
+ * MUI's `ListSubheaderTypeMap` with `color` removed, keeping the
+ * polymorphic root.
+ */
+export interface ListSubheaderTypeMap<
+  AdditionalProps = object,
+  RootComponent extends React.ElementType = 'li',
+> {
+  props: AdditionalProps &
+    Omit<
+      MuiListSubheaderTypeMap<object, RootComponent>['props'],
+      LockedSubheaderProp
+    >;
+  defaultComponent: RootComponent;
+}
+
+/**
+ * Props for the Neoflo `ListSubheader` — the label over a group of rows.
+ *
+ * MUI's, minus `color`. `disableSticky`, `disableGutters`, `inset`,
+ * `component`, and `sx` all behave as documented for MUI.
+ */
+export type ListSubheaderProps<
+  RootComponent extends React.ElementType = 'li',
+  AdditionalProps = object,
+> = Omit<
+  MuiListSubheaderProps<RootComponent, AdditionalProps>,
+  LockedSubheaderProp
+>;

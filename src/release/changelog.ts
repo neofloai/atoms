@@ -19,6 +19,47 @@ import type { Release } from './types';
  */
 export const RELEASES: readonly Release[] = [
   {
+    version: '3.1.0',
+    tag: 'v3.1.0',
+    date: '2026-10-21',
+    headline:
+      '`Menu` and `MenuItem` follow the navigation redraw, `MenuItem` gains an `error` tone, `ListSubheader` is exported, and the `sm` `Navbar` gutter is 16px.',
+    summary:
+      'A minor release from the navigation sheet, which draws the top bar, the sidebar and their two dropdowns. Nothing is removed or renamed. Menus are tighter and flatter: 28px rows on 4px corners, a near-white panel on 8px corners, and a neutral fill for the selected row in place of the primary tint. New: a destructive `error` tone for rows such as Sign out, and `ListSubheader`, the mono label over a group of rows. The docs sidebar and top bar are rebuilt to the sheet.',
+    changes: [
+      {
+        kind: 'changed',
+        summary:
+          '`Menu` has 8px corners (was 16) and a near-white panel (`surface.layers.page`; dark mode stays on `card 2`). Rows sit 4px apart, and a `Divider` between groups sits 8px from the rows on either side.',
+        scope: ['Menu'],
+      },
+      {
+        kind: 'changed',
+        summary:
+          '`MenuItem` rows are 28px (were 36) on 4px corners (were 8), with the glyph 12px from the label (was 4) and labels in B1 Medium. `selected` is a neutral `surface/default/2` fill that holds under the pointer, in place of the primary tint. A row that leads with a `size="sm"` `Avatar` grows to 40px. A `dense` row is 24px.',
+        scope: ['MenuItem'],
+      },
+      {
+        kind: 'added',
+        summary:
+          '`MenuItem` `variant="error"`: the destructive row, in `text/error/4` for both label and glyph -- Sign out, Delete.',
+        scope: ['MenuItem'],
+      },
+      {
+        kind: 'added',
+        summary:
+          '`ListSubheader`, the label over a group of rows: DM Mono Medium at 12/16 in caption ink. In a `Menu` it lines up with the item labels; as a `List` `subheader` it takes the rows\' 16px inset. `color` is removed from its props. `ListSubheaderProps` and `ListSubheaderTypeMap` are exported.',
+        scope: ['ListSubheader', 'Menu', 'List'],
+      },
+      {
+        kind: 'changed',
+        summary:
+          '`Navbar` `size="sm"` has a 16px inline gutter (was 24). `size="md"` is unchanged at 24.',
+        scope: ['Navbar'],
+      },
+    ],
+  },
+  {
     version: '3.0.0',
     tag: 'v3.0.0',
     date: '2026-10-01',

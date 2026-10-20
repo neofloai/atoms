@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-01T09:22:01.788Z",
+  "generatedAt": "2026-10-20T19:42:13.355Z",
   "components": [
     {
       "name": "Accordion",
@@ -1913,6 +1913,7 @@
     {
       "name": "Drawer",
       "category": "Navigation",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6206",
       "tagline": "The side navigation an app shell is built from — the sidebar down the left, permanent, 220px, folding to a rail of icons — and the same panel used as a sheet that slides in over the page. With `Navbar` it is the shell every screen starts from: lay the page out as a row, rail first, and the bar begins where the rail ends. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.",
       "keywords": [
         "sidebar",
@@ -2001,7 +2002,7 @@
         },
         {
           "title": "A permanent nav rail",
-          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. The nav rows are `ToggleButton`s, not a `List` — that is what carries the selected tint and survives the collapse to icons. For the whole screen — rail, bar and content together — start from the Dashboard pattern.",
+          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. The nav rows are `ToggleButton`s, not a `List` — that is what carries the selected tint and survives the collapse to icons. For the whole screen — rail, bar and content together — start from the Dashboard pattern.",
           "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer\n    variant=\"permanent\"\n    size=\"sm\"\n    slotProps={{ paper: { sx: { py: 2.5 } } }}\n  >\n    <Stack sx={{ px: 2, gap: 2, pb: 2 }}>\n      <NeofloLogo variant=\"full\" size={20} />\n      <Button\n        variant=\"secondary\"\n        appearance=\"outline\"\n        size=\"sm\"\n        fullWidth\n        startIcon={<SuitcaseSimpleIcon size={16} />}\n        endIcon={<CaretUpDownIcon size={14} />}\n        onClick={openWorkspaceMenu}\n      >\n        Non Trade AP DB\n      </Button>\n    </Stack>\n\n    <Divider />\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <Stack sx={{ flex: 1, px: 2, py: 2, gap: 1 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ToggleButton\n          key={key}\n          value={key}\n          selected={active === key}\n          onChange={() => setActive(key)}\n          appearance=\"text\"\n          size=\"sm\"\n          sx={{ gap: 1, justifyContent: \"flex-start\", textTransform: \"none\" }}\n        >\n          <Icon size={20} />\n          {label}\n        </ToggleButton>\n      ))}\n    </Stack>\n\n    <Divider />\n\n    <Stack sx={{ px: 2, pt: 2.5 }}>\n      <Button\n        variant=\"secondary\"\n        appearance=\"text\"\n        fullWidth\n        endIcon={<CaretDownIcon size={16} />}\n        onClick={openUserMenu}\n        sx={{ justifyContent: \"space-between\", textTransform: \"none\" }}\n      >\n        <Avatar size=\"sm\">AV</Avatar>\n      </Button>\n    </Stack>\n  </Drawer>\n\n  <Box sx={{ flex: 1, p: 3 }}>{children}</Box>\n</Stack>"
         },
         {
@@ -2806,7 +2807,7 @@
           "name": "subheader",
           "type": "ReactNode",
           "default": "—",
-          "description": "A heading rendered above the first row. Unstyled — the design draws no subheader, so anything passed here keeps its own type."
+          "description": "A heading rendered above the first row. Pass a `ListSubheader` with `component=\"div\"`, which sets the label in the mono section type and lines it up with the rows' 16px inset."
         },
         {
           "name": "component",
@@ -2867,6 +2868,18 @@
           "type": "boolean",
           "default": "false",
           "description": "Indents a row that has no leading element so it lines up with rows that do."
+        },
+        {
+          "name": "ListSubheader children",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The label over a group of rows — DM Mono Medium at 12/16 in caption ink. Also the group label inside a `Menu`, where it lines up with the item labels instead."
+        },
+        {
+          "name": "ListSubheader disableSticky",
+          "type": "boolean",
+          "default": "false",
+          "description": "Stops the label sticking to the top while the rows scroll. Sticky labels take their container's fill to cover the rows under them, so turn it off where the container has no fill of its own."
         }
       ],
       "examples": [
@@ -2889,6 +2902,11 @@
           "title": "A clickable row with a separate trailing target",
           "description": "Nest the button inside the item and pass `disablePadding`, so the row fill reaches both edges while the switch stays its own target.",
           "code": "<ListItem disablePadding secondaryAction={<Switch defaultChecked />}>\n  <ListItemButton>\n    <ListItemText primary=\"Two-factor auth\" secondary=\"Required for admins\" />\n  </ListItemButton>\n</ListItem>"
+        },
+        {
+          "title": "A labelled group",
+          "description": "A `ListSubheader` names the rows under it in the mono section label — the same label the workspace switcher and the sidebar use. It takes the rows' 16px inset, so the label and the row text start on one line.",
+          "code": "<List subheader={<ListSubheader component=\"div\">Recent</ListSubheader>}>\n  <ListItemButton>\n    <ListItemText primary=\"Q3 vendor audit\" />\n  </ListItemButton>\n  <ListItemButton>\n    <ListItemText primary=\"Duplicate invoices\" />\n  </ListItemButton>\n</List>"
         },
         {
           "title": "A disabled row",
@@ -2922,7 +2940,7 @@
       "name": "Menu",
       "category": "Navigation",
       "tagline": "Floating panel of choices anchored to a control — the branded surface around MUI Menu, with the full MUI prop surface intact.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3228-62331",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6085",
       "props": [
         {
           "name": "open",
@@ -2946,7 +2964,7 @@
           "name": "children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The choices, as `MenuItem` elements. MUI's menu compositions also work: a `Divider` between groups, a `ListSubheader` above one."
+          "description": "The choices, as `MenuItem` elements. A `Divider` goes between groups and a `ListSubheader` above one — both from `@neofloai/atoms`."
         },
         {
           "name": "variant",
@@ -3022,13 +3040,23 @@
         },
         {
           "title": "Selected item",
-          "description": "When a menu reports a current choice, mark it with `selected` on the item — it takes the `surface.primary.subtle` tint, and `Menu`'s default `variant=\"selectedMenu\"` opens with focus already on it. Use `variant=\"menu\"` on the Menu to keep the tint without moving initial focus.",
+          "description": "When a menu reports a current choice, mark it with `selected` on the item — it takes the neutral `surface/default/2` fill, and `Menu`'s default `variant=\"selectedMenu\"` opens with focus already on it. Use `variant=\"menu\"` on the Menu to keep the fill without moving initial focus.",
           "code": "const [sort, setSort] = React.useState(\"name\");\n\n<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  {[\"name\", \"date\", \"size\"].map((option) => (\n    <MenuItem\n      key={option}\n      selected={option === sort}\n      onClick={() => {\n        setSort(option);\n        close();\n      }}\n    >\n      {option}\n    </MenuItem>\n  ))}\n</Menu>"
         },
         {
           "title": "Sections and secondary rows",
-          "description": "A `Divider` between groups picks up the panel's own border token, and `variant=\"secondary\"` de-emphasises a row that informs rather than acts. MUI gives a `MenuItem`-adjacent `Divider` its own vertical margin, so no spacing is needed around it.",
+          "description": "A `Divider` between groups picks up the panel's own border token and sits 8px from the rows on either side, as the flyout draws it — no spacing is needed around it. `variant=\"secondary\"` de-emphasises a row that informs rather than acts.",
           "code": "<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <MenuItem onClick={close}>Share</MenuItem>\n  <MenuItem onClick={close}>Copy link</MenuItem>\n  <Divider />\n  <MenuItem variant=\"secondary\" disabled>\n    Edited 2 days ago\n  </MenuItem>\n</Menu>"
+        },
+        {
+          "title": "Workspace switcher",
+          "description": "The dropdown at the foot of the sidebar. A `ListSubheader` names the group in the mono section label; each workspace is a row led by a small square `Avatar`, which grows the row to 40px; the current one is `selected` and carries a trailing check. \"Create workspace\" closes the list behind a divider. Opens upwards off its trigger.",
+          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  anchorOrigin={{ vertical: \"top\", horizontal: \"left\" }}\n  transformOrigin={{ vertical: \"bottom\", horizontal: \"left\" }}\n  sx={{ '& .MuiMenu-paper': { width: 240 } }}\n>\n  <ListSubheader>Workspaces</ListSubheader>\n  {workspaces.map((space) => (\n    <MenuItem\n      key={space.id}\n      selected={space.id === current}\n      onClick={() => {\n        setCurrent(space.id);\n        close();\n      }}\n    >\n      <Avatar size=\"sm\" shape=\"mid\" color={space.color}>\n        {space.initials}\n      </Avatar>\n      <Box component=\"span\" sx={{ flex: 1 }}>{space.name}</Box>\n      {space.id === current && <CheckCircleIcon size={16} />}\n    </MenuItem>\n  ))}\n  <Divider />\n  <MenuItem onClick={createWorkspace}>\n    <PlusIcon size={16} />\n    Create workspace\n  </MenuItem>\n</Menu>"
+        },
+        {
+          "title": "Account menu",
+          "description": "The dropdown off the avatar in the top bar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — then three groups divided by rules, a theme switch on a row of its own, and Sign out last in the `error` tone. Right-aligned under the avatar, at the 240px the design draws.",
+          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  anchorOrigin={{ vertical: \"bottom\", horizontal: \"right\" }}\n  transformOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n  sx={{ '& .MuiMenu-paper': { width: 240 } }}\n>\n  <AccountHeader user={user} />\n  <Divider />\n  <MenuItem onClick={close}><GearSixIcon size={16} />Settings</MenuItem>\n  <MenuItem onClick={close}><CreditCardIcon size={16} />Billings</MenuItem>\n  <MenuItem onClick={close}><ChartBarIcon size={16} />Reporting</MenuItem>\n  <Divider />\n  <MenuItem onClick={close}><QuestionIcon size={16} />Help</MenuItem>\n  <MenuItem onClick={close}><BookOpenIcon size={16} />Documentation</MenuItem>\n  <MenuItem onClick={close}><BugIcon size={16} />Report an issue</MenuItem>\n  <Divider />\n  <ThemeRow />\n  <Divider />\n  <MenuItem variant=\"error\" onClick={signOut}>\n    <SignOutIcon size={16} />\n    Sign out\n  </MenuItem>\n</Menu>"
         },
         {
           "title": "Positioning",
@@ -3037,7 +3065,7 @@
         },
         {
           "title": "Dense list",
-          "description": "The design specifies a single density, so `dense` is MUI's knob rather than a Neoflo variant, and it changes the type only: the label drops to `B2` and the row to 32px, while the 8px inset is held at both densities. Worth it for a long list of short strings; unnecessary otherwise. Set it once on the list rather than on every item — MUI 9.2.0 gives an item that *inherits* `dense` the dense styles without the `MuiMenuItem-dense` class, so target the list if you need to hang your own styles off it.",
+          "description": "The design specifies a single density, so `dense` is MUI's knob rather than a Neoflo variant, and it changes the type only: the label drops to `B2` and the row to 24px, while the 4px block inset is held at both densities. Worth it for a long list of short strings; unnecessary otherwise. Set it once on the list rather than on every item — MUI 9.2.0 gives an item that *inherits* `dense` the dense styles without the `MuiMenuItem-dense` class, so target the list if you need to hang your own styles off it.",
           "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  slotProps={{ list: { dense: true } }}\n>\n  {lineHeights.map((value) => (\n    <MenuItem key={value} onClick={close}>\n      {value}\n    </MenuItem>\n  ))}\n</Menu>"
         },
         {
@@ -3049,12 +3077,13 @@
       "dos": [
         "Close the menu from each item's `onClick` — a selection does not fire `onClose`, so nothing else will",
         "Capture the anchor with `event.currentTarget` and derive `open` from it, so one piece of state drives both",
-        "Mark the current choice with `selected` rather than a checkmark glyph — the tint and the initial focus both follow from it",
+        "Mark the current choice with `selected` — the fill and the initial focus both follow from it; a trailing check goes with it, not instead of it",
+        "Head a group with a `ListSubheader` when the rows need a name, such as Workspaces in the switcher",
         "Reach the panel through `sx={{ \"& .MuiMenu-paper\": { … } }}` when it needs a width or a height cap"
       ],
       "donts": [
         "Don't use a Menu for form input — a bound list of values with a label and validation is a `Select`, which is a field rather than a floating panel",
-        "Don't put a text field, or anything else focusable and non-menu, inside a Menu — the list owns arrow-key focus, and the WAI-ARIA menu pattern has no place for an input",
+        "Don't put a text field inside a Menu — the list owns arrow-key focus, so anything typed into belongs in a `Dialog` or a form. The account menu's theme switch is the one control the design puts in a menu, on a row of its own",
         "Don't nest a Menu inside a Menu; MUI has no submenu, and a second popover anchored inside the first is a trap on both keyboard and touch",
         "Don't reach for `autoFocus={false}` to stop the panel stealing focus — it leaves the menu unoperable by keyboard; `variant=\"menu\"` is almost always what was meant",
         "Don't paint the panel yourself — the surface, border, corners, and shadow all come from the design, and `sx` on the Menu root styles the modal wrapper, not the panel"
@@ -3068,20 +3097,20 @@
     {
       "name": "MenuItem",
       "category": "Navigation",
-      "tagline": "One choice inside a Menu, in three label tones — the default, a de-emphasised row, and an accent row for the action that creates something.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3204-121756",
+      "tagline": "One choice inside a Menu: a 28px row with an optional 16px glyph 12px from a medium-weight label, in four tones — the default, a de-emphasised row, an accent row for the action that creates something, and a destructive row such as Sign out.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6085",
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'secondary' | 'action'",
+          "type": "'primary' | 'secondary' | 'action' | 'error'",
           "default": "'primary'",
-          "description": "Label tone. `primary` is body strength; `secondary` de-emphasises a row that informs rather than acts; `action` tints the row that creates something. Nothing to do with `Menu`'s `variant`, which controls focus."
+          "description": "Label tone. `primary` is body strength; `secondary` de-emphasises a row that informs rather than acts; `action` tints the row that creates something; `error` marks the row that ends or removes something, such as Sign out. Nothing to do with `Menu`'s `variant`, which controls focus."
         },
         {
           "name": "selected",
           "type": "boolean",
           "default": "false",
-          "description": "Marks the current choice with the `surface.primary.subtle` tint. Inside a `Menu` with the default `variant=\"selectedMenu\"`, the selected item also takes initial focus."
+          "description": "Marks the current choice with the neutral `surface/default/2` fill, which holds under the pointer. Inside a `Menu` with the default `variant=\"selectedMenu\"`, the selected item also takes initial focus."
         },
         {
           "name": "disabled",
@@ -3093,7 +3122,7 @@
           "name": "dense",
           "type": "boolean",
           "default": "false",
-          "description": "Drops the label to `B2` and the row to 32px; the 8px inset is held at both densities, since the design specifies only one. Inherited from the parent list, so `slotProps={{ list: { dense: true } }}` on the Menu is usually the better place to set it."
+          "description": "Drops the label to `B2` and the row to 24px; the 4px block inset is held at both densities, since the design specifies only one. Inherited from the parent list, so `slotProps={{ list: { dense: true } }}` on the Menu is usually the better place to set it."
         },
         {
           "name": "divider",
@@ -3153,12 +3182,12 @@
       "examples": [
         {
           "title": "Tones",
-          "description": "The three tones from the Figma variant axis. `primary` is the default and carries the body text colour; `secondary` steps the label down to `B2` grey for a row that reports rather than acts; `action` takes the primary accent, for the one row that creates something. One `action` per menu, the way there is one primary button per section.",
-          "code": "<MenuItem onClick={close}>Rename</MenuItem>\n<MenuItem variant=\"secondary\" onClick={close}>\n  Move to archive\n</MenuItem>\n<MenuItem variant=\"action\" onClick={close}>\n  New folder\n</MenuItem>"
+          "description": "`primary` is the default and carries the body text colour; `secondary` steps the label down to `B2` grey for a row that reports rather than acts; `action` takes the primary accent, for the one row that creates something; `error` is the destructive row, last in its own group. One `action` per menu, the way there is one primary button per section.",
+          "code": "<MenuItem onClick={close}>Rename</MenuItem>\n<MenuItem variant=\"secondary\" onClick={close}>\n  Move to archive\n</MenuItem>\n<MenuItem variant=\"action\" onClick={close}>\n  New folder\n</MenuItem>\n<MenuItem variant=\"error\" onClick={signOut}>\n  Sign out\n</MenuItem>"
         },
         {
           "title": "States",
-          "description": "Hover and keyboard focus share one tint, so a row reached by either route looks the same. `selected` marks the current choice with the primary tint and keeps it when hovered. `disabled` uses the disabled text token instead of MUI's opacity fade, which keeps the label readable rather than washing the whole row out.",
+          "description": "Hover and keyboard focus share one tint, so a row reached by either route looks the same. `selected` marks the current choice with a neutral fill and keeps it when hovered. `disabled` uses the disabled text token instead of MUI's opacity fade, which keeps the label readable rather than washing the whole row out.",
           "code": "<MenuItem selected onClick={close}>Name</MenuItem>\n<MenuItem onClick={close}>Date modified</MenuItem>\n<MenuItem disabled>Size (unavailable)</MenuItem>"
         },
         {
@@ -3168,7 +3197,7 @@
         },
         {
           "title": "MUI list composition",
-          "description": "MUI's own icon-menu composition works unchanged. `ListItemIcon`'s 36px reserved column is collapsed to the design's 4px gap and its colour set to inherit, so both routes look identical — use this one when a row needs a trailing shortcut or a two-line label.",
+          "description": "MUI's own icon-menu composition works unchanged. `ListItemIcon`'s 36px reserved column is collapsed to the design's 12px gap and its colour set to inherit, so both routes look identical — use this one when a row needs a trailing shortcut or a two-line label.",
           "code": "<MenuItem onClick={close}>\n  <ListItemIcon>\n    <CopyIcon size={16} />\n  </ListItemIcon>\n  <ListItemText>Duplicate</ListItemText>\n  <Typography variant=\"body2\" color=\"text.secondary\">\n    ⌘D\n  </Typography>\n</MenuItem>"
         },
         {
@@ -3186,7 +3215,8 @@
         "Close the menu from `onClick` — a selection never reaches the Menu's `onClose`",
         "Keep `variant=\"action\"` to one row per menu, and put it last, where a \"new…\" row is expected",
         "Give every row a glyph or none, so the labels stay aligned with each other",
-        "Use `selected` for the current choice instead of a checkmark glyph, so the tint and the initial focus both follow from one prop",
+        "Use `selected` for the current choice, so the fill and the initial focus both follow from one prop; a trailing check, as the workspace switcher draws, goes with it rather than instead of it",
+        "Lead a row with a `size=\"sm\"` `Avatar` when the choice is a workspace or a person — the row grows to 40px on its own",
         "Write labels as verbs for rows that act (\"Rename\", \"Duplicate\") and leave `variant=\"secondary\"` for the rows that do not"
       ],
       "donts": [
@@ -3205,6 +3235,7 @@
     {
       "name": "Navbar",
       "category": "Navigation",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6086",
       "tagline": "The topbar across the top of an app, in two heights — a 48px app bar or a 72px page header. With `Drawer` it is the shell every screen starts from: the rail owns the full height and this bar begins where the rail ends, so it never runs the full width above it. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.",
       "keywords": [
         "topbar",
@@ -3236,7 +3267,7 @@
           "name": "size",
           "type": "'sm' | 'md'",
           "default": "'sm'",
-          "description": "How tall the bar is, and therefore what kind of bar it is. `sm` is the 48px app bar — one row of controls belonging to the whole screen. `md` is the 72px page header, tall enough for a `NavbarTitle` with a line of context under it plus the actions that apply to the record on screen. Only the height differs; surface, rule, gutter and row are identical."
+          "description": "How tall the bar is, and therefore what kind of bar it is. `sm` is the 48px app bar — one row of controls belonging to the whole screen. `md` is the 72px page header, tall enough for a `NavbarTitle` with a line of context under it plus the actions that apply to the record on screen. The surface, rule and row are identical; the gutter is 16px at `sm` and 24px at `md`."
         },
         {
           "name": "position",
@@ -3248,7 +3279,7 @@
           "name": "disableGutters",
           "type": "boolean",
           "default": "false",
-          "description": "Drop the 24px inline gutter so the first and last children sit flush with the page edge. Reach for it when the bar’s own children already carry the inset — a full-bleed `Tabs`, for instance."
+          "description": "Drop the inline gutter (16px at `sm`, 24px at `md`) so the first and last children sit flush with the page edge. Reach for it when the bar’s own children already carry the inset — a full-bleed `Tabs`, for instance."
         },
         {
           "name": "component",
@@ -3283,9 +3314,9 @@
       ],
       "examples": [
         {
-          "title": "An app bar with a title and trailing actions",
-          "description": "The shape almost every bar takes: what the screen is on the left, what you can do to it on the right, and a flexible gap doing the separating. The gap is composition rather than a prop, so a tight cluster of icon buttons chooses its own spacing.",
-          "code": "<Navbar>\n  <Typography variant=\"subtitle1\" sx={{ fontWeight: 600 }}>\n    Query log\n  </Typography>\n  <Box sx={{ flex: 1 }} />\n  <IconButton variant=\"secondary\" appearance=\"text\" size=\"sm\" aria-label=\"Search\">\n    <MagnifyingGlassIcon />\n  </IconButton>\n  <IconButton variant=\"secondary\" appearance=\"text\" size=\"sm\" aria-label=\"Notifications\">\n    <BellIcon />\n  </IconButton>\n  <Avatar size=\"sm\">AV</Avatar>\n</Navbar>"
+          "title": "An app bar: toggle, page name, account",
+          "description": "The app bar as the navigation sheet draws it. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar opens the account menu; see the Menu page for its contents.",
+          "code": "<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={collapsed ? \"Expand sidebar\" : \"Collapse sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label=\"Account\"\n      onClick={(event) => setAccountAnchor(event.currentTarget)}\n    >\n      <Avatar size=\"sm\" color=\"error\">JD</Avatar>\n    </IconButton>\n  </Stack>\n</Navbar>"
         },
         {
           "title": "The shell: a full-height rail, the bar beside it",
@@ -5668,6 +5699,7 @@
     "ListItemButton",
     "ListItemIcon",
     "ListItemText",
+    "ListSubheader",
     "Menu",
     "MenuItem",
     "Navbar",

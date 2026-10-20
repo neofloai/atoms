@@ -4,6 +4,7 @@ export { ListItemAvatar } from './ListItemAvatar';
 export { ListItemButton } from './ListItemButton';
 export { ListItemIcon } from './ListItemIcon';
 export { ListItemText } from './ListItemText';
+export { ListSubheader } from './ListSubheader';
 export type {
   ListItemAvatarProps,
   ListItemButtonProps,
@@ -13,5 +14,7 @@ export type {
   ListItemTextProps,
   ListItemTypeMap,
   ListProps,
+  ListSubheaderProps,
+  ListSubheaderTypeMap,
   ListTypeMap,
 } from './List.types';

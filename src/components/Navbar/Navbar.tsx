@@ -13,8 +13,8 @@ import type { NavbarProps, NavbarSize } from './Navbar.types';
 /**
  * Height of the bar, in pixels, per `size`.
  *
- * `sm` is the Vendor Query shell's top bar: a 24px control with 12px
- * above and below it. `md` is the page header from the UI experiment
+ * `sm` is the navigation sheet's top bar (4564:6105): a 24px control
+ * with 12px above and below it. `md` is the page header from the UI experiment
  * frame — 12px above and below a 48px block, which is what a 28px title
  * over a 16px line of context needs.
  *
@@ -41,15 +41,26 @@ export const NAVBAR_HEIGHT_PX: Record<NavbarSize, number> = {
 };
 
 /**
- * Inline gutter. `Scale/400`, the same 24px the shell's bar carries and
- * the same inset `Dialog` uses on its own regions, so a bar above a
- * dialog-width panel shares its left edge.
+ * Inline gutter, per `size`.
+ *
+ * `sm` is `Scale/300`, 16px, from the navigation sheet's top bar
+ * (4564:6105), which also spaces its children 16 apart. It is a literal
+ * because the component spacing ladder has no 16 — the same gap `Card`
+ * carries its padding as (DESIGNER_QUESTIONS.md #31).
+ *
+ * `md` stays on `Scale/400`, 24px, the page header's own gutter and the
+ * inset `Dialog` uses on its regions, so a header above a dialog-width
+ * panel shares its left edge. The navigation sheet does not draw a page
+ * header, so nothing has moved it.
  *
  * Applied here rather than left to MUI, which ramps its gutter 16 -> 24
  * at `sm`. The row is rendered with `disableGutters` and this padding
  * instead, so one flat value wins outright.
  */
-const NAVBAR_PADDING_INLINE_PX = spacing.component.md;
+const NAVBAR_PADDING_INLINE_PX: Record<NavbarSize, number> = {
+  sm: 16,
+  md: spacing.component.md,
+};
 
 /** Width of the rule under the bar — the only edge it draws. */
 const NAVBAR_BORDER_WIDTH_PX = 1;
@@ -77,7 +88,7 @@ const NavbarToolbar = styled(Toolbar, {
     prop !== 'neofloGutters' && prop !== 'neofloSize',
 })<NavbarToolbarProps>(({ neofloGutters = true, neofloSize = 'sm' }) => ({
   minHeight: NAVBAR_HEIGHT_PX[neofloSize],
-  paddingInline: neofloGutters ? NAVBAR_PADDING_INLINE_PX : 0,
+  paddingInline: neofloGutters ? NAVBAR_PADDING_INLINE_PX[neofloSize] : 0,
 }));
 
 /**
@@ -131,14 +142,19 @@ const NavbarToolbar = styled(Toolbar, {
  * `sx={{ ml: 'auto' }}` between them, and a tight group of icon buttons
  * chooses its own gap rather than inheriting one meant for a brand.
  *
- * @example An app bar with a title and trailing actions
+ * @example An app bar: sidebar toggle, page name, trailing actions
  * <Navbar>
- *   <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Query log</Typography>
- *   <Box sx={{ flex: 1 }} />
- *   <IconButton variant="secondary" appearance="text" aria-label="Search">
- *     <MagnifyingGlassIcon />
- *   </IconButton>
- *   <Avatar size="sm">AV</Avatar>
+ *   <Stack direction="row" sx={{ flex: 1, alignItems: 'center', gap: 2 }}>
+ *     <IconButton variant="secondary" appearance="text" size="sm" aria-label="Collapse sidebar">
+ *       <SidebarSimpleIcon />
+ *     </IconButton>
+ *     <Typography variant="body1" color="text.secondary">Invoice Processing</Typography>
+ *     <Box sx={{ flex: 1 }} />
+ *     <IconButton variant="primary" appearance="outline" size="sm" aria-label="Ask Neo">
+ *       <StarFourIcon />
+ *     </IconButton>
+ *     <Avatar size="sm" color="error">JD</Avatar>
+ *   </Stack>
  * </Navbar>
  *
  * @example Staying put as the page scrolls

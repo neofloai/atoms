@@ -616,7 +616,7 @@ export function ErpPostingPreview(): React.JSX.Element {
         <AppRail
           collapsed
           showBrand={false}
-          showUser={false}
+          showWorkspace={false}
           nav={WORKFLOW_NAV}
           secondaryNav={WORKFLOW_SECONDARY_NAV}
         />
@@ -760,7 +760,7 @@ export function ErpPostingPreview(): React.JSX.Element {
           open={navOpen}
           onClose={() => setNavOpen(false)}
           onNavigate={() => setNavOpen(false)}
-          defaultActive="dashboard"
+          defaultActive="work-area"
           container={belowBar}
         />
       </Box>

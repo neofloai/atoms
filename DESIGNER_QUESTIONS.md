@@ -1061,7 +1061,7 @@ The `list` frame is the largest component set synced so far: four axes — `2-li
 
 **The avatar the sheet uses in a two-line row does not exist in this system.** Its instance reports `min-width: 32` and `width: 36` in the same box, and the `Avatar` component ships `sm` 24 / `md` 32 / `lg` 40 — no 36. Nothing breaks, because a two-line text block is 36 tall on its own and the row measures 68 either way, but the sheet is asking for a size that is not on the ladder. **Confirm `md` (32) is the intended avatar beside two lines, or add a rung.**
 
-**`ListSubheader` is not built.** MUI ships one and the sheet draws none, so wrapping it would mean inventing its type, colour, and inset. `List` still takes MUI's `subheader` prop, so a heading can be passed and styled by the caller. **Draw a subheader cell if lists are meant to have sections.**
+**`ListSubheader` is not built.** MUI ships one and the sheet draws none, so wrapping it would mean inventing its type, colour, and inset. `List` still takes MUI's `subheader` prop, so a heading can be passed and styled by the caller. **Draw a subheader cell if lists are meant to have sections.** *Answered 21 October by the navigation sheet (#71): its mono section label now ships as `ListSubheader`, at the rows' 16px inset in a list and the item labels' 8px gutter in a menu.*
 
 **One deviation from MUI's mechanics, forced by the sheet.** MUI positions the trailing control absolutely and reserves a flat 48px for it; this design breaks that in both directions — the `icon-button` cell is 68px wide (two 32px buttons `Scale/100` apart) and would overflow the reserve, while the `radio` cell is 16px and wastes half of it. Figma draws a flex line, content on `flex: 1` over `min-width: 0` and the control on `shrink-0`, so the slot was returned to normal flow. The title now shortens to make room instead of sliding underneath, which is also the better behaviour. No question — recorded because it is the one place the DOM differs from MUI's.
 
@@ -1487,3 +1487,30 @@ The Avatar set was redrawn with five axes — `content` (text / icon / img), `si
 7. **Every dot binds `surface/primary/default`** in its variable, but renders `green/400` — one cell binds `green/400` directly. Shipped green (`icon/success/4`), with `warning`/`error`/`neutral` on the same rung of their ladders for the presence conventions the sheet does not draw.
 8. **`xs` holds one initial.** Every `xs` text cell shows a single letter; the docs say so, the component does not truncate.
 
+
+---
+
+### 71. Navigation — the top bar, the sidebar and their two dropdowns (added 21 October, source: Product Design System node 4564:6085)
+
+The navigation sheet draws the top nav bar (4564:6086), the side nav bar in three states (4564:6206 — resting, with the workspace menu open, and a floating rail with no brand), and the account flyout off the avatar (4564:6122). It supersedes the menu panel (3228:62331) and menu item (3204:121756) sheets: the flyout is now what `Menu` and `MenuItem` draw. What changed in code:
+
+- **`Menu`**: 8px corners (was 16), a near-white fill, 4px inset and 4px between rows, a `Divider` 8px from the rows either side, and `ListSubheader` set as the sheet's mono section label.
+- **`MenuItem`**: 28px rows (was 36), 4px corners (was 8), the glyph 12px from the label (was 4), labels in `Sans/B1/Medium`, a neutral selected fill, and a fourth tone, `error`, for Sign out. A row that leads with an avatar grows to 40px, as the switcher draws it.
+- **`Navbar`**: the `sm` bar's gutter is 16px (was 24); `md` is unchanged.
+- **`ListSubheader`** is now exported: the sheet's mono section label (DM Mono Medium 12/16, `text/default/b3`), which closes #51's subheader point.
+- **The sidebar and the top bar** are docs compositions, rebuilt to the sheet: brand, sectioned nav, and the workspace switcher at the foot; toggle, page name, Ask Neo and the account avatar across the top.
+
+**Confirm:**
+1. **The flyout's fill is literal white.** It ships as `surface/layers/page` (`#fdfdfc`). In dark mode it stays on `card 2`, because the page's dark half is darker than the bar and rail it drops out of. #55 asked the same of the rail's own flyout.
+2. **The shadow is unnamed and much deeper than any rung** — 0/20/25 at 10% black, plus 0/8/10 at 10% on the switcher. Menus keep `Shadow/medium` and the floating rail takes `Shadow/large`. Should this become a named effect style?
+3. **Selected is `surface/default/2`, a neutral fill, not the primary tint the item sheet drew.** That rung is the rail's own `card 2` in dark mode, so selected would vanish there; the dark half moves to `surface/default/default pressed` (`grey/900`). That is also the dark hover, so in dark the two differ only by ink and weight.
+4. **"Create workspace" is a 40px row with a `border/layers/card 3` rule on top.** It ships as a `Divider` and an ordinary 28px row. Should the footer row be taller than its siblings?
+5. **The toggle and Ask Neo are 24px squares; `IconButton` starts at 32.** Both ship at 32, unmodified. Ask Neo's 0.857px border and 3.4px corners read as a 28px button scaled down. Is a 24px icon button wanted?
+6. **There is no nav-row component.** The rail's rows are built from MUI's unstyled `ButtonBase` with the sheet's treatment — 28px, 16px glyph, `text/default/b3` Regular at rest, `surface/default/2` behind `text/default/b1` Medium when current. Should the row, or the whole side nav, become a component? Hover is not drawn; it borrows `card 3`, as `MenuItem` does.
+7. **The parent of the current page is drawn plain** (`b3`, Regular) while its group is open. It takes the current page's ink and weight only when that page is out of sight, in a shut group or a folded rail. That was the older branched frame's rule (1262:78156).
+8. **Child rows set the glyph 8px from the label; top-level rows, 12.** Followed as drawn.
+9. **The branch rule is an unbound vector.** It ships as `border/default/1`; a `card 2` rule on the `card 2` rail is invisible.
+10. **The current workspace's check is unbound.** It ships as `icon/success/4`, to match the green it renders.
+11. **The theme switch sits inside a menu.** Arrow keys move between menu rows and skip it, and Tab closes the menu, so it can only be reached with the pointer. Is that acceptable for a theme control, or should Theme be a row that opens a submenu?
+12. **The role chip in the account header nearly vanishes in dark mode.** The muted tag's fill is `card 2` (#68), which is also the menu's dark fill. Should a chip on a panel step up a rung, or should the muted tag have a dark fill of its own?
+13. **The sheet draws no dark mode and no collapsed rail.** Both are carried over from the shell: a 64px icon strip, with the folded parent's level in a flyout.

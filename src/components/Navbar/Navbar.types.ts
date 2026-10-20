@@ -20,7 +20,7 @@ export type NavbarPosition = NonNullable<MuiAppBarProps['position']>;
  * actions that apply to the record on screen.
  *
  * Two rungs rather than a `variant`, because the difference really is
- * only the height — the surface, the rule, the gutter and the row are
+ * the height and the gutter — the surface, the rule and the row are
  * identical, and what fills them is composition either way.
  */
 export type NavbarSize = 'sm' | 'md';
@@ -75,7 +75,7 @@ export interface NavbarProps extends Omit<MuiAppBarProps, LockedBarProp> {
    */
   size?: NavbarSize;
   /**
-   * Drop the 24px inline gutter, for a bar whose first and last children
+   * Drop the inline gutter — 16px at `sm`, 24px at `md` — for a bar whose first and last children
    * should sit flush with the page edge. MUI's `Toolbar` prop, forwarded.
    *
    * @default false

@@ -15,23 +15,23 @@ export const data: ComponentExamplesData = {
   name: 'MenuItem',
   category: 'Navigation',
   tagline:
-    'One choice inside a Menu, in three label tones — the default, a de-emphasised row, and an accent row for the action that creates something.',
+    'One choice inside a Menu: a 28px row with an optional 16px glyph 12px from a medium-weight label, in four tones — the default, a de-emphasised row, an accent row for the action that creates something, and a destructive row such as Sign out.',
   figmaUrl:
-    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3204-121756',
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6085',
   props: [
     {
       name: 'variant',
-      type: "'primary' | 'secondary' | 'action'",
+      type: "'primary' | 'secondary' | 'action' | 'error'",
       default: "'primary'",
       description:
-        'Label tone. `primary` is body strength; `secondary` de-emphasises a row that informs rather than acts; `action` tints the row that creates something. Nothing to do with `Menu`\'s `variant`, which controls focus.',
+        'Label tone. `primary` is body strength; `secondary` de-emphasises a row that informs rather than acts; `action` tints the row that creates something; `error` marks the row that ends or removes something, such as Sign out. Nothing to do with `Menu`\'s `variant`, which controls focus.',
     },
     {
       name: 'selected',
       type: 'boolean',
       default: 'false',
       description:
-        'Marks the current choice with the `surface.primary.subtle` tint. Inside a `Menu` with the default `variant="selectedMenu"`, the selected item also takes initial focus.',
+        'Marks the current choice with the neutral `surface/default/2` fill, which holds under the pointer. Inside a `Menu` with the default `variant="selectedMenu"`, the selected item also takes initial focus.',
     },
     {
       name: 'disabled',
@@ -45,7 +45,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Drops the label to `B2` and the row to 32px; the 8px inset is held at both densities, since the design specifies only one. Inherited from the parent list, so `slotProps={{ list: { dense: true } }}` on the Menu is usually the better place to set it.',
+        'Drops the label to `B2` and the row to 24px; the 4px block inset is held at both densities, since the design specifies only one. Inherited from the parent list, so `slotProps={{ list: { dense: true } }}` on the Menu is usually the better place to set it.',
     },
     {
       name: 'divider',
@@ -114,7 +114,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Tones',
       description:
-        'The three tones from the Figma variant axis. `primary` is the default and carries the body text colour; `secondary` steps the label down to `B2` grey for a row that reports rather than acts; `action` takes the primary accent, for the one row that creates something. One `action` per menu, the way there is one primary button per section.',
+        '`primary` is the default and carries the body text colour; `secondary` steps the label down to `B2` grey for a row that reports rather than acts; `action` takes the primary accent, for the one row that creates something; `error` is the destructive row, last in its own group. One `action` per menu, the way there is one primary button per section.',
       code: [
         '<MenuItem onClick={close}>Rename</MenuItem>',
         '<MenuItem variant="secondary" onClick={close}>',
@@ -123,12 +123,15 @@ export const data: ComponentExamplesData = {
         '<MenuItem variant="action" onClick={close}>',
         '  New folder',
         '</MenuItem>',
+        '<MenuItem variant="error" onClick={signOut}>',
+        '  Sign out',
+        '</MenuItem>',
       ].join('\n'),
     },
     {
       title: 'States',
       description:
-        'Hover and keyboard focus share one tint, so a row reached by either route looks the same. `selected` marks the current choice with the primary tint and keeps it when hovered. `disabled` uses the disabled text token instead of MUI\'s opacity fade, which keeps the label readable rather than washing the whole row out.',
+        'Hover and keyboard focus share one tint, so a row reached by either route looks the same. `selected` marks the current choice with a neutral fill and keeps it when hovered. `disabled` uses the disabled text token instead of MUI\'s opacity fade, which keeps the label readable rather than washing the whole row out.',
       code: [
         '<MenuItem selected onClick={close}>Name</MenuItem>',
         '<MenuItem onClick={close}>Date modified</MenuItem>',
@@ -153,7 +156,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'MUI list composition',
       description:
-        'MUI\'s own icon-menu composition works unchanged. `ListItemIcon`\'s 36px reserved column is collapsed to the design\'s 4px gap and its colour set to inherit, so both routes look identical — use this one when a row needs a trailing shortcut or a two-line label.',
+        'MUI\'s own icon-menu composition works unchanged. `ListItemIcon`\'s 36px reserved column is collapsed to the design\'s 12px gap and its colour set to inherit, so both routes look identical — use this one when a row needs a trailing shortcut or a two-line label.',
       code: [
         '<MenuItem onClick={close}>',
         '  <ListItemIcon>',
@@ -205,7 +208,8 @@ export const data: ComponentExamplesData = {
     'Close the menu from `onClick` — a selection never reaches the Menu\'s `onClose`',
     'Keep `variant="action"` to one row per menu, and put it last, where a "new…" row is expected',
     'Give every row a glyph or none, so the labels stay aligned with each other',
-    'Use `selected` for the current choice instead of a checkmark glyph, so the tint and the initial focus both follow from one prop',
+    'Use `selected` for the current choice, so the fill and the initial focus both follow from one prop; a trailing check, as the workspace switcher draws, goes with it rather than instead of it',
+    'Lead a row with a `size="sm"` `Avatar` when the choice is a workspace or a person — the row grows to 40px on its own',
     'Write labels as verbs for rows that act ("Rename", "Duplicate") and leave `variant="secondary"` for the rows that do not',
   ],
   donts: [

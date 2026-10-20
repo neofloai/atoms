@@ -26,8 +26,13 @@ import type {
  *                   creates something: "New folder", "Invite member".
  *                   One per menu, the way `Button variant="primary"` is
  *                   one per section.
+ *   - `error`     — destructive label (`text/error/4`), for the row that
+ *                   ends or removes something: "Sign out", "Delete".
+ *                   From the account flyout in the navigation sheet
+ *                   (node 4564:6199), which is a later component than
+ *                   the item set and adds the tone that set lacked.
  */
-export type MenuItemVariant = 'primary' | 'secondary' | 'action';
+export type MenuItemVariant = 'primary' | 'secondary' | 'action' | 'error';
 
 /**
  * The one prop this wrapper adds to MUI's `MenuItem`.
