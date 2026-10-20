@@ -4,13 +4,15 @@ import type { ComponentExamplesData } from '@/src/types/docs';
  * Docs + MCP data for `Navbar`. Read by `scripts/generate.ts` and served
  * through the MCP `get_component` tool and the docs site.
  *
- * No `figmaUrl`: the Product Design System file has no app-bar cell. The
- * surface is the shared panel treatment and the 48px height is measured
- * from the Vendor Query shell — see the constants in `Navbar.tsx`.
+ * `figmaUrl` is the top nav bar in the navigation sheet (4564:6086),
+ * which draws the `sm` bar. The `md` page header has no cell of its own
+ * yet — its 72px is measured from a workflow frame; see `Navbar.tsx`.
  */
 export const data: ComponentExamplesData = {
   name: 'Navbar',
   category: 'Navigation',
+  figmaUrl:
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6086',
   tagline:
     'The topbar across the top of an app, in two heights — a 48px app bar or a 72px page header. With `Drawer` it is the shell every screen starts from: the rail owns the full height and this bar begins where the rail ends, so it never runs the full width above it. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.',
   // `Navbar` is the house name; `topbar` and `header` are what people
@@ -49,7 +51,7 @@ export const data: ComponentExamplesData = {
       type: "'sm' | 'md'",
       default: "'sm'",
       description:
-        'How tall the bar is, and therefore what kind of bar it is. `sm` is the 48px app bar — one row of controls belonging to the whole screen. `md` is the 72px page header, tall enough for a `NavbarTitle` with a line of context under it plus the actions that apply to the record on screen. Only the height differs; surface, rule, gutter and row are identical.',
+        'How tall the bar is, and therefore what kind of bar it is. `sm` is the 48px app bar — one row of controls belonging to the whole screen. `md` is the 72px page header, tall enough for a `NavbarTitle` with a line of context under it plus the actions that apply to the record on screen. The surface, rule and row are identical; the gutter is 16px at `sm` and 24px at `md`.',
     },
     {
       name: 'position',
@@ -63,7 +65,7 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Drop the 24px inline gutter so the first and last children sit flush with the page edge. Reach for it when the bar’s own children already carry the inset — a full-bleed `Tabs`, for instance.',
+        'Drop the inline gutter (16px at `sm`, 24px at `md`) so the first and last children sit flush with the page edge. Reach for it when the bar’s own children already carry the inset — a full-bleed `Tabs`, for instance.',
     },
     {
       name: 'component',
@@ -103,22 +105,38 @@ export const data: ComponentExamplesData = {
   ],
   examples: [
     {
-      title: 'An app bar with a title and trailing actions',
+      title: 'An app bar: toggle, page name, account',
       description:
-        'The shape almost every bar takes: what the screen is on the left, what you can do to it on the right, and a flexible gap doing the separating. The gap is composition rather than a prop, so a tight cluster of icon buttons chooses its own spacing.',
+        'The app bar as the navigation sheet draws it. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar opens the account menu; see the Menu page for its contents.',
       code: [
         '<Navbar>',
-        '  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>',
-        '    Query log',
-        '  </Typography>',
-        '  <Box sx={{ flex: 1 }} />',
-        '  <IconButton variant="secondary" appearance="text" size="sm" aria-label="Search">',
-        '    <MagnifyingGlassIcon />',
-        '  </IconButton>',
-        '  <IconButton variant="secondary" appearance="text" size="sm" aria-label="Notifications">',
-        '    <BellIcon />',
-        '  </IconButton>',
-        '  <Avatar size="sm">AV</Avatar>',
+        '  <Stack direction="row" sx={{ flex: 1, alignItems: "center", gap: 2 }}>',
+        '    <IconButton',
+        '      variant="secondary"',
+        '      appearance="text"',
+        '      size="sm"',
+        '      aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}',
+        '      onClick={toggleSidebar}',
+        '    >',
+        '      <SidebarSimpleIcon />',
+        '    </IconButton>',
+        '    <Typography variant="body1" color="text.secondary" noWrap>',
+        '      Invoice Processing',
+        '    </Typography>',
+        '    <Box sx={{ flex: 1 }} />',
+        '    <IconButton variant="primary" appearance="outline" size="sm" aria-label="Ask Neo">',
+        '      <StarFourIcon />',
+        '    </IconButton>',
+        '    <IconButton',
+        '      variant="secondary"',
+        '      appearance="text"',
+        '      size="sm"',
+        '      aria-label="Account"',
+        '      onClick={(event) => setAccountAnchor(event.currentTarget)}',
+        '    >',
+        '      <Avatar size="sm" color="error">JD</Avatar>',
+        '    </IconButton>',
+        '  </Stack>',
         '</Navbar>',
       ].join('\n'),
     },

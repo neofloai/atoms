@@ -435,6 +435,7 @@ export {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
 } from './components/List';
 export type {
   ListItemAvatarProps,
@@ -445,6 +446,8 @@ export type {
   ListItemTextProps,
   ListItemTypeMap,
   ListProps,
+  ListSubheaderProps,
+  ListSubheaderTypeMap,
   ListTypeMap,
 } from './components/List';
 

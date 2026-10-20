@@ -575,7 +575,7 @@ export default function InvoiceDashboardPage() {
       direction="row"
       sx={{ height: '100vh' }}
     >
-      <AppRail collapsed={collapsed} active="dashboard" />
+      <AppRail collapsed={collapsed} active="work-area" />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>

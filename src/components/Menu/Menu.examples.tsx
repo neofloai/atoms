@@ -15,7 +15,7 @@ export const data: ComponentExamplesData = {
   tagline:
     'Floating panel of choices anchored to a control — the branded surface around MUI Menu, with the full MUI prop surface intact.',
   figmaUrl:
-    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3228-62331',
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6085',
   props: [
     {
       name: 'open',
@@ -43,7 +43,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'The choices, as `MenuItem` elements. MUI\'s menu compositions also work: a `Divider` between groups, a `ListSubheader` above one.',
+        'The choices, as `MenuItem` elements. A `Divider` goes between groups and a `ListSubheader` above one — both from `@neofloai/atoms`.',
     },
     {
       name: 'variant',
@@ -158,7 +158,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Selected item',
       description:
-        'When a menu reports a current choice, mark it with `selected` on the item — it takes the `surface.primary.subtle` tint, and `Menu`\'s default `variant="selectedMenu"` opens with focus already on it. Use `variant="menu"` on the Menu to keep the tint without moving initial focus.',
+        'When a menu reports a current choice, mark it with `selected` on the item — it takes the neutral `surface/default/2` fill, and `Menu`\'s default `variant="selectedMenu"` opens with focus already on it. Use `variant="menu"` on the Menu to keep the fill without moving initial focus.',
       code: [
         'const [sort, setSort] = React.useState("name");',
         '',
@@ -181,7 +181,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Sections and secondary rows',
       description:
-        'A `Divider` between groups picks up the panel\'s own border token, and `variant="secondary"` de-emphasises a row that informs rather than acts. MUI gives a `MenuItem`-adjacent `Divider` its own vertical margin, so no spacing is needed around it.',
+        'A `Divider` between groups picks up the panel\'s own border token and sits 8px from the rows on either side, as the flyout draws it — no spacing is needed around it. `variant="secondary"` de-emphasises a row that informs rather than acts.',
       code: [
         '<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>',
         '  <MenuItem onClick={close}>Share</MenuItem>',
@@ -189,6 +189,76 @@ export const data: ComponentExamplesData = {
         '  <Divider />',
         '  <MenuItem variant="secondary" disabled>',
         '    Edited 2 days ago',
+        '  </MenuItem>',
+        '</Menu>',
+      ].join('\n'),
+    },
+    {
+      title: 'Workspace switcher',
+      description:
+        'The dropdown at the foot of the sidebar. A `ListSubheader` names the group in the mono section label; each workspace is a row led by a small square `Avatar`, which grows the row to 40px; the current one is `selected` and carries a trailing check. "Create workspace" closes the list behind a divider. Opens upwards off its trigger.',
+      code: [
+        '<Menu',
+        '  anchorEl={anchorEl}',
+        '  open={Boolean(anchorEl)}',
+        '  onClose={close}',
+        '  anchorOrigin={{ vertical: "top", horizontal: "left" }}',
+        '  transformOrigin={{ vertical: "bottom", horizontal: "left" }}',
+        "  sx={{ '& .MuiMenu-paper': { width: 240 } }}",
+        '>',
+        '  <ListSubheader>Workspaces</ListSubheader>',
+        '  {workspaces.map((space) => (',
+        '    <MenuItem',
+        '      key={space.id}',
+        '      selected={space.id === current}',
+        '      onClick={() => {',
+        '        setCurrent(space.id);',
+        '        close();',
+        '      }}',
+        '    >',
+        '      <Avatar size="sm" shape="mid" color={space.color}>',
+        '        {space.initials}',
+        '      </Avatar>',
+        '      <Box component="span" sx={{ flex: 1 }}>{space.name}</Box>',
+        '      {space.id === current && <CheckCircleIcon size={16} />}',
+        '    </MenuItem>',
+        '  ))}',
+        '  <Divider />',
+        '  <MenuItem onClick={createWorkspace}>',
+        '    <PlusIcon size={16} />',
+        '    Create workspace',
+        '  </MenuItem>',
+        '</Menu>',
+      ].join('\n'),
+    },
+    {
+      title: 'Account menu',
+      description:
+        'The dropdown off the avatar in the top bar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — then three groups divided by rules, a theme switch on a row of its own, and Sign out last in the `error` tone. Right-aligned under the avatar, at the 240px the design draws.',
+      code: [
+        '<Menu',
+        '  anchorEl={anchorEl}',
+        '  open={Boolean(anchorEl)}',
+        '  onClose={close}',
+        '  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}',
+        '  transformOrigin={{ vertical: "top", horizontal: "right" }}',
+        "  sx={{ '& .MuiMenu-paper': { width: 240 } }}",
+        '>',
+        '  <AccountHeader user={user} />',
+        '  <Divider />',
+        '  <MenuItem onClick={close}><GearSixIcon size={16} />Settings</MenuItem>',
+        '  <MenuItem onClick={close}><CreditCardIcon size={16} />Billings</MenuItem>',
+        '  <MenuItem onClick={close}><ChartBarIcon size={16} />Reporting</MenuItem>',
+        '  <Divider />',
+        '  <MenuItem onClick={close}><QuestionIcon size={16} />Help</MenuItem>',
+        '  <MenuItem onClick={close}><BookOpenIcon size={16} />Documentation</MenuItem>',
+        '  <MenuItem onClick={close}><BugIcon size={16} />Report an issue</MenuItem>',
+        '  <Divider />',
+        '  <ThemeRow />',
+        '  <Divider />',
+        '  <MenuItem variant="error" onClick={signOut}>',
+        '    <SignOutIcon size={16} />',
+        '    Sign out',
         '  </MenuItem>',
         '</Menu>',
       ].join('\n'),
@@ -213,7 +283,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Dense list',
       description:
-        'The design specifies a single density, so `dense` is MUI\'s knob rather than a Neoflo variant, and it changes the type only: the label drops to `B2` and the row to 32px, while the 8px inset is held at both densities. Worth it for a long list of short strings; unnecessary otherwise. Set it once on the list rather than on every item — MUI 9.2.0 gives an item that *inherits* `dense` the dense styles without the `MuiMenuItem-dense` class, so target the list if you need to hang your own styles off it.',
+        'The design specifies a single density, so `dense` is MUI\'s knob rather than a Neoflo variant, and it changes the type only: the label drops to `B2` and the row to 24px, while the 4px block inset is held at both densities. Worth it for a long list of short strings; unnecessary otherwise. Set it once on the list rather than on every item — MUI 9.2.0 gives an item that *inherits* `dense` the dense styles without the `MuiMenuItem-dense` class, so target the list if you need to hang your own styles off it.',
       code: [
         '<Menu',
         '  anchorEl={anchorEl}',
@@ -254,12 +324,13 @@ export const data: ComponentExamplesData = {
   dos: [
     'Close the menu from each item\'s `onClick` — a selection does not fire `onClose`, so nothing else will',
     'Capture the anchor with `event.currentTarget` and derive `open` from it, so one piece of state drives both',
-    'Mark the current choice with `selected` rather than a checkmark glyph — the tint and the initial focus both follow from it',
+    'Mark the current choice with `selected` — the fill and the initial focus both follow from it; a trailing check goes with it, not instead of it',
+    'Head a group with a `ListSubheader` when the rows need a name, such as Workspaces in the switcher',
     'Reach the panel through `sx={{ "& .MuiMenu-paper": { … } }}` when it needs a width or a height cap',
   ],
   donts: [
     "Don't use a Menu for form input — a bound list of values with a label and validation is a `Select`, which is a field rather than a floating panel",
-    "Don't put a text field, or anything else focusable and non-menu, inside a Menu — the list owns arrow-key focus, and the WAI-ARIA menu pattern has no place for an input",
+    "Don't put a text field inside a Menu — the list owns arrow-key focus, so anything typed into belongs in a `Dialog` or a form. The account menu's theme switch is the one control the design puts in a menu, on a row of its own",
     "Don't nest a Menu inside a Menu; MUI has no submenu, and a second popover anchored inside the first is a trap on both keyboard and touch",
     "Don't reach for `autoFocus={false}` to stop the panel stealing focus — it leaves the menu unoperable by keyboard; `variant=\"menu\"` is almost always what was meant",
     "Don't paint the panel yourself — the surface, border, corners, and shadow all come from the design, and `sx` on the Menu root styles the modal wrapper, not the panel",

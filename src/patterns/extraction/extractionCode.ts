@@ -1574,7 +1574,7 @@ export default function ExtractionScreen() {
         <AppRail
           collapsed
           showBrand={false}
-          showUser={false}
+          showWorkspace={false}
           nav={WORKFLOW_NAV}
           secondaryNav={WORKFLOW_SECONDARY_NAV}
         />
@@ -1691,7 +1691,7 @@ export default function ExtractionScreen() {
           open={navOpen}
           onClose={() => setNavOpen(false)}
           onNavigate={() => setNavOpen(false)}
-          defaultActive="dashboard"
+          defaultActive="work-area"
           container={belowBar}
         />
       </Box>

@@ -5,15 +5,12 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { IconButton } from '@/src/components/IconButton';
-import { Navbar } from '@/src/components/Navbar';
-import { SidebarSimpleIcon } from '@/src/icons';
-
 import {
   AppRail,
   WORKFLOW_NAV,
   WORKFLOW_SECONDARY_NAV,
 } from './AppRail';
+import { AppTopBar } from './AppTopBar';
 import { PageHeaderBar } from './PageHeaderBar';
 
 import type { NavbarSize } from '@/src/components/Navbar';
@@ -40,11 +37,12 @@ import type { NavbarSize } from '@/src/components/Navbar';
  * a row). `Navbar` is `position: static`, so it simply sits at the top of
  * that column with no spacer under it.
  *
- * ## The bar holds one control, at `sm`
+ * ## The bar, at `sm`
  *
- * The frame leaves the rest of the row empty on purpose (526:24230 draws
- * the toggle and nothing else), and that space is where per-page actions
- * land. Nothing is invented to fill it here.
+ * The navigation sheet's top bar (4564:6086): the toggle, the page you
+ * are on, then Ask Neo and the account avatar at the trailing edge. The
+ * account menu hangs off the avatar; the workspace switcher lives at the
+ * foot of the rail. See `AppTopBar`.
  *
  * ## `md` inverts the arrangement, and that is the point
  *
@@ -64,8 +62,8 @@ import type { NavbarSize } from '@/src/components/Navbar';
  *     the 64px icon strip. It reserves its width, so the record starts
  *     beside it rather than under it, and it never widens in place.
  *   - **The hamburger brings back the main menu**, not that strip widened.
- *     It floats the full rail in from off-screen — brand, switcher, nav,
- *     user — over a workflow that stays exactly where it is. That is the
+ *     It floats the main menu in from off-screen — nav and workspace
+ *     switcher — over a workflow that stays exactly where it is. That is the
  *     way back out to everything else, which is why it slides in from
  *     outside rather than growing out of the strip.
  *   - **It overlays rather than pushes.** The record keeps its width and
@@ -185,13 +183,13 @@ export function AppShell({
               beside it rather than under it.
 
               Its own items, not the dashboard's — sections of the record
-              rather than destinations in the app. No brand block and no user
-              footer either: the header above owns the top of the screen, and
-              the account menu belongs to the main menu. */}
+              rather than destinations in the app. No brand block and no
+              workspace switcher either: the header above owns the top of the
+              screen, and switching workspace belongs to the main menu. */}
           <AppRail
             collapsed
             showBrand={false}
-            showUser={false}
+            showWorkspace={false}
             nav={WORKFLOW_NAV}
             secondaryNav={WORKFLOW_SECONDARY_NAV}
           />
@@ -199,7 +197,8 @@ export function AppShell({
           {content}
 
           {/* The main menu, floated back in. This is not the strip widening:
-              it is the full rail — brand, switcher, nav, user — arriving from
+              it is the sheet's floating rail — nav and workspace switcher,
+              no brand under a header that already owns the top — arriving from
               off-screen over a workflow that stays exactly where it is. That
               is what the hamburger is for, and it is the way back out of a
               workflow to everything else. It overlays rather than pushes, so
@@ -210,7 +209,7 @@ export function AppShell({
             open={navOpen}
             onClose={() => setNavOpen(false)}
             onNavigate={() => setNavOpen(false)}
-            defaultActive="vendors"
+            defaultActive="work-area"
             container={belowBar}
           />
         </Box>
@@ -220,19 +219,15 @@ export function AppShell({
 
   return (
     <Stack direction="row" sx={frame}>
-      <AppRail collapsed={collapsed} />
+      {/* Opens on Work area, as the sheet draws it, so the branch under
+          Invoice Processing is showing. */}
+      <AppRail collapsed={collapsed} defaultActive="work-area" />
       <Stack sx={{ flex: 1, minWidth: 0 }}>
-        <Navbar>
-          <IconButton
-            variant="secondary"
-            appearance="text"
-            size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={toggle}
-          >
-            <SidebarSimpleIcon />
-          </IconButton>
-        </Navbar>
+        <AppTopBar
+          title="Invoice Processing"
+          collapsed={collapsed}
+          onToggle={toggle}
+        />
         {content}
       </Stack>
     </Stack>

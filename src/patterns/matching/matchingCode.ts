@@ -1299,7 +1299,7 @@ export default function MatchingPage() {
         <AppRail
           collapsed
           showBrand={false}
-          showUser={false}
+          showWorkspace={false}
           nav={WORKFLOW_NAV}
           secondaryNav={WORKFLOW_SECONDARY_NAV}
         />
@@ -1641,7 +1641,7 @@ export default function MatchingPage() {
           open={navOpen}
           onClose={() => setNavOpen(false)}
           onNavigate={() => setNavOpen(false)}
-          defaultActive="dashboard"
+          defaultActive="work-area"
           container={belowBar}
         />
       </Box>

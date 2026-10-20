@@ -233,7 +233,7 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} active="dashboard" />
+      <AppRail collapsed={collapsed} active="work-area" />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>

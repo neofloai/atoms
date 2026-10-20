@@ -4,7 +4,7 @@ import type { ComponentExamplesData } from '@/src/types/docs';
  * Docs + MCP data for the list family. Read by `scripts/generate.ts`
  * and served through the MCP `get_component` tool and the docs site.
  *
- * The props table covers all six parts. Props belonging to a part other
+ * The props table covers all seven parts. Props belonging to a part other
  * than `List` are prefixed with the component that owns them, since the
  * table is one flat list.
  */
@@ -35,7 +35,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'A heading rendered above the first row. Unstyled — the design draws no subheader, so anything passed here keeps its own type.',
+        'A heading rendered above the first row. Pass a `ListSubheader` with `component="div"`, which sets the label in the mono section type and lines it up with the rows\' 16px inset.',
     },
     {
       name: 'component',
@@ -105,6 +105,20 @@ export const data: ComponentExamplesData = {
       default: 'false',
       description:
         'Indents a row that has no leading element so it lines up with rows that do.',
+    },
+    {
+      name: 'ListSubheader children',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        'The label over a group of rows — DM Mono Medium at 12/16 in caption ink. Also the group label inside a `Menu`, where it lines up with the item labels instead.',
+    },
+    {
+      name: 'ListSubheader disableSticky',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Stops the label sticking to the top while the rows scroll. Sticky labels take their container\'s fill to cover the rows under them, so turn it off where the container has no fill of its own.',
     },
   ],
   examples: [
@@ -179,6 +193,21 @@ export const data: ComponentExamplesData = {
         '    <ListItemText primary="Two-factor auth" secondary="Required for admins" />',
         '  </ListItemButton>',
         '</ListItem>',
+      ].join('\n'),
+    },
+    {
+      title: 'A labelled group',
+      description:
+        'A `ListSubheader` names the rows under it in the mono section label — the same label the workspace switcher and the sidebar use. It takes the rows\' 16px inset, so the label and the row text start on one line.',
+      code: [
+        '<List subheader={<ListSubheader component="div">Recent</ListSubheader>}>',
+        '  <ListItemButton>',
+        '    <ListItemText primary="Q3 vendor audit" />',
+        '  </ListItemButton>',
+        '  <ListItemButton>',
+        '    <ListItemText primary="Duplicate invoices" />',
+        '  </ListItemButton>',
+        '</List>',
       ].join('\n'),
     },
     {

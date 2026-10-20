@@ -4,14 +4,16 @@ import type { ComponentExamplesData } from '@/src/types/docs';
  * Docs + MCP data for `Drawer`. Read by `scripts/generate.ts` and served
  * through the MCP `get_component` tool and the docs site.
  *
- * No `figmaUrl`: the Product Design System file has no drawer cell. The
- * treatment is the shared panel surface every other container uses, and
- * the widths are measured from the Vendor Query shell — see
- * `drawerMetrics.ts`.
+ * `figmaUrl` is the side nav bar in the navigation sheet (4564:6206),
+ * which draws the 220px rail this panel holds. The sheet draws the rail's
+ * contents, not a drawer component, so the other widths are still
+ * measured from the Vendor Query shell — see `drawerMetrics.ts`.
  */
 export const data: ComponentExamplesData = {
   name: 'Drawer',
   category: 'Navigation',
+  figmaUrl:
+    'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6206',
   tagline:
     'The side navigation an app shell is built from — the sidebar down the left, permanent, 220px, folding to a rail of icons — and the same panel used as a sheet that slides in over the page. With `Navbar` it is the shell every screen starts from: lay the page out as a row, rail first, and the bar begins where the rail ends. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.',
   // The house name for this is `Drawer`, which is MUI's word and nobody's
@@ -131,7 +133,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A permanent nav rail',
       description:
-        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, user — with the nav taking the slack so the footer sits on the bottom edge. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. The nav rows are `ToggleButton`s, not a `List` — that is what carries the selected tint and survives the collapse to icons. For the whole screen — rail, bar and content together — start from the Dashboard pattern.',
+        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. The nav rows are `ToggleButton`s, not a `List` — that is what carries the selected tint and survives the collapse to icons. For the whole screen — rail, bar and content together — start from the Dashboard pattern.',
       code: [
         '<Stack direction="row" sx={{ minHeight: "100vh" }}>',
         '  <Drawer',

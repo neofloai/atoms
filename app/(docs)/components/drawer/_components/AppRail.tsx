@@ -2,136 +2,171 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 
 import { NeofloLogo } from '@/src/brand';
 import { Avatar } from '@/src/components/Avatar';
-import { Button } from '@/src/components/Button';
 import { Collapse } from '@/src/components/Collapse';
 import { Divider } from '@/src/components/Divider';
 import { Drawer } from '@/src/components/Drawer';
-import { IconButton } from '@/src/components/IconButton';
+import { ListSubheader } from '@/src/components/List';
 import { Menu } from '@/src/components/Menu';
 import { MenuItem } from '@/src/components/MenuItem';
-import { ToggleButton } from '@/src/components/ToggleButton';
+import { NAVBAR_HEIGHT_PX } from '@/src/components/Navbar';
 import { Tooltip } from '@/src/components/Tooltip';
 import {
   border,
   elevation,
+  fontFamilies,
   fontWeights,
+  icon,
   radius,
   surface,
   text,
+  typography,
 } from '@/src/tokens';
 import {
+  BriefcaseIcon,
   CaretDownIcon,
   CaretUpDownIcon,
   ChartLineIcon,
+  ChatsIcon,
+  CheckCircleIcon,
   ClockCounterClockwiseIcon,
+  CurrencyCircleDollarIcon,
+  DatabaseIcon,
   FileTextIcon,
-  FolderUserIcon,
-  GearSixIcon,
+  FilesIcon,
+  GearIcon,
+  HouseIcon,
+  PlusIcon,
   QuestionIcon,
   ScrollIcon,
-  SignOutIcon,
-  SquaresFourIcon,
-  SuitcaseSimpleIcon,
-  UsersIcon,
 } from '@/src/icons';
 
 import type { CSSObject, Theme } from '@mui/material/styles';
+import type { AvatarColor } from '@/src/components/Avatar';
+import type { ModeToken } from '@/src/tokens';
 
 /**
- * The Vendor Query sidebar, rebuilt out of Atoms parts.
+ * The app sidebar, rebuilt out of Atoms parts from the navigation sheet's
+ * side nav bar (4564:6206).
  *
  * It is here rather than in the component because a drawer supplies the
  * panel and nothing inside it — so this is what "compose the contents"
- * actually looks like at full size, and it is the demo both the Drawer
- * and the Navbar pages show.
+ * actually looks like at full size, and it is the demo the Drawer and the
+ * Navbar pages and every shell-level pattern show.
  *
- * Geometry and colour are the shell's own, read off its sidebar frame
- * (591:25991) and its dashboard frame (526:24241): a 220px rail folding to
- * 64, a 16px gutter the blocks stretch between, and four blocks — brand and
- * switcher, the main nav, a second nav group, the signed-in user — with the
- * main nav taking the slack so the last two sit on the bottom edge. No
- * rules: the frames separate those blocks with space.
+ * Three blocks, top to bottom:
  *
- * Collapsed, the gutter comes off and the rows centre on the rail's axis
- * instead — every row is symmetric, so centring the row centres its glyph,
- * and the brand mark, the switcher, the nav icons and the avatar all land on
- * one line despite being four different widths.
+ *   - **the brand**, 48px tall so the mark sits on the same line as the
+ *     top bar beside it, 20px from the rail's edge;
+ *   - **the nav**, which takes the slack: sections 16px apart, rows 4px
+ *     apart inside a 12px inset, an optional mono label heading a section;
+ *   - **the workspace switcher**, pinned to the foot behind a rule, which
+ *     opens the workspace menu upwards.
  *
- * Nothing here is a new component. The nav rows are `ToggleButton`, the one
- * house control that stays pressed; the switcher and the user row are
- * `Button`s that open a `Menu`. Inventing a nav-row component for a demo
- * would put a treatment in the docs that no designer has drawn.
+ * The sheet draws three states of it. The default rail; the same rail
+ * with the workspace menu open (4564:6288); and a floating rail with no
+ * brand, on 12px corners with a border all round and a shadow
+ * (4564:10301), which is what `overlay` renders — the menu called up over
+ * a workflow, where a page header already owns the top of the screen.
+ *
+ * Collapsed, the inset comes off and every row centres on the rail's axis,
+ * so the mark, the nav glyphs and the workspace avatar land on one line
+ * despite being different widths. The sheet does not draw a folded rail;
+ * that state is the shell's own, carried over.
+ *
+ * ## No row component, yet
+ *
+ * The rows are `ButtonBase` — MUI's unstyled primitive — with the sheet's
+ * treatment written here. No Atoms component draws a nav row: `MenuItem`
+ * is the nearest, and it is a menu's option with a menu's ink and focus
+ * model rather than a link to a page. An earlier build bent `ToggleButton`
+ * into shape, and every value it drew — height, glyph, type, ink, fill —
+ * had to be overridden to get there. See DESIGNER_QUESTIONS.md #71.
  *
  * ## The second level
  *
  * A row with `children` is a group rather than a destination: it opens and
- * closes instead of navigating, and it never takes the selected fill. The
- * branched sidenav frame (1262:78156) puts that level in two places, and
- * both are built here — expanded, the children reflow in behind a branch
- * rule at a 32px indent; folded, they arrive in a flyout anchored to the
- * parent's glyph and headed with the parent's name, because at 64px there
- * is no width to indent into and no label left to indent under.
+ * closes instead of navigating, and it never takes the selected fill.
+ * Expanded, the children reflow in behind a branch rule at a 40px indent;
+ * folded, they arrive in a flyout anchored to the parent's glyph and headed
+ * with the parent's name, because at 64px there is no width to indent into.
  *
- * That frame also draws a third row state the rail did not have. The fill
- * marks the one page you are on; a parent whose child is that page takes
- * the same ink and weight with *no* fill. It is the only thing left saying
- * where you are once a group is shut and its selected child is off screen.
+ * A parent whose child is the current page takes the selected row's ink
+ * and weight with *no* fill — but only while that child is out of sight,
+ * in a shut group or a folded rail. The sheet draws the open group with a
+ * plain parent, and once the child is on screen its own fill says where
+ * you are.
  *
  * One level and no further — a third would need a row that is both a group
  * and a destination, which nothing has drawn. See DESIGNER_QUESTIONS.md #55.
  */
 
-/** Rail widths — expanded on the `sm` rung, folded to a row's square. */
+/** Rail width folded — a row's square plus the inset either side. */
 const RAIL_COLLAPSED_PX = 64;
 
-/** Gutter the blocks stretch between. Expanded only. */
-const RAIL_GUTTER_PX = 16;
+/** Inset around the nav block — `Scale/250`. */
+const RAIL_INSET_PX = 12;
+
+/** Inline inset of the brand block — `Scale/350`. */
+const BRAND_INSET_PX = 20;
 
 /**
- * Nav row geometry from the design: a 28px row around a 20px glyph
- * (`Scale/350`).
- *
- * 28 is not a `ToggleButton` size — the component set draws 36 and 32 —
- * so the box comes down here while the glyph stays the `md` size's own
- * 20px value. That is why these rows are `md` toggles rather than `sm`:
- * `sm` is built around a 16px glyph, and passing it a 20 would inflate
- * the box past its own 32 and leave the row a size that is neither.
+ * Nav row geometry: a 28px row, an 8px inline inset, a 16px glyph, and a
+ * `Scale/250` gap to the label. Children tighten that gap to `Scale/200`,
+ * as the sheet draws them.
  */
 const NAV_ROW_PX = 28;
-const NAV_GLYPH_PX = 20;
+const NAV_ROW_INSET_PX = 8;
+const NAV_GLYPH_PX = 16;
+const NAV_GLYPH_GAP_PX = 12;
+const NAV_CHILD_GLYPH_GAP_PX = 8;
+
+/** A parent's caret, and a section label's. */
+const NAV_CARET_PX = 14;
+
+/** Between rows — `Scale/100`. */
+const NAV_ROW_GAP_PX = 4;
+
+/** Between sections — `Scale/300`. */
+const NAV_SECTION_GAP_PX = 16;
+
+/** Between a section's label and its first row — `Scale/200`. */
+const NAV_LABEL_GAP_PX = 8;
 
 /**
  * The second level: where the branch rule stands, and where a child row
- * starts. Both measured from the left edge of the nav block rather than
- * of the rail, so the pair survives a change to the gutter.
- *
- * From the branched sidenav frame (1262:78156), which draws the rule at
- * 16 and the child at 32. The rule lands between the parent's glyph and
- * the child's, which is what makes the indent read as descent rather
- * than as a second list starting.
- *
- * Folded there is no width to indent into, so neither number applies and
- * the level moves into a flyout instead.
+ * starts, both from the nav block's left edge. The rule sits under the
+ * parent's glyph and the children start 40px in — the 156px column the
+ * sheet right-aligns in a 196px block.
  */
 const BRANCH_RULE_PX = 16;
-const BRANCH_INDENT_PX = 32;
+const BRANCH_INDENT_PX = 40;
 
 /**
- * Gap between the rail's edge and a folded parent's flyout.
- *
- * The frame stands the panel off the rail rather than flush against it —
- * its collapsed rail ends at 755 and the flyout starts at 763 — so the two
- * read as a panel *beside* the rail rather than a widening of it. `Scale/200`.
+ * The workspace switcher: a 40px row (8 + 24px avatar + 8) inside a 4px
+ * inline and 8px block inset, which puts the avatar 12px from the rail's
+ * edge and the block at 56px — the same footprint as the sheet's resting
+ * footer, whose row carries no padding of its own.
+ */
+const SWITCHER_ROW_PX = 40;
+const SWITCHER_INSET_INLINE_PX = 4;
+const SWITCHER_INSET_BLOCK_PX = 8;
+
+/** Width of both flyouts — the workspace menu and a folded parent's level. */
+const FLYOUT_WIDTH_PX = 240;
+
+/**
+ * Gap between the rail's edge and a folded parent's flyout, and between
+ * the switcher and the workspace menu above it. `Scale/200`.
  */
 const FLYOUT_OFFSET_PX = 8;
 
 /**
- * How far past its anchor the flyout has to start.
+ * How far past its anchor a folded parent's flyout has to start.
  *
  * It is anchored to the *row's* right edge but has to clear the *rail's*,
  * and a folded row is a 28px square centred in a 64px panel — so the rail's
@@ -157,171 +192,203 @@ const FLYOUT_ANCHOR_STEP_PX =
  * from either side is cut off at exactly the edge it needs to cross.
  *
  * A timer is what is left, and it has to be generous rather than tight:
- * 8px is nothing to cross quickly and everything to cross while reading,
- * and a reader who pauses mid-gap should not have the panel taken away.
  * 300ms outlasts a deliberate move without leaving a panel hanging after
  * the pointer has truly gone.
  */
 const FLYOUT_GRACE_MS = 300;
 
 /**
- * The flyout is its own surface rather than a `Menu` in `Menu`'s clothes.
+ * Brand mark height; the lockup's wordmark scales from it.
  *
- * The frame draws it at 240px on 8px corners with an 8px inset. The house
- * `Menu` is 16px corners on a 4px inset and takes its width from its widest
- * item — which is what made the first build read as a dropdown that had
- * wandered onto the rail rather than as a branch of it. `Menu` still does
- * the anchoring, the dismissal and the keyboard handling; the surface is
- * this.
- *
- * Colour and elevation stay tokenised where the frame left them unbound: it
- * fills with raw `white` behind a shadow roughly four times `Shadow/medium`.
- * `card 1` is the nearest rung above the `card 2` rail, and `medium` is the
- * house token for a floating panel. See DESIGNER_QUESTIONS.md #55.
- */
-const FLYOUT_WIDTH_PX = 240;
-
-/**
- * Brand mark height, and the lockup's wordmark scales from it.
- *
- * Not the 32 the frames instance the Logo at. That 32 is the *box*: the
- * layer inspector shows ~8.3px of padding on all four sides around
- * artwork measuring 15.3 x 15.5, so the mark a viewer actually sees is
- * about 15.4. Atoms' `NeofloLogo` is cropped tight — its viewBox is the
- * artwork — so `size` is the visible mark, and passing 32 would render it
- * at roughly twice the design's.
- *
- * 16 is that measurement rounded to the house small-glyph size, and it
- * lands within a pixel of the 17.19 the shell itself renders (see
- * `BRAND_LOCKUP_WIDTH` in its sidebar config, which records the same
- * padded-box-versus-tight-crop problem from the other direction).
- *
- * One number for both states, so the mark neither moves nor resizes when
- * the rail folds.
+ * Atoms' `NeofloLogo` is cropped tight — its viewBox is the artwork — so
+ * `size` is the visible mark. The sheet's mark measures 15.6 x 15.7, which
+ * rounds to the house small-glyph size. One number for both states, so the
+ * mark neither moves nor resizes when the rail folds.
  */
 const LOGO_MARK_PX = 16;
 
-/**
- * Nav row colour, read off the sidebar frame rather than taken from
- * `ToggleButton`'s own table.
- *
- * The toggle's neutral selected fill is `surface.layers.card2` — which is
- * exactly the surface this rail is painted in, so on a rail the selected
- * row would not show at all. That is no fault of the toggle's: its own
- * component set sits it on a `card 1` toolbar, where `card 2` is the first
- * rung that reads.
- *
- * A rail needs the `default` ladder instead, which is what the design
- * binds — `default-hover` under the pointer, `default-pressed` once
- * selected, the label moving from `caption` ink to `body`. Sampled off the
- * frame at #e5e4e1 and #cccac6, the light values of those two rungs.
- *
- * Written the way `paired` writes it: one object per scheme, so both land
- * in a single `applyStyles('dark')` block rather than two that would
- * discard each other.
- */
-function navRowStyles(theme: Theme): CSSObject {
-  const scheme = (mode: 'light' | 'dark'): CSSObject => ({
-    color: text.default.b2[mode],
-    '&:hover': { backgroundColor: surface.default.defaultHover[mode] },
-    '&.Mui-selected': {
-      backgroundColor: surface.default.defaultPressed[mode],
-      color: text.default.b1[mode],
-      '&:hover': { backgroundColor: surface.default.defaultPressed[mode] },
-    },
-  });
+/** The floating rail's inset from the region it floats over — `Scale/200`. */
+const FLOAT_INSET_PX = 8;
 
+type Mode = 'light' | 'dark';
+
+/**
+ * The selected row's fill: `surface/default/2` as the sheet binds it in
+ * light, one rung further up the `default` ladder in dark, where the
+ * bound rung is the rail's own `card 2`. The same pair `MenuItem` uses for
+ * its selected row, so the current page and the current workspace are
+ * marked alike.
+ */
+const SELECTED_FILL: ModeToken = {
+  light: surface.default.defaultHover.light,
+  dark: surface.default.defaultPressed.dark,
+};
+
+/** One set of rules per scheme, landed in a single `applyStyles` block. */
+function bothSchemes(
+  theme: Theme,
+  scheme: (mode: Mode) => CSSObject
+): CSSObject {
   return { ...scheme('light'), ...theme.applyStyles('dark', scheme('dark')) };
 }
 
-/** The flyout's panel. See `FLYOUT_WIDTH_PX` for why it is not `Menu`'s. */
-function flyoutSurface(theme: Theme): CSSObject {
-  return {
-    width: FLYOUT_WIDTH_PX,
-    maxWidth: FLYOUT_WIDTH_PX,
-    borderRadius: `${radius.sm}px`,
-    padding: `${FLYOUT_OFFSET_PX}px`,
-    boxShadow: elevation.medium,
-    backgroundColor: surface.layers.card1.light,
-    borderColor: border.layers.card2.light,
-    ...theme.applyStyles('dark', {
-      backgroundColor: surface.layers.card1.dark,
-      borderColor: border.layers.card2.dark,
-    }),
-  };
+/** Paint one property from a token, in both schemes. */
+function ink(property: string, token: ModeToken) {
+  return (theme: Theme): CSSObject =>
+    bothSchemes(theme, (mode) => ({ [property]: token[mode] }));
 }
 
+/** `Sans/B1`, the type every row in the rail is set in. */
+const B1_TYPE: CSSObject = {
+  fontFamily: fontFamilies.product.sans,
+  fontSize: typography.body.b1.size,
+  lineHeight: `${typography.body.b1.leading}px`,
+  letterSpacing: `${typography.body.b1.letterSpacing}em`,
+};
+
 /**
- * A row inside the flyout, drawn as the rail's own row rather than as a
- * menu item: a 28px pill on 4px corners, an 8px inset, an 8px glyph gap,
- * and the same colour ladder.
+ * Nav row treatment, read off the sheet.
  *
- * The frame instances the same row component in both places, which is the
- * point — a child reached through the flyout and the same child reached in
- * the open rail should be the same object, not two treatments of it.
+ * At rest the label and glyph are `text/default/b3` at Regular — a quiet
+ * list, so the one selected row carries the eye. Selected, the row takes
+ * `SELECTED_FILL` behind `text/default/b1` at Medium. Hover is not drawn;
+ * it borrows `card 3`, one layer above the rail, as `MenuItem` does.
+ *
+ * State rides attributes rather than classes: `aria-current="page"` is
+ * what a nav link should say anyway, and `data-on-branch` is the parent of
+ * an out-of-sight current page.
  */
-function flyoutRow(theme: Theme): CSSObject {
+function navRowStyles(theme: Theme): CSSObject {
   return {
-    minHeight: NAV_ROW_PX,
+    ...B1_TYPE,
     height: NAV_ROW_PX,
-    paddingInline: `${FLYOUT_OFFSET_PX}px`,
-    gap: `${FLYOUT_OFFSET_PX}px`,
+    minHeight: NAV_ROW_PX,
+    minWidth: 0,
     borderRadius: `${radius.xs}px`,
-    ...navRowStyles(theme),
+    fontWeight: fontWeights.regular,
+    textAlign: 'left',
+    // A row is mid-animation for 200ms while the rail narrows, and flex
+    // resolves the overflow by squeezing whatever gives: the glyph would
+    // collapse towards zero and a two-word label would wrap. Pinning the
+    // glyph and refusing the wrap leaves the panel's own `overflow-x` to
+    // clip the label instead.
+    whiteSpace: 'nowrap',
+    '& svg': { flexShrink: 0 },
+    '&[aria-current="page"], &[data-on-branch]': {
+      fontWeight: fontWeights.medium,
+    },
+    ...bothSchemes(theme, (mode) => ({
+      color: text.default.b3[mode],
+      '&:hover, &.Mui-focusVisible': {
+        backgroundColor: surface.layers.card3[mode],
+      },
+      '&[data-on-branch]': { color: text.default.b1[mode] },
+      '&[aria-current="page"]': {
+        backgroundColor: SELECTED_FILL[mode],
+        color: text.default.b1[mode],
+      },
+    })),
   };
 }
 
-/**
- * The rail draws no rules at all.
- *
- * Its four blocks are separated by space, not lines — the dashboard frame
- * (526:24241) has none, and an earlier draft here drew two. Space is what
- * the design uses, so space is what this uses.
- */
+/** A caret that points down open and right shut. */
+function Caret({ open, size }: { open: boolean; size: number }) {
+  return (
+    <Box
+      component="span"
+      aria-hidden
+      sx={(theme) => ({
+        display: 'flex',
+        flexShrink: 0,
+        transform: open ? 'none' : 'rotate(-90deg)',
+        transition: theme.transitions.create('transform'),
+      })}
+    >
+      <CaretDownIcon size={size} />
+    </Box>
+  );
+}
 
-/**
- * The two nav groups, in the order and with the glyphs the dashboard frame
- * names them: `SquaresFour`, `ChartLine`, `GearSix`, `FolderUser` in the
- * main group, `Users` and `Question` in the group above the avatar.
- *
- * The second group exists because the frame pins it to the bottom of the
- * nav rather than continuing the first: the things you reach for
- * occasionally sit apart from the things you navigate by.
- */
+Caret.displayName = 'Caret';
+
 export interface RailItem {
   key: string;
   label: string;
   Icon: React.ComponentType<{ size?: number }>;
   /**
-   * The level under this row, from the branched sidenav frame
-   * (1262:78156).
-   *
-   * One level deep and no further. A row with children is a group rather
-   * than a destination — it opens and closes instead of navigating — so
-   * nesting a third level would need a row that is both, which nothing
-   * has drawn.
+   * The level under this row. One level deep and no further: a row with
+   * children is a group rather than a destination — it opens and closes
+   * instead of navigating — so nesting a third level would need a row that
+   * is both, which nothing has drawn.
    */
   children?: readonly RailItem[];
 }
 
-export const MAIN_NAV: readonly RailItem[] = [
-  { key: 'dashboard', label: 'Dashboard', Icon: SquaresFourIcon },
-  { key: 'analytics', label: 'Analytics', Icon: ChartLineIcon },
+/**
+ * A run of rows, optionally under a label.
+ *
+ * The sheet heads its second run with "Workflows" in the mono section
+ * label, and that label folds the run away. The first run has no label —
+ * it is the app's own front doors, and there is nothing to call them.
+ */
+export interface RailSection {
+  key: string;
+  label?: string;
+  items: readonly RailItem[];
+}
+
+/** The second level the sheet draws under Invoice Processing. */
+function workflowPages(prefix: string): readonly RailItem[] {
+  // The first workflow's pages keep bare keys, so a shell can name its
+  // current page as `active="work-area"` rather than a qualified path.
+  const key = (page: string) => (prefix ? `${prefix}-${page}` : page);
+  return [
+    { key: key('work-area'), label: 'Work area', Icon: BriefcaseIcon },
+    { key: key('analytics'), label: 'Analytics', Icon: ChartLineIcon },
+    { key: key('memory'), label: 'Memory', Icon: DatabaseIcon },
+    { key: key('supporting-doc'), label: 'Supporting doc', Icon: FileTextIcon },
+    { key: key('settings'), label: 'Settings', Icon: GearIcon },
+  ];
+}
+
+/**
+ * The main menu, as the sheet lists it: Home and Sources, then the
+ * workflows. Collections and Vendor Query are drawn shut, with a caret;
+ * they carry the same pages as the open one so the caret has something to
+ * open.
+ */
+export const MAIN_NAV: readonly RailSection[] = [
   {
-    key: 'configuration',
-    label: 'Configuration',
-    Icon: GearSixIcon,
-    children: [
-      { key: 'rules', label: 'Validation rules', Icon: ScrollIcon },
-      { key: 'documents', label: 'Document types', Icon: FileTextIcon },
+    key: 'app',
+    items: [
+      { key: 'home', label: 'Home', Icon: HouseIcon },
+      { key: 'sources', label: 'Sources', Icon: FilesIcon },
     ],
   },
-  { key: 'vendors', label: 'Vendor details', Icon: FolderUserIcon },
-];
-
-export const MAIN_SECONDARY_NAV: readonly RailItem[] = [
-  { key: 'team', label: 'Team', Icon: UsersIcon },
-  { key: 'help', label: 'Help', Icon: QuestionIcon },
+  {
+    key: 'workflows',
+    label: 'Workflows',
+    items: [
+      {
+        key: 'invoice-processing',
+        label: 'Invoice Processing',
+        Icon: FileTextIcon,
+        children: workflowPages(''),
+      },
+      {
+        key: 'collections',
+        label: 'Collections',
+        Icon: CurrencyCircleDollarIcon,
+        children: workflowPages('collections'),
+      },
+      {
+        key: 'vendor-query',
+        label: 'Vendor Query',
+        Icon: ChatsIcon,
+        children: workflowPages('vendor-query'),
+      },
+    ],
+  },
 ];
 
 /**
@@ -331,80 +398,41 @@ export const MAIN_SECONDARY_NAV: readonly RailItem[] = [
  *
  * A different set from the main menu's, and that is the point — inside a
  * workflow the rail moves between *sections of the record*, not between
- * destinations in the app. Showing the dashboard's items here would offer to
- * leave the workflow from a strip whose whole job is navigating within it;
- * leaving is what the hamburger and the main menu are for.
- *
- * The frame also hides the avatar block on this rail, so the workflow strip
- * carries no user footer either.
+ * destinations in the app. Leaving is what the hamburger and the main menu
+ * are for.
  */
-export const WORKFLOW_NAV: readonly RailItem[] = [
-  { key: 'invoice', label: 'Invoice', Icon: ScrollIcon },
-  { key: 'documents', label: 'Documents', Icon: FileTextIcon },
-  { key: 'history', label: 'History', Icon: ClockCounterClockwiseIcon },
+export const WORKFLOW_NAV: readonly RailSection[] = [
+  {
+    key: 'record',
+    items: [
+      { key: 'invoice', label: 'Invoice', Icon: ScrollIcon },
+      { key: 'documents', label: 'Documents', Icon: FileTextIcon },
+      { key: 'history', label: 'History', Icon: ClockCounterClockwiseIcon },
+    ],
+  },
 ];
 
 export const WORKFLOW_SECONDARY_NAV: readonly RailItem[] = [
   { key: 'help', label: 'Help', Icon: QuestionIcon },
 ];
 
-const WORKSPACES = ['Non-Trade AP', 'Trade AP', 'Vendor Query'];
-
-const USER = {
-  name: 'Ankit Verma',
-  email: 'ankit.v@neoflo.ai',
-  role: 'AP Agent',
-};
-
-/** Initials for the avatar — first and last word. */
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  const first = parts[0]?.[0] ?? '';
-  const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? '') : '';
-  return (first + last).toUpperCase();
+interface Workspace {
+  key: string;
+  name: string;
+  initials: string;
+  color: AvatarColor;
 }
 
-/**
- * The signed-in user's avatar, shared by the rail's footer and the bar's
- * trailing cluster so one shell cannot draw two of them.
- *
- * Colour is the design's own avatar cell (753:27289):
- * `surface.primary.default-pressed` behind `text.default.heading`, at
- * `Sans/B3/Medium`. That pairing is not one of `Avatar`'s six roles —
- * `accent` is a softer primary under primary ink, `primary` a saturated one
- * under white — so it is applied here rather than added to the component,
- * whose own colour axis comes from its own component set. See
- * DESIGNER_QUESTIONS.md #46.
- *
- * Shape is `Avatar`'s default `round`. The sidebar frame draws a rounded
- * square; circular is what was asked for, and it makes the rail's avatar and
- * the bar's the same object.
- */
-export function UserAvatar({ children }: { children: React.ReactNode }) {
-  return (
-    <Avatar
-      size="sm"
-      sx={(theme) => ({
-        fontWeight: fontWeights.medium,
-        backgroundColor: surface.primary.defaultPressed.light,
-        color: text.default.heading.light,
-        ...theme.applyStyles('dark', {
-          backgroundColor: surface.primary.defaultPressed.dark,
-          color: text.default.heading.dark,
-        }),
-      })}
-    >
-      {children}
-    </Avatar>
-  );
-}
-
-UserAvatar.displayName = 'UserAvatar';
+/** The switcher's workspaces, in the sheet's colours: primary, then green. */
+const WORKSPACES: readonly Workspace[] = [
+  { key: 'finance', name: 'Finance', initials: 'FI', color: 'primary' },
+  { key: 'procurement', name: 'Procurement', initials: 'PR', color: 'success' },
+];
 
 /**
- * One nav row. A pill the width of the block expanded, a square the height
- * of the row collapsed — the fill is the only part of a row the eye reads,
- * and a 48x28 one would read as a rectangle beside the icons above it.
+ * One nav row. The width of the block expanded, a 28px square collapsed —
+ * the fill is the only part of a row the eye reads, and a wide one would
+ * read as a rectangle beside the icons above it.
  */
 function NavRow({
   label,
@@ -415,6 +443,7 @@ function NavRow({
   onBranch = false,
   hasChildren = false,
   expanded = false,
+  child = false,
   onMouseEnter,
   onMouseLeave,
 }: {
@@ -423,6 +452,13 @@ function NavRow({
   selected: boolean;
   collapsed: boolean;
   onSelect: (event: React.MouseEvent<HTMLElement>) => void;
+  /** This row is the parent of a current page that is out of sight. */
+  onBranch?: boolean;
+  /** Carries a caret, and opens a level instead of navigating. */
+  hasChildren?: boolean;
+  expanded?: boolean;
+  /** A second-level row, which sets its glyph 8px from the label, not 12. */
+  child?: boolean;
   /**
    * Pointer handlers, for the one row that has something to reveal on
    * hover other than a tooltip: a folded parent, whose flyout opens the
@@ -430,68 +466,34 @@ function NavRow({
    */
   onMouseEnter?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseLeave?: () => void;
-  /**
-   * This row is the parent of the page you are on.
-   *
-   * Drawn in the selected row's ink and weight but with no fill, which is
-   * the frame's own division of labour: the fill marks exactly one row,
-   * and this says the current screen is somewhere inside this group. It
-   * matters most when the group is shut and the selected child is not on
-   * screen at all.
-   */
-  onBranch?: boolean;
-  /** Carries a caret, and opens a level instead of navigating. */
-  hasChildren?: boolean;
-  expanded?: boolean;
 }) {
   return (
     /* A folded parent gets no tooltip: its flyout opens on the same hover
-       and already carries the name as a header, so a tooltip would be the
-       same word twice, in two panels, overlapping. */
+       and already carries the name as a header. */
     <Tooltip title={collapsed && !hasChildren ? label : ''} placement="right">
-      <ToggleButton
-        value={label}
-        selected={selected}
-        onChange={onSelect}
+      <ButtonBase
+        onClick={onSelect}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        appearance="text"
-        size="md"
-        // Every other folded row is named by its tooltip. This one has
-        // none, so the name is stated instead of lost — a folded parent is
-        // a bare glyph, and its flyout only exists once hovered.
+        aria-current={selected ? 'page' : undefined}
+        data-on-branch={onBranch || undefined}
+        // Every other folded row is named by its tooltip. A folded parent
+        // has none, so the name is stated instead of lost.
         aria-label={collapsed && hasChildren ? label : undefined}
         aria-expanded={hasChildren && !collapsed ? expanded : undefined}
         sx={(theme) => ({
           ...navRowStyles(theme),
-          height: NAV_ROW_PX,
-          minHeight: NAV_ROW_PX,
-          gap: 1,
           width: collapsed ? NAV_ROW_PX : '100%',
-          minWidth: 0,
           alignSelf: collapsed ? 'center' : 'stretch',
           justifyContent: collapsed ? 'center' : 'flex-start',
-          px: collapsed ? 0 : 1,
-          textTransform: 'none',
-          fontWeight: selected || onBranch ? 500 : 400,
-          ...(onBranch && {
-            color: text.default.b1.light,
-            ...theme.applyStyles('dark', { color: text.default.b1.dark }),
-          }),
+          px: collapsed ? 0 : `${NAV_ROW_INSET_PX}px`,
+          gap: `${child ? NAV_CHILD_GLYPH_GAP_PX : NAV_GLYPH_GAP_PX}px`,
           // A folded parent's hover target runs to the rail's edge, not
-          // just to the pill's.
-          //
-          // The pill is a 28px square centred in a 64px rail, so 18px of
-          // bare rail sits between it and the panel it opens — and leaving
-          // the pill onto that strip reads to the DOM as leaving the row
-          // entirely. Without this the flyout starts closing while the
-          // pointer is still travelling towards it, over the rail, which is
-          // the one place it has every reason to be.
-          //
-          // Transparent, so the fill stays the 28px square the design
-          // draws. It stops at the rail's edge because the panel clips its
-          // own overflow to fold the labels; the 8px beyond that is what
-          // the grace period is for.
+          // just to the square. The 18px of bare rail between the two
+          // reads to the DOM as leaving the row, which would start closing
+          // the flyout while the pointer travels towards it. Transparent,
+          // so the fill stays the 28px square; the 8px beyond the rail is
+          // what the grace period is for.
           ...(collapsed &&
             hasChildren && {
               position: 'relative',
@@ -504,15 +506,6 @@ function NavRow({
                 width: `${(RAIL_COLLAPSED_PX - NAV_ROW_PX) / 2}px`,
               },
             }),
-          // The panel is mid-animation for 200ms while this row is still
-          // laid out at its old width, and flex resolves the overflow by
-          // squeezing whatever will give: the glyph collapses towards zero
-          // and a two-word label wraps, which makes the row taller than the
-          // rail's 28px until the width lands. Pinning the glyph and
-          // refusing the wrap leaves the label to be clipped by the panel's
-          // own `overflow-x`, which is what should absorb it.
-          whiteSpace: 'nowrap',
-          '& svg': { flexShrink: 0 },
         })}
       >
         <Icon size={NAV_GLYPH_PX} />
@@ -525,23 +518,13 @@ function NavRow({
           </Box>
         )}
         {/* A parent's caret is its only trailing part, so it takes the
-            slack rather than sitting in the label's gap. Folded there is
-            neither slack nor label — the glyph is the whole row, and the
-            level it opens arrives beside the rail instead. */}
+            slack rather than sitting in the label's gap. */}
         {!collapsed && hasChildren && (
-          <Box
-            component="span"
-            sx={(theme) => ({
-              ml: 'auto',
-              display: 'flex',
-              transform: expanded ? 'none' : 'rotate(-90deg)',
-              transition: theme.transitions.create('transform'),
-            })}
-          >
-            <CaretDownIcon size={14} />
+          <Box component="span" sx={{ ml: 'auto', display: 'flex' }}>
+            <Caret open={expanded} size={NAV_CARET_PX} />
           </Box>
         )}
-      </ToggleButton>
+      </ButtonBase>
     </Tooltip>
   );
 }
@@ -552,14 +535,8 @@ NavRow.displayName = 'NavRow';
  * A parent row and the level under it.
  *
  * Expanded, the children reflow in beneath the parent behind the branch
- * rule. Folded, there is no width to indent into, so the same children
- * arrive in a flyout anchored to the parent's glyph — one level of
- * nesting, two places to put it, which is what keeps a folded rail from
- * dropping its second level on the floor.
- *
- * The flyout keeps the parent's name as a header, because the trigger at
- * that width is a bare glyph and two rows hanging off it say nothing
- * about which branch they belong to.
+ * rule. Folded, the same children arrive in a flyout anchored to the
+ * parent's glyph — one level of nesting, two places to put it.
  */
 function NavGroup({
   item,
@@ -579,11 +556,9 @@ function NavGroup({
 
   // Arriving on the branch from anywhere else opens the group. Adjusted
   // during render rather than in an effect: it is state derived from a
-  // change in `active`, so an effect would open the group a frame late and
-  // cost a second pass. Tracking the previous value is what keeps it to
-  // the transition — read directly, `onBranch` would force the group open
-  // again every render and a reader could never shut a group they are
-  // standing inside.
+  // change in `active`, so an effect would open the group a frame late.
+  // Tracking the previous value keeps it to the transition, so a reader
+  // can still shut a group they are standing inside.
   const [wasOnBranch, setWasOnBranch] = React.useState(onBranch);
   if (onBranch !== wasOnBranch) {
     setWasOnBranch(onBranch);
@@ -591,12 +566,8 @@ function NavGroup({
   }
 
   /**
-   * Hover, with a grace period for crossing the seam.
-   *
-   * Leaving the glyph and entering the flyout are two events with a gap
-   * between them, so closing on `mouseleave` alone would shut the panel
-   * before the pointer could reach it. The close is scheduled instead, and
-   * the panel's own `mouseenter` cancels it.
+   * Hover, with a grace period for crossing the seam. The close is
+   * scheduled on `mouseleave`, and the panel's own `mouseenter` cancels it.
    */
   const closeTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -623,18 +594,17 @@ function NavGroup({
   React.useEffect(() => () => clearTimeout(closeTimer.current), []);
 
   return (
-    <>
+    <Stack sx={{ alignItems: collapsed ? 'center' : 'stretch' }}>
       <NavRow
         label={item.label}
         Icon={item.Icon}
         collapsed={collapsed}
         selected={false}
-        onBranch={onBranch}
+        onBranch={onBranch && (collapsed || !expanded)}
         hasChildren
         expanded={expanded}
         // Hover is how a folded rail reveals anything, so it is how the
-        // flyout opens. Click still works, because hover is not available
-        // to a touch screen or a keyboard.
+        // flyout opens. Click still works, for touch and the keyboard.
         onMouseEnter={
           collapsed ? (event) => openFlyout(event.currentTarget) : undefined
         }
@@ -645,24 +615,29 @@ function NavGroup({
         }}
       />
 
+      {/* The 4px above the first child lives inside the collapse, so a shut
+          group leaves no gap behind it. */}
       {!collapsed && (
         <Collapse in={expanded}>
           <Stack
             sx={(theme) => ({
-              gap: 1,
-              ml: `${BRANCH_RULE_PX}px`,
-              pl: `${BRANCH_INDENT_PX - BRANCH_RULE_PX - 1}px`,
-              borderLeft: '1px solid',
-              // The `default` ladder, not `layers` — the same correction
-              // #46 made for the selected row. The frame's rule is
-              // `border.layers.card2`, which is a rung *off* the rail's own
-              // `card 2` fill and measures 1.06:1 against it: drawn on the
-              // canvas outside the rail, as this one was, that is never
-              // visible. A branch nobody can see is not a branch.
-              borderColor: border.default.default.light,
-              ...theme.applyStyles('dark', {
-                borderColor: border.default.default.dark,
-              }),
+              position: 'relative',
+              gap: `${NAV_ROW_GAP_PX}px`,
+              pt: `${NAV_ROW_GAP_PX}px`,
+              pl: `${BRANCH_INDENT_PX}px`,
+              // The branch rule, under the parent's glyph and as tall as
+              // the column of children. The `default` ladder rather than
+              // `layers`: a `card 2` rule on the `card 2` rail measures
+              // 1.06:1 and is never visible.
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                left: `${BRANCH_RULE_PX}px`,
+                top: `${NAV_ROW_GAP_PX}px`,
+                bottom: 0,
+                borderLeft: '1px solid',
+                ...ink('borderColor', border.default.default)(theme),
+              },
             })}
           >
             {children.map(({ key, label, Icon }) => (
@@ -671,6 +646,7 @@ function NavGroup({
                 label={label}
                 Icon={Icon}
                 collapsed={false}
+                child
                 selected={active === key}
                 onSelect={() => onSelect(key)}
               />
@@ -681,33 +657,26 @@ function NavGroup({
 
       <Menu
         anchorEl={anchorEl}
-        // Gated on `collapsed` as well as the anchor, so expanding the rail
-        // dismisses the flyout on its own. The alternative is an effect
-        // clearing the anchor, which fires after the glyph it points at has
-        // already moved.
+        // Gated on `collapsed` as well, so expanding the rail dismisses the
+        // flyout on its own.
         open={collapsed && Boolean(anchorEl)}
         onClose={closeFlyout}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        // A hover panel must not take the pointer. The modal's backdrop
-        // covers the whole viewport, so left alone it would swallow the
-        // hover on every other glyph in the rail and the pointer could
-        // never leave this row. The panel itself takes it back.
-        sx={(theme) => ({
+        // A hover panel must not take the pointer: the modal's backdrop
+        // would swallow the hover on every other glyph in the rail. The
+        // panel itself takes it back. Written through `Menu`'s own panel
+        // selector, which is the one that outranks the wrapper's styles.
+        sx={{
           pointerEvents: 'none',
-          // The panel's own styles go here, not on `slotProps.paper`.
-          // `Menu` paints its paper through a descendant selector, which
-          // outranks the single class an `sx` on the paper generates — the
-          // same specificity trap `Drawer` documents for its width. Written
-          // as the same selector, so these actually land.
           '& .MuiMenu-paper': {
             pointerEvents: 'auto',
             ml: `${FLYOUT_ANCHOR_STEP_PX}px`,
-            ...flyoutSurface(theme),
+            width: FLYOUT_WIDTH_PX,
           },
-        })}
-        // The flyout is not a menu the reader committed to opening, so it
-        // does not take focus off the rail on hover.
+        }}
+        // Not a menu the reader committed to opening, so it does not take
+        // focus off the rail on hover.
         disableAutoFocusItem
         disableRestoreFocus
         slotProps={{
@@ -717,56 +686,292 @@ function NavGroup({
           },
         }}
       >
-        {/* The parent's name, then a rule, then the level. The frame heads
-            the panel this way because the trigger is a bare glyph: without
-            the name, two rows arrive from nowhere. */}
-        <Box
-          sx={(theme) => ({
-            pb: `${FLYOUT_OFFSET_PX}px`,
-            mb: `${FLYOUT_OFFSET_PX}px`,
-            borderBottom: '1px solid',
-            borderColor: border.layers.card2.light,
-            ...theme.applyStyles('dark', {
-              borderColor: border.layers.card2.dark,
-            }),
-          })}
-        >
-          <Typography
-            variant="body2"
-            noWrap
-            sx={(theme) => ({
-              fontWeight: fontWeights.medium,
-              color: text.default.b3.light,
-              ...theme.applyStyles('dark', {
-                color: text.default.b3.dark,
-              }),
-            })}
+        {/* The parent's name heads the panel, because the trigger is a bare
+            glyph: without it, the rows arrive from nowhere. */}
+        <ListSubheader>{item.label}</ListSubheader>
+        {children.map(({ key, label, Icon }) => (
+          <MenuItem
+            key={key}
+            selected={active === key}
+            onClick={() => {
+              onSelect(key);
+              closeFlyout();
+            }}
           >
-            {item.label}
-          </Typography>
-        </Box>
-        <Stack sx={{ gap: `${radius.xs}px` }}>
-          {children.map(({ key, label, Icon }) => (
-            <MenuItem
-              key={key}
-              selected={active === key}
-              onClick={() => {
-                onSelect(key);
-                closeFlyout();
-              }}
-              sx={flyoutRow}
-            >
-              <Icon size={16} />
-              {label}
-            </MenuItem>
-          ))}
-        </Stack>
+            <Icon size={NAV_GLYPH_PX} />
+            {label}
+          </MenuItem>
+        ))}
       </Menu>
-    </>
+    </Stack>
   );
 }
 
 NavGroup.displayName = 'NavGroup';
+
+/** Rows, as leaves or groups, in a column 4px apart. */
+function NavItems({
+  items,
+  collapsed,
+  active,
+  onSelect,
+}: {
+  items: readonly RailItem[];
+  collapsed: boolean;
+  active: string;
+  onSelect: (key: string) => void;
+}) {
+  return (
+    <Stack
+      sx={{
+        gap: `${NAV_ROW_GAP_PX}px`,
+        alignItems: collapsed ? 'center' : 'stretch',
+      }}
+    >
+      {items.map((item) =>
+        item.children ? (
+          <NavGroup
+            key={item.key}
+            item={item}
+            collapsed={collapsed}
+            active={active}
+            onSelect={onSelect}
+          />
+        ) : (
+          <NavRow
+            key={item.key}
+            label={item.label}
+            Icon={item.Icon}
+            collapsed={collapsed}
+            selected={active === item.key}
+            onSelect={() => onSelect(item.key)}
+          />
+        )
+      )}
+    </Stack>
+  );
+}
+
+NavItems.displayName = 'NavItems';
+
+/**
+ * A section: its rows, under a mono label that folds them away.
+ *
+ * Folded, the label goes — there is no width for it — and the rows stay
+ * out, so a collapsed rail never hides a page behind a label it cannot
+ * show.
+ */
+function NavSection({
+  section,
+  collapsed,
+  active,
+  onSelect,
+}: {
+  section: RailSection;
+  collapsed: boolean;
+  active: string;
+  onSelect: (key: string) => void;
+}) {
+  const [open, setOpen] = React.useState(true);
+  const rows = (
+    <NavItems
+      items={section.items}
+      collapsed={collapsed}
+      active={active}
+      onSelect={onSelect}
+    />
+  );
+
+  if (!section.label || collapsed) return rows;
+
+  return (
+    <Stack>
+      {/* The sheet's section label: DM Mono Medium, 12/16, caption ink,
+          with a 14px caret 4px after it. The same type as `ListSubheader`,
+          so "Workflows" here and "Workspaces" in the
+          switcher read as one kind of thing. */}
+      <ButtonBase
+        onClick={() => setOpen((previous) => !previous)}
+        aria-expanded={open}
+        sx={(theme) => ({
+          alignSelf: 'stretch',
+          justifyContent: 'flex-start',
+          gap: `${NAV_ROW_GAP_PX}px`,
+          px: `${NAV_ROW_INSET_PX}px`,
+          py: `${NAV_ROW_GAP_PX}px`,
+          borderRadius: `${radius.xs}px`,
+          fontFamily: fontFamilies.product.mono,
+          fontSize: typography.body.b2.size,
+          fontWeight: fontWeights.medium,
+          lineHeight: `${typography.body.b2.leading}px`,
+          ...bothSchemes(theme, (mode) => ({
+            color: text.default.b3[mode],
+            '&:hover, &.Mui-focusVisible': {
+              backgroundColor: surface.layers.card3[mode],
+            },
+          })),
+        })}
+      >
+        {section.label}
+        <Caret open={open} size={NAV_CARET_PX} />
+      </ButtonBase>
+      <Collapse in={open}>
+        <Box sx={{ pt: `${NAV_LABEL_GAP_PX}px` }}>{rows}</Box>
+      </Collapse>
+    </Stack>
+  );
+}
+
+NavSection.displayName = 'NavSection';
+
+/**
+ * The workspace switcher at the foot of the rail, and the menu it opens.
+ *
+ * The trigger is the current workspace — its avatar on the `mid` square,
+ * its name in `Sans/B1/Medium`, and an up-down caret saying the list opens
+ * on either side. The menu opens upwards off it, 8px clear, and is the
+ * sheet's flyout: a `Workspaces` label, a row per workspace with the
+ * current one filled and checked, and "Create workspace" behind a rule.
+ */
+function WorkspaceSwitcher({ collapsed }: { collapsed: boolean }) {
+  const [current, setCurrent] = React.useState(WORKSPACES[0].key);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const workspace =
+    WORKSPACES.find((space) => space.key === current) ?? WORKSPACES[0];
+  const close = () => setAnchorEl(null);
+
+  const trigger = (
+    <ButtonBase
+      onClick={(event) => setAnchorEl(event.currentTarget)}
+      aria-haspopup="menu"
+      aria-expanded={Boolean(anchorEl)}
+      aria-label={collapsed ? workspace.name : undefined}
+      sx={(theme) => ({
+        ...B1_TYPE,
+        fontWeight: fontWeights.medium,
+        width: collapsed ? SWITCHER_ROW_PX : '100%',
+        height: SWITCHER_ROW_PX,
+        p: collapsed ? 0 : `${NAV_ROW_INSET_PX}px`,
+        gap: `${NAV_GLYPH_GAP_PX}px`,
+        justifyContent: collapsed ? 'center' : 'flex-start',
+        borderRadius: `${radius.xs}px`,
+        whiteSpace: 'nowrap',
+        '& .MuiAvatar-root, & svg': { flexShrink: 0 },
+        ...bothSchemes(theme, (mode) => ({
+          color: text.default.b1[mode],
+          '&:hover, &.Mui-focusVisible, &[aria-expanded="true"]': {
+            backgroundColor: surface.layers.card3[mode],
+          },
+        })),
+      })}
+    >
+      <Avatar size="sm" shape="mid" color={workspace.color}>
+        {workspace.initials}
+      </Avatar>
+      {!collapsed && (
+        <>
+          <Box
+            component="span"
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              textAlign: 'left',
+            }}
+          >
+            {workspace.name}
+          </Box>
+          <Box
+            component="span"
+            sx={(theme) => ({
+              display: 'flex',
+              ...ink('color', icon.default.b3)(theme),
+            })}
+          >
+            <CaretUpDownIcon size={NAV_GLYPH_PX} />
+          </Box>
+        </>
+      )}
+    </ButtonBase>
+  );
+
+  return (
+    <Box
+      sx={(theme) => ({
+        flexShrink: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        px: collapsed ? 0 : `${SWITCHER_INSET_INLINE_PX}px`,
+        py: `${SWITCHER_INSET_BLOCK_PX}px`,
+        borderTop: '1px solid',
+        // `card 3`'s edge, as the sheet binds it: a rung darker than the
+        // rail's own `card 2` edge in dark mode, so the rule reads there.
+        ...ink('borderColor', border.layers.card3)(theme),
+      })}
+    >
+      {collapsed ? (
+        <Tooltip title={workspace.name} placement="right">
+          {trigger}
+        </Tooltip>
+      ) : (
+        trigger
+      )}
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={close}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        sx={{
+          '& .MuiMenu-paper': {
+            width: FLYOUT_WIDTH_PX,
+            mt: `-${FLYOUT_OFFSET_PX}px`,
+            ml: `${FLYOUT_OFFSET_PX}px`,
+          },
+        }}
+      >
+        <ListSubheader>Workspaces</ListSubheader>
+        {WORKSPACES.map((space) => (
+          <MenuItem
+            key={space.key}
+            selected={space.key === current}
+            onClick={() => {
+              setCurrent(space.key);
+              close();
+            }}
+          >
+            <Avatar size="sm" shape="mid" color={space.color}>
+              {space.initials}
+            </Avatar>
+            <Box component="span" sx={{ flex: 1, minWidth: 0 }}>
+              {space.name}
+            </Box>
+            {space.key === current && (
+              <Box
+                component="span"
+                sx={(theme) => ({
+                  display: 'flex',
+                  ...ink('color', icon.success[4])(theme),
+                })}
+              >
+                <CheckCircleIcon size={NAV_GLYPH_PX} />
+              </Box>
+            )}
+          </MenuItem>
+        ))}
+        <Divider />
+        <MenuItem onClick={close}>
+          <PlusIcon size={NAV_GLYPH_PX} />
+          Create workspace
+        </MenuItem>
+      </Menu>
+    </Box>
+  );
+}
+
+WorkspaceSwitcher.displayName = 'WorkspaceSwitcher';
 
 /**
  * The rail. `collapsed` resolves to a `size` in pixels rather than a name
@@ -776,6 +981,7 @@ NavGroup.displayName = 'NavGroup';
 export function AppRail({
   collapsed = false,
   showBrand = true,
+  showWorkspace = true,
   overlay = false,
   open = false,
   onClose,
@@ -783,21 +989,20 @@ export function AppRail({
   active: activeProp,
   onActiveChange,
   nav = MAIN_NAV,
-  secondaryNav = MAIN_SECONDARY_NAV,
+  secondaryNav = [],
   defaultActive,
-  showUser = true,
   container,
 }: {
   collapsed?: boolean;
   /**
    * Float over the page instead of reserving space beside it — a
-   * `temporary` drawer rather than a `permanent` one.
+   * `temporary` drawer rather than a `permanent` one, drawn as the sheet's
+   * floating rail: no brand, 12px corners, a border all round, and a
+   * shadow, inset 8px from the region it floats over.
    *
    * The page header uses this: that bar spans the whole screen, so the
-   * navigation under it is something you summon and dismiss rather than
-   * a column the layout is built around. It brings the backdrop, the
-   * `Escape` handler and the scroll lock with it, and the content behind
-   * it does not reflow when it arrives.
+   * navigation under it is something you summon and dismiss rather than a
+   * column the layout is built around.
    *
    * @default false
    */
@@ -807,100 +1012,95 @@ export function AppRail({
   onClose?: () => void;
   /**
    * Fired when a nav row is picked. An overlay should close on navigation
-   * — it covers what you just chose to look at — where a docked rail
-   * stays put, so this is passed only by the overlay case.
+   * — it covers what you just chose to look at — where a docked rail stays
+   * put, so this is passed only by the overlay case.
    */
   onNavigate?: () => void;
-  /**
-   * The selected row, lifted out so two rails can share it.
-   *
-   * The page header's shell renders this twice — a docked strip that is
-   * always there and an overlay that expands over it — and they have to
-   * agree about which page you are on. Left uncontrolled (the app bar's
-   * shell, which has one rail) it keeps its own.
-   */
+  /** The selected row, lifted out so a shell can drive it. */
   active?: string;
   onActiveChange?: (key: string) => void;
   /**
-   * Which items the rail carries. The main menu's by default; a workflow
-   * strip passes `WORKFLOW_NAV`, whose rows are sections of the record
-   * rather than destinations in the app.
+   * Which sections the rail carries. The main menu's by default; a
+   * workflow strip passes `WORKFLOW_NAV`, whose rows are sections of the
+   * record rather than destinations in the app.
    */
-  nav?: readonly RailItem[];
+  nav?: readonly RailSection[];
+  /** A group pinned above the foot of the rail. None in the main menu. */
   secondaryNav?: readonly RailItem[];
   /** Which row starts selected. Defaults to the first. */
   defaultActive?: string;
   /**
-   * The user footer. The workflow frame hides it — a strip for moving
-   * around one record has no reason to carry the account menu, which is
-   * reachable from the main menu the hamburger brings back.
+   * The workspace switcher at the foot. The workflow strip drops it — a
+   * strip for moving around one record has no business switching
+   * workspace, which is reachable from the main menu the hamburger brings
+   * back.
    *
    * @default true
    */
-  showUser?: boolean;
+  showWorkspace?: boolean;
   /**
    * Where the overlay renders. A `temporary` drawer is a `Modal`, which
    * portals to `document.body` and pins itself to the viewport — correct
-   * in an app, wrong inside a docs preview, where it would cover the
-   * whole page. Passing the preview's own box keeps it in the frame.
+   * in an app, wrong inside a docs preview. Passing the preview's own box
+   * keeps it in the frame.
    */
   container?: HTMLElement | null;
   /**
-   * The brand block — the logo and the workspace switcher.
-   *
-   * Dropped when the rail hangs under a page header, which is how the
-   * frame draws it: that bar already owns the top of the screen, so a
-   * second identity directly beneath a record's title has nothing to say,
-   * and a workspace control there reads as belonging to the record. What
-   * is left is what the rail is actually for — the menu items.
-   *
-   * One flag rather than two, because neither frame keeps one without the
-   * other.
+   * The brand block. Dropped on the workflow strip, which hangs under a
+   * page header that already owns the top of the screen, and never drawn
+   * on the overlay, which floats under that same header.
    *
    * @default true
    */
   showBrand?: boolean;
 }) {
   const [uncontrolledActive, setUncontrolledActive] = React.useState(
-    defaultActive ?? nav[0]?.key ?? ''
+    defaultActive ?? nav[0]?.items[0]?.key ?? ''
   );
   const active = activeProp ?? uncontrolledActive;
   const setActive = onActiveChange ?? setUncontrolledActive;
-  const [workspace, setWorkspace] = React.useState(WORKSPACES[0]);
-  const [switcherAnchor, setSwitcherAnchor] =
-    React.useState<HTMLElement | null>(null);
-  const [userAnchor, setUserAnchor] = React.useState<HTMLElement | null>(null);
-
-  /** Expanded, the blocks stretch between the gutters; collapsed they centre. */
-  const block = {
-    px: collapsed ? 0 : `${RAIL_GUTTER_PX}px`,
-    alignItems: collapsed ? 'center' : 'stretch',
-  } as const;
+  const select = (key: string) => {
+    setActive(key);
+    onNavigate?.();
+  };
+  const brand = showBrand && !overlay;
 
   return (
     <Drawer
       variant={overlay ? 'temporary' : 'permanent'}
       open={overlay ? open : undefined}
       onClose={overlay ? onClose : undefined}
-      // MUI's Slide, kept. The overlay is not the strip beneath it widening —
-      // it is the main menu arriving from off-screen over a workflow that
-      // stays where it is, so it should read as coming from outside.
       // The folded width is state, not a fourth rung on the scale — and it
       // goes on `size` rather than on the paper, because it has to reach
       // the space the rail reserves as well as the panel itself.
       size={collapsed ? RAIL_COLLAPSED_PX : 'sm'}
+      // The floating rail. Written through the drawer's own paper selector,
+      // which is the one that outranks the edge and corners `Drawer` draws:
+      // the sheet's floating rail has a border all round and 12px corners
+      // where a docked one has a single hairline and none.
+      sx={
+        overlay
+          ? {
+              '& .MuiDrawer-paper': {
+                m: `${FLOAT_INSET_PX}px`,
+                height: `calc(100% - ${FLOAT_INSET_PX * 2}px)`,
+                borderWidth: 1,
+                borderRadius: `${radius.md}px`,
+                boxShadow: elevation.large,
+              },
+            }
+          : undefined
+      }
       slotProps={{
         // `absolute` rather than `relative` for the overlay, so the panel
         // pins to the preview box the modal is rendered into; a docked
         // panel is put back in normal flow instead. Neither is MUI's
         // default `fixed`, which belongs to the viewport.
         paper: {
-          sx: { position: overlay ? 'absolute' : 'relative', py: 2.5 },
+          sx: { position: overlay ? 'absolute' : 'relative' },
         },
-        // The backdrop needs the same treatment as the root, and separately:
-        // MUI's is `position: fixed` in its own right, so containing the
-        // modal alone still leaves the scrim covering the whole viewport —
-        // the docs page around the preview, and the bar above it.
+        // The backdrop needs the same treatment as the root, and
+        // separately: MUI's is `position: fixed` in its own right.
         ...(overlay && container
           ? {
               root: { container, sx: { position: 'absolute' } },
@@ -909,12 +1109,15 @@ export function AppRail({
           : {}),
       }}
     >
-      {showBrand && (
-      <Stack sx={{ ...block, gap: 2, pb: 2, flexShrink: 0 }}>
+      {brand && (
         <Box
           sx={{
+            height: NAVBAR_HEIGHT_PX.sm,
+            flexShrink: 0,
             display: 'flex',
-            alignSelf: collapsed ? 'center' : 'flex-start',
+            alignItems: 'center',
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            px: collapsed ? 0 : `${BRAND_INSET_PX}px`,
             color: 'text.primary',
           }}
         >
@@ -923,252 +1126,49 @@ export function AppRail({
             size={LOGO_MARK_PX}
           />
         </Box>
-
-        {collapsed ? (
-          <Tooltip title={workspace ?? ''} placement="right">
-            <IconButton
-              variant="secondary"
-              appearance="outline"
-              size="sm"
-              aria-label={workspace}
-              onClick={(event) => setSwitcherAnchor(event.currentTarget)}
-            >
-              <SuitcaseSimpleIcon size={16} />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Button
-            variant="secondary"
-            appearance="outline"
-            size="sm"
-            fullWidth
-            startIcon={<SuitcaseSimpleIcon size={16} />}
-            endIcon={<CaretUpDownIcon size={14} />}
-            onClick={(event) => setSwitcherAnchor(event.currentTarget)}
-            sx={{
-              justifyContent: 'space-between',
-              textTransform: 'none',
-              whiteSpace: 'nowrap',
-              // Same reason as the nav rows: the two carets and the suitcase
-              // must not be squeezed while the panel is narrowing.
-              '& svg': { flexShrink: 0 },
-            }}
-          >
-            <Box
-              component="span"
-              sx={{
-                flex: 1,
-                textAlign: 'left',
-                minWidth: 0,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {workspace}
-            </Box>
-          </Button>
-        )}
-      </Stack>
       )}
 
-      {/* The main group takes the slack, which is what pins the two blocks
-          below it to the bottom of the rail. With no brand block above it
-          the paper's own inset is already the top gap, so the extra 16
-          would double it. */}
+      {/* The nav takes the slack, which is what pins the switcher to the
+          foot of the rail. */}
       <Stack
         sx={{
-          ...block,
           flex: 1,
           minHeight: 0,
           overflowY: 'auto',
-          gap: 1,
-          pt: showBrand ? 2 : 0,
+          gap: `${NAV_SECTION_GAP_PX}px`,
+          px: collapsed ? 0 : `${RAIL_INSET_PX}px`,
+          py: `${RAIL_INSET_PX}px`,
         }}
       >
-        {nav.map((item) =>
-          item.children ? (
-            <NavGroup
-              key={item.key}
-              item={item}
-              collapsed={collapsed}
-              active={active}
-              onSelect={(key) => {
-                setActive(key);
-                onNavigate?.();
-              }}
-            />
-          ) : (
-            <NavRow
-              key={item.key}
-              label={item.label}
-              Icon={item.Icon}
-              collapsed={collapsed}
-              selected={active === item.key}
-              onSelect={() => {
-                setActive(item.key);
-                onNavigate?.();
-              }}
-            />
-          )
-        )}
+        {nav.map((section) => (
+          <NavSection
+            key={section.key}
+            section={section}
+            collapsed={collapsed}
+            active={active}
+            onSelect={select}
+          />
+        ))}
       </Stack>
 
-      <Stack sx={{ ...block, gap: 1, pb: 2, flexShrink: 0 }}>
-        {secondaryNav.map((item) =>
-          item.children ? (
-            <NavGroup
-              key={item.key}
-              item={item}
-              collapsed={collapsed}
-              active={active}
-              onSelect={(key) => {
-                setActive(key);
-                onNavigate?.();
-              }}
-            />
-          ) : (
-            <NavRow
-              key={item.key}
-              label={item.label}
-              Icon={item.Icon}
-              collapsed={collapsed}
-              selected={active === item.key}
-              onSelect={() => {
-                setActive(item.key);
-                onNavigate?.();
-              }}
-            />
-          )
-        )}
-      </Stack>
-
-      {showUser && (
-      <Stack sx={{ ...block, flexShrink: 0 }}>
-        {collapsed ? (
-          <Tooltip title={USER.name} placement="right">
-            <IconButton
-              variant="secondary"
-              appearance="text"
-              size="sm"
-              aria-label={USER.name}
-              onClick={(event) => setUserAnchor(event.currentTarget)}
-              // The expanded footer is 36 tall because it holds two lines;
-              // matching it here keeps every row above the footer on the same
-              // y in both states, which is what lets the overlay read as this
-              // strip widening rather than as a different panel.
-              sx={{ height: 36 }}
-            >
-              <UserAvatar>{initials(USER.name)}</UserAvatar>
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Button
-            variant="secondary"
-            appearance="text"
-            fullWidth
-            endIcon={<CaretDownIcon size={16} />}
-            onClick={(event) => setUserAnchor(event.currentTarget)}
-            sx={{
-              justifyContent: 'space-between',
-              textTransform: 'none',
-              // The design pins this row at 36 so dropping the two lines on
-              // collapse cannot pull the avatar up. `md` is that height, but
-              // its block padding would then stack on top of a 36px pair of
-              // lines, so the padding comes off instead of the height.
-              py: 0,
-              minHeight: 36,
-              // The avatar and the caret hold their size while the panel
-              // narrows; the name and address are already `noWrap`, so the
-              // text block is what gives.
-              '& svg': { flexShrink: 0 },
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                minWidth: 0,
-                flex: 1,
-                '& .MuiAvatar-root': { flexShrink: 0 },
-              }}
-            >
-              <UserAvatar>{initials(USER.name)}</UserAvatar>
-              <Box sx={{ minWidth: 0, textAlign: 'left' }}>
-                <Typography variant="body2" noWrap sx={{ fontWeight: 500 }}>
-                  {USER.name}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  component="p"
-                  noWrap
-                  color="text.secondary"
-                >
-                  {USER.email}
-                </Typography>
-              </Box>
-            </Box>
-          </Button>
-        )}
-      </Stack>
+      {secondaryNav.length > 0 && (
+        <Box
+          sx={{
+            flexShrink: 0,
+            px: collapsed ? 0 : `${RAIL_INSET_PX}px`,
+            pb: `${RAIL_INSET_PX}px`,
+          }}
+        >
+          <NavItems
+            items={secondaryNav}
+            collapsed={collapsed}
+            active={active}
+            onSelect={select}
+          />
+        </Box>
       )}
 
-      <Menu
-        anchorEl={switcherAnchor}
-        open={Boolean(switcherAnchor)}
-        onClose={() => setSwitcherAnchor(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-      >
-        {WORKSPACES.map((name) => (
-          <MenuItem
-            key={name}
-            selected={name === workspace}
-            onClick={() => {
-              setWorkspace(name);
-              setSwitcherAnchor(null);
-            }}
-          >
-            {name}
-          </MenuItem>
-        ))}
-      </Menu>
-
-      <Menu
-        anchorEl={userAnchor}
-        open={Boolean(userAnchor)}
-        onClose={() => setUserAnchor(null)}
-        // Opens upwards off the footer, left edges aligned.
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      >
-        <Box sx={{ px: 2, pt: 0.5, pb: 1 }}>
-          <Typography variant="body2" noWrap sx={{ fontWeight: 500 }}>
-            {USER.name}
-          </Typography>
-          <Typography
-            variant="caption"
-            component="p"
-            noWrap
-            color="text.secondary"
-          >
-            {USER.role}
-          </Typography>
-        </Box>
-        <Divider />
-        <MenuItem onClick={() => setUserAnchor(null)}>
-          <GearSixIcon size={16} />
-          <Box component="span" sx={{ ml: 1 }}>
-            Account settings
-          </Box>
-        </MenuItem>
-        <MenuItem onClick={() => setUserAnchor(null)}>
-          <SignOutIcon size={16} />
-          <Box component="span" sx={{ ml: 1 }}>
-            Log out
-          </Box>
-        </MenuItem>
-      </Menu>
+      {showWorkspace && <WorkspaceSwitcher collapsed={collapsed} />}
     </Drawer>
   );
 }
