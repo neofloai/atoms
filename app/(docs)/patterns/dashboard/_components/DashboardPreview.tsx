@@ -90,9 +90,9 @@ const PAGE_SIZE = 10;
  *
  * The outer box is a row — rail, then a column — not a column with a bar
  * across the top. That is what makes the brand mark the top-left corner
- * of the app, and it is why the collapse toggle sits at the leading edge
- * of the bar: it is the one control whose position does not move when the
- * rail folds.
+ * of the app, and it is why the sidebar toggle sits at the leading edge
+ * of the bar. The toggle hides the rail; hovering it while hidden peeks
+ * at the rail under the bar, through `useRailPeek` and `RailPeek`.
  *
  * ## Three bands, and only one of them is elastic
  *

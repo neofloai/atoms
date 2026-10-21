@@ -89,10 +89,11 @@ export default function DashboardPatternPage() {
             because from the reader&apos;s side there is one filtered table.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            The rail&apos;s folded width goes through{' '}
-            <code>size</code> as a number rather than onto the paper: the
-            width has to reach the space the rail reserves as well as the
-            panel itself, and changes to it animate. Its contents are the
+            The code below writes the rail out in full — the same one every
+            other pattern imports as <code>./AppRail</code>. Hidden, it is
+            unmounted, so the page takes its width back; the peek is a
+            temporary drawer with no backdrop, rendered into a layer under
+            the bar so it never covers the bar itself. Its contents are the
             same ones the <Link href="/components/drawer">Drawer</Link> page
             composes, and the table below is the{' '}
             <Link href="/components/filter#filtering-a-data-grid">Filter</Link>{' '}

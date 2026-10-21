@@ -59,8 +59,7 @@ import type { ChipColors, FilterValue, GridColDef } from '@neofloai/atoms';
 // the same one every other screen in the workflow mounts, so it is imported
 // rather than redrawn — a second copy would drift from the screens the
 // Review button opens.
-import { AppRail, RailPeek } from './AppRail';
-import { useRailPeek } from './useRailPeek';
+import { AppRail, RailPeek, useRailPeek } from './AppRail';
 import { INVOICE_FILTER_GROUPS, filterInvoices } from './invoices';
 
 import type { Invoice, InvoiceStage } from './invoices';

@@ -53,7 +53,7 @@ import { border, icon, surface } from '@neofloai/atoms/tokens';
 
 // The rail every screen in the app mounts. Its main menu already carries the
 // Analytics row this screen is, which is the row that has to read as selected.
-import { AppRail } from './AppRail';
+import { AppRail, RailPeek, useRailPeek } from './AppRail';
 
 /* ------------------------------------------------------------------ *
  * Geometry
@@ -1421,7 +1421,7 @@ function DriverBar({
  * glyph on every card title is where that is stated.
  */
 export function ReportingScreen() {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const rail = useRailPeek(true);
   const [range, setRange] = React.useState<RangeKey>('30d');
   const [entityKey, setEntityKey] = React.useState(ENTITIES[0].key);
   const [agentKey, setAgentKey] = React.useState(AGENTS[0].key);
@@ -1455,16 +1455,17 @@ export function ReportingScreen() {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} active="analytics" />
+      {!rail.hidden && <AppRail active="analytics" />}
 
-      <Stack sx={{ flex: 1, minWidth: 0 }}>
+      {/* relative, so the peek's layer can sit under the bar. */}
+      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
         <Navbar {...atomsRegion('reporting', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            // Hides the rail; hovered while it is hidden, peeks at it.
+            {...rail.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -1663,6 +1664,10 @@ export function ReportingScreen() {
             </Stack>
           </Stack>
         </Box>
+
+        {/* The hidden rail, floated in under the bar by hovering the
+            toggle. No backdrop and no focus trap: the page stays live. */}
+        <RailPeek {...rail.peekProps} active="analytics" />
       </Stack>
     </Stack>
   );
