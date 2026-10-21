@@ -33,7 +33,7 @@ import {
 
 import type { Theme } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
-import type { RailToggleProps } from './useRailPeek';
+import type { SidebarToggleProps } from '@/src/components/Drawer';
 
 /**
  * The app bar from the navigation sheet's top nav bar (4564:6086), and the
@@ -247,8 +247,8 @@ export function AppTopBar({
 }: {
   /** The page you are on, after the toggle. */
   title: string;
-  /** The sidebar toggle's name, press and hover, from `useRailPeek`. */
-  toggleProps: RailToggleProps;
+  /** The sidebar toggle's name, press and hover, from `useSidebarToggle`. */
+  toggleProps: SidebarToggleProps;
 }) {
   const [accountAnchor, setAccountAnchor] =
     React.useState<HTMLElement | null>(null);

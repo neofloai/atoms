@@ -1,21 +1,29 @@
 'use client';
 
+import * as React from 'react';
 import {
   ListItemButton as MuiListItemButton,
   listItemButtonClasses,
   listItemClasses,
+  listItemIconClasses,
   listItemTextClasses,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { surface } from '@/src/tokens';
+import { fontWeights, radius, surface } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
+import { ListVariantContext } from './listContext';
 import {
   LIST_ROW_PADDING_PX,
+  NAV_GLYPH_GAP_PX,
+  NAV_ROW_INSET_PX,
+  NAV_ROW_PX,
+  listPrimaryType,
   listRowBox,
   listRowState,
   listRowSurface,
+  navRowState,
 } from './listTokens';
 
 import type { ExtendButtonBase } from '@mui/material';
@@ -61,6 +69,9 @@ import type { ListItemButtonTypeMap } from './List.types';
  *   <ListItemIcon><FolderIcon size={16} /></ListItemIcon>
  *   <ListItemText primary="Invoices" secondary="12 unpaid" />
  * </ListItemButton>
+ *
+ * In a `variant="nav"` list the same component draws the sidebar's
+ * 28px row instead — see `NavListItemButton` below and `List`.
  *
  * @example A row that navigates, as a link
  * <ListItemButton component="a" href="/reports">
@@ -137,6 +148,104 @@ const StyledListItemButton = styled(MuiListItemButton)(({ theme }) => ({
 StyledListItemButton.displayName = 'ListItemButton';
 
 /**
+ * The row in a `variant="nav"` list — the navigation sheet's sidebar row.
+ *
+ * 28px tall on 4px corners, 8px in, the glyph 12px from the label, set in
+ * `Sans/B1/Regular`. No band and no hairline: a sidebar is a column of
+ * rows on the rail's own surface, and only the current page is filled.
+ *
+ *   rest         `text/default/b2` label, `icon/default/b2` glyph
+ *   hover/focus  `card 3` fill
+ *   selected     `surface/default/2` fill, `b1` ink and glyph, Medium
+ *   aria-current `b1` ink and glyph, Medium, no fill — a parent row
+ *                whose current page is out of sight
+ *   disabled     `text/disabled` ink, no fill
+ *
+ * The label never wraps and the glyph never shrinks, so a row inside a
+ * drawer that is narrowing clips its label rather than breaking onto two
+ * lines. The state rules are written at three classes, as the list row's
+ * are, so they outrank MUI's own and read top to bottom.
+ */
+const NavListItemButton = styled(MuiListItemButton)(({ theme }) => ({
+  ...listPrimaryType,
+  boxSizing: 'border-box',
+  flexGrow: 0,
+  height: NAV_ROW_PX,
+  minHeight: NAV_ROW_PX,
+  gap: NAV_GLYPH_GAP_PX,
+  borderRadius: radius.xs,
+  whiteSpace: 'nowrap',
+  ...paired(theme, { color: navRowState.ink }),
+
+  [`&.${listItemButtonClasses.root}`]: {
+    paddingInline: NAV_ROW_INSET_PX,
+    paddingBlock: 0,
+  },
+
+  // The glyph, in `ListItemIcon` or passed bare.
+  [`& .${listItemIconClasses.root}, & > svg`]: {
+    flexShrink: 0,
+    ...paired(theme, { color: navRowState.glyph }),
+  },
+
+  // `ListItemText` sets its own title ink and type for the list frame;
+  // in a nav row the row decides both, so the title follows the row's
+  // state.
+  [`& .${listItemTextClasses.root}`]: {
+    margin: 0,
+    minWidth: 0,
+  },
+  [`&.${listItemButtonClasses.root} .${listItemTextClasses.primary}`]: {
+    color: 'inherit',
+    fontWeight: 'inherit',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+
+  [`&.${listItemButtonClasses.root}:hover, &.${listItemButtonClasses.root}.${listItemButtonClasses.focusVisible}`]:
+    paired(theme, { backgroundColor: navRowState.hoverFill }),
+
+  [`&.${listItemButtonClasses.root}[aria-current="true"], &.${listItemButtonClasses.root}.${listItemButtonClasses.selected}`]:
+    {
+      fontWeight: fontWeights.medium,
+      ...paired(theme, { color: navRowState.currentInk }),
+      [`& .${listItemIconClasses.root}, & > svg`]: paired(theme, {
+        color: navRowState.currentGlyph,
+      }),
+    },
+
+  [`&.${listItemButtonClasses.root}.${listItemButtonClasses.selected}, &.${listItemButtonClasses.root}.${listItemButtonClasses.selected}:hover`]:
+    paired(theme, { backgroundColor: navRowState.selectedFill }),
+
+  [`&.${listItemButtonClasses.root}.${listItemButtonClasses.disabled}`]: {
+    opacity: 1,
+    ...paired(theme, { color: navRowState.disabledInk }),
+    [`& .${listItemIconClasses.root}, & > svg`]: paired(theme, {
+      color: navRowState.disabledInk,
+    }),
+  },
+}));
+
+NavListItemButton.displayName = 'ListItemButton';
+
+/**
+ * Picks the row for the list it is in: the list frame's band, or — in a
+ * `variant="nav"` list — the sidebar's row. One component either way, so
+ * a row is written the same in both and the list decides how it looks.
+ */
+const ListItemButtonBase = React.forwardRef(function ListItemButton(
+  props: React.ComponentProps<typeof StyledListItemButton>,
+  ref: React.Ref<HTMLDivElement>
+) {
+  const { variant } = React.useContext(ListVariantContext);
+  const Row = variant === 'nav' ? NavListItemButton : StyledListItemButton;
+  return <Row ref={ref} {...props} />;
+});
+
+ListItemButtonBase.displayName = 'ListItemButton';
+
+/**
  * Cast to `ExtendButtonBase<…>` — MUI's own declaration shape for
  * `ListItemButton` — rather than left as the styled component's inferred
  * type, which pins the root at `div` and drops the element's own props.
@@ -145,4 +254,4 @@ StyledListItemButton.displayName = 'ListItemButton';
  * shorthand would go with it. The same fix `MenuItem` uses.
  */
 export const ListItemButton =
-  StyledListItemButton as ExtendButtonBase<ListItemButtonTypeMap>;
+  ListItemButtonBase as unknown as ExtendButtonBase<ListItemButtonTypeMap>;

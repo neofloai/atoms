@@ -31,6 +31,7 @@ import {
   Typography,
   atomsRegion,
   countActiveFilters,
+  useSidebarToggle,
 } from '@neofloai/atoms';
 import {
   ArrowSquareOutIcon,
@@ -59,7 +60,7 @@ import type { ChipColors, FilterValue, GridColDef } from '@neofloai/atoms';
 // the same one every other screen in the workflow mounts, so it is imported
 // rather than redrawn — a second copy would drift from the screens the
 // Review button opens.
-import { AppRail, RailPeek, useRailPeek } from './AppRail';
+import { AppRail } from './AppRail';
 import { INVOICE_FILTER_GROUPS, filterInvoices } from './invoices';
 
 import type { Invoice, InvoiceStage } from './invoices';
@@ -544,7 +545,7 @@ function invoiceColumns(
 /* ----------------------------------------------------------------- page */
 
 export default function InvoiceDashboardPage() {
-  const rail = useRailPeek(true);
+  const sidebar = useSidebarToggle({ defaultHidden: true });
   const [tab, setTab] = React.useState<'open' | 'closed'>('open');
 
   const [search, setSearch] = React.useState('');
@@ -575,17 +576,16 @@ export default function InvoiceDashboardPage() {
       direction="row"
       sx={{ height: '100vh' }}
     >
-      {!rail.hidden && <AppRail active="work-area" />}
+      {!sidebar.hidden && <AppRail active="work-area" />}
 
-      {/* relative, so the peek's layer can sit under the bar. */}
-      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
+      <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
             // Hides the rail; hovered while it is hidden, peeks at it.
-            {...rail.toggleProps}
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -695,11 +695,15 @@ export default function InvoiceDashboardPage() {
             />
           </Box>
         </Stack>
-
-        {/* The hidden rail, floated in under the bar by hovering the
-            toggle. No backdrop and no focus trap: the page stays live. */}
-        <RailPeek {...rail.peekProps} active="work-area" />
       </Stack>
+
+      {/* The hidden rail, floated in under the bar by hovering the
+          toggle. No backdrop and no focus trap: the page stays live. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+        active="work-area"
+      />
 
       {/* The trigger sits at the right end of the toolbar, so the panel
           hangs off its right edge. */}

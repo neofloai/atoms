@@ -9,6 +9,7 @@ import { Button } from '@/src/components/Button';
 import { Chip } from '@/src/components/Chip';
 import { DataGrid } from '@/src/components/DataGrid';
 import { Divider } from '@/src/components/Divider';
+import { useSidebarToggle } from '@/src/components/Drawer';
 import { Filter, countActiveFilters } from '@/src/components/Filter';
 import { IconButton } from '@/src/components/IconButton';
 import { Navbar } from '@/src/components/Navbar';
@@ -25,11 +26,7 @@ import {
 // table and its facets come from the Filter page for the same reason —
 // this pattern is the two of them assembled, and a copy of either would
 // eventually disagree with the page it was copied from.
-import {
-  AppRail,
-  RailPeek,
-} from '../../../components/drawer/_components/AppRail';
-import { useRailPeek } from '../../../components/drawer/_components/useRailPeek';
+import { AppRail } from '../../../components/drawer/_components/AppRail';
 import {
   QUERY_COLUMNS,
   filterQueryRows,
@@ -92,7 +89,7 @@ const PAGE_SIZE = 10;
  * across the top. That is what makes the brand mark the top-left corner
  * of the app, and it is why the sidebar toggle sits at the leading edge
  * of the bar. The toggle hides the rail; hovering it while hidden peeks
- * at the rail under the bar, through `useRailPeek` and `RailPeek`.
+ * at the rail under the bar, through the library's `useSidebarToggle`.
  *
  * ## Three bands, and only one of them is elastic
  *
@@ -111,7 +108,8 @@ const PAGE_SIZE = 10;
  * one filtered table.
  */
 export function DashboardPreview(): React.JSX.Element {
-  const rail = useRailPeek(true);
+  const [shell, setShell] = React.useState<HTMLDivElement | null>(null);
+  const sidebar = useSidebarToggle({ defaultHidden: true, container: shell });
 
   const [selection, setSelection] = React.useState<FilterValue>(EMPTY);
   const [search, setSearch] = React.useState('');
@@ -128,9 +126,11 @@ export function DashboardPreview(): React.JSX.Element {
 
   return (
     <Stack
+      ref={setShell}
       {...atomsRegion('dashboard', 'shell')}
       direction="row"
       sx={{
+        position: 'relative',
         height: FRAME_HEIGHT_PX,
         overflow: 'hidden',
         borderRadius: 1.5,
@@ -138,15 +138,15 @@ export function DashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      {!rail.hidden && <AppRail />}
+      {!sidebar.hidden && <AppRail />}
 
-      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
+      <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
-            {...rail.toggleProps}
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -231,9 +231,14 @@ export function DashboardPreview(): React.JSX.Element {
             />
           </Box>
         </Stack>
-
-        <RailPeek {...rail.peekProps} />
       </Stack>
+
+      {/* The hidden rail, floated in under the bar while its toggle is
+          hovered. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+      />
 
       <Filter
         {...atomsRegion('dashboard', 'filter')}

@@ -64,6 +64,16 @@ import type {
  *
  * The removals are typed as an `Omit`, so they fail at compile time.
  *
+ * ## The nav treatment
+ *
+ * `variant="nav"` is the one prop added, and it is a treatment rather
+ * than a new part: the same `ListItemButton`, `ListItemIcon`,
+ * `ListItemText` and `ListSubheader`, composed the way MUI composes a
+ * navigation drawer, drawn as the navigation sheet's sidebar instead of
+ * as the list frame's bands. It travels through context like `dense`, so
+ * a nested `List` under a parent row inherits it and draws the branch.
+ * See `List.tsx`.
+ *
  * ## The subheader
  *
  * `ListSubheader` was left out while no design drew one. The navigation
@@ -74,6 +84,27 @@ import type {
 
 /** Removed from `List`. Documented above. */
 type LockedListProp = 'disablePadding';
+
+/**
+ * The list's treatment.
+ *
+ *   - `default` — the list frame: 16px bands under a hairline, for an
+ *     index of rows inside a page.
+ *   - `nav` — the sidebar: 28px rows on 4px corners, 4px apart, for app
+ *     navigation inside a `Drawer`.
+ */
+export type ListVariant = 'default' | 'nav';
+
+/** The props `List` adds to MUI's. */
+interface ListOwnProps {
+  /**
+   * The treatment — the list frame's bands, or the sidebar's rows.
+   * Inherited by a nested `List`, the way `dense` is.
+   *
+   * @default 'default'
+   */
+  variant?: ListVariant;
+}
 
 /** Removed from `ListItem` and `ListItemButton`. Documented above. */
 type LockedRowProp = 'divider';
@@ -88,6 +119,7 @@ export interface ListTypeMap<
   RootComponent extends React.ElementType = 'ul',
 > {
   props: AdditionalProps &
+    ListOwnProps &
     Omit<MuiListTypeMap<object, RootComponent>['props'], LockedListProp>;
   defaultComponent: RootComponent;
 }
@@ -103,7 +135,8 @@ export interface ListTypeMap<
 export type ListProps<
   RootComponent extends React.ElementType = 'ul',
   AdditionalProps = object,
-> = Omit<MuiListProps<RootComponent, AdditionalProps>, LockedListProp>;
+> = Omit<MuiListProps<RootComponent, AdditionalProps>, LockedListProp> &
+  ListOwnProps;
 
 /**
  * MUI's `ListItemTypeMap` with `divider` removed, keeping the

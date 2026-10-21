@@ -42,6 +42,7 @@ import {
   Tooltip,
   Typography,
   atomsRegion,
+  useSidebarToggle,
 } from '@neofloai/atoms';
 import {
   ArrowDownIcon,
@@ -53,7 +54,7 @@ import { border, icon, surface } from '@neofloai/atoms/tokens';
 
 // The rail every screen in the app mounts. Its main menu already carries the
 // Analytics row this screen is, which is the row that has to read as selected.
-import { AppRail, RailPeek, useRailPeek } from './AppRail';
+import { AppRail } from './AppRail';
 
 /* ------------------------------------------------------------------ *
  * Geometry
@@ -1421,7 +1422,7 @@ function DriverBar({
  * glyph on every card title is where that is stated.
  */
 export function ReportingScreen() {
-  const rail = useRailPeek(true);
+  const sidebar = useSidebarToggle({ defaultHidden: true });
   const [range, setRange] = React.useState<RangeKey>('30d');
   const [entityKey, setEntityKey] = React.useState(ENTITIES[0].key);
   const [agentKey, setAgentKey] = React.useState(AGENTS[0].key);
@@ -1455,17 +1456,16 @@ export function ReportingScreen() {
         borderColor: 'divider',
       }}
     >
-      {!rail.hidden && <AppRail active="analytics" />}
+      {!sidebar.hidden && <AppRail active="analytics" />}
 
-      {/* relative, so the peek's layer can sit under the bar. */}
-      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
+      <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('reporting', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
             // Hides the rail; hovered while it is hidden, peeks at it.
-            {...rail.toggleProps}
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -1664,11 +1664,15 @@ export function ReportingScreen() {
             </Stack>
           </Stack>
         </Box>
-
-        {/* The hidden rail, floated in under the bar by hovering the
-            toggle. No backdrop and no focus trap: the page stays live. */}
-        <RailPeek {...rail.peekProps} active="analytics" />
       </Stack>
+
+      {/* The hidden rail, floated in under the bar by hovering the
+          toggle. No backdrop and no focus trap: the page stays live. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+        active="analytics"
+      />
     </Stack>
   );
 }

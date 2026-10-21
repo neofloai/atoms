@@ -5,15 +5,15 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { useSidebarToggle } from '@/src/components/Drawer';
+
 import {
   AppRail,
-  RailPeek,
   WORKFLOW_NAV,
   WORKFLOW_SECONDARY_NAV,
 } from './AppRail';
 import { AppTopBar } from './AppTopBar';
 import { PageHeaderBar } from './PageHeaderBar';
-import { useRailPeek } from './useRailPeek';
 
 import type { NavbarSize } from '@/src/components/Navbar';
 
@@ -52,7 +52,7 @@ import type { NavbarSize } from '@/src/components/Navbar';
  * The peek is no backdrop and no focus trap: it is a look, not a mode, so
  * the page under it stays live. The two rails share `active`, so the page
  * picked from the peek is the one the docked rail shows when it returns.
- * The behaviour lives in `useRailPeek`, which the patterns share.
+ * The behaviour is the library's `useSidebarToggle`.
  *
  * ## The bar, at `sm`
  *
@@ -106,8 +106,13 @@ export function AppShell({
   height: number;
   size?: NavbarSize;
 }) {
-  /** `sm` only: the hidden rail and its peek. */
-  const rail = useRailPeek();
+  /**
+   * `sm` only: the frame the peek renders into, and the hidden rail's
+   * toggle. In a callback ref, because the hook needs the element during
+   * render to hand it to the modal as its container.
+   */
+  const [shell, setShell] = React.useState<HTMLDivElement | null>(null);
+  const sidebar = useSidebarToggle({ container: shell });
   /** `sm` only: one selection for the docked rail and its peek. */
   const [active, setActive] = React.useState('work-area');
 
@@ -237,20 +242,27 @@ export function AppShell({
   }
 
   return (
-    <Stack direction="row" sx={frame}>
+    <Stack ref={setShell} direction="row" sx={frame}>
       {/* Both rails open on Work area, as the sheet draws it, so the branch
           under Invoice Processing is showing. */}
-      {!rail.hidden && <AppRail active={active} onActiveChange={setActive} />}
-      {/* `relative`, so the peek's layer can sit under the bar. */}
-      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
-        <AppTopBar title="Invoice Processing" toggleProps={rail.toggleProps} />
-        {content}
-        <RailPeek
-          {...rail.peekProps}
-          active={active}
-          onActiveChange={setActive}
+      {!sidebar.hidden && (
+        <AppRail active={active} onActiveChange={setActive} />
+      )}
+      <Stack sx={{ flex: 1, minWidth: 0 }}>
+        <AppTopBar
+          title="Invoice Processing"
+          toggleProps={sidebar.toggleProps}
         />
+        {content}
       </Stack>
+
+      {/* The peek: the same rail, floated in under the bar. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+        active={active}
+        onActiveChange={setActive}
+      />
     </Stack>
   );
 }

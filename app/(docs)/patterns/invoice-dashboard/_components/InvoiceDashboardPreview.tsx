@@ -9,6 +9,7 @@ import { Button } from '@/src/components/Button';
 import { Chip } from '@/src/components/Chip';
 import { DataGrid } from '@/src/components/DataGrid';
 import { Divider } from '@/src/components/Divider';
+import { useSidebarToggle } from '@/src/components/Drawer';
 import { Filter, countActiveFilters } from '@/src/components/Filter';
 import { IconButton } from '@/src/components/IconButton';
 import { Navbar } from '@/src/components/Navbar';
@@ -28,11 +29,7 @@ import {
 // every other screen in the invoice processing workflow mounts. Imported
 // rather than redrawn: a second copy would drift from the screens `Review`
 // opens.
-import {
-  AppRail,
-  RailPeek,
-} from '../../../components/drawer/_components/AppRail';
-import { useRailPeek } from '../../../components/drawer/_components/useRailPeek';
+import { AppRail } from '../../../components/drawer/_components/AppRail';
 import {
   INVOICE_COLUMNS,
   INVOICE_FILTER_GROUPS,
@@ -215,7 +212,8 @@ const PREVIEW_COLUMNS: GridColDef<Invoice>[] = [
  * any one of them.
  */
 export function InvoiceDashboardPreview(): React.JSX.Element {
-  const rail = useRailPeek(true);
+  const [shell, setShell] = React.useState<HTMLDivElement | null>(null);
+  const sidebar = useSidebarToggle({ defaultHidden: true, container: shell });
   const [queue, setQueue] = React.useState<Queue>('open');
 
   const [search, setSearch] = React.useState('');
@@ -227,9 +225,11 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
 
   return (
     <Stack
+      ref={setShell}
       {...atomsRegion('invoice-dashboard', 'shell')}
       direction="row"
       sx={{
+        position: 'relative',
         height: FRAME_HEIGHT_PX,
         overflow: 'hidden',
         borderRadius: 1.5,
@@ -237,15 +237,15 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      {!rail.hidden && <AppRail active="work-area" />}
+      {!sidebar.hidden && <AppRail active="work-area" />}
 
-      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
+      <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
-            {...rail.toggleProps}
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -349,9 +349,15 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
             />
           </Box>
         </Stack>
-
-        <RailPeek {...rail.peekProps} active="work-area" />
       </Stack>
+
+      {/* The hidden rail, floated in under the bar while its toggle is
+          hovered. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+        active="work-area"
+      />
 
       <Filter
         {...atomsRegion('invoice-dashboard', 'filter')}

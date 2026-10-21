@@ -2,6 +2,7 @@ import {
   border,
   fontFamilies,
   fontWeights,
+  icon,
   spacing,
   surface,
   text,
@@ -9,6 +10,7 @@ import {
 } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
+import { modePair } from '../_shared/devMarks';
 
 import type { CSSObject, Theme } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
@@ -186,6 +188,48 @@ export const listRowState = {
   disabledFill: surface.disabled.default,
   disabledRule: border.disabled.default,
   disabledInk: text.disabled.default,
+} satisfies Record<string, ModeToken>;
+
+/**
+ * The nav treatment's geometry, from the navigation sheet's sidebar
+ * (4564:6206). One row at both levels: 28px tall, 8px inline inset, the
+ * glyph 12px from the label, rows 4px apart.
+ */
+export const NAV_ROW_PX = 28;
+export const NAV_ROW_INSET_PX = spacing.component.xs;
+export const NAV_GLYPH_GAP_PX = spacing.component.sm;
+export const NAV_ROW_GAP_PX = spacing.component.xxs;
+
+/**
+ * The second level: the branch rule stands under the parent's glyph, 16px
+ * in, and a child row starts 40px in — both from the nav list's own left
+ * edge, so they hold wherever the list is inset.
+ */
+export const NAV_BRANCH_RULE_PX = 16;
+export const NAV_BRANCH_INDENT_PX = 40;
+
+/**
+ * Every colour a nav row moves, resolved to a token.
+ *
+ * At rest the label is `text/default/b2` and the glyph `icon/default/b2`.
+ * The current page takes `surface/default/2` behind `b1` ink — the same
+ * fill `MenuItem` gives its selected row, so the current page and the
+ * current workspace are marked alike. Its dark half moves one rung up,
+ * because the light rung is the rail's own `card 2` in dark mode. Hover
+ * and keyboard focus take `card 3`, one layer above the rail.
+ */
+export const navRowState = {
+  ink: text.default.b2,
+  glyph: icon.default.b2,
+  currentInk: text.default.b1,
+  currentGlyph: icon.default.b1,
+  hoverFill: surface.layers.card3,
+  selectedFill: modePair(
+    surface.default.defaultHover,
+    surface.default.defaultPressed
+  ),
+  disabledInk: text.disabled.default,
+  branchRule: border.default.default,
 } satisfies Record<string, ModeToken>;
 
 /**

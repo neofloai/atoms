@@ -90,10 +90,12 @@ export default function DashboardPatternPage() {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             The code below writes the rail out in full — the same one every
-            other pattern imports as <code>./AppRail</code>. Hidden, it is
-            unmounted, so the page takes its width back; the peek is a
-            temporary drawer with no backdrop, rendered into a layer under
-            the bar so it never covers the bar itself. Its contents are the
+            other pattern imports as <code>./AppRail</code>, its rows a{' '}
+            <code>List variant=&quot;nav&quot;</code>. The toggle is{' '}
+            <code>useSidebarToggle</code>: hidden, the rail is unmounted and
+            the page takes its width back, and the peek is a second,
+            temporary drawer with no backdrop that hangs under the bar. Its
+            contents are the
             same ones the <Link href="/components/drawer">Drawer</Link> page
             composes, and the table below is the{' '}
             <Link href="/components/filter#filtering-a-data-grid">Filter</Link>{' '}

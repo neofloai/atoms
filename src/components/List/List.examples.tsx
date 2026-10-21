@@ -12,7 +12,7 @@ export const data: ComponentExamplesData = {
   name: 'List',
   category: 'Layout',
   tagline:
-    'A vertical index of rows inside a page — a settings panel, a stack of people, a set of records with a control each. Each row is a band with 16px inside it and a hairline underneath. Not the app navigation rail: that is `ToggleButton` inside a `permanent` Drawer — see the Dashboard pattern.',
+    'A vertical index of rows — a settings panel, a stack of people, a set of records with a control each, where each row is a band with 16px inside it and a hairline underneath. With `variant="nav"` it is also the app sidebar: 28px rows inside a `Drawer`, the way MUI builds a navigation drawer.',
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3648-25970&m=dev',
   props: [
@@ -22,6 +22,13 @@ export const data: ComponentExamplesData = {
       default: '—',
       description:
         'The rows. A `ListItem` for a row that displays, a `ListItemButton` for one that responds to the pointer.',
+    },
+    {
+      name: 'variant',
+      type: "'default' | 'nav'",
+      default: "'default'",
+      description:
+        "The treatment. `default` is the list frame's 16px bands under a hairline. `nav` is the app sidebar: 28px rows on 4px corners, 4px apart, the label in `text/default/b2` and the glyph in `icon/default/b2`, the current page on a grey fill in `b1`. A nested `List` inherits it and draws the second level behind a branch rule at a 40px indent.",
     },
     {
       name: 'dense',
@@ -70,7 +77,14 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description:
-        'Marks the current row. Tints it with the primary subtle rung and keeps it there under the pointer.',
+        'Marks the current row. Tints it with the primary subtle rung and keeps it there under the pointer. In a `nav` list it is the current page: a grey fill behind `b1` ink at Medium.',
+    },
+    {
+      name: 'ListItemButton aria-current',
+      type: "'page' | 'true'",
+      default: '—',
+      description:
+        'In a `nav` list, `\'true\'` on a parent row whose current page is out of sight — a shut group or a folded rail — gives it the current page\'s ink and weight without the fill.',
     },
     {
       name: 'ListItemButton disabled',
@@ -139,7 +153,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'Navigation inside a page',
       description:
-        'Rows that respond. `selected` marks the current one; a row with an `href` is a link. This is in-page navigation — a settings sub-nav, a table of contents, a folder tree. The app-level rail down the side of the screen is a different construct: `ToggleButton` rows inside a `permanent` Drawer, which is what the Dashboard pattern uses.',
+        'Rows that respond. `selected` marks the current one; a row with an `href` is a link. This is in-page navigation — a settings sub-nav, a table of contents, a folder tree. The app sidebar is the same parts with `variant="nav"`, below.',
       code: [
         '<List component="nav">',
         '  <ListItemButton selected>',
@@ -155,6 +169,46 @@ export const data: ComponentExamplesData = {
         '    <ListItemText primary="Reports" />',
         '  </ListItemButton>',
         '</List>',
+      ].join('\n'),
+    },
+    {
+      title: 'The app sidebar',
+      description:
+        'MUI\'s navigation drawer, drawn as the sidebar: a `nav` list of `ListItemButton`s in a `permanent` Drawer. Rows are 28px and 4px apart; the glyph sits 12px from the label at both levels. A section label is a `ListSubheader` — as a button it folds its rows away in a `Collapse`. A level is a `Collapse` holding a nested `List`, which takes the 40px indent and the branch rule on its own. The parent of a current page that is out of sight takes `aria-current="true"`.',
+      code: [
+        '<Drawer variant="permanent" size="sm">',
+        '  <List variant="nav" component="nav" sx={{ p: 1.5 }}>',
+        '    <ListItemButton selected>',
+        '      <ListItemIcon>',
+        '        <HouseIcon size={16} />',
+        '      </ListItemIcon>',
+        '      <ListItemText primary="Home" />',
+        '    </ListItemButton>',
+        '    <ListSubheader component="button" onClick={toggleSection} aria-expanded={sectionOpen}>',
+        '      Workflows',
+        '      <CaretDownIcon size={14} />',
+        '    </ListSubheader>',
+        '    <Collapse in={sectionOpen}>',
+        '      <ListItemButton onClick={toggleGroup} aria-expanded={groupOpen}>',
+        '        <ListItemIcon>',
+        '          <FileTextIcon size={16} />',
+        '        </ListItemIcon>',
+        '        <ListItemText primary="Invoice Processing" />',
+        '        <CaretDownIcon size={14} />',
+        '      </ListItemButton>',
+        '      <Collapse in={groupOpen}>',
+        '        <List component="div">',
+        '          <ListItemButton>',
+        '            <ListItemIcon>',
+        '              <BriefcaseIcon size={16} />',
+        '            </ListItemIcon>',
+        '            <ListItemText primary="Work area" />',
+        '          </ListItemButton>',
+        '        </List>',
+        '      </Collapse>',
+        '    </Collapse>',
+        '  </List>',
+        '</Drawer>',
       ].join('\n'),
     },
     {
@@ -225,23 +279,25 @@ export const data: ComponentExamplesData = {
     'Reach for `secondaryAction` for the trailing control rather than adding it as the last child, so the title shortens instead of colliding with it',
     'Size the leading element yourself — `Avatar size="sm"` beside a one-line row, `size="md"` beside two',
     'Switch `alignItems="flex-start"` once a row runs to three lines or more, so the avatar stays with the title',
+    'Build the app sidebar as `List variant="nav"` inside a `permanent` Drawer, and nest a level as a `Collapse` holding a `List` — the indent and branch rule come with it',
+    'Fold a sidebar to an icon strip by leaving out `ListItemText` and centring the 28px row, with a `Tooltip` naming each glyph',
   ],
   donts: [
     "Don't nest an `IconButton` or a `Switch` inside a `ListItemButton` — put it in the item's `secondaryAction`, where it is a separate target",
     "Don't add a bottom border to a row; every row already ends on one, and it turns primary on focus and grey when disabled",
     "Don't wrap a row in a `Card` for a surface — the row paints `card 1` itself",
     "Don't use a list for tabular data with more than one column of values; that is `Table`, or `DataGrid` when the table is the screen's work",
-    "Don't build the app's primary navigation rail out of `List`/`ListItemButton` — the rail is `ToggleButton` rows inside a `permanent` Drawer, which is what carries the selected tint, the icon-only collapsed width, and the tooltips that appear when the labels drop out. Start from the Dashboard pattern rather than writing a shell from scratch",
+    "Don't build the app sidebar from the default list — its 16px bands and hairlines are an index of rows. Pass `variant=\"nav\"`, and start from the Dashboard pattern for the whole shell",
+    "Don't give a parent row in a `nav` list `selected` — it opens a level rather than being a page; mark it `aria-current=\"true\"` only while its current page is out of sight",
   ],
   relatedComponents: [
     'Menu',
     'MenuItem',
     'Table',
     'Accordion',
-    // The two a reader lands here looking for by mistake. `List` and an
-    // app rail look alike in a screenshot and are different constructs,
-    // so the comparison is one call away rather than a rediscovery.
-    'ToggleButton',
+    // The panel a `nav` list goes in, and the collapse a level opens
+    // behind.
     'Drawer',
+    'Collapse',
   ],
 };

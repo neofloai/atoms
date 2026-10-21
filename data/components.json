@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T08:29:27.421Z",
+  "generatedAt": "2026-10-21T15:22:33.079Z",
   "components": [
     {
       "name": "Accordion",
@@ -1914,7 +1914,7 @@
       "name": "Drawer",
       "category": "Navigation",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6206",
-      "tagline": "The side navigation an app shell is built from — the sidebar down the left, permanent, 220px, folding to a rail of icons — and the same panel used as a sheet that slides in over the page. With `Navbar` it is the shell every screen starts from: lay the page out as a row, rail first, and the bar begins where the rail ends. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.",
+      "tagline": "The side navigation an app shell is built from — the sidebar down the left, permanent, 220px, filled with `List variant=\"nav\"`, hidden and peeked at with `useSidebarToggle` — and the same panel used as a sheet that slides in over the page. With `Navbar` it is the shell every screen starts from: lay the page out as a row, rail first, and the bar begins where the rail ends. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.",
       "keywords": [
         "sidebar",
         "sidenav",
@@ -1988,6 +1988,12 @@
           "description": "How long the slide takes. Left alone it resolves from the theme, which honours `prefers-reduced-motion`, so prefer overriding it only for a panel whose contents make the default feel wrong."
         },
         {
+          "name": "useSidebarToggle(options)",
+          "type": "{ defaultHidden?, offsetTop?, container? } → { hidden, toggleProps, peekProps, closePeek, setHidden }",
+          "default": "—",
+          "description": "The app shell's sidebar toggle, as a hook. Spread `toggleProps` on the toggle in the bar — press to hide the docked rail, hover while it is hidden to peek. Spread `peekProps` on a second Drawer holding the same navigation, and call `closePeek` when a page is picked from it. `container` keeps the peek inside an element rather than the window."
+        },
+        {
           "name": "slotProps",
           "type": "{ paper, backdrop, root, docked, transition }",
           "default": "{}",
@@ -2002,18 +2008,23 @@
         },
         {
           "title": "A permanent nav rail",
-          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. The nav rows are `ToggleButton`s, not a `List` — that is what carries the selected tint and survives the collapse to icons. For the whole screen — rail, bar and content together — start from the Dashboard pattern.",
-          "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer\n    variant=\"permanent\"\n    size=\"sm\"\n    slotProps={{ paper: { sx: { py: 2.5 } } }}\n  >\n    <Stack sx={{ px: 2, gap: 2, pb: 2 }}>\n      <NeofloLogo variant=\"full\" size={20} />\n      <Button\n        variant=\"secondary\"\n        appearance=\"outline\"\n        size=\"sm\"\n        fullWidth\n        startIcon={<SuitcaseSimpleIcon size={16} />}\n        endIcon={<CaretUpDownIcon size={14} />}\n        onClick={openWorkspaceMenu}\n      >\n        Non Trade AP DB\n      </Button>\n    </Stack>\n\n    <Divider />\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <Stack sx={{ flex: 1, px: 2, py: 2, gap: 1 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ToggleButton\n          key={key}\n          value={key}\n          selected={active === key}\n          onChange={() => setActive(key)}\n          appearance=\"text\"\n          size=\"sm\"\n          sx={{ gap: 1, justifyContent: \"flex-start\", textTransform: \"none\" }}\n        >\n          <Icon size={20} />\n          {label}\n        </ToggleButton>\n      ))}\n    </Stack>\n\n    <Divider />\n\n    <Stack sx={{ px: 2, pt: 2.5 }}>\n      <Button\n        variant=\"secondary\"\n        appearance=\"text\"\n        fullWidth\n        endIcon={<CaretDownIcon size={16} />}\n        onClick={openUserMenu}\n        sx={{ justifyContent: \"space-between\", textTransform: \"none\" }}\n      >\n        <Avatar size=\"sm\">AV</Avatar>\n      </Button>\n    </Stack>\n  </Drawer>\n\n  <Box sx={{ flex: 1, p: 3 }}>{children}</Box>\n</Stack>"
+          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rows are `List variant=\"nav\"`: MUI's navigation-drawer composition, drawn as the sidebar — 28px rows, `b2` ink at rest, the current page on a grey fill. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. For the whole screen, start from the Dashboard pattern.",
+          "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer variant=\"permanent\" size=\"sm\">\n    <Box sx={{ height: 48, display: \"flex\", alignItems: \"center\", px: 2.5 }}>\n      <NeofloLogo variant=\"full\" size={16} />\n    </Box>\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <List variant=\"nav\" component=\"nav\" sx={{ flex: 1, p: 1.5 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ListItemButton\n          key={key}\n          selected={active === key}\n          onClick={() => setActive(key)}\n        >\n          <ListItemIcon>\n            <Icon size={16} />\n          </ListItemIcon>\n          <ListItemText primary={label} />\n        </ListItemButton>\n      ))}\n    </List>\n\n    <WorkspaceSwitcherOfYourOwn />\n  </Drawer>\n\n  <Box sx={{ flex: 1 }}>{children}</Box>\n</Stack>"
         },
         {
           "title": "A nav rail with a second level",
-          "description": "One level of nesting, and it lands in two different places. Expanded, the children reflow in under the parent behind a hairline that stands between the parent’s glyph and theirs — that rule is what makes the indent read as descent rather than as a second list. Folded, there is no width to indent into, so the same children arrive in a flyout anchored to the parent’s glyph and headed with the parent’s name, because two rows hanging off a 16px icon say nothing about which branch they belong to. Note the three row states: the fill marks the one page you are on, and a parent whose child is that page takes the same ink and weight with no fill, which is what still says so when the group is shut. Stop at one level — a rail that needs three needs a different navigation model. For the whole screen, start from the Dashboard pattern.",
-          "code": "const [open, setOpen] = React.useState(true);\nconst [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);\nconst onBranch = SECTION.children.some((c) => c.key === active);\n\n<Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n  {/* The parent opens the level under it; it is not a page, so it\n      never takes the fill. Folded, the same click opens the flyout. */}\n  <NavRow\n    item={SECTION}\n    collapsed={collapsed}\n    onBranch={onBranch}\n    expanded={open}\n    onSelect={(event) =>\n      collapsed\n        ? setAnchorEl(event.currentTarget)\n        : setOpen((previous) => !previous)\n    }\n  />\n\n  {!collapsed && (\n    <Collapse in={open}>\n      <Stack\n        sx={(theme) => ({\n          gap: 0.5,\n          ml: \"16px\",\n          pl: \"15px\",\n          borderLeft: \"1px solid\",\n          borderColor: border.layers.card2.light,\n          ...theme.applyStyles(\"dark\", {\n            borderColor: border.layers.card2.dark,\n          }),\n        })}\n      >\n        {SECTION.children.map((child) => (\n          <NavRow\n            key={child.key}\n            item={child}\n            selected={active === child.key}\n            onSelect={() => setActive(child.key)}\n          />\n        ))}\n      </Stack>\n    </Collapse>\n  )}\n\n  {/* Folded, the second level has nowhere to go but beside the rail. */}\n  <Menu\n    anchorEl={anchorEl}\n    open={anchorEl !== null}\n    onClose={() => setAnchorEl(null)}\n    anchorOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n    transformOrigin={{ vertical: \"top\", horizontal: \"left\" }}\n  >\n    <Typography variant=\"body2\" sx={{ px: 1, pb: 1 }}>\n      {SECTION.label}\n    </Typography>\n    <Divider sx={{ mb: 0.5 }} />\n    {SECTION.children.map(({ key, label, Icon }) => (\n      <MenuItem key={key} selected={active === key} onClick={() => go(key)}>\n        <Icon size={16} />\n        {label}\n      </MenuItem>\n    ))}\n  </Menu>\n</Drawer>"
+          "description": "One level of nesting, and it lands in two different places. Expanded, the level is MUI's nested list — a `Collapse` holding a `List` — and the `nav` list draws it 40px in behind a hairline under the parent's glyph; that rule is what makes the indent read as descent rather than as a second list. Folded, there is no width to indent into, so the same children arrive in a `Menu` anchored to the parent's glyph and headed with its name. Three row states: `selected` fills the one page you are on, and a parent whose current page is out of sight takes `aria-current=\"true\"` — the same ink and weight with no fill. Stop at one level.",
+          "code": "const [open, setOpen] = React.useState(true);\nconst [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);\nconst onBranch = SECTION.children.some((child) => child.key === active);\n\n<List variant=\"nav\" component=\"nav\">\n  {/* The parent opens the level under it; it is not a page, so it\n      never takes the fill. Folded, the same click opens the flyout. */}\n  <ListItemButton\n    aria-expanded={open}\n    aria-current={onBranch && !open ? \"true\" : undefined}\n    onClick={(event) =>\n      collapsed ? setAnchorEl(event.currentTarget) : setOpen((previous) => !previous)\n    }\n  >\n    <ListItemIcon>\n      <SECTION.Icon size={16} />\n    </ListItemIcon>\n    <ListItemText primary={SECTION.label} />\n    <CaretDownIcon size={14} />\n  </ListItemButton>\n\n  <Collapse in={open && !collapsed}>\n    <List component=\"div\">\n      {SECTION.children.map(({ key, label, Icon }) => (\n        <ListItemButton key={key} selected={active === key} onClick={() => go(key)}>\n          <ListItemIcon>\n            <Icon size={16} />\n          </ListItemIcon>\n          <ListItemText primary={label} />\n        </ListItemButton>\n      ))}\n    </List>\n  </Collapse>\n</List>\n\n{/* Folded, the second level has nowhere to go but beside the rail. */}\n<Menu\n  anchorEl={anchorEl}\n  open={anchorEl !== null}\n  onClose={() => setAnchorEl(null)}\n  anchorOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n  transformOrigin={{ vertical: \"top\", horizontal: \"left\" }}\n>\n  <ListSubheader>{SECTION.label}</ListSubheader>\n  {SECTION.children.map(({ key, label, Icon }) => (\n    <MenuItem key={key} selected={active === key} onClick={() => go(key)}>\n      <Icon size={16} />\n      {label}\n    </MenuItem>\n  ))}\n</Menu>"
+        },
+        {
+          "title": "A sidebar that hides, and peeks on hover",
+          "description": "`useSidebarToggle` is the app shell's toggle. Pressed, it hides the docked rail outright — render the rail only while `hidden` is false, and the bar and the page take the full width. While it is hidden, hovering the toggle floats the same navigation in under the bar: a second, `temporary` Drawer on 12px corners with a border all round and a shadow, 8px in. It has no backdrop and no focus trap, so the page stays live; it leaves 300ms after the pointer does, and `closePeek` closes it when a page is picked. Pressing the toggle docks the rail again.",
+          "code": "const sidebar = useSidebarToggle();\n\n<Stack direction=\"row\" sx={{ height: \"100vh\" }}>\n  {!sidebar.hidden && (\n    <Drawer variant=\"permanent\" size=\"sm\">\n      <AppNav />\n    </Drawer>\n  )}\n\n  <Stack sx={{ flex: 1, minWidth: 0 }}>\n    <Navbar>\n      <IconButton variant=\"secondary\" appearance=\"text\" size=\"sm\" {...sidebar.toggleProps}>\n        <SidebarSimpleIcon />\n      </IconButton>\n    </Navbar>\n    {children}\n  </Stack>\n\n  {/* The peek: the same navigation, floated in under the bar. */}\n  <Drawer {...sidebar.peekProps} size=\"sm\">\n    <AppNav onNavigate={sidebar.closePeek} />\n  </Drawer>\n</Stack>"
         },
         {
           "title": "A rail that collapses to icons",
-          "description": "One rail, two widths. There is no collapsed rung on the scale, because a rail folding to a strip of icons is the same panel narrowed — so it is the same prop with a raw number. The width animates and the panel clips its own overflow, which is what lets the labels drop out without pushing the rail back open.",
-          "code": "const [collapsed, setCollapsed] = React.useState(false);\n\n<Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n  <NavOfYourOwn collapsed={collapsed} />\n</Drawer>"
+          "description": "A workflow screen's strip: the same panel narrowed, so it is the same prop with a raw number. The width animates and the panel clips its own overflow. In a `nav` list a folded row is its glyph alone — leave out the `ListItemText`, centre the 28px row, and name each glyph with a `Tooltip`.",
+          "code": "<Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n  <List variant=\"nav\" sx={{ p: 1.5, alignItems: collapsed ? \"center\" : \"stretch\" }}>\n    {NAV.map(({ key, label, Icon }) => (\n      <Tooltip key={key} title={collapsed ? label : \"\"} placement=\"right\">\n        <ListItemButton\n          selected={active === key}\n          sx={collapsed ? { width: 28, px: 0, justifyContent: \"center\" } : undefined}\n        >\n          <ListItemIcon>\n            <Icon size={16} />\n          </ListItemIcon>\n          {!collapsed && <ListItemText primary={label} />}\n        </ListItemButton>\n      </Tooltip>\n    ))}\n  </List>\n</Drawer>"
         },
         {
           "title": "Pushing the page aside instead of covering it",
@@ -2037,6 +2048,8 @@
         "Mount a `temporary` drawer only while it has something to show, so its contents rebuild per record instead of holding the last one",
         "Match the `anchor` to what the panel is: a rail belongs on the left, a record on the right, a row of actions at the bottom",
         "Drive a collapsing rail from `size` with a pixel number, so the panel and the space it reserves fold together and animate",
+        "Fill the rail with `List variant=\"nav\"` — MUI's navigation-drawer composition, drawn as the sidebar",
+        "Let the shell's toggle hide the rail and hover peek at it with `useSidebarToggle`, and spread its `peekProps` on a second `temporary` Drawer holding the same navigation",
         "Stop a nav rail at one level of nesting, and put that level behind a `Collapse` with a hairline standing between the parent’s glyph and the children’s",
         "Move a folded rail’s second level into a `Menu` anchored to the parent’s glyph, headed with the parent’s name — the labels are gone at 64px and the branch has to be named somewhere"
       ],
@@ -2047,7 +2060,8 @@
         "Don't put a `permanent` drawer inside a container without `position: \"relative\"` on the paper — it will pin itself to the window instead",
         "Don't add a shadow to a `temporary` drawer that still has its backdrop; the scrim is already doing that job",
         "Don't let a parent row take the selected fill as well as its children — it opens a level rather than being a page, and two filled rows both claim to be where you are",
-        "Don't leave a nav row's selected fill to `ToggleButton`'s own: it is `card 2`, the same value this panel's paper takes, so the fill is invisible and only the ink shifts",
+        "Don't build the rail's rows from the default `List` or from `ToggleButton` — `List variant=\"nav\"` is the sidebar row, with its fill, ink and 28px height",
+        "Don't fold the main shell's rail to icons; hide it with `useSidebarToggle` and let hover peek at it. The icon strip belongs to workflow screens",
         "Don't indent a second level in a folded rail; the labels are clipped at that width and what is left is a column of glyphs that cannot say which are children"
       ],
       "relatedComponents": [
@@ -2057,7 +2071,7 @@
         "Menu",
         "Slide",
         "Collapse",
-        "ToggleButton"
+        "List"
       ]
     },
     {
@@ -2788,7 +2802,7 @@
     {
       "name": "List",
       "category": "Layout",
-      "tagline": "A vertical index of rows inside a page — a settings panel, a stack of people, a set of records with a control each. Each row is a band with 16px inside it and a hairline underneath. Not the app navigation rail: that is `ToggleButton` inside a `permanent` Drawer — see the Dashboard pattern.",
+      "tagline": "A vertical index of rows — a settings panel, a stack of people, a set of records with a control each, where each row is a band with 16px inside it and a hairline underneath. With `variant=\"nav\"` it is also the app sidebar: 28px rows inside a `Drawer`, the way MUI builds a navigation drawer.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3648-25970&m=dev",
       "props": [
         {
@@ -2796,6 +2810,12 @@
           "type": "ReactNode",
           "default": "—",
           "description": "The rows. A `ListItem` for a row that displays, a `ListItemButton` for one that responds to the pointer."
+        },
+        {
+          "name": "variant",
+          "type": "'default' | 'nav'",
+          "default": "'default'",
+          "description": "The treatment. `default` is the list frame's 16px bands under a hairline. `nav` is the app sidebar: 28px rows on 4px corners, 4px apart, the label in `text/default/b2` and the glyph in `icon/default/b2`, the current page on a grey fill in `b1`. A nested `List` inherits it and draws the second level behind a branch rule at a 40px indent."
         },
         {
           "name": "dense",
@@ -2837,7 +2857,13 @@
           "name": "ListItemButton selected",
           "type": "boolean",
           "default": "false",
-          "description": "Marks the current row. Tints it with the primary subtle rung and keeps it there under the pointer."
+          "description": "Marks the current row. Tints it with the primary subtle rung and keeps it there under the pointer. In a `nav` list it is the current page: a grey fill behind `b1` ink at Medium."
+        },
+        {
+          "name": "ListItemButton aria-current",
+          "type": "'page' | 'true'",
+          "default": "—",
+          "description": "In a `nav` list, `'true'` on a parent row whose current page is out of sight — a shut group or a folded rail — gives it the current page's ink and weight without the fill."
         },
         {
           "name": "ListItemButton disabled",
@@ -2890,8 +2916,13 @@
         },
         {
           "title": "Navigation inside a page",
-          "description": "Rows that respond. `selected` marks the current one; a row with an `href` is a link. This is in-page navigation — a settings sub-nav, a table of contents, a folder tree. The app-level rail down the side of the screen is a different construct: `ToggleButton` rows inside a `permanent` Drawer, which is what the Dashboard pattern uses.",
+          "description": "Rows that respond. `selected` marks the current one; a row with an `href` is a link. This is in-page navigation — a settings sub-nav, a table of contents, a folder tree. The app sidebar is the same parts with `variant=\"nav\"`, below.",
           "code": "<List component=\"nav\">\n  <ListItemButton selected>\n    <ListItemIcon>\n      <FolderIcon size={16} />\n    </ListItemIcon>\n    <ListItemText primary=\"Invoices\" />\n  </ListItemButton>\n  <ListItemButton component=\"a\" href=\"/reports\">\n    <ListItemIcon>\n      <ChartBarIcon size={16} />\n    </ListItemIcon>\n    <ListItemText primary=\"Reports\" />\n  </ListItemButton>\n</List>"
+        },
+        {
+          "title": "The app sidebar",
+          "description": "MUI's navigation drawer, drawn as the sidebar: a `nav` list of `ListItemButton`s in a `permanent` Drawer. Rows are 28px and 4px apart; the glyph sits 12px from the label at both levels. A section label is a `ListSubheader` — as a button it folds its rows away in a `Collapse`. A level is a `Collapse` holding a nested `List`, which takes the 40px indent and the branch rule on its own. The parent of a current page that is out of sight takes `aria-current=\"true\"`.",
+          "code": "<Drawer variant=\"permanent\" size=\"sm\">\n  <List variant=\"nav\" component=\"nav\" sx={{ p: 1.5 }}>\n    <ListItemButton selected>\n      <ListItemIcon>\n        <HouseIcon size={16} />\n      </ListItemIcon>\n      <ListItemText primary=\"Home\" />\n    </ListItemButton>\n    <ListSubheader component=\"button\" onClick={toggleSection} aria-expanded={sectionOpen}>\n      Workflows\n      <CaretDownIcon size={14} />\n    </ListSubheader>\n    <Collapse in={sectionOpen}>\n      <ListItemButton onClick={toggleGroup} aria-expanded={groupOpen}>\n        <ListItemIcon>\n          <FileTextIcon size={16} />\n        </ListItemIcon>\n        <ListItemText primary=\"Invoice Processing\" />\n        <CaretDownIcon size={14} />\n      </ListItemButton>\n      <Collapse in={groupOpen}>\n        <List component=\"div\">\n          <ListItemButton>\n            <ListItemIcon>\n              <BriefcaseIcon size={16} />\n            </ListItemIcon>\n            <ListItemText primary=\"Work area\" />\n          </ListItemButton>\n        </List>\n      </Collapse>\n    </Collapse>\n  </List>\n</Drawer>"
         },
         {
           "title": "People, with avatars and two trailing actions",
@@ -2918,22 +2949,25 @@
         "Pass `disablePadding` on a `ListItem` whenever you nest a `ListItemButton` inside it, so the row fill reaches both edges",
         "Reach for `secondaryAction` for the trailing control rather than adding it as the last child, so the title shortens instead of colliding with it",
         "Size the leading element yourself — `Avatar size=\"sm\"` beside a one-line row, `size=\"md\"` beside two",
-        "Switch `alignItems=\"flex-start\"` once a row runs to three lines or more, so the avatar stays with the title"
+        "Switch `alignItems=\"flex-start\"` once a row runs to three lines or more, so the avatar stays with the title",
+        "Build the app sidebar as `List variant=\"nav\"` inside a `permanent` Drawer, and nest a level as a `Collapse` holding a `List` — the indent and branch rule come with it",
+        "Fold a sidebar to an icon strip by leaving out `ListItemText` and centring the 28px row, with a `Tooltip` naming each glyph"
       ],
       "donts": [
         "Don't nest an `IconButton` or a `Switch` inside a `ListItemButton` — put it in the item's `secondaryAction`, where it is a separate target",
         "Don't add a bottom border to a row; every row already ends on one, and it turns primary on focus and grey when disabled",
         "Don't wrap a row in a `Card` for a surface — the row paints `card 1` itself",
         "Don't use a list for tabular data with more than one column of values; that is `Table`, or `DataGrid` when the table is the screen's work",
-        "Don't build the app's primary navigation rail out of `List`/`ListItemButton` — the rail is `ToggleButton` rows inside a `permanent` Drawer, which is what carries the selected tint, the icon-only collapsed width, and the tooltips that appear when the labels drop out. Start from the Dashboard pattern rather than writing a shell from scratch"
+        "Don't build the app sidebar from the default list — its 16px bands and hairlines are an index of rows. Pass `variant=\"nav\"`, and start from the Dashboard pattern for the whole shell",
+        "Don't give a parent row in a `nav` list `selected` — it opens a level rather than being a page; mark it `aria-current=\"true\"` only while its current page is out of sight"
       ],
       "relatedComponents": [
         "Menu",
         "MenuItem",
         "Table",
         "Accordion",
-        "ToggleButton",
-        "Drawer"
+        "Drawer",
+        "Collapse"
       ]
     },
     {
@@ -3320,8 +3354,8 @@
         },
         {
           "title": "The shell: a full-height rail, the bar beside it",
-          "description": "Navbar and Drawer are painted from the same surface and the same edge token, so they meet at the corner without a seam. The arrangement is the part to get right, and it is easy to get backwards: the rail runs the full height of the app and the bar starts where the rail ends, so the outer box is a **row** — rail, then a column — not a bar with a row under it. Two things follow. The brand mark is the top-left corner of the screen, and the bar cannot hold anything that has to line up with the rail, which is why the sidebar toggle sits at its leading edge. The toggle hides the rail outright, and the bar and the page take the full width. While it is hidden, hovering the toggle floats the rail back in under the bar — a temporary drawer with no backdrop and no focus trap, rendered into the region below the bar — and it leaves when the pointer does, after a short grace for crossing from the toggle to the panel. Click the toggle to dock it again. This is the shell of the Dashboard pattern, which is where to start for a whole screen rather than assembling one from here.",
-          "code": "<Stack direction=\"row\" sx={{ height: \"100vh\" }}>\n  {!hidden && (\n    <Drawer variant=\"permanent\" size=\"sm\">\n      <NavOfYourOwn />\n    </Drawer>\n  )}\n\n  <Stack sx={{ flex: 1, minWidth: 0 }}>\n    <Navbar>\n      <IconButton\n        variant=\"secondary\"\n        appearance=\"text\"\n        size=\"sm\"\n        aria-label={hidden ? \"Show sidebar\" : \"Hide sidebar\"}\n        onClick={() => setHidden((previous) => !previous)}\n        // Hidden, hovering the toggle peeks at the rail.\n        onMouseEnter={hidden ? showPeek : undefined}\n        onMouseLeave={hidden ? hidePeekSoon : undefined}\n      >\n        <SidebarSimpleIcon />\n      </IconButton>\n    </Navbar>\n\n    <Box ref={setBelowBar} sx={{ flex: 1, minHeight: 0, position: \"relative\" }}>\n      <Box sx={{ height: \"100%\", overflowY: \"auto\", p: 3 }}>{children}</Box>\n\n      {/* The peek: a look, not a mode — no backdrop, no focus trap,\n          and the pointer passes through everywhere but the panel. */}\n      <Drawer\n        variant=\"temporary\"\n        size=\"sm\"\n        open={hidden && peeking}\n        onClose={hidePeek}\n        hideBackdrop\n        container={belowBar}\n        disableAutoFocus\n        disableEnforceFocus\n        sx={{ position: \"absolute\", pointerEvents: \"none\" }}\n        slotProps={{\n          paper: {\n            onMouseEnter: holdPeek,\n            onMouseLeave: hidePeekSoon,\n            sx: { position: \"absolute\", pointerEvents: \"auto\" },\n          },\n        }}\n      >\n        <NavOfYourOwn onNavigate={hidePeek} />\n      </Drawer>\n    </Box>\n  </Stack>\n</Stack>"
+          "description": "Navbar and Drawer are painted from the same surface and the same edge token, so they meet at the corner without a seam. The arrangement is the part to get right, and it is easy to get backwards: the rail runs the full height of the app and the bar starts where the rail ends, so the outer box is a **row** — rail, then a column — not a bar with a row under it. Two things follow. The brand mark is the top-left corner of the screen, and the bar cannot hold anything that has to line up with the rail, which is why the sidebar toggle sits at its leading edge. The toggle hides the rail outright, and the bar and the page take the full width. While it is hidden, hovering the toggle floats the rail back in under the bar — a temporary drawer with no backdrop and no focus trap — and it leaves when the pointer does, after a short grace for crossing from the toggle to the panel. Click the toggle to dock it again. `useSidebarToggle` is the whole behaviour: spread its `toggleProps` on the toggle and its `peekProps` on a second Drawer. This is the shell of the Dashboard pattern, which is where to start for a whole screen rather than assembling one from here.",
+          "code": "const sidebar = useSidebarToggle();\n\n<Stack direction=\"row\" sx={{ height: \"100vh\" }}>\n  {!sidebar.hidden && (\n    <Drawer variant=\"permanent\" size=\"sm\">\n      <AppNav />\n    </Drawer>\n  )}\n\n  <Stack sx={{ flex: 1, minWidth: 0 }}>\n    <Navbar>\n      {/* Press to hide the rail; hover while it is hidden to peek. */}\n      <IconButton\n        variant=\"secondary\"\n        appearance=\"text\"\n        size=\"sm\"\n        {...sidebar.toggleProps}\n      >\n        <SidebarSimpleIcon />\n      </IconButton>\n    </Navbar>\n\n    <Box sx={{ flex: 1, minHeight: 0, overflowY: \"auto\", p: 3 }}>\n      {children}\n    </Box>\n  </Stack>\n\n  {/* The peek: the same navigation, floated in under the bar. */}\n  <Drawer {...sidebar.peekProps} size=\"sm\">\n    <AppNav onNavigate={sidebar.closePeek} />\n  </Drawer>\n</Stack>"
         },
         {
           "title": "A page header, with the record and its actions",
