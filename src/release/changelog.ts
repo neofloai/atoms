@@ -19,6 +19,35 @@ import type { Release } from './types';
  */
 export const RELEASES: readonly Release[] = [
   {
+    version: '3.2.0',
+    tag: 'v3.2.0',
+    date: '2026-10-21',
+    headline:
+      'The app sidebar ships in the package: `List variant="nav"` draws the sidebar rows, and `useSidebarToggle` hides the sidebar on click and peeks at it on hover.',
+    summary:
+      'A minor release. Nothing is removed or renamed, and the default `List` is unchanged. The sidebar used to live only in the docs and the Dashboard pattern code; its rows are now a treatment of `List`, built the way MUI builds a navigation drawer, and its toggle is a hook. Nav rows are 28px with the label in `text/default/b2` and the glyph in `icon/default/b2`, 12px apart at both levels. The toggle hides the sidebar outright, and hovering it while hidden floats the sidebar in under the bar.',
+    changes: [
+      {
+        kind: 'added',
+        summary:
+          '`List` `variant="nav"`: the app sidebar. Rows are 28px on 4px corners, 4px apart, 8px in, with the glyph 12px from the label. At rest the label is `text/default/b2` and the glyph `icon/default/b2`; `selected` is the current page on a `surface/default/2` fill in `b1` at Medium; `aria-current="true"` gives a parent row the same ink and weight with no fill. Hover and focus take `card 3`. A nested `List` inherits the variant and draws the second level 40px in behind a branch rule. `ListVariant` is exported.',
+        scope: ['List', 'ListItemButton', 'ListItemIcon', 'ListItemText'],
+      },
+      {
+        kind: 'added',
+        summary:
+          '`ListSubheader` in a `nav` list is the section label, 8px in and 8px above the first row. With `component="button"` it is the toggle that folds its section away, with a hover fill and room for a caret.',
+        scope: ['ListSubheader', 'List'],
+      },
+      {
+        kind: 'added',
+        summary:
+          '`useSidebarToggle()`: the app shell\'s sidebar toggle. `toggleProps` go on the toggle in the `Navbar` -- pressed, it hides the docked sidebar; hovered while hidden, it floats the sidebar in under the bar, 8px in, on 12px corners with a shadow. `peekProps` go on a second `temporary` `Drawer` holding the same navigation: no backdrop, no focus trap, closing 300ms after the pointer leaves or on `closePeek`. Also exported: `SIDEBAR_PEEK_GRACE_MS` and the `SidebarToggleProps`, `UseSidebarToggleOptions` and `UseSidebarToggleResult` types.',
+        scope: ['Drawer', 'Navbar'],
+      },
+    ],
+  },
+  {
     version: '3.1.0',
     tag: 'v3.1.0',
     date: '2026-10-21',

@@ -17,4 +17,5 @@ export type {
   ListSubheaderProps,
   ListSubheaderTypeMap,
   ListTypeMap,
+  ListVariant,
 } from './List.types';

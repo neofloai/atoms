@@ -9,6 +9,7 @@ import { Button } from '@/src/components/Button';
 import { Chip } from '@/src/components/Chip';
 import { DataGrid } from '@/src/components/DataGrid';
 import { Divider } from '@/src/components/Divider';
+import { useSidebarToggle } from '@/src/components/Drawer';
 import { Filter, countActiveFilters } from '@/src/components/Filter';
 import { IconButton } from '@/src/components/IconButton';
 import { Navbar } from '@/src/components/Navbar';
@@ -86,9 +87,9 @@ const PAGE_SIZE = 10;
  *
  * The outer box is a row — rail, then a column — not a column with a bar
  * across the top. That is what makes the brand mark the top-left corner
- * of the app, and it is why the collapse toggle sits at the leading edge
- * of the bar: it is the one control whose position does not move when the
- * rail folds.
+ * of the app, and it is why the sidebar toggle sits at the leading edge
+ * of the bar. The toggle hides the rail; hovering it while hidden peeks
+ * at the rail under the bar, through the library's `useSidebarToggle`.
  *
  * ## Three bands, and only one of them is elastic
  *
@@ -107,7 +108,8 @@ const PAGE_SIZE = 10;
  * one filtered table.
  */
 export function DashboardPreview(): React.JSX.Element {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const [shell, setShell] = React.useState<HTMLDivElement | null>(null);
+  const sidebar = useSidebarToggle({ defaultHidden: true, container: shell });
 
   const [selection, setSelection] = React.useState<FilterValue>(EMPTY);
   const [search, setSearch] = React.useState('');
@@ -124,9 +126,11 @@ export function DashboardPreview(): React.JSX.Element {
 
   return (
     <Stack
+      ref={setShell}
       {...atomsRegion('dashboard', 'shell')}
       direction="row"
       sx={{
+        position: 'relative',
         height: FRAME_HEIGHT_PX,
         overflow: 'hidden',
         borderRadius: 1.5,
@@ -134,7 +138,7 @@ export function DashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} />
+      {!sidebar.hidden && <AppRail />}
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('dashboard', 'navbar')}>
@@ -142,8 +146,7 @@ export function DashboardPreview(): React.JSX.Element {
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -229,6 +232,13 @@ export function DashboardPreview(): React.JSX.Element {
           </Box>
         </Stack>
       </Stack>
+
+      {/* The hidden rail, floated in under the bar while its toggle is
+          hovered. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+      />
 
       <Filter
         {...atomsRegion('dashboard', 'filter')}

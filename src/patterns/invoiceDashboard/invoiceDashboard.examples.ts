@@ -35,7 +35,7 @@ export const data: PatternExamplesData = {
     'Let the Status chip decide where Review goes: extraction, matching and ERP posting are stages of one record, so the row already says which screen to open',
     'Give every status its colours from one map and read them from that map everywhere — the Status column, the filter facet, anywhere else a stage is named — so a reader never has to check whether two chips mean the same thing',
     'Put a glyph on the statuses that end a row — error, posted, rejected — so an outcome is legible in greyscale and not by hue alone; the stages in between are named by their labels',
-    'Flex the two identity columns and fix Status, Amount and Action, so the table absorbs the rail folding by giving and taking from the names',
+    'Flex the two identity columns and fix Status, Amount and Action, so the table absorbs the rail docking and hiding by giving and taking from the names',
     'Set the amount in `fontFamilies.mono` and right-align it — lined-up decimal points are the only reason a reader can compare two figures without reading either',
     'Keep the Action control in one place across all three of its states, disabled included, so the table does not jump under the cursor when a row finishes processing',
     'Split the queue with `Tabs` above the toolbar and narrow it with `Filter` inside — Open vs Closed is a different question from the facets, and mixing them hides one behind the other',

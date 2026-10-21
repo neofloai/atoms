@@ -42,6 +42,7 @@ import {
   Tooltip,
   Typography,
   atomsRegion,
+  useSidebarToggle,
 } from '@neofloai/atoms';
 import {
   ArrowDownIcon,
@@ -1421,7 +1422,7 @@ function DriverBar({
  * glyph on every card title is where that is stated.
  */
 export function ReportingScreen() {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const sidebar = useSidebarToggle({ defaultHidden: true });
   const [range, setRange] = React.useState<RangeKey>('30d');
   const [entityKey, setEntityKey] = React.useState(ENTITIES[0].key);
   const [agentKey, setAgentKey] = React.useState(AGENTS[0].key);
@@ -1455,7 +1456,7 @@ export function ReportingScreen() {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} active="analytics" />
+      {!sidebar.hidden && <AppRail active="analytics" />}
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('reporting', 'navbar')}>
@@ -1463,8 +1464,8 @@ export function ReportingScreen() {
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            // Hides the rail; hovered while it is hidden, peeks at it.
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -1664,6 +1665,14 @@ export function ReportingScreen() {
           </Stack>
         </Box>
       </Stack>
+
+      {/* The hidden rail, floated in under the bar by hovering the
+          toggle. No backdrop and no focus trap: the page stays live. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+        active="analytics"
+      />
     </Stack>
   );
 }

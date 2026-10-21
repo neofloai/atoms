@@ -10,7 +10,13 @@ import { Avatar } from '@/src/components/Avatar';
 import { Collapse } from '@/src/components/Collapse';
 import { Divider } from '@/src/components/Divider';
 import { Drawer } from '@/src/components/Drawer';
-import { ListSubheader } from '@/src/components/List';
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+} from '@/src/components/List';
 import { Menu } from '@/src/components/Menu';
 import { MenuItem } from '@/src/components/MenuItem';
 import { NAVBAR_HEIGHT_PX } from '@/src/components/Navbar';
@@ -47,6 +53,7 @@ import {
 
 import type { CSSObject, Theme } from '@mui/material/styles';
 import type { AvatarColor } from '@/src/components/Avatar';
+import type { DrawerProps } from '@/src/components/Drawer';
 import type { ModeToken } from '@/src/tokens';
 
 /**
@@ -71,12 +78,15 @@ import type { ModeToken } from '@/src/tokens';
  * with the workspace menu open (4564:6288); and a floating rail with no
  * brand, on 12px corners with a border all round and a shadow
  * (4564:10301), which is what `overlay` renders — the menu called up over
- * a workflow, where a page header already owns the top of the screen.
+ * a workflow, where a page header already owns the top of the screen. The
+ * same floating rail is what a hidden rail peeks as while its toggle is
+ * hovered (4564:9280), which is `overlay` with `peek`.
  *
  * Collapsed, the inset comes off and every row centres on the rail's axis,
  * so the mark, the nav glyphs and the workspace avatar land on one line
- * despite being different widths. The sheet does not draw a folded rail;
- * that state is the shell's own, carried over.
+ * despite being different widths. The main shell does not fold the rail —
+ * its toggle hides it outright — so the folded strip is the workflow
+ * screen's and the patterns'.
  *
  * ## No row component, yet
  *
@@ -115,36 +125,21 @@ const RAIL_INSET_PX = 12;
 const BRAND_INSET_PX = 20;
 
 /**
- * Nav row geometry: a 28px row, an 8px inline inset, a 16px glyph, and a
- * `Scale/250` gap to the label. Children tighten that gap to `Scale/200`,
- * as the sheet draws them.
+ * Nav row geometry. The row itself — 28px, 8px in, the glyph 12px from
+ * the label — is `ListItemButton`'s in a `nav` list; these are what the
+ * rail still needs to know: the row's height to fold it to a square, the
+ * glyph size, and the switcher's inset and gap, which match the rows.
  */
 const NAV_ROW_PX = 28;
 const NAV_ROW_INSET_PX = 8;
 const NAV_GLYPH_PX = 16;
 const NAV_GLYPH_GAP_PX = 12;
-const NAV_CHILD_GLYPH_GAP_PX = 8;
 
 /** A parent's caret, and a section label's. */
 const NAV_CARET_PX = 14;
 
-/** Between rows — `Scale/100`. */
-const NAV_ROW_GAP_PX = 4;
-
 /** Between sections — `Scale/300`. */
 const NAV_SECTION_GAP_PX = 16;
-
-/** Between a section's label and its first row — `Scale/200`. */
-const NAV_LABEL_GAP_PX = 8;
-
-/**
- * The second level: where the branch rule stands, and where a child row
- * starts, both from the nav block's left edge. The rule sits under the
- * parent's glyph and the children start 40px in — the 156px column the
- * sheet right-aligns in a 196px block.
- */
-const BRANCH_RULE_PX = 16;
-const BRANCH_INDENT_PX = 40;
 
 /**
  * The workspace switcher: a 40px row (8 + 24px avatar + 8) inside a 4px
@@ -212,18 +207,6 @@ const FLOAT_INSET_PX = 8;
 
 type Mode = 'light' | 'dark';
 
-/**
- * The selected row's fill: `surface/default/2` as the sheet binds it in
- * light, one rung further up the `default` ladder in dark, where the
- * bound rung is the rail's own `card 2`. The same pair `MenuItem` uses for
- * its selected row, so the current page and the current workspace are
- * marked alike.
- */
-const SELECTED_FILL: ModeToken = {
-  light: surface.default.defaultHover.light,
-  dark: surface.default.defaultPressed.dark,
-};
-
 /** One set of rules per scheme, landed in a single `applyStyles` block. */
 function bothSchemes(
   theme: Theme,
@@ -245,51 +228,6 @@ const B1_TYPE: CSSObject = {
   lineHeight: `${typography.body.b1.leading}px`,
   letterSpacing: `${typography.body.b1.letterSpacing}em`,
 };
-
-/**
- * Nav row treatment, read off the sheet.
- *
- * At rest the label and glyph are `text/default/b3` at Regular — a quiet
- * list, so the one selected row carries the eye. Selected, the row takes
- * `SELECTED_FILL` behind `text/default/b1` at Medium. Hover is not drawn;
- * it borrows `card 3`, one layer above the rail, as `MenuItem` does.
- *
- * State rides attributes rather than classes: `aria-current="page"` is
- * what a nav link should say anyway, and `data-on-branch` is the parent of
- * an out-of-sight current page.
- */
-function navRowStyles(theme: Theme): CSSObject {
-  return {
-    ...B1_TYPE,
-    height: NAV_ROW_PX,
-    minHeight: NAV_ROW_PX,
-    minWidth: 0,
-    borderRadius: `${radius.xs}px`,
-    fontWeight: fontWeights.regular,
-    textAlign: 'left',
-    // A row is mid-animation for 200ms while the rail narrows, and flex
-    // resolves the overflow by squeezing whatever gives: the glyph would
-    // collapse towards zero and a two-word label would wrap. Pinning the
-    // glyph and refusing the wrap leaves the panel's own `overflow-x` to
-    // clip the label instead.
-    whiteSpace: 'nowrap',
-    '& svg': { flexShrink: 0 },
-    '&[aria-current="page"], &[data-on-branch]': {
-      fontWeight: fontWeights.medium,
-    },
-    ...bothSchemes(theme, (mode) => ({
-      color: text.default.b3[mode],
-      '&:hover, &.Mui-focusVisible': {
-        backgroundColor: surface.layers.card3[mode],
-      },
-      '&[data-on-branch]': { color: text.default.b1[mode] },
-      '&[aria-current="page"]': {
-        backgroundColor: SELECTED_FILL[mode],
-        color: text.default.b1[mode],
-      },
-    })),
-  };
-}
 
 /** A caret that points down open and right shut. */
 function Caret({ open, size }: { open: boolean; size: number }) {
@@ -430,9 +368,9 @@ const WORKSPACES: readonly Workspace[] = [
 ];
 
 /**
- * One nav row. The width of the block expanded, a 28px square collapsed —
- * the fill is the only part of a row the eye reads, and a wide one would
- * read as a rectangle beside the icons above it.
+ * One nav row: `ListItemButton` in the `nav` list, which draws the 28px
+ * row, its ink and its states. Folded, the row is its glyph alone — a
+ * 28px square on the rail's axis, as MUI's mini drawer centres it.
  */
 function NavRow({
   label,
@@ -443,7 +381,6 @@ function NavRow({
   onBranch = false,
   hasChildren = false,
   expanded = false,
-  child = false,
   onMouseEnter,
   onMouseLeave,
 }: {
@@ -457,8 +394,6 @@ function NavRow({
   /** Carries a caret, and opens a level instead of navigating. */
   hasChildren?: boolean;
   expanded?: boolean;
-  /** A second-level row, which sets its glyph 8px from the label, not 12. */
-  child?: boolean;
   /**
    * Pointer handlers, for the one row that has something to reveal on
    * hover other than a tooltip: a folded parent, whose flyout opens the
@@ -471,60 +406,49 @@ function NavRow({
     /* A folded parent gets no tooltip: its flyout opens on the same hover
        and already carries the name as a header. */
     <Tooltip title={collapsed && !hasChildren ? label : ''} placement="right">
-      <ButtonBase
+      <ListItemButton
+        selected={selected}
         onClick={onSelect}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        aria-current={selected ? 'page' : undefined}
-        data-on-branch={onBranch || undefined}
+        aria-current={selected ? 'page' : onBranch ? 'true' : undefined}
         // Every other folded row is named by its tooltip. A folded parent
         // has none, so the name is stated instead of lost.
         aria-label={collapsed && hasChildren ? label : undefined}
         aria-expanded={hasChildren && !collapsed ? expanded : undefined}
-        sx={(theme) => ({
-          ...navRowStyles(theme),
-          width: collapsed ? NAV_ROW_PX : '100%',
-          alignSelf: collapsed ? 'center' : 'stretch',
-          justifyContent: collapsed ? 'center' : 'flex-start',
-          px: collapsed ? 0 : `${NAV_ROW_INSET_PX}px`,
-          gap: `${child ? NAV_CHILD_GLYPH_GAP_PX : NAV_GLYPH_GAP_PX}px`,
-          // A folded parent's hover target runs to the rail's edge, not
-          // just to the square. The 18px of bare rail between the two
-          // reads to the DOM as leaving the row, which would start closing
-          // the flyout while the pointer travels towards it. Transparent,
-          // so the fill stays the 28px square; the 8px beyond the rail is
-          // what the grace period is for.
-          ...(collapsed &&
-            hasChildren && {
-              position: 'relative',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: '100%',
-                width: `${(RAIL_COLLAPSED_PX - NAV_ROW_PX) / 2}px`,
-              },
-            }),
-        })}
+        sx={
+          collapsed
+            ? {
+                width: NAV_ROW_PX,
+                alignSelf: 'center',
+                justifyContent: 'center',
+                px: 0,
+                // A folded parent's hover target runs to the rail's edge,
+                // so the pointer is not leaving the row while it crosses
+                // the bare rail towards the flyout. Transparent, so the
+                // fill stays the 28px square.
+                ...(hasChildren && {
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: '100%',
+                    width: `${(RAIL_COLLAPSED_PX - NAV_ROW_PX) / 2}px`,
+                  },
+                }),
+              }
+            : undefined
+        }
       >
-        <Icon size={NAV_GLYPH_PX} />
-        {!collapsed && (
-          <Box
-            component="span"
-            sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}
-          >
-            {label}
-          </Box>
-        )}
-        {/* A parent's caret is its only trailing part, so it takes the
-            slack rather than sitting in the label's gap. */}
+        <ListItemIcon>
+          <Icon size={NAV_GLYPH_PX} />
+        </ListItemIcon>
+        {!collapsed && <ListItemText primary={label} />}
         {!collapsed && hasChildren && (
-          <Box component="span" sx={{ ml: 'auto', display: 'flex' }}>
-            <Caret open={expanded} size={NAV_CARET_PX} />
-          </Box>
+          <Caret open={expanded} size={NAV_CARET_PX} />
         )}
-      </ButtonBase>
+      </ListItemButton>
     </Tooltip>
   );
 }
@@ -534,9 +458,11 @@ NavRow.displayName = 'NavRow';
 /**
  * A parent row and the level under it.
  *
- * Expanded, the children reflow in beneath the parent behind the branch
- * rule. Folded, the same children arrive in a flyout anchored to the
- * parent's glyph — one level of nesting, two places to put it.
+ * Expanded, the children are a nested `List` in a `Collapse` — MUI's own
+ * nested-list composition — which the `nav` list draws behind a branch
+ * rule at a 40px indent. Folded, the same children arrive in a flyout
+ * anchored to the parent's glyph — one level of nesting, two places to
+ * put it.
  */
 function NavGroup({
   item,
@@ -593,8 +519,10 @@ function NavGroup({
   // A pending close outliving the component would call setState on it.
   React.useEffect(() => () => clearTimeout(closeTimer.current), []);
 
+  // A fragment rather than a wrapper: the row and its `Collapse` are both
+  // children of the `nav` list, which is what spaces them.
   return (
-    <Stack sx={{ alignItems: collapsed ? 'center' : 'stretch' }}>
+    <>
       <NavRow
         label={item.label}
         Icon={item.Icon}
@@ -615,43 +543,20 @@ function NavGroup({
         }}
       />
 
-      {/* The 4px above the first child lives inside the collapse, so a shut
-          group leaves no gap behind it. */}
       {!collapsed && (
         <Collapse in={expanded}>
-          <Stack
-            sx={(theme) => ({
-              position: 'relative',
-              gap: `${NAV_ROW_GAP_PX}px`,
-              pt: `${NAV_ROW_GAP_PX}px`,
-              pl: `${BRANCH_INDENT_PX}px`,
-              // The branch rule, under the parent's glyph and as tall as
-              // the column of children. The `default` ladder rather than
-              // `layers`: a `card 2` rule on the `card 2` rail measures
-              // 1.06:1 and is never visible.
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                left: `${BRANCH_RULE_PX}px`,
-                top: `${NAV_ROW_GAP_PX}px`,
-                bottom: 0,
-                borderLeft: '1px solid',
-                ...ink('borderColor', border.default.default)(theme),
-              },
-            })}
-          >
+          <List component="div">
             {children.map(({ key, label, Icon }) => (
               <NavRow
                 key={key}
                 label={label}
                 Icon={Icon}
                 collapsed={false}
-                child
                 selected={active === key}
                 onSelect={() => onSelect(key)}
               />
             ))}
-          </Stack>
+          </List>
         </Collapse>
       )}
 
@@ -703,60 +608,46 @@ function NavGroup({
           </MenuItem>
         ))}
       </Menu>
-    </Stack>
+    </>
   );
 }
 
 NavGroup.displayName = 'NavGroup';
 
-/** Rows, as leaves or groups, in a column 4px apart. */
-function NavItems({
-  items,
-  collapsed,
-  active,
-  onSelect,
-}: {
-  items: readonly RailItem[];
-  collapsed: boolean;
-  active: string;
-  onSelect: (key: string) => void;
-}) {
-  return (
-    <Stack
-      sx={{
-        gap: `${NAV_ROW_GAP_PX}px`,
-        alignItems: collapsed ? 'center' : 'stretch',
-      }}
-    >
-      {items.map((item) =>
-        item.children ? (
-          <NavGroup
-            key={item.key}
-            item={item}
-            collapsed={collapsed}
-            active={active}
-            onSelect={onSelect}
-          />
-        ) : (
-          <NavRow
-            key={item.key}
-            label={item.label}
-            Icon={item.Icon}
-            collapsed={collapsed}
-            selected={active === item.key}
-            onSelect={() => onSelect(item.key)}
-          />
-        )
-      )}
-    </Stack>
+/** Rows, as leaves or groups. */
+function navItems(
+  items: readonly RailItem[],
+  collapsed: boolean,
+  active: string,
+  onSelect: (key: string) => void
+) {
+  return items.map((item) =>
+    item.children ? (
+      <NavGroup
+        key={item.key}
+        item={item}
+        collapsed={collapsed}
+        active={active}
+        onSelect={onSelect}
+      />
+    ) : (
+      <NavRow
+        key={item.key}
+        label={item.label}
+        Icon={item.Icon}
+        collapsed={collapsed}
+        selected={active === item.key}
+        onSelect={() => onSelect(item.key)}
+      />
+    )
   );
 }
 
-NavItems.displayName = 'NavItems';
-
 /**
- * A section: its rows, under a mono label that folds them away.
+ * A section: a `nav` list, under a mono label that folds its rows away.
  *
+ * The label is `ListSubheader` rendered as a button, and the rows sit in
+ * a `Collapse` straight inside the list, which keeps them 4px apart.
  * Folded, the label goes — there is no width for it — and the rows stay
  * out, so a collapsed rail never hides a page behind a label it cannot
  * show.
@@ -773,52 +664,27 @@ function NavSection({
   onSelect: (key: string) => void;
 }) {
   const [open, setOpen] = React.useState(true);
-  const rows = (
-    <NavItems
-      items={section.items}
-      collapsed={collapsed}
-      active={active}
-      onSelect={onSelect}
-    />
-  );
-
-  if (!section.label || collapsed) return rows;
+  const rows = navItems(section.items, collapsed, active, onSelect);
+  const labelled = Boolean(section.label) && !collapsed;
 
   return (
-    <Stack>
-      {/* The sheet's section label: DM Mono Medium, 12/16, caption ink,
-          with a 14px caret 4px after it. The same type as `ListSubheader`,
-          so "Workflows" here and "Workspaces" in the
-          switcher read as one kind of thing. */}
-      <ButtonBase
-        onClick={() => setOpen((previous) => !previous)}
-        aria-expanded={open}
-        sx={(theme) => ({
-          alignSelf: 'stretch',
-          justifyContent: 'flex-start',
-          gap: `${NAV_ROW_GAP_PX}px`,
-          px: `${NAV_ROW_INSET_PX}px`,
-          py: `${NAV_ROW_GAP_PX}px`,
-          borderRadius: `${radius.xs}px`,
-          fontFamily: fontFamilies.product.mono,
-          fontSize: typography.body.b2.size,
-          fontWeight: fontWeights.medium,
-          lineHeight: `${typography.body.b2.leading}px`,
-          ...bothSchemes(theme, (mode) => ({
-            color: text.default.b3[mode],
-            '&:hover, &.Mui-focusVisible': {
-              backgroundColor: surface.layers.card3[mode],
-            },
-          })),
-        })}
-      >
-        {section.label}
-        <Caret open={open} size={NAV_CARET_PX} />
-      </ButtonBase>
-      <Collapse in={open}>
-        <Box sx={{ pt: `${NAV_LABEL_GAP_PX}px` }}>{rows}</Box>
-      </Collapse>
-    </Stack>
+    <List
+      variant="nav"
+      component="div"
+      sx={collapsed ? { alignItems: 'center' } : undefined}
+    >
+      {labelled && (
+        <ListSubheader
+          component="button"
+          onClick={() => setOpen((previous) => !previous)}
+          aria-expanded={open}
+        >
+          {section.label}
+          <Caret open={open} size={NAV_CARET_PX} />
+        </ListSubheader>
+      )}
+      {labelled ? <Collapse in={open}>{rows}</Collapse> : rows}
+    </List>
   );
 }
 
@@ -983,6 +849,7 @@ export function AppRail({
   showBrand = true,
   showWorkspace = true,
   overlay = false,
+  peekProps,
   open = false,
   onClose,
   onNavigate,
@@ -1007,6 +874,12 @@ export function AppRail({
    * @default false
    */
   overlay?: boolean;
+  /**
+   * Render as the hidden rail's peek: the `peekProps` from
+   * `useSidebarToggle`, which float the rail in under the bar while its
+   * toggle is hovered. Drawn as the floating rail, with no brand.
+   */
+  peekProps?: DrawerProps;
   /** Whether the overlay is showing. Ignored unless `overlay`. */
   open?: boolean;
   onClose?: () => void;
@@ -1063,52 +936,10 @@ export function AppRail({
     setActive(key);
     onNavigate?.();
   };
-  const brand = showBrand && !overlay;
+  const brand = showBrand && !overlay && !peekProps;
 
-  return (
-    <Drawer
-      variant={overlay ? 'temporary' : 'permanent'}
-      open={overlay ? open : undefined}
-      onClose={overlay ? onClose : undefined}
-      // The folded width is state, not a fourth rung on the scale — and it
-      // goes on `size` rather than on the paper, because it has to reach
-      // the space the rail reserves as well as the panel itself.
-      size={collapsed ? RAIL_COLLAPSED_PX : 'sm'}
-      // The floating rail. Written through the drawer's own paper selector,
-      // which is the one that outranks the edge and corners `Drawer` draws:
-      // the sheet's floating rail has a border all round and 12px corners
-      // where a docked one has a single hairline and none.
-      sx={
-        overlay
-          ? {
-              '& .MuiDrawer-paper': {
-                m: `${FLOAT_INSET_PX}px`,
-                height: `calc(100% - ${FLOAT_INSET_PX * 2}px)`,
-                borderWidth: 1,
-                borderRadius: `${radius.md}px`,
-                boxShadow: elevation.large,
-              },
-            }
-          : undefined
-      }
-      slotProps={{
-        // `absolute` rather than `relative` for the overlay, so the panel
-        // pins to the preview box the modal is rendered into; a docked
-        // panel is put back in normal flow instead. Neither is MUI's
-        // default `fixed`, which belongs to the viewport.
-        paper: {
-          sx: { position: overlay ? 'absolute' : 'relative' },
-        },
-        // The backdrop needs the same treatment as the root, and
-        // separately: MUI's is `position: fixed` in its own right.
-        ...(overlay && container
-          ? {
-              root: { container, sx: { position: 'absolute' } },
-              backdrop: { sx: { position: 'absolute' } },
-            }
-          : {}),
-      }}
-    >
+  const contents = (
+    <>
       {brand && (
         <Box
           sx={{
@@ -1159,16 +990,74 @@ export function AppRail({
             pb: `${RAIL_INSET_PX}px`,
           }}
         >
-          <NavItems
-            items={secondaryNav}
-            collapsed={collapsed}
-            active={active}
-            onSelect={select}
-          />
+          <List
+            variant="nav"
+            component="div"
+            sx={collapsed ? { alignItems: 'center' } : undefined}
+          >
+            {navItems(secondaryNav, collapsed, active, select)}
+          </List>
         </Box>
       )}
 
       {showWorkspace && <WorkspaceSwitcher collapsed={collapsed} />}
+    </>
+  );
+
+  // The hidden rail's peek: the hook's own temporary drawer, floating.
+  if (peekProps) {
+    return (
+      <Drawer size="sm" {...peekProps}>
+        {contents}
+      </Drawer>
+    );
+  }
+
+  return (
+    <Drawer
+      variant={overlay ? 'temporary' : 'permanent'}
+      open={overlay ? open : undefined}
+      onClose={overlay ? onClose : undefined}
+      // The folded width is state, not a fourth rung on the scale — and it
+      // goes on `size` rather than on the paper, because it has to reach
+      // the space the rail reserves as well as the panel itself.
+      size={collapsed ? RAIL_COLLAPSED_PX : 'sm'}
+      // The floating rail. Written through the drawer's own paper selector,
+      // which is the one that outranks the edge and corners `Drawer` draws:
+      // the sheet's floating rail has a border all round and 12px corners
+      // where a docked one has a single hairline and none.
+      sx={
+        overlay
+          ? {
+              '& .MuiDrawer-paper': {
+                m: `${FLOAT_INSET_PX}px`,
+                height: `calc(100% - ${FLOAT_INSET_PX * 2}px)`,
+                borderWidth: 1,
+                borderRadius: `${radius.md}px`,
+                boxShadow: elevation.large,
+              },
+            }
+          : undefined
+      }
+      slotProps={{
+        // `absolute` rather than `relative` for the overlay, so the panel
+        // pins to the preview box the modal is rendered into; a docked
+        // panel is put back in normal flow instead. Neither is MUI's
+        // default `fixed`, which belongs to the viewport.
+        paper: {
+          sx: { position: overlay ? 'absolute' : 'relative' },
+        },
+        // The backdrop needs the same treatment as the root, and
+        // separately: MUI's is `position: fixed` in its own right.
+        ...(overlay && container
+          ? {
+              root: { container, sx: { position: 'absolute' } },
+              backdrop: { sx: { position: 'absolute' } },
+            }
+          : {}),
+      }}
+    >
+      {contents}
     </Drawer>
   );
 }

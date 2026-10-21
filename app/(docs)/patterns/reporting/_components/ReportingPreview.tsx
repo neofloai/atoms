@@ -9,6 +9,7 @@ import { Card } from '@/src/components/Card';
 import { CardContent } from '@/src/components/Card';
 import { Chip } from '@/src/components/Chip';
 import { Divider } from '@/src/components/Divider';
+import { useSidebarToggle } from '@/src/components/Drawer';
 import { IconButton } from '@/src/components/IconButton';
 import { MenuItem } from '@/src/components/MenuItem';
 import { Navbar } from '@/src/components/Navbar';
@@ -704,7 +705,8 @@ DriverBar.displayName = 'DriverBar';
  * no designer has drawn.
  */
 export function ReportingPreview(): React.JSX.Element {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const [shell, setShell] = React.useState<HTMLDivElement | null>(null);
+  const sidebar = useSidebarToggle({ defaultHidden: true, container: shell });
   const [range, setRange] = React.useState<RangeKey>('30d');
   const [entityKey, setEntityKey] = React.useState(ENTITIES[0].key);
   const [agentKey, setAgentKey] = React.useState(AGENTS[0].key);
@@ -731,9 +733,11 @@ export function ReportingPreview(): React.JSX.Element {
 
   return (
     <Stack
+      ref={setShell}
       {...atomsRegion('reporting', 'shell')}
       direction="row"
       sx={{
+        position: 'relative',
         height: FRAME_HEIGHT_PX,
         overflow: 'hidden',
         borderRadius: 1.5,
@@ -741,7 +745,7 @@ export function ReportingPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} active="analytics" />
+      {!sidebar.hidden && <AppRail active="analytics" />}
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('reporting', 'navbar')}>
@@ -749,8 +753,7 @@ export function ReportingPreview(): React.JSX.Element {
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -949,6 +952,14 @@ export function ReportingPreview(): React.JSX.Element {
           </Stack>
         </Box>
       </Stack>
+
+      {/* The hidden rail, floated in under the bar while its toggle is
+          hovered. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+        active="analytics"
+      />
     </Stack>
   );
 }

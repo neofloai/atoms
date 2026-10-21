@@ -449,6 +449,7 @@ export type {
   ListSubheaderProps,
   ListSubheaderTypeMap,
   ListTypeMap,
+  ListVariant,
 } from './components/List';
 
 export { Menu } from './components/Menu';
@@ -557,13 +558,25 @@ export type {
  * and locks the four props that would recolour a bar that has one
  * treatment. Both flatten MUI's shadow and leave `elevation` reachable
  * through `sx` or `slotProps`, the seam `Dialog` opened.
+ *
+ * `useSidebarToggle` is the shell's sidebar toggle — press to hide the
+ * docked rail, hover while it is hidden to peek — returned as MUI props
+ * for the toggle and for a second, `temporary` Drawer. The rail's rows are
+ * `List variant="nav"`.
  */
-export { Drawer } from './components/Drawer';
+export {
+  Drawer,
+  SIDEBAR_PEEK_GRACE_MS,
+  useSidebarToggle,
+} from './components/Drawer';
 export type {
   DrawerAnchor,
   DrawerProps,
   DrawerSize,
   DrawerVariant,
+  SidebarToggleProps,
+  UseSidebarToggleOptions,
+  UseSidebarToggleResult,
 } from './components/Drawer';
 
 /**

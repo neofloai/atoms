@@ -14,7 +14,7 @@ export const data: ComponentExamplesData = {
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6086',
   tagline:
-    'The topbar across the top of an app, in two heights — a 48px app bar or a 72px page header. With `Drawer` it is the shell every screen starts from: the rail owns the full height and this bar begins where the rail ends, so it never runs the full width above it. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.',
+    'The topbar across the top of an app, in two heights — a 48px app bar or a 72px page header. With `Drawer` it is the shell every screen starts from: the rail owns the full height and this bar begins where the rail ends, so it never runs above the rail — only across the full width once the rail is hidden. On the `card 2` chrome surface a Drawer shares, closed by a single rule along the bottom. Wraps MUI’s AppBar with its Toolbar folded in, so children are the row.',
   // `Navbar` is the house name; `topbar` and `header` are what people
   // actually type, and neither reached this component before. See the same
   // note on `Drawer` — these two are the pair a screen starts from, so
@@ -107,7 +107,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'An app bar: toggle, page name, account',
       description:
-        'The app bar as the navigation sheet draws it. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar opens the account menu; see the Menu page for its contents.',
+        'The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar opens the account menu; see the Menu page for its contents.',
       code: [
         '<Navbar>',
         '  <Stack direction="row" sx={{ flex: 1, alignItems: "center", gap: 2 }}>',
@@ -115,7 +115,7 @@ export const data: ComponentExamplesData = {
         '      variant="secondary"',
         '      appearance="text"',
         '      size="sm"',
-        '      aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}',
+        '      aria-label={sidebarHidden ? "Show sidebar" : "Hide sidebar"}',
         '      onClick={toggleSidebar}',
         '    >',
         '      <SidebarSimpleIcon />',
@@ -143,21 +143,25 @@ export const data: ComponentExamplesData = {
     {
       title: 'The shell: a full-height rail, the bar beside it',
       description:
-        'Navbar and Drawer are painted from the same surface and the same edge token, so they meet at the corner without a seam. The arrangement is the part to get right, and it is easy to get backwards: the rail runs the full height of the app and the bar starts where the rail ends, so the outer box is a **row** — rail, then a column — not a bar with a row under it. Two things follow. The brand mark is the top-left corner of the screen, and the bar cannot hold anything that has to line up with the rail, which is why the collapse toggle sits at its leading edge: it is the one control whose position does not move when the rail folds. The toggle drives the rail through `size`, so the panel and the space it reserves fold together. This is the shell of the Dashboard pattern, which is where to start for a whole screen rather than assembling one from here.',
+        'Navbar and Drawer are painted from the same surface and the same edge token, so they meet at the corner without a seam. The arrangement is the part to get right, and it is easy to get backwards: the rail runs the full height of the app and the bar starts where the rail ends, so the outer box is a **row** — rail, then a column — not a bar with a row under it. Two things follow. The brand mark is the top-left corner of the screen, and the bar cannot hold anything that has to line up with the rail, which is why the sidebar toggle sits at its leading edge. The toggle hides the rail outright, and the bar and the page take the full width. While it is hidden, hovering the toggle floats the rail back in under the bar — a temporary drawer with no backdrop and no focus trap — and it leaves when the pointer does, after a short grace for crossing from the toggle to the panel. Click the toggle to dock it again. `useSidebarToggle` is the whole behaviour: spread its `toggleProps` on the toggle and its `peekProps` on a second Drawer. This is the shell of the Dashboard pattern, which is where to start for a whole screen rather than assembling one from here.',
       code: [
+        'const sidebar = useSidebarToggle();',
+        '',
         '<Stack direction="row" sx={{ height: "100vh" }}>',
-        '  <Drawer variant="permanent" size={collapsed ? 64 : "sm"}>',
-        '    <NavOfYourOwn collapsed={collapsed} />',
-        '  </Drawer>',
+        '  {!sidebar.hidden && (',
+        '    <Drawer variant="permanent" size="sm">',
+        '      <AppNav />',
+        '    </Drawer>',
+        '  )}',
         '',
         '  <Stack sx={{ flex: 1, minWidth: 0 }}>',
         '    <Navbar>',
+        '      {/* Press to hide the rail; hover while it is hidden to peek. */}',
         '      <IconButton',
         '        variant="secondary"',
         '        appearance="text"',
         '        size="sm"',
-        '        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}',
-        '        onClick={() => setCollapsed((previous) => !previous)}',
+        '        {...sidebar.toggleProps}',
         '      >',
         '        <SidebarSimpleIcon />',
         '      </IconButton>',
@@ -167,6 +171,11 @@ export const data: ComponentExamplesData = {
         '      {children}',
         '    </Box>',
         '  </Stack>',
+        '',
+        '  {/* The peek: the same navigation, floated in under the bar. */}',
+        '  <Drawer {...sidebar.peekProps} size="sm">',
+        '    <AppNav onNavigate={sidebar.closePeek} />',
+        '  </Drawer>',
         '</Stack>',
       ].join('\n'),
     },

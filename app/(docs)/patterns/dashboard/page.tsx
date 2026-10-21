@@ -63,9 +63,10 @@ export default function DashboardPatternPage() {
             — rail, then a column — rather than a bar with a row under it.
             Two things follow. The brand mark is the top-left corner of the
             screen, and the bar cannot hold anything that has to line up
-            with the rail, which is why the collapse toggle sits at its
-            leading edge: it is the one control whose position does not move
-            when the rail folds.
+            with the rail, which is why the sidebar toggle sits at its
+            leading edge. The toggle hides the rail outright and the page
+            takes the full width; while it is hidden, hovering the toggle
+            floats the rail back in under the bar without docking it.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             The page under the bar is three bands — title, toolbar, grid —
@@ -88,10 +89,13 @@ export default function DashboardPatternPage() {
             because from the reader&apos;s side there is one filtered table.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            The rail&apos;s folded width goes through{' '}
-            <code>size</code> as a number rather than onto the paper: the
-            width has to reach the space the rail reserves as well as the
-            panel itself, and changes to it animate. Its contents are the
+            The code below writes the rail out in full — the same one every
+            other pattern imports as <code>./AppRail</code>, its rows a{' '}
+            <code>List variant=&quot;nav&quot;</code>. The toggle is{' '}
+            <code>useSidebarToggle</code>: hidden, the rail is unmounted and
+            the page takes its width back, and the peek is a second,
+            temporary drawer with no backdrop that hangs under the bar. Its
+            contents are the
             same ones the <Link href="/components/drawer">Drawer</Link> page
             composes, and the table below is the{' '}
             <Link href="/components/filter#filtering-a-data-grid">Filter</Link>{' '}
@@ -133,7 +137,8 @@ export default function DashboardPatternPage() {
               The screen
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Live. Fold the rail with the toggle, search the table, and
+              Live. The rail starts hidden: hover the toggle to peek at it,
+              press it to dock it. Search the table, and
               open the panel to narrow it — the trigger keeps the count once
               the panel closes.
             </Typography>

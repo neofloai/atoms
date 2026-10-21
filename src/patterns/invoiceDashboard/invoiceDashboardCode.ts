@@ -31,6 +31,7 @@ import {
   Typography,
   atomsRegion,
   countActiveFilters,
+  useSidebarToggle,
 } from '@neofloai/atoms';
 import {
   ArrowSquareOutIcon,
@@ -544,7 +545,7 @@ function invoiceColumns(
 /* ----------------------------------------------------------------- page */
 
 export default function InvoiceDashboardPage() {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const sidebar = useSidebarToggle({ defaultHidden: true });
   const [tab, setTab] = React.useState<'open' | 'closed'>('open');
 
   const [search, setSearch] = React.useState('');
@@ -575,7 +576,7 @@ export default function InvoiceDashboardPage() {
       direction="row"
       sx={{ height: '100vh' }}
     >
-      <AppRail collapsed={collapsed} active="work-area" />
+      {!sidebar.hidden && <AppRail active="work-area" />}
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>
@@ -583,8 +584,8 @@ export default function InvoiceDashboardPage() {
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            // Hides the rail; hovered while it is hidden, peeks at it.
+            {...sidebar.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -695,6 +696,14 @@ export default function InvoiceDashboardPage() {
           </Box>
         </Stack>
       </Stack>
+
+      {/* The hidden rail, floated in under the bar by hovering the
+          toggle. No backdrop and no focus trap: the page stays live. */}
+      <AppRail
+        peekProps={sidebar.peekProps}
+        onNavigate={sidebar.closePeek}
+        active="work-area"
+      />
 
       {/* The trigger sits at the right end of the toolbar, so the panel
           hangs off its right edge. */}
