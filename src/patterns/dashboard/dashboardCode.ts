@@ -9,8 +9,8 @@
  * workspace switcher, the folded strip and the floating rail — because
  * every other pattern imports that rail from `./AppRail` rather than
  * redrawing it, and this is where it is written out. The rows are
- * `List variant="nav"` and the hide-and-peek toggle is `useSidebarToggle`,
- * both from the library. A snippet that referenced a rail the reader does not have would
+ * `List variant="nav"` and the hide, peek and resize behaviour is
+ * `useSidebarToggle`, both from the library. A snippet that referenced a rail the reader does not have would
  * hand back half a screen.
  *
  * What is left to the reader is the data — the rows, the columns and the
@@ -83,7 +83,13 @@ import {
 } from '@neofloai/atoms/tokens';
 import { neofloTheme } from '@neofloai/atoms/theme';
 
-import type { AvatarColor, DrawerProps, FilterValue } from '@neofloai/atoms';
+import type {
+  AvatarColor,
+  DrawerProps,
+  FilterValue,
+  SidebarResizeHandleProps,
+  TooltipProps,
+} from '@neofloai/atoms';
 import type { ModeToken } from '@neofloai/atoms/tokens';
 import { QUERY_COLUMNS, QUERY_ROWS, filterQueries } from './queries';
 import { FILTER_GROUPS } from './facets';
@@ -787,6 +793,18 @@ interface AppRailProps {
    */
   overlay?: boolean;
   /**
+   * The docked rail's props from \`useSidebarToggle\`: a persistent drawer
+   * that slides away and gives its space back when the toggle hides it,
+   * at the width its handle was dragged to. Keep the rail mounted.
+   */
+  dockProps?: DrawerProps;
+  /**
+   * The docked rail's edge handle and its tooltip, from
+   * \`useSidebarToggle\`: click to collapse, drag to resize.
+   */
+  resizeHandleProps?: SidebarResizeHandleProps;
+  resizeTooltipProps?: Omit<TooltipProps, 'children'>;
+  /**
    * Render as the hidden rail's peek: the \`peekProps\` from
    * \`useSidebarToggle\`, which float the rail in under the bar while its
    * toggle is hovered.
@@ -815,6 +833,9 @@ function AppRail({
   showBrand = true,
   showWorkspace = true,
   overlay = false,
+  dockProps,
+  resizeHandleProps,
+  resizeTooltipProps,
   peekProps,
   open = false,
   onClose,
@@ -917,6 +938,7 @@ function AppRail({
       open={overlay ? open : undefined}
       onClose={overlay ? onClose : undefined}
       size={collapsed ? RAIL_COLLAPSED_PX : 'sm'}
+      {...dockProps}
       sx={
         overlay
           ? {
@@ -943,6 +965,11 @@ function AppRail({
       }}
     >
       {contents}
+      {resizeHandleProps && (
+        <Tooltip title="" {...resizeTooltipProps}>
+          <Box {...resizeHandleProps} />
+        </Tooltip>
+      )}
     </Drawer>
   );
 }
@@ -976,9 +1003,16 @@ export default function QueryLogPage() {
       direction="row"
       sx={{ height: '100vh' }}
     >
-      {!sidebar.hidden && (
-        <AppRail active={active} onActiveChange={setActive} />
-      )}
+      {/* Kept mounted: the toggle slides it away and back, and its
+          trailing edge collapses it on a click and resizes it on a
+          drag, between 220 and 320px. */}
+      <AppRail
+        dockProps={sidebar.dockProps}
+        resizeHandleProps={sidebar.resizeHandleProps}
+        resizeTooltipProps={sidebar.resizeTooltipProps}
+        active={active}
+        onActiveChange={setActive}
+      />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         {/* The toggle leads the bar. Per-page actions go after it. */}

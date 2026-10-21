@@ -92,8 +92,10 @@ export default function DashboardPatternPage() {
             The code below writes the rail out in full — the same one every
             other pattern imports as <code>./AppRail</code>, its rows a{' '}
             <code>List variant=&quot;nav&quot;</code>. The toggle is{' '}
-            <code>useSidebarToggle</code>: hidden, the rail is unmounted and
-            the page takes its width back, and the peek is a second,
+            <code>useSidebarToggle</code>: the docked rail is a persistent
+            drawer that slides away and gives the page its width back, its
+            edge collapses it on a click and resizes it on a drag, between
+            220 and 320px, and the peek is a second,
             temporary drawer with no backdrop that hangs under the bar. Its
             contents are the
             same ones the <Link href="/components/drawer">Drawer</Link> page

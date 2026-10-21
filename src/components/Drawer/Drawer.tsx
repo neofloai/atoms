@@ -6,7 +6,13 @@ import { styled } from '@mui/material/styles';
 import { border, surface } from '@/src/tokens';
 
 import { paired } from '../_shared/actionStyles';
-import { DRAWER_BORDER_WIDTH_PX, drawerWidth } from './drawerMetrics';
+import {
+  DRAWER_BORDER_WIDTH_PX,
+  RESIZE_GRIP_HEIGHT_PX,
+  RESIZE_GRIP_WIDTH_PX,
+  RESIZE_HANDLE_PX,
+  drawerWidth,
+} from './drawerMetrics';
 
 import type { DrawerAnchor, DrawerSize } from './Drawer.types';
 
@@ -63,7 +69,7 @@ function isHorizontal(anchor: DrawerAnchor): boolean {
  *
  * ## What this wrapper changes
  *
- * Three values and one dimension, no behaviour:
+ * Three values and one dimension:
  *
  *   - **the surface.** MUI paints the paper from
  *     `palette.background.paper` (`grey/25` light, `grey/1050` dark).
@@ -108,6 +114,23 @@ function isHorizontal(anchor: DrawerAnchor): boolean {
  * has to land on both boxes exactly as the named widths do. Changes
  * animate, so `size={collapsed ? 64 : 'sm'}` is the whole mechanism.
  *
+ * ## A closed `persistent` drawer gives its space back
+ *
+ * MUI slides a closed `persistent` panel away but leaves the space it
+ * reserved, and its own demo moves the page back over by hand with a
+ * negative margin on the content. Here the reserved space closes with the
+ * panel, on the timings that demo uses, so the page beside it reflows on
+ * its own: `open` is the whole mechanism. Do not add the demo's margin as
+ * well — the page would move twice.
+ *
+ * ## Resizing
+ *
+ * MUI has no resize handle, so a drawer takes one as a child: any element
+ * carrying `data-drawer-resize-handle`, which `useSidebarToggle` spreads
+ * for the app sidebar. The panel places it along the edge that faces the
+ * page and draws its grip on hover; the drag itself drives `size`, with
+ * `disableSizeTransition` on while it lasts.
+ *
  * Do not put the width on `slotProps.paper` instead. Both rules here are
  * descendant selectors, which outrank the single class an `sx` generates
  * — the panel would keep its `size` width and only the reserved space
@@ -139,6 +162,11 @@ function isHorizontal(anchor: DrawerAnchor): boolean {
  *   <NavOfYourOwn collapsed={collapsed} />
  * </Drawer>
  *
+ * @example A panel that pushes the page aside
+ * <Drawer variant="persistent" open={filtersOpen}>
+ *   <FiltersOfYourOwn />
+ * </Drawer>
+ *
  * @example A bottom sheet, as tall as its content
  * <Drawer anchor="bottom" open={open} onClose={handleClose}>
  *   <Stack sx={{ p: 3 }}>{actions}</Stack>
@@ -153,17 +181,34 @@ export const Drawer = styled(MuiDrawer, {
   ({
     theme,
     anchor = 'left',
+    variant = 'temporary',
+    open = false,
     size = 'md',
     disableSizeTransition = false,
   }) => {
     const width = drawerWidth(size);
     const horizontal = isHorizontal(anchor);
+    // A closed `persistent` drawer gives its space back, on the timings
+    // MUI's persistent-drawer demo moves the page with: out on `sharp` over
+    // `leavingScreen`, back in on `easeOut` over `enteringScreen` — the
+    // same curves and durations the panel's own slide runs on.
+    const shut = variant === 'persistent' && !open;
     // So `size={collapsed ? 64 : 'sm'}` folds a rail rather than snapping
-    // it. Declared on both boxes that carry the width, or the panel and the
-    // space it sits in would arrive at the new width on different frames.
+    // it. Declared on both boxes that carry the width, and the same on
+    // both, or the panel and the space it sits in would arrive at the new
+    // width on different frames and open a gap between them.
     const widthTransition = disableSizeTransition
       ? 'none'
-      : theme.transitions.create('width');
+      : variant === 'persistent'
+        ? theme.transitions.create('width', {
+            easing: open
+              ? theme.transitions.easing.easeOut
+              : theme.transitions.easing.sharp,
+            duration: open
+              ? theme.transitions.duration.enteringScreen
+              : theme.transitions.duration.leavingScreen,
+          })
+        : theme.transitions.create('width');
 
     return {
       // The docked class is on the root for `permanent` and `persistent`
@@ -171,9 +216,12 @@ export const Drawer = styled(MuiDrawer, {
       // full-screen overlay, which must not be narrowed.
       ...(horizontal && {
         [`&.${drawerClasses.docked}`]: {
-          width,
+          width: shut ? 0 : width,
           flexShrink: 0,
           transition: widthTransition,
+          // The panel keeps its width while the space under it closes, so
+          // the space clips it rather than letting it lie over the page.
+          ...(variant === 'persistent' && { overflow: 'hidden' }),
         },
       }),
       [`& .${drawerClasses.paper}`]: {
@@ -204,6 +252,47 @@ export const Drawer = styled(MuiDrawer, {
           transition: widthTransition,
         }),
       },
+      // A resize handle: an element carrying `data-drawer-resize-handle`,
+      // which `useSidebarToggle` hands out. A full-height strip on the
+      // edge that faces the page, inside the panel — the paper clips its
+      // overflow — so the edge is easy to catch anywhere along it. Hovered,
+      // held or focused, it shows a short grip at its middle, over the
+      // hairline: the one mark that says the edge does something.
+      ...(horizontal && {
+        [`& .${drawerClasses.paper} [data-drawer-resize-handle]`]: {
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          [anchor === 'left' ? 'right' : 'left']: 0,
+          width: RESIZE_HANDLE_PX,
+          zIndex: 1,
+          cursor: 'col-resize',
+          touchAction: 'none',
+          outline: 'none',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: '50%',
+            [anchor === 'left' ? 'right' : 'left']: 0,
+            width: RESIZE_GRIP_WIDTH_PX,
+            height: RESIZE_GRIP_HEIGHT_PX,
+            marginTop: -RESIZE_GRIP_HEIGHT_PX / 2,
+            borderRadius: RESIZE_GRIP_WIDTH_PX,
+            opacity: 0,
+            transition: theme.transitions.create(
+              ['opacity', 'background-color'],
+              { duration: theme.transitions.duration.shortest }
+            ),
+            ...paired(theme, { backgroundColor: border.default.default }),
+          },
+          '&:hover::after, &:focus-visible::after, &[data-resizing]::after': {
+            opacity: 1,
+          },
+          '&:focus-visible::after, &[data-resizing]::after': paired(theme, {
+            backgroundColor: border.default.defaultHover,
+          }),
+        },
+      }),
     };
   }
 );

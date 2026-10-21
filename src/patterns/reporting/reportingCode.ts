@@ -1456,7 +1456,12 @@ export function ReportingScreen() {
         borderColor: 'divider',
       }}
     >
-      {!sidebar.hidden && <AppRail active="analytics" />}
+      <AppRail
+        dockProps={sidebar.dockProps}
+        resizeHandleProps={sidebar.resizeHandleProps}
+        resizeTooltipProps={sidebar.resizeTooltipProps}
+        active="analytics"
+      />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('reporting', 'navbar')}>

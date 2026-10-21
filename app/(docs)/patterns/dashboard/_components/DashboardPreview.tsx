@@ -88,8 +88,9 @@ const PAGE_SIZE = 10;
  * The outer box is a row — rail, then a column — not a column with a bar
  * across the top. That is what makes the brand mark the top-left corner
  * of the app, and it is why the sidebar toggle sits at the leading edge
- * of the bar. The toggle hides the rail; hovering it while hidden peeks
- * at the rail under the bar, through the library's `useSidebarToggle`.
+ * of the bar. The toggle slides the rail away; hovering it while hidden
+ * peeks at the rail under the bar, and the docked rail's edge collapses
+ * it on a click and resizes it on a drag — all the library's `useSidebarToggle`.
  *
  * ## Three bands, and only one of them is elastic
  *
@@ -138,7 +139,11 @@ export function DashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      {!sidebar.hidden && <AppRail />}
+      <AppRail
+        dockProps={sidebar.dockProps}
+        resizeHandleProps={sidebar.resizeHandleProps}
+        resizeTooltipProps={sidebar.resizeTooltipProps}
+      />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('dashboard', 'navbar')}>

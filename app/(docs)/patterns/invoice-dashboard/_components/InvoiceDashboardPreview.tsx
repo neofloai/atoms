@@ -237,7 +237,12 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      {!sidebar.hidden && <AppRail active="work-area" />}
+      <AppRail
+        dockProps={sidebar.dockProps}
+        resizeHandleProps={sidebar.resizeHandleProps}
+        resizeTooltipProps={sidebar.resizeTooltipProps}
+        active="work-area"
+      />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>

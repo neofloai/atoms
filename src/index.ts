@@ -559,13 +559,16 @@ export type {
  * treatment. Both flatten MUI's shadow and leave `elevation` reachable
  * through `sx` or `slotProps`, the seam `Dialog` opened.
  *
- * `useSidebarToggle` is the shell's sidebar toggle — press to hide the
- * docked rail, hover while it is hidden to peek — returned as MUI props
- * for the toggle and for a second, `temporary` Drawer. The rail's rows are
+ * `useSidebarToggle` is the shell's sidebar — press to hide the docked
+ * rail, hover while it is hidden to peek, drag its edge to resize —
+ * returned as MUI props for the toggle, the docked `persistent` Drawer,
+ * its resize handle and a second, `temporary` Drawer. The rail's rows are
  * `List variant="nav"`.
  */
 export {
   Drawer,
+  SIDEBAR_MAX_WIDTH_PX,
+  SIDEBAR_MIN_WIDTH_PX,
   SIDEBAR_PEEK_GRACE_MS,
   useSidebarToggle,
 } from './components/Drawer';
@@ -574,6 +577,7 @@ export type {
   DrawerProps,
   DrawerSize,
   DrawerVariant,
+  SidebarResizeHandleProps,
   SidebarToggleProps,
   UseSidebarToggleOptions,
   UseSidebarToggleResult,

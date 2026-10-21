@@ -39,6 +39,25 @@ export const DRAWER_BORDER_WIDTH_PX = 1;
  * to 64. Neither is a rung: one is the ceiling of a resize handle, the
  * other a collapsed state. `size` takes a raw number for both.
  */
+/**
+ * A resize handle's hit area — a full-height strip, wider than the
+ * hairline so the edge is easy to catch — and the grip it shows while
+ * hovered or held: a 4 x 32 pill at its middle. Both sit inside the
+ * panel, which clips anything outside it.
+ */
+export const RESIZE_HANDLE_PX = 6;
+export const RESIZE_GRIP_WIDTH_PX = 4;
+export const RESIZE_GRIP_HEIGHT_PX = 32;
+
+/**
+ * How far the app sidebar can be dragged. It never goes narrower than the
+ * `sm` it is drawn at — below that a workflow's name and its caret stop
+ * fitting — and stops at 320px, past which it takes width the page needs
+ * more than a longer label does.
+ */
+export const SIDEBAR_MIN_WIDTH_PX = 220;
+export const SIDEBAR_MAX_WIDTH_PX = 320;
+
 export const DRAWER_WIDTH_PX: Record<DrawerSize, number> = {
   sm: 220,
   md: 400,
