@@ -71,12 +71,15 @@ import type { ModeToken } from '@/src/tokens';
  * with the workspace menu open (4564:6288); and a floating rail with no
  * brand, on 12px corners with a border all round and a shadow
  * (4564:10301), which is what `overlay` renders — the menu called up over
- * a workflow, where a page header already owns the top of the screen.
+ * a workflow, where a page header already owns the top of the screen. The
+ * same floating rail is what a hidden rail peeks as while its toggle is
+ * hovered (4564:9280), which is `overlay` with `peek`.
  *
  * Collapsed, the inset comes off and every row centres on the rail's axis,
  * so the mark, the nav glyphs and the workspace avatar land on one line
- * despite being different widths. The sheet does not draw a folded rail;
- * that state is the shell's own, carried over.
+ * despite being different widths. The main shell does not fold the rail —
+ * its toggle hides it outright — so the folded strip is the workflow
+ * screen's and the patterns'.
  *
  * ## No row component, yet
  *
@@ -116,14 +119,12 @@ const BRAND_INSET_PX = 20;
 
 /**
  * Nav row geometry: a 28px row, an 8px inline inset, a 16px glyph, and a
- * `Scale/250` gap to the label. Children tighten that gap to `Scale/200`,
- * as the sheet draws them.
+ * `Scale/250` gap to the label — the same at both levels.
  */
 const NAV_ROW_PX = 28;
 const NAV_ROW_INSET_PX = 8;
 const NAV_GLYPH_PX = 16;
 const NAV_GLYPH_GAP_PX = 12;
-const NAV_CHILD_GLYPH_GAP_PX = 8;
 
 /** A parent's caret, and a section label's. */
 const NAV_CARET_PX = 14;
@@ -195,7 +196,7 @@ const FLYOUT_ANCHOR_STEP_PX =
  * 300ms outlasts a deliberate move without leaving a panel hanging after
  * the pointer has truly gone.
  */
-const FLYOUT_GRACE_MS = 300;
+export const FLYOUT_GRACE_MS = 300;
 
 /**
  * Brand mark height; the lockup's wordmark scales from it.
@@ -249,9 +250,10 @@ const B1_TYPE: CSSObject = {
 /**
  * Nav row treatment, read off the sheet.
  *
- * At rest the label and glyph are `text/default/b3` at Regular — a quiet
- * list, so the one selected row carries the eye. Selected, the row takes
- * `SELECTED_FILL` behind `text/default/b1` at Medium. Hover is not drawn;
+ * At rest the label is `text/default/b2` and the glyph `icon/default/b2`,
+ * at Regular — a quiet list, so the one selected row carries the eye.
+ * Selected, the row takes `SELECTED_FILL` behind `text/default/b1` and
+ * `icon/default/b1` at Medium. Hover is not drawn;
  * it borrows `card 3`, one layer above the rail, as `MenuItem` does.
  *
  * State rides attributes rather than classes: `aria-current="page"` is
@@ -278,14 +280,17 @@ function navRowStyles(theme: Theme): CSSObject {
       fontWeight: fontWeights.medium,
     },
     ...bothSchemes(theme, (mode) => ({
-      color: text.default.b3[mode],
+      color: text.default.b2[mode],
+      '& svg': { color: icon.default.b2[mode] },
       '&:hover, &.Mui-focusVisible': {
         backgroundColor: surface.layers.card3[mode],
       },
-      '&[data-on-branch]': { color: text.default.b1[mode] },
+      '&[data-on-branch], &[aria-current="page"]': {
+        color: text.default.b1[mode],
+        '& svg': { color: icon.default.b1[mode] },
+      },
       '&[aria-current="page"]': {
         backgroundColor: SELECTED_FILL[mode],
-        color: text.default.b1[mode],
       },
     })),
   };
@@ -443,7 +448,6 @@ function NavRow({
   onBranch = false,
   hasChildren = false,
   expanded = false,
-  child = false,
   onMouseEnter,
   onMouseLeave,
 }: {
@@ -457,8 +461,6 @@ function NavRow({
   /** Carries a caret, and opens a level instead of navigating. */
   hasChildren?: boolean;
   expanded?: boolean;
-  /** A second-level row, which sets its glyph 8px from the label, not 12. */
-  child?: boolean;
   /**
    * Pointer handlers, for the one row that has something to reveal on
    * hover other than a tooltip: a folded parent, whose flyout opens the
@@ -487,7 +489,7 @@ function NavRow({
           alignSelf: collapsed ? 'center' : 'stretch',
           justifyContent: collapsed ? 'center' : 'flex-start',
           px: collapsed ? 0 : `${NAV_ROW_INSET_PX}px`,
-          gap: `${child ? NAV_CHILD_GLYPH_GAP_PX : NAV_GLYPH_GAP_PX}px`,
+          gap: `${NAV_GLYPH_GAP_PX}px`,
           // A folded parent's hover target runs to the rail's edge, not
           // just to the square. The 18px of bare rail between the two
           // reads to the DOM as leaving the row, which would start closing
@@ -646,7 +648,6 @@ function NavGroup({
                 label={label}
                 Icon={Icon}
                 collapsed={false}
-                child
                 selected={active === key}
                 onSelect={() => onSelect(key)}
               />
@@ -983,8 +984,11 @@ export function AppRail({
   showBrand = true,
   showWorkspace = true,
   overlay = false,
+  peek = false,
   open = false,
   onClose,
+  onMouseEnter,
+  onMouseLeave,
   onNavigate,
   active: activeProp,
   onActiveChange,
@@ -1007,9 +1011,24 @@ export function AppRail({
    * @default false
    */
   overlay?: boolean;
+  /**
+   * An overlay summoned by hover rather than by a press: no backdrop, no
+   * focus trap, and the pointer passes through everywhere but the panel,
+   * so the page under it stays live while it is up. The shell opens it off
+   * the toggle of a hidden rail and closes it when the pointer leaves —
+   * `onMouseEnter` and `onMouseLeave` are the panel's, for that.
+   *
+   * Ignored unless `overlay`.
+   *
+   * @default false
+   */
+  peek?: boolean;
   /** Whether the overlay is showing. Ignored unless `overlay`. */
   open?: boolean;
   onClose?: () => void;
+  /** Pointer handlers on the panel. Ignored unless `peek`. */
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   /**
    * Fired when a nav row is picked. An overlay should close on navigation
    * — it covers what you just chose to look at — where a docked rail stays
@@ -1091,22 +1110,41 @@ export function AppRail({
             }
           : undefined
       }
+      hideBackdrop={peek}
       slotProps={{
         // `absolute` rather than `relative` for the overlay, so the panel
         // pins to the preview box the modal is rendered into; a docked
         // panel is put back in normal flow instead. Neither is MUI's
         // default `fixed`, which belongs to the viewport.
         paper: {
-          sx: { position: overlay ? 'absolute' : 'relative' },
+          sx: {
+            position: overlay ? 'absolute' : 'relative',
+            ...(peek && { pointerEvents: 'auto' }),
+          },
+          ...(peek && { onMouseEnter, onMouseLeave }),
         },
+        ...(overlay && {
+          root: {
+            ...(container && { container }),
+            // A peek is not something the reader committed to opening, so
+            // it neither takes focus nor holds it, and the modal's root
+            // lets the pointer through to the page — the panel takes it
+            // back above.
+            ...(peek && {
+              disableAutoFocus: true,
+              disableEnforceFocus: true,
+              disableRestoreFocus: true,
+            }),
+            sx: {
+              ...(container && { position: 'absolute' }),
+              ...(peek && { pointerEvents: 'none' }),
+            },
+          },
+        }),
         // The backdrop needs the same treatment as the root, and
         // separately: MUI's is `position: fixed` in its own right.
-        ...(overlay && container
-          ? {
-              root: { container, sx: { position: 'absolute' } },
-              backdrop: { sx: { position: 'absolute' } },
-            }
-          : {}),
+        ...(overlay &&
+          container && { backdrop: { sx: { position: 'absolute' } } }),
       }}
     >
       {brand && (
@@ -1174,3 +1212,40 @@ export function AppRail({
 }
 
 AppRail.displayName = 'AppRail';
+
+/**
+ * Where a hidden rail peeks: a layer over the column an `sm` bar heads,
+ * starting under the bar, that the floating rail renders into — so it
+ * floats 8px below the bar rather than over it, whatever the column under
+ * the bar does with its own scrolling. The column needs
+ * `position: relative`.
+ *
+ * The layer takes no pointer, and neither does the peek's modal root, so
+ * the page under both stays live; only the panel takes it back.
+ */
+export function RailPeek(
+  props: Omit<
+    React.ComponentProps<typeof AppRail>,
+    'overlay' | 'peek' | 'container'
+  >
+) {
+  const [region, setRegion] = React.useState<HTMLDivElement | null>(null);
+
+  return (
+    <Box
+      ref={setRegion}
+      sx={{
+        position: 'absolute',
+        top: NAVBAR_HEIGHT_PX.sm,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        pointerEvents: 'none',
+      }}
+    >
+      <AppRail {...props} overlay peek container={region} />
+    </Box>
+  );
+}
+
+RailPeek.displayName = 'RailPeek';

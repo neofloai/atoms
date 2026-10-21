@@ -33,6 +33,7 @@ import {
 
 import type { Theme } from '@mui/material/styles';
 import type { ModeToken } from '@/src/tokens';
+import type { RailToggleProps } from './useRailPeek';
 
 /**
  * The app bar from the navigation sheet's top nav bar (4564:6086), and the
@@ -242,14 +243,12 @@ AccountMenu.displayName = 'AccountMenu';
 
 export function AppTopBar({
   title,
-  collapsed,
-  onToggle,
+  toggleProps,
 }: {
   /** The page you are on, after the toggle. */
   title: string;
-  /** Whether the rail beside the bar is folded, for the toggle's name. */
-  collapsed: boolean;
-  onToggle: () => void;
+  /** The sidebar toggle's name, press and hover, from `useRailPeek`. */
+  toggleProps: RailToggleProps;
 }) {
   const [accountAnchor, setAccountAnchor] =
     React.useState<HTMLElement | null>(null);
@@ -264,8 +263,7 @@ export function AppTopBar({
           variant="secondary"
           appearance="text"
           size="sm"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          onClick={onToggle}
+          {...toggleProps}
         >
           <SidebarSimpleIcon />
         </IconButton>

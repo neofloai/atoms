@@ -7,11 +7,13 @@ import Typography from '@mui/material/Typography';
 
 import {
   AppRail,
+  RailPeek,
   WORKFLOW_NAV,
   WORKFLOW_SECONDARY_NAV,
 } from './AppRail';
 import { AppTopBar } from './AppTopBar';
 import { PageHeaderBar } from './PageHeaderBar';
+import { useRailPeek } from './useRailPeek';
 
 import type { NavbarSize } from '@/src/components/Navbar';
 
@@ -36,6 +38,21 @@ import type { NavbarSize } from '@/src/components/Navbar';
  * So the outer box is a row (rail, then a column), not a column (bar, then
  * a row). `Navbar` is `position: static`, so it simply sits at the top of
  * that column with no spacer under it.
+ *
+ * ## The toggle hides the rail, and hovering it peeks
+ *
+ * The toggle does not fold the rail to icons: it takes it off the screen,
+ * and the bar and the page widen to the frame's full width. While it is
+ * hidden, hovering the toggle floats the rail back in under the bar — the
+ * floating rail, inset 8px — without docking it. It leaves when the pointer
+ * does, after the same grace a folded parent's flyout gets for crossing
+ * the gap between the toggle and the panel. Picking a page closes it;
+ * clicking the toggle docks the rail again.
+ *
+ * The peek is no backdrop and no focus trap: it is a look, not a mode, so
+ * the page under it stays live. The two rails share `active`, so the page
+ * picked from the peek is the one the docked rail shows when it returns.
+ * The behaviour lives in `useRailPeek`, which the patterns share.
  *
  * ## The bar, at `sm`
  *
@@ -89,8 +106,10 @@ export function AppShell({
   height: number;
   size?: NavbarSize;
 }) {
-  const [collapsed, setCollapsed] = React.useState(false);
-  const toggle = () => setCollapsed((previous) => !previous);
+  /** `sm` only: the hidden rail and its peek. */
+  const rail = useRailPeek();
+  /** `sm` only: one selection for the docked rail and its peek. */
+  const [active, setActive] = React.useState('work-area');
 
   /** `md` only: whether the overlay rail is showing. */
   const [navOpen, setNavOpen] = React.useState(false);
@@ -142,7 +161,7 @@ export function AppShell({
         <Typography variant="body2" color="text.secondary">
           {size === 'md'
             ? 'Inside a workflow. The header names the record and carries its actions, and the rail is a strip of icons that stays half closed — it never widens in place. Press the hamburger and the main menu floats in from outside, over this column rather than pushing it, so the record never reflows; pick a destination, or press Escape, and it goes again.'
-            : 'The main shell. The rail runs the full height of the app and the bar starts where it ends, so the brand mark is the top-left corner of the screen. Fold the rail with the toggle: its width animates, the labels drop out, and this column widens to take the space back. Picking an item here replaces the whole screen with a workflow.'}
+            : 'The main shell. The rail runs the full height of the app and the bar starts where it ends, so the brand mark is the top-left corner of the screen. Press the toggle and the rail goes, and the bar and this column take the full width. With it hidden, hover the toggle: the rail floats back in under the bar without docking, and leaves when the pointer does. Picking an item here replaces the whole screen with a workflow.'}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Both surfaces are the same <code>card 2</code> fill behind the same{' '}
@@ -219,16 +238,18 @@ export function AppShell({
 
   return (
     <Stack direction="row" sx={frame}>
-      {/* Opens on Work area, as the sheet draws it, so the branch under
-          Invoice Processing is showing. */}
-      <AppRail collapsed={collapsed} defaultActive="work-area" />
-      <Stack sx={{ flex: 1, minWidth: 0 }}>
-        <AppTopBar
-          title="Invoice Processing"
-          collapsed={collapsed}
-          onToggle={toggle}
-        />
+      {/* Both rails open on Work area, as the sheet draws it, so the branch
+          under Invoice Processing is showing. */}
+      {!rail.hidden && <AppRail active={active} onActiveChange={setActive} />}
+      {/* `relative`, so the peek's layer can sit under the bar. */}
+      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
+        <AppTopBar title="Invoice Processing" toggleProps={rail.toggleProps} />
         {content}
+        <RailPeek
+          {...rail.peekProps}
+          active={active}
+          onActiveChange={setActive}
+        />
       </Stack>
     </Stack>
   );

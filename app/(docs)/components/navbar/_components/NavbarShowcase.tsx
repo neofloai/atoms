@@ -78,7 +78,7 @@ export function NavbarShowcase() {
     <Stack spacing={4}>
       <PreviewCard
         title="sm — the app bar, in the shell it belongs to"
-        description="The bar is not full width. The rail runs the whole height of the app and the bar starts at its right edge, spanning the content column only — so the brand mark is the top-left corner of the screen rather than something tucked under a bar. Both are painted from the same card 2 fill behind the same card 2 edge, so they meet at the corner with no seam. The bar carries the sidebar toggle and nothing else: the design leaves the rest of the row empty, and that space is where per-page actions land."
+        description="The bar is not full width. The rail runs the whole height of the app and the bar starts at its right edge, spanning the content column only — so the brand mark is the top-left corner of the screen rather than something tucked under a bar. Both are painted from the same card 2 fill behind the same card 2 edge, so they meet at the corner with no seam. The bar carries the sidebar toggle and the page you are on, then Ask Neo and the account menu at the trailing edge. The toggle hides the rail and the bar runs the full width; hover it while the rail is hidden and the rail floats in under the bar until the pointer leaves."
       >
         <AppShell height={SHELL_PREVIEW_HEIGHT_PX} />
       </PreviewCard>

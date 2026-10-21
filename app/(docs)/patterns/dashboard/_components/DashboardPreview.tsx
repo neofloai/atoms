@@ -25,7 +25,11 @@ import {
 // table and its facets come from the Filter page for the same reason —
 // this pattern is the two of them assembled, and a copy of either would
 // eventually disagree with the page it was copied from.
-import { AppRail } from '../../../components/drawer/_components/AppRail';
+import {
+  AppRail,
+  RailPeek,
+} from '../../../components/drawer/_components/AppRail';
+import { useRailPeek } from '../../../components/drawer/_components/useRailPeek';
 import {
   QUERY_COLUMNS,
   filterQueryRows,
@@ -107,7 +111,7 @@ const PAGE_SIZE = 10;
  * one filtered table.
  */
 export function DashboardPreview(): React.JSX.Element {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const rail = useRailPeek(true);
 
   const [selection, setSelection] = React.useState<FilterValue>(EMPTY);
   const [search, setSearch] = React.useState('');
@@ -134,16 +138,15 @@ export function DashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} />
+      {!rail.hidden && <AppRail />}
 
-      <Stack sx={{ flex: 1, minWidth: 0 }}>
+      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
         <Navbar {...atomsRegion('dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            {...rail.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -228,6 +231,8 @@ export function DashboardPreview(): React.JSX.Element {
             />
           </Box>
         </Stack>
+
+        <RailPeek {...rail.peekProps} />
       </Stack>
 
       <Filter

@@ -208,9 +208,10 @@ export default function InvoiceDashboardPatternPage() {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             The two identity columns flex and the three on the right are fixed,
-            so the table absorbs the rail folding by giving and taking from the
-            names — never from the amount or the button, which are the two
-            things read down a column. The amount is set in{' '}
+            so the table absorbs the rail docking and hiding by giving and
+            taking from the names — never from the amount or the button,
+            which are the two things read down a column. The amount is set
+            in{' '}
             <code>fontFamilies.mono</code> and right-aligned: lined-up decimal
             points are the only reason a reader can compare two figures without
             reading either of them. The currency mark stays in the caption
@@ -262,8 +263,9 @@ export default function InvoiceDashboardPatternPage() {
             <Typography variant="body2" color="text.secondary">
               Live. Switch queues with the tabs, search the table, and open the
               panel to narrow it — the trigger keeps the count once the panel
-              closes. Fold the rail with the toggle to watch the name columns
-              give up their width rather than the amount or the button.
+              closes. Dock the rail with the toggle to watch the name columns
+              give up their width rather than the amount or the button; with
+              it hidden, hover the toggle to peek at it instead.
             </Typography>
           </Stack>
           <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>

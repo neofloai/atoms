@@ -145,7 +145,7 @@ const NavbarToolbar = styled(Toolbar, {
  * @example An app bar: sidebar toggle, page name, trailing actions
  * <Navbar>
  *   <Stack direction="row" sx={{ flex: 1, alignItems: 'center', gap: 2 }}>
- *     <IconButton variant="secondary" appearance="text" size="sm" aria-label="Collapse sidebar">
+ *     <IconButton variant="secondary" appearance="text" size="sm" aria-label="Hide sidebar">
  *       <SidebarSimpleIcon />
  *     </IconButton>
  *     <Typography variant="body1" color="text.secondary">Invoice Processing</Typography>

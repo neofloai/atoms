@@ -28,7 +28,11 @@ import {
 // every other screen in the invoice processing workflow mounts. Imported
 // rather than redrawn: a second copy would drift from the screens `Review`
 // opens.
-import { AppRail } from '../../../components/drawer/_components/AppRail';
+import {
+  AppRail,
+  RailPeek,
+} from '../../../components/drawer/_components/AppRail';
+import { useRailPeek } from '../../../components/drawer/_components/useRailPeek';
 import {
   INVOICE_COLUMNS,
   INVOICE_FILTER_GROUPS,
@@ -211,7 +215,7 @@ const PREVIEW_COLUMNS: GridColDef<Invoice>[] = [
  * any one of them.
  */
 export function InvoiceDashboardPreview(): React.JSX.Element {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const rail = useRailPeek(true);
   const [queue, setQueue] = React.useState<Queue>('open');
 
   const [search, setSearch] = React.useState('');
@@ -233,16 +237,15 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} active="work-area" />
+      {!rail.hidden && <AppRail active="work-area" />}
 
-      <Stack sx={{ flex: 1, minWidth: 0 }}>
+      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
         <Navbar {...atomsRegion('invoice-dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            {...rail.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -346,6 +349,8 @@ export function InvoiceDashboardPreview(): React.JSX.Element {
             />
           </Box>
         </Stack>
+
+        <RailPeek {...rail.peekProps} active="work-area" />
       </Stack>
 
       <Filter

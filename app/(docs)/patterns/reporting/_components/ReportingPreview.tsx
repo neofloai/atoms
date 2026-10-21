@@ -28,7 +28,11 @@ import {
 // The rail every screen in this app mounts, imported rather than redrawn.
 // Its main menu already carries the `analytics` row this screen is, which is
 // the row that has to read as selected here.
-import { AppRail } from '../../../components/drawer/_components/AppRail';
+import {
+  AppRail,
+  RailPeek,
+} from '../../../components/drawer/_components/AppRail';
+import { useRailPeek } from '../../../components/drawer/_components/useRailPeek';
 import {
   AGENTS,
   COVERAGE_METRIC,
@@ -704,7 +708,7 @@ DriverBar.displayName = 'DriverBar';
  * no designer has drawn.
  */
 export function ReportingPreview(): React.JSX.Element {
-  const [collapsed, setCollapsed] = React.useState(true);
+  const rail = useRailPeek(true);
   const [range, setRange] = React.useState<RangeKey>('30d');
   const [entityKey, setEntityKey] = React.useState(ENTITIES[0].key);
   const [agentKey, setAgentKey] = React.useState(AGENTS[0].key);
@@ -741,16 +745,15 @@ export function ReportingPreview(): React.JSX.Element {
         borderColor: 'divider',
       }}
     >
-      <AppRail collapsed={collapsed} active="analytics" />
+      {!rail.hidden && <AppRail active="analytics" />}
 
-      <Stack sx={{ flex: 1, minWidth: 0 }}>
+      <Stack sx={{ flex: 1, minWidth: 0, position: 'relative' }}>
         <Navbar {...atomsRegion('reporting', 'navbar')}>
           <IconButton
             variant="secondary"
             appearance="text"
             size="sm"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((previous) => !previous)}
+            {...rail.toggleProps}
           >
             <SidebarSimpleIcon />
           </IconButton>
@@ -948,6 +951,8 @@ export function ReportingPreview(): React.JSX.Element {
             </Stack>
           </Stack>
         </Box>
+
+        <RailPeek {...rail.peekProps} active="analytics" />
       </Stack>
     </Stack>
   );

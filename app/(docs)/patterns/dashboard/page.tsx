@@ -63,9 +63,10 @@ export default function DashboardPatternPage() {
             — rail, then a column — rather than a bar with a row under it.
             Two things follow. The brand mark is the top-left corner of the
             screen, and the bar cannot hold anything that has to line up
-            with the rail, which is why the collapse toggle sits at its
-            leading edge: it is the one control whose position does not move
-            when the rail folds.
+            with the rail, which is why the sidebar toggle sits at its
+            leading edge. The toggle hides the rail outright and the page
+            takes the full width; while it is hidden, hovering the toggle
+            floats the rail back in under the bar without docking it.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             The page under the bar is three bands — title, toolbar, grid —
@@ -133,7 +134,8 @@ export default function DashboardPatternPage() {
               The screen
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Live. Fold the rail with the toggle, search the table, and
+              Live. The rail starts hidden: hover the toggle to peek at it,
+              press it to dock it. Search the table, and
               open the panel to narrow it — the trigger keeps the count once
               the panel closes.
             </Typography>
