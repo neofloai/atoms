@@ -41,8 +41,9 @@ import type { NavbarSize } from '@/src/components/Navbar';
  *
  * ## The toggle hides the rail, and hovering it peeks
  *
- * The toggle does not fold the rail to icons: it takes it off the screen,
- * and the bar and the page widen to the frame's full width. While it is
+ * The toggle does not fold the rail to icons: it slides it off the screen,
+ * as MUI's persistent drawer closes, and the bar and the page widen into
+ * the frame's full width as it goes. While it is
  * hidden, hovering the toggle floats the rail back in under the bar — the
  * floating rail, inset 8px — without docking it. It leaves when the pointer
  * does, after the same grace a folded parent's flyout gets for crossing
@@ -53,6 +54,10 @@ import type { NavbarSize } from '@/src/components/Navbar';
  * the page under it stays live. The two rails share `active`, so the page
  * picked from the peek is the one the docked rail shows when it returns.
  * The behaviour is the library's `useSidebarToggle`.
+ *
+ * Docked, the rail's trailing edge is a handle: click it to collapse the
+ * rail, drag it to resize between 220 and 320px. The peek floats in at
+ * whatever width it was left at.
  *
  * ## The bar, at `sm`
  *
@@ -245,9 +250,13 @@ export function AppShell({
     <Stack ref={setShell} direction="row" sx={frame}>
       {/* Both rails open on Work area, as the sheet draws it, so the branch
           under Invoice Processing is showing. */}
-      {!sidebar.hidden && (
-        <AppRail active={active} onActiveChange={setActive} />
-      )}
+      <AppRail
+        dockProps={sidebar.dockProps}
+        resizeHandleProps={sidebar.resizeHandleProps}
+        resizeTooltipProps={sidebar.resizeTooltipProps}
+        active={active}
+        onActiveChange={setActive}
+      />
       <Stack sx={{ flex: 1, minWidth: 0 }}>
         <AppTopBar
           title="Invoice Processing"

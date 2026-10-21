@@ -53,7 +53,11 @@ import {
 
 import type { CSSObject, Theme } from '@mui/material/styles';
 import type { AvatarColor } from '@/src/components/Avatar';
-import type { DrawerProps } from '@/src/components/Drawer';
+import type {
+  DrawerProps,
+  SidebarResizeHandleProps,
+} from '@/src/components/Drawer';
+import type { TooltipProps } from '@/src/components/Tooltip';
 import type { ModeToken } from '@/src/tokens';
 
 /**
@@ -849,6 +853,9 @@ export function AppRail({
   showBrand = true,
   showWorkspace = true,
   overlay = false,
+  dockProps,
+  resizeHandleProps,
+  resizeTooltipProps,
   peekProps,
   open = false,
   onClose,
@@ -874,6 +881,18 @@ export function AppRail({
    * @default false
    */
   overlay?: boolean;
+  /**
+   * The docked rail's props from `useSidebarToggle`: a `persistent` drawer
+   * that slides away and gives its space back when the toggle hides it,
+   * at the width its handle was dragged to. Keep the rail mounted.
+   */
+  dockProps?: DrawerProps;
+  /**
+   * The docked rail's edge handle and its tooltip, from
+   * `useSidebarToggle`: click to collapse, drag to resize.
+   */
+  resizeHandleProps?: SidebarResizeHandleProps;
+  resizeTooltipProps?: Omit<TooltipProps, 'children'>;
   /**
    * Render as the hidden rail's peek: the `peekProps` from
    * `useSidebarToggle`, which float the rail in under the bar while its
@@ -1022,6 +1041,7 @@ export function AppRail({
       // goes on `size` rather than on the paper, because it has to reach
       // the space the rail reserves as well as the panel itself.
       size={collapsed ? RAIL_COLLAPSED_PX : 'sm'}
+      {...dockProps}
       // The floating rail. Written through the drawer's own paper selector,
       // which is the one that outranks the edge and corners `Drawer` draws:
       // the sheet's floating rail has a border all round and 12px corners
@@ -1058,6 +1078,11 @@ export function AppRail({
       }}
     >
       {contents}
+      {resizeHandleProps && (
+        <Tooltip title="" {...resizeTooltipProps}>
+          <Box {...resizeHandleProps} />
+        </Tooltip>
+      )}
     </Drawer>
   );
 }

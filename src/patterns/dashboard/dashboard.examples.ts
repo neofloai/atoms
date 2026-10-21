@@ -37,8 +37,8 @@ export const data: PatternExamplesData = {
   ],
   dos: [
     'Lay the screen out as a row — rail, then a column — so the rail owns the full height and the bar starts where it ends',
-    'Put the sidebar toggle at the leading edge of the bar, and let it hide the rail outright — unmount it, so the bar and the page take the full width',
-    'Drive the toggle with `useSidebarToggle`: spread `toggleProps` on the toggle, render the docked rail only while `hidden` is false, and spread `peekProps` on a second Drawer holding the same navigation — hover peeks, with no backdrop or focus trap, and `closePeek` closes it when a page is picked',
+    'Put the sidebar toggle at the leading edge of the bar, and let it slide the rail away — a persistent drawer, kept mounted, so the bar and the page widen into its space as it goes',
+    'Drive the toggle with `useSidebarToggle`: spread `toggleProps` on the toggle, `dockProps` on the docked rail with `resizeHandleProps` and `resizeTooltipProps` on its edge, and `peekProps` on a second Drawer holding the same navigation — hover peeks, with no backdrop or focus trap, and `closePeek` closes it when a page is picked',
     'Build the rail\'s rows as `List variant="nav"` — `ListItemButton`, `ListItemIcon`, `ListItemText`, a nested `List` in a `Collapse` for the second level',
     'Keep one selection for the docked rail and its peek, so the page picked from the peek is the one the rail shows when it is docked again',
     'Stop the nav tree at one level of nesting — a rail that needs three needs a different navigation model, not a third indent',
