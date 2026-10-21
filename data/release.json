@@ -1,11 +1,42 @@
 {
-  "generatedAt": "2026-10-21T15:22:33.080Z",
+  "generatedAt": "2026-10-21T17:32:11.280Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "3.2.0",
-  "currentTag": "v3.2.0",
+  "current": "3.3.0",
+  "currentTag": "v3.3.0",
   "minimumSupported": "3.0.0",
   "releases": [
+    {
+      "version": "3.3.0",
+      "tag": "v3.3.0",
+      "date": "2026-10-21",
+      "headline": "The sidebar resizes and slides: drag its edge between 220 and 320px or click it to collapse, and hiding or showing it animates the way MUI's persistent drawer does.",
+      "summary": "A minor release. Nothing is removed or renamed. `useSidebarToggle` now returns `dockProps` for the docked sidebar, a `persistent` `Drawer` kept mounted, so the toggle slides the sidebar out and back while the page reflows alongside, where 3.2.0 removed it instantly. The sidebar's right edge is a handle: hovered, it shows a grip and \"Click to collapse / Drag to resize\"; a click collapses the sidebar and a drag resizes it. One behaviour change in `Drawer`: a closed `persistent` drawer now gives its space back to the page.",
+      "changes": [
+        {
+          "kind": "added",
+          "summary": "`useSidebarToggle()` returns `dockProps`, `resizeHandleProps`, `resizeTooltipProps`, `width` and `setWidth`, and takes `defaultWidth`, `minWidth` and `maxWidth`. Spread `dockProps` on the docked `Drawer` and keep it mounted; put `resizeHandleProps` on an empty element inside it, wrapped in a `Tooltip` given `resizeTooltipProps`. The edge shows a 4 x 32 grip on hover; a click collapses the sidebar, a drag of more than 3px resizes it between 220 and 320px, and the arrow keys step it 8px. The peek floats in at the docked width. Also exported: `SIDEBAR_MIN_WIDTH_PX`, `SIDEBAR_MAX_WIDTH_PX` and the `SidebarResizeHandleProps` type.",
+          "scope": [
+            "Drawer",
+            "Tooltip"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "Hiding the sidebar with `useSidebarToggle` slides it out on MUI's persistent-drawer timings (195ms `sharp` out, 225ms `easeOut` in) instead of unmounting it. Render the docked sidebar with `dockProps` rather than only while `hidden` is false; the old pattern still works, without the animation.",
+          "scope": [
+            "Drawer"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`Drawer` `variant=\"persistent\"`: when closed, the space it reserves now closes with the panel, on the same timings, so the content beside it reflows on its own. If you copied MUI's demo and move the content back with a negative margin, remove the margin, or the content moves twice.",
+          "scope": [
+            "Drawer"
+          ]
+        }
+      ]
+    },
     {
       "version": "3.2.0",
       "tag": "v3.2.0",
@@ -480,8 +511,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^3.2.0",
-    "pin": "npm install github:neofloai/atoms#semver:^3.2.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^3.3.0",
+    "pin": "npm install github:neofloai/atoms#semver:^3.3.0"
   },
   "keywords": [
     "changelog",
