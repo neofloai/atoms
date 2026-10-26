@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T17:27:25.230Z",
+  "generatedAt": "2026-10-26T11:19:48.416Z",
   "components": [
     {
       "name": "Accordion",
@@ -2976,6 +2976,25 @@
       "category": "Navigation",
       "tagline": "Floating panel of choices anchored to a control — the branded surface around MUI Menu, with the full MUI prop surface intact.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6085",
+      "keywords": [
+        "dropdown",
+        "dropdown menu",
+        "popup menu",
+        "context menu",
+        "overflow menu",
+        "account menu",
+        "user menu",
+        "profile",
+        "profile menu",
+        "profile dropdown",
+        "avatar menu",
+        "avatar dropdown",
+        "sign out",
+        "log out",
+        "logout",
+        "theme switch",
+        "workspace switcher"
+      ],
       "props": [
         {
           "name": "open",
@@ -3090,8 +3109,8 @@
         },
         {
           "title": "Account menu",
-          "description": "The dropdown off the avatar in the top bar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — then three groups divided by rules, a theme switch on a row of its own, and Sign out last in the `error` tone. Right-aligned under the avatar, at the 240px the design draws.",
-          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  anchorOrigin={{ vertical: \"bottom\", horizontal: \"right\" }}\n  transformOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n  sx={{ '& .MuiMenu-paper': { width: 240 } }}\n>\n  <AccountHeader user={user} />\n  <Divider />\n  <MenuItem onClick={close}><GearSixIcon size={16} />Settings</MenuItem>\n  <MenuItem onClick={close}><CreditCardIcon size={16} />Billings</MenuItem>\n  <MenuItem onClick={close}><ChartBarIcon size={16} />Reporting</MenuItem>\n  <Divider />\n  <MenuItem onClick={close}><QuestionIcon size={16} />Help</MenuItem>\n  <MenuItem onClick={close}><BookOpenIcon size={16} />Documentation</MenuItem>\n  <MenuItem onClick={close}><BugIcon size={16} />Report an issue</MenuItem>\n  <Divider />\n  <ThemeRow />\n  <Divider />\n  <MenuItem variant=\"error\" onClick={signOut}>\n    <SignOutIcon size={16} />\n    Sign out\n  </MenuItem>\n</Menu>"
+          "description": "The profile dropdown off the avatar at the end of the app bar — the standard account menu, and the one place it lives: in the `Navbar`, not in the sidebar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — as a 36px avatar beside the name, the address under it in caption ink, and the role as a small muted chip. Then three groups divided by rules: Settings, Billings and Reporting; Help, Documentation and Report an issue; a System / Light / Dark theme switch on a row of its own. Sign out comes last in the `error` tone. The panel is 240px wide, right-aligned under the avatar 12px below the bar, and opens with `variant=\"menu\"` because the header is not an option. Neither the header nor the theme row is a library component, so both are written out here in full — copy the whole file.",
+          "code": "import * as React from \"react\";\nimport {\n  Avatar,\n  Box,\n  Chip,\n  Divider,\n  IconButton,\n  Menu,\n  MenuItem,\n  Stack,\n  ToggleButton,\n  ToggleButtonGroup,\n  Typography,\n  useColorScheme,\n} from \"@neofloai/atoms\";\nimport {\n  BookOpenIcon,\n  BugIcon,\n  ChartBarIcon,\n  CreditCardIcon,\n  DesktopIcon,\n  GearSixIcon,\n  MoonIcon,\n  QuestionIcon,\n  SignOutIcon,\n  SunIcon,\n} from \"@neofloai/atoms/icons\";\nimport { fontWeights, text } from \"@neofloai/atoms/tokens\";\nimport { neofloTheme } from \"@neofloai/atoms/theme\";\nimport type { ModeToken } from \"@neofloai/atoms/tokens\";\n\ntype Theme = typeof neofloTheme;\n\ninterface User {\n  name: string;\n  email: string;\n  initials: string;\n  role: string;\n}\n\n/** Paint one property from a token, in both schemes. */\nfunction ink(property: string, token: ModeToken) {\n  return (theme: Theme) => ({\n    [property]: token.light,\n    ...theme.applyStyles(\"dark\", { [property]: token.dark }),\n  });\n}\n\n/** The signed-in user, heading the panel. */\nfunction AccountHeader({ user }: { user: User }) {\n  return (\n    <Box sx={{ display: \"flex\", gap: 1.5, px: 1, py: 1.5 }}>\n      <Avatar size=\"md\" color=\"error\">{user.initials}</Avatar>\n      <Stack sx={{ gap: 1, minWidth: 0, alignItems: \"flex-start\" }}>\n        <Stack sx={{ gap: 0.25, minWidth: 0, maxWidth: \"100%\" }}>\n          <Typography\n            variant=\"body1\"\n            noWrap\n            sx={(theme) => ({\n              fontWeight: fontWeights.medium,\n              ...ink(\"color\", text.default.b1)(theme),\n            })}\n          >\n            {user.name}\n          </Typography>\n          <Typography\n            variant=\"body2\"\n            noWrap\n            sx={(theme) => ({\n              fontWeight: fontWeights.medium,\n              ...ink(\"color\", text.default.b3)(theme),\n            })}\n          >\n            {user.email}\n          </Typography>\n        </Stack>\n        <Chip size=\"sm\" variant=\"muted\" label={user.role} />\n      </Stack>\n    </Box>\n  );\n}\n\n/** System, light or dark — wired to the real colour scheme. */\nfunction ThemeRow() {\n  const { mode, setMode } = useColorScheme();\n\n  return (\n    <Box\n      sx={(theme) => ({\n        display: \"flex\",\n        alignItems: \"center\",\n        justifyContent: \"space-between\",\n        minHeight: 28,\n        px: 1,\n        typography: \"body1\",\n        fontWeight: fontWeights.medium,\n        ...ink(\"color\", text.default.b1)(theme),\n      })}\n    >\n      Theme\n      <ToggleButtonGroup\n        appearance=\"segmented\"\n        exclusive\n        aria-label=\"Theme\"\n        value={mode ?? \"system\"}\n        onChange={(_, next: \"system\" | \"light\" | \"dark\" | null) => {\n          if (next) setMode(next);\n        }}\n      >\n        <ToggleButton value=\"system\" aria-label=\"System\"><DesktopIcon /></ToggleButton>\n        <ToggleButton value=\"light\" aria-label=\"Light\"><SunIcon /></ToggleButton>\n        <ToggleButton value=\"dark\" aria-label=\"Dark\"><MoonIcon /></ToggleButton>\n      </ToggleButtonGroup>\n    </Box>\n  );\n}\n\nexport function AccountMenu({\n  user,\n  onSignOut,\n}: {\n  user: User;\n  onSignOut: () => void;\n}) {\n  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);\n  const close = () => setAnchorEl(null);\n\n  return (\n    <>\n      {/* The trigger: the last thing in the Navbar's row. */}\n      <IconButton\n        variant=\"secondary\"\n        appearance=\"text\"\n        size=\"sm\"\n        aria-label=\"Account\"\n        aria-haspopup=\"menu\"\n        aria-expanded={Boolean(anchorEl)}\n        onClick={(event) => setAnchorEl(event.currentTarget)}\n      >\n        <Avatar size=\"sm\" color=\"error\">{user.initials}</Avatar>\n      </IconButton>\n\n      <Menu\n        anchorEl={anchorEl}\n        open={Boolean(anchorEl)}\n        onClose={close}\n        anchorOrigin={{ vertical: \"bottom\", horizontal: \"right\" }}\n        transformOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n        variant=\"menu\"\n        sx={{ '& .MuiMenu-paper': { width: 240, mt: 1.5 } }}\n      >\n        <AccountHeader user={user} />\n        <Divider />\n        <MenuItem onClick={close}><GearSixIcon size={16} />Settings</MenuItem>\n        <MenuItem onClick={close}><CreditCardIcon size={16} />Billings</MenuItem>\n        <MenuItem onClick={close}><ChartBarIcon size={16} />Reporting</MenuItem>\n        <Divider />\n        <MenuItem onClick={close}><QuestionIcon size={16} />Help</MenuItem>\n        <MenuItem onClick={close}><BookOpenIcon size={16} />Documentation</MenuItem>\n        <MenuItem onClick={close}><BugIcon size={16} />Report an issue</MenuItem>\n        <Divider />\n        <ThemeRow />\n        <Divider />\n        <MenuItem\n          variant=\"error\"\n          onClick={() => {\n            close();\n            onSignOut();\n          }}\n        >\n          <SignOutIcon size={16} />\n          Sign out\n        </MenuItem>\n      </Menu>\n    </>\n  );\n}"
         },
         {
           "title": "Positioning",
@@ -3289,7 +3308,9 @@
         "page layout",
         "layout",
         "title bar",
-        "breadcrumb bar"
+        "breadcrumb bar",
+        "account menu",
+        "profile dropdown"
       ],
       "props": [
         {
@@ -3350,8 +3371,8 @@
       "examples": [
         {
           "title": "An app bar: toggle, page name, account",
-          "description": "The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar opens the account menu; see the Menu page for its contents.",
-          "code": "<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label=\"Account\"\n      onClick={(event) => setAccountAnchor(event.currentTarget)}\n    >\n      <Avatar size=\"sm\" color=\"error\">JD</Avatar>\n    </IconButton>\n  </Stack>\n</Navbar>"
+          "description": "The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is the account menu, and the top bar is where it lives on every screen of the shell. `AccountMenu` renders the avatar button and the dropdown it opens; its full code is the \"Account menu\" example on `Menu` — call `get_component` for `Menu`.",
+          "code": "// AccountMenu: the \"Account menu\" example on Menu, copied whole.\nimport { AccountMenu } from \"./AccountMenu\";\n\n<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    {/* The avatar and the profile dropdown it opens. */}\n    <AccountMenu user={user} onSignOut={signOut} />\n  </Stack>\n</Navbar>"
         },
         {
           "title": "The shell: a full-height rail, the bar beside it",

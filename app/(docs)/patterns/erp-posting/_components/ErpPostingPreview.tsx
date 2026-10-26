@@ -610,9 +610,10 @@ export function ErpPostingPreview(): React.JSX.Element {
         }}
       >
         {/* The workflow strip: sections of this record, not destinations in
-            the app. No brand block and no user footer — the header above owns
-            the top of the screen, and the account menu belongs to the main
-            menu the hamburger brings back. */}
+            the app. No brand block and no workspace switcher — the header above
+            owns the top of the screen. Nor is the account menu here: it is the
+            avatar at the end of the app bar on the screens outside this
+            workflow, and this header carries the record's actions instead. */}
         <AppRail
           collapsed
           showBrand={false}

@@ -37,6 +37,8 @@ export const data: ComponentExamplesData = {
     'layout',
     'title bar',
     'breadcrumb bar',
+    'account menu',
+    'profile dropdown',
   ],
   props: [
     {
@@ -107,8 +109,11 @@ export const data: ComponentExamplesData = {
     {
       title: 'An app bar: toggle, page name, account',
       description:
-        'The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar opens the account menu; see the Menu page for its contents.',
+        'The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is the account menu, and the top bar is where it lives on every screen of the shell. `AccountMenu` renders the avatar button and the dropdown it opens; its full code is the "Account menu" example on `Menu` — call `get_component` for `Menu`.',
       code: [
+        '// AccountMenu: the "Account menu" example on Menu, copied whole.',
+        'import { AccountMenu } from "./AccountMenu";',
+        '',
         '<Navbar>',
         '  <Stack direction="row" sx={{ flex: 1, alignItems: "center", gap: 2 }}>',
         '    <IconButton',
@@ -127,15 +132,8 @@ export const data: ComponentExamplesData = {
         '    <IconButton variant="primary" appearance="outline" size="sm" aria-label="Ask Neo">',
         '      <StarFourIcon />',
         '    </IconButton>',
-        '    <IconButton',
-        '      variant="secondary"',
-        '      appearance="text"',
-        '      size="sm"',
-        '      aria-label="Account"',
-        '      onClick={(event) => setAccountAnchor(event.currentTarget)}',
-        '    >',
-        '      <Avatar size="sm" color="error">JD</Avatar>',
-        '    </IconButton>',
+        '    {/* The avatar and the profile dropdown it opens. */}',
+        '    <AccountMenu user={user} onSignOut={signOut} />',
         '  </Stack>',
         '</Navbar>',
       ].join('\n'),

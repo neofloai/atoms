@@ -55,11 +55,21 @@ function formatComponentResponse(
   // only the examples are pasted: a prop list read against the wrong
   // version is a question, a code block pasted against the wrong version
   // is a broken build that gets repaired by invention.
+  //
+  // Each example carries its description. It is where an example says
+  // what it leaves out and where the rest lives — "the avatar opens the
+  // account menu; see Menu" — and without it the code reads as complete.
   const examples = gate.blocked
     ? gate.notice
     : comp.examples.length > 0
       ? comp.examples
-          .map((e) => `### ${e.title}\n\`\`\`tsx\n${e.code}\n\`\`\``)
+          .map((e) =>
+            [
+              `### ${e.title}`,
+              ...(e.description ? ['', e.description, ''] : []),
+              `\`\`\`tsx\n${e.code}\n\`\`\``,
+            ].join('\n')
+          )
           .join('\n\n')
       : '_No examples documented._';
 
