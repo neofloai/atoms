@@ -15,6 +15,7 @@
  */
 
 import { BRIEF_QUESTIONS } from './questions';
+import { projectStructure } from './structure';
 import {
   BRAND_ASSETS,
   BRAND_ORIGIN,
@@ -33,6 +34,20 @@ import type {
 
 export * from './types';
 export { BRIEF_QUESTIONS } from './questions';
+export {
+  projectStructure,
+  renderAgentsMd,
+  structureRuleLines,
+  REACT_TEMPLATE_COMMAND,
+  REACT_TEMPLATE_PATH,
+} from './structure';
+export type {
+  ProjectStructure,
+  StructureLayer,
+  StructureRecipe,
+  StructureRule,
+  StructureRuleGroup,
+} from './structure';
 export {
   BRAND_ASSETS,
   BRAND_ORIGIN,
@@ -62,7 +77,7 @@ const PURPOSE_NOTES: Record<ProjectPurpose, readonly string[]> = {
   prototype: [
     'Every screen has to be reachable by clicking. No sign-in gate, no route that can only be reached by editing the URL.',
     'Assume it gets shown to other people, live. Every click has to land somewhere — a dead control in front of a room is the only thing anyone remembers.',
-    'Put the sample data in one file with an obvious name. What is on screen changes far more often than the components do, and nobody should have to open a component to change a vendor name.',
+    'Put the sample data in each feature\'s `mocks/` folder, in the shape the real API will return, read only by that feature\'s `api/`. What is on screen changes far more often than the components do, and nobody should have to open a component to change a vendor name — and the day the API exists, switching is one file per feature.',
     'Nothing half-styled. A control that is not wired yet still has to look finished, because in a review it will be read as the design rather than as a placeholder.',
     'Nothing that needs a network. If the room has no wifi it still has to run.',
     'One obvious path through the screens, and the two commands that start it at the top of the README: `npm install`, `npm run dev`. Anything more than that will not survive being handed on.',
@@ -132,6 +147,7 @@ export const projectGuide: ProjectGuide = {
   brandOrigin: BRAND_ORIGIN,
   brandAssets: BRAND_ASSETS,
   logoStep: LOGO_STEP,
+  structure: projectStructure,
 };
 
 /**

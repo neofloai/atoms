@@ -10,6 +10,7 @@
  */
 
 import type { InstallStep } from '@/src/install';
+import type { ProjectStructure } from './structure';
 
 /**
  * What is being made. This is the fork the whole brief turns on, which
@@ -129,6 +130,14 @@ export interface ProjectTargetRecipe {
   /** Create command, with `{{name}}` for the project name. */
   createCommand: string | null;
   /**
+   * The create command copies the Atoms template, which arrives with the
+   * install, the provider, the brand icons, the logo and the project
+   * structure already in place. `scaffold_app` then leaves out every
+   * step the template has already done, rather than having an agent
+   * redo them by hand on top of it.
+   */
+  fromTemplate: boolean;
+  /**
    * How the downloaded icon files get declared, which is the one step
    * that differs between a framework's own conventions. Held apart from
    * `steps` so it can be emitted immediately after the download rather
@@ -190,4 +199,6 @@ export interface ProjectGuide {
   brandAssets: readonly BrandAsset[];
   /** How the mark gets into the app, which needs no file. */
   logoStep: InstallStep;
+  /** The layout and rules every React project is built in. */
+  structure: ProjectStructure;
 }

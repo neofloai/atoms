@@ -1,0 +1,24 @@
+# dependencies
+node_modules
+
+# build and test output
+dist
+dist-ssr
+coverage
+*.tsbuildinfo
+
+# env — commit .env.example, never a real value
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+*.log
+
+# editor and OS
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

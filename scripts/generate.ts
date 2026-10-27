@@ -4,7 +4,12 @@ import path from 'node:path';
 import { branding } from '../src/brand/branding';
 import { installation } from '../src/install';
 import { patterns as patternData } from '../src/patterns';
-import { projectGuide } from '../src/project';
+import {
+  projectGuide,
+  projectStructure,
+  renderAgentsMd,
+  REACT_TEMPLATE_PATH,
+} from '../src/project';
 import { release } from '../src/release';
 import { ATOMS_VERSION } from '../src/release/version';
 import {
@@ -41,6 +46,10 @@ import type {
  * is one line there, and a half-written pattern stays out of the manifest
  * until it is added on purpose. The installation, brand and project
  * guides are hand-written modules serialized as they are.
+ *
+ * It also writes two files outside `data/`: the React template's
+ * AGENTS.md and the Atoms range in its package.json (see
+ * `writeReactTemplate`).
  */
 
 const ROOT = path.resolve(__dirname, '..');
@@ -225,7 +234,43 @@ async function main(): Promise<void> {
     writeManifest('brand.json', { brand: branding }),
     writeManifest('project.json', { ...projectGuide }),
     writeManifest('release.json', { ...release }),
+    writeReactTemplate(),
   ]);
+}
+
+/**
+ * Keep the React template in step with the release it ships in.
+ *
+ * Its AGENTS.md is rendered from `src/project/structure.ts`, so the rules
+ * an agent reads in a scaffolded project are the ones `scaffold_app`
+ * serves. Its Atoms dependency is set to the current range, because the
+ * scaffolder copies the template at this release's tag and a template
+ * that installed an older Atoms would build against the wrong docs.
+ */
+async function writeReactTemplate(): Promise<void> {
+  const dir = path.join(ROOT, REACT_TEMPLATE_PATH);
+  await writeIfChanged(path.join(dir, 'AGENTS.md'), renderAgentsMd(projectStructure));
+  await writeIfChanged(
+    path.join(dir, 'CLAUDE.md'),
+    '<!-- Generated from src/project/structure.ts in neofloai/atoms. -->\n\n@AGENTS.md\n'
+  );
+
+  const pkgPath = path.join(dir, 'package.json');
+  const raw = await fs.readFile(pkgPath, 'utf8');
+  const range = `github:neofloai/atoms#semver:^${ATOMS_VERSION}`;
+  const next = raw.replace(
+    /("@neofloai\/atoms":\s*)"[^"]*"/,
+    (_match, key: string) => `${key}"${range}"`
+  );
+  await writeIfChanged(pkgPath, next);
+}
+
+async function writeIfChanged(target: string, contents: string): Promise<void> {
+  const current = await fs.readFile(target, 'utf8').catch(() => null);
+  if (current !== contents) {
+    await fs.writeFile(target, contents);
+    console.log(`  wrote ${path.relative(ROOT, target)}`);
+  }
 }
 
 main().catch((error: unknown) => {

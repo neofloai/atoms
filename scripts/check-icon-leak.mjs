@@ -54,7 +54,9 @@ const NAMESPACE_IMPORT = new RegExp(
   ].join('|')
 );
 
-const files = (await readdir(DIST)).filter(
+// Recursive: the ESM build splits into chunks and per-component entries
+// under dist/components, and a leak in any of them ships the whole set.
+const files = (await readdir(DIST, { recursive: true })).filter(
   (name) =>
     (name.endsWith('.mjs') || name.endsWith('.js')) && !EXEMPT.has(name)
 );

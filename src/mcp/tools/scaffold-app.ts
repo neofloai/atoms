@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { structureRuleLines } from '@/src/project';
 import { loadInstallation, loadProject } from '../data-loader';
 import { renderSteps } from '../format';
 
@@ -79,6 +80,33 @@ export function ColorModeToggle() {
   );
 }`;
 
+/** Where the template mounts the provider and the bar. */
+const TEMPLATE_PROVIDERS_FILE = 'src/app/providers/AppProviders.tsx';
+const TEMPLATE_LAYOUT_FILE = 'src/app/layout/AppLayout.tsx';
+
+/**
+ * The scheme step for a project made from the template, which already
+ * mounts the provider pinned to light. Light needs nothing; the others
+ * name the file the change goes in rather than describing a provider
+ * the reader would then have to find.
+ */
+function renderTemplateSchemeStep(mode: 'dark' | 'switch'): InstallStep {
+  if (mode === 'dark') {
+    return {
+      title: 'Pin the colour scheme to dark',
+      body: `The brief asked for dark. The template pins light in \`${TEMPLATE_PROVIDERS_FILE}\`; change that one prop. Every token carries both schemes, so nothing else moves.`,
+      code: `<NeofloThemeProvider defaultMode="dark">`,
+      language: 'tsx',
+    };
+  }
+  return {
+    title: 'Build the colour-scheme switch',
+    body: `Keep \`defaultMode="light"\` in \`${TEMPLATE_PROVIDERS_FILE}\` as the starting scheme. Put this control in \`src/shared/ui/ColorModeToggle.tsx\` and render it at the end of the \`Navbar\` in \`${TEMPLATE_LAYOUT_FILE}\`. \`mode\` is \`undefined\` on the first render, before the stored preference has been read — render the space rather than a guess, or the icon flips after hydration.`,
+    code: MODE_SWITCH_SNIPPET,
+    language: 'tsx',
+  };
+}
+
 /**
  * Pinning the scheme the brief actually asked for.
  *
@@ -148,22 +176,38 @@ function renderPlan(
   const optional = setup.steps.filter((step) =>
     step.title.startsWith('Optional')
   );
+  const recipeSteps = recipe.steps.map((step) => ({
+    ...step,
+    ...(step.code && { code: step.code.replaceAll('{{name}}', projectName) }),
+  }));
   // One ordered list rather than a section per source: whoever runs this
   // needs to know what comes after what, and which steps came from the
   // installation guide and which from the scaffold recipe is a fact
   // about this repo rather than about the task.
-  const steps: InstallStep[] = [
-    renderCreateStep(guide, recipe.createCommand, projectName, parentDir),
-    install.shared[0],
-    ...required,
-    colorMode === 'switch'
-      ? renderSwitchStep(framework)
-      : renderSchemeStep(framework, colorMode),
-    renderBrandStep(guide.brandAssets, guide.brandOrigin),
-    ...(recipe.iconStep ? [recipe.iconStep] : []),
-    guide.logoStep,
-    ...recipe.steps,
-  ];
+  //
+  // A template already carries the install, the provider, the icons and
+  // the mark, so its list is the copy, the scheme if it is not light,
+  // and the recipe's own steps. Re-running the others on top of it would
+  // write a second provider into a file that has one.
+  const steps: InstallStep[] = recipe.fromTemplate
+    ? [
+        renderCreateStep(guide, recipe.createCommand, projectName, parentDir),
+        ...recipeSteps.slice(0, 1),
+        ...(colorMode === 'light' ? [] : [renderTemplateSchemeStep(colorMode)]),
+        ...recipeSteps.slice(1),
+      ]
+    : [
+        renderCreateStep(guide, recipe.createCommand, projectName, parentDir),
+        install.shared[0],
+        ...required,
+        colorMode === 'switch'
+          ? renderSwitchStep(framework)
+          : renderSchemeStep(framework, colorMode),
+        renderBrandStep(guide.brandAssets, guide.brandOrigin),
+        ...(recipe.iconStep ? [recipe.iconStep] : []),
+        guide.logoStep,
+        ...recipeSteps,
+      ];
 
   const schemeNote =
     colorMode === 'switch'
@@ -186,6 +230,24 @@ function renderPlan(
     '',
     renderSteps(steps, 1),
     '',
+    ...(recipe.fromTemplate
+      ? [
+          '## Project structure — mandatory',
+          '',
+          'The project is laid out in four layers, each importing only from those below it:',
+          '',
+          '```',
+          guide.structure.tree,
+          '```',
+          '',
+          'Follow every rule below on every change, without being reminded. They are also in the project\'s `AGENTS.md`, with the reason for each; those marked *(oxlint)* fail `npm run check`. When a request cannot be met without breaking one, stop and say which rule rather than working around it.',
+          '',
+          structureRuleLines(guide.structure)
+            .map((rule) => `- ${rule}`)
+            .join('\n'),
+          '',
+        ]
+      : []),
     '## Rules',
     '',
     install.notes.map((note) => `- ${note}`).join('\n'),
@@ -215,12 +277,12 @@ export function registerScaffoldApp(server: McpServer): void {
     {
       title: 'Scaffold a new app',
       description:
-        'Returns the exact ordered commands to create a new app with @neofloai/atoms already wired: the create command, the install, the theme provider, the Neoflo favicon and logo, and how to run it. Pass framework "react" for a Vite prototype or "nextjs" when the app needs a server. Creates the project in the user\'s Desktop folder, never in a temp directory or the current working directory. Call start_project first to decide which framework the brief actually needs.',
+        'Returns the exact ordered commands to create a new app with @neofloai/atoms already wired, and how to run it. Framework "react" copies the Atoms template — Vite, React Router, TanStack Query, oxlint and oxfmt, with the provider, brand, shell and a strict four-layer structure in place — and returns the structure rules every change in it must follow. Pass "nextjs" when the app needs a server. Creates the project in the user\'s Desktop folder, never in a temp directory or the current working directory. Call start_project first to decide which framework the brief actually needs.',
       inputSchema: {
         framework: z
           .enum(['react', 'nextjs'])
           .describe(
-            'Target: "react" for Vite + React (prototypes, demos, anything with no server-side work), "nextjs" when the app needs auth, persistence, API routes, or secrets. Resolve this with start_project rather than guessing.'
+            'Target: "react" for the Atoms Vite + React template (prototypes, demos, anything with no server-side work), "nextjs" when the app needs auth, persistence, API routes, or secrets. Resolve this with start_project rather than guessing.'
           ),
         projectName: z
           .string()
