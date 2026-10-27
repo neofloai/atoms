@@ -128,13 +128,13 @@ export const data: ComponentExamplesData = {
         'A control that is present from the start should not scale in as the page arrives — that reads as the interface still assembling itself.',
       code: [
         '<Zoom in={enabled} appear={false}>',
-        '  <Chip label="Live" variant="success" />',
+        '  <Tag label="Live" variant="success" />',
         '</Zoom>',
       ].join('\n'),
     },
   ],
   dos: [
-    'Use `Zoom` for small controls of known size — icon buttons, chips, badges',
+    'Use `Zoom` for small controls of known size — icon buttons, tags, badges',
     'Pass `unmountOnExit` so a control scaled to nothing is not still focusable and clickable',
     'Delay the entering element by the exiting one\'s duration when two zooms share a slot',
     'Give a swap a fixed-size container if the surrounding layout should not move',

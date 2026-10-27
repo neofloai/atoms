@@ -144,5 +144,5 @@ export const data: ComponentExamplesData = {
     "Don't mix sizes within a single avatar group or stack",
     "Don't rely on the badge colour alone to convey status — pair it with text elsewhere",
   ],
-  relatedComponents: ['Chip'],
+  relatedComponents: ['Tag'],
 };

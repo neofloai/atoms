@@ -18,6 +18,7 @@ export interface ComponentProp {
 
 export interface ComponentExample {
   title: string;
+  description?: string;
   code: string;
 }
 

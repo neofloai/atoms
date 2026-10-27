@@ -164,7 +164,7 @@ export const data: ComponentExamplesData = {
     'Use `variant="dot"` when the fact that something changed matters more than how much did',
     'Keep `badgeContent` to a number or one short word; the counter is 20px tall and grows sideways',
     'Let the default `showZero={false}` hide an empty count instead of rendering a `0`',
-    'Reach for `Chip size="sm"` when you want a label beside text — a badge is anchored to a corner, not set inline',
+    'Reach for `Tag` when you want a label beside text — a badge is anchored to a corner, not set inline',
   ],
   donts: [
     "Don't rely on the colour alone to carry meaning — a `warning` and an `error` dot are two shades of the same 8px circle to most people",
@@ -174,5 +174,5 @@ export const data: ComponentExamplesData = {
     "Don't wrap a block-level layout in a badge — the root is `inline-flex`, so it is meant to sit around a single control",
     "Don't drop a childless badge into a row of text expecting it to take up space: the root measures 0x0 and the badge overhangs it on every side, so it will land on whatever is next to it",
   ],
-  relatedComponents: ['Avatar', 'Chip', 'IconButton'],
+  relatedComponents: ['Avatar', 'Tag', 'IconButton'],
 };

@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { erpPosting } from '@/src/patterns';
 import { CodeBlock } from '../../_components/CodeBlock';
 import { ErpPostingPreview } from './_components/ErpPostingPreview';
@@ -127,9 +127,8 @@ export default function ErpPostingPatternPage() {
                 </Typography>
                 <Stack direction="row" sx={{ gap: 0.75, flexWrap: 'wrap' }}>
                   {group.fields.map((field) => (
-                    <Chip
+                    <Tag
                       key={field}
-                      size="sm"
                       variant="secondary"
                       label={field}
                     />
@@ -274,7 +273,7 @@ export default function ErpPostingPatternPage() {
             Built from
           </Typography>
           <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
-            {/* The anchor is the interactive element and the chip is the
+            {/* The anchor is the interactive element and the tag is the
                 shape of it — `clickable` would put a button inside a link. */}
             {erpPosting.components.map((name) => (
               <Link
@@ -283,8 +282,7 @@ export default function ErpPostingPatternPage() {
                 underline="none"
                 sx={{ display: 'inline-flex' }}
               >
-                <Chip
-                  size="sm"
+                <Tag
                   variant="secondary"
                   label={name}
                   sx={{ cursor: 'pointer' }}

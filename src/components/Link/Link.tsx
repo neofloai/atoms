@@ -124,7 +124,7 @@ import type { LinkColor, LinkProps, LinkTypeMap } from './Link.types';
  *
  * `warning` is the one role whose hover rung is not comfortable:
  * `yellow/700` on the page is a pale rung against a light surface. It is
- * offered because MUI, `Chip`, `Badge`, and `Progress` all offer it, and
+ * offered because MUI, `Tag`, `Badge`, and `Progress` all offer it, and
  * tracked in DESIGNER_QUESTIONS.md #39 rather than silently dropped.
  */
 interface RoleTokens {

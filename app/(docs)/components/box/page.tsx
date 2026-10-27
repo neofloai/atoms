@@ -92,7 +92,7 @@ export default function BoxDocsPage() {
           <Typography variant="body2" color="text.secondary">
             A bordered Box is not a Card. A tinted Box is not an{' '}
             <code>Alert</code>. A padded Box with a label is not a{' '}
-            <code>Chip</code>. When a purpose-built component exists, it
+            <code>Tag</code>. When a purpose-built component exists, it
             carries states and both colour schemes that a Box does not —
             reproducing its look by hand is how a product drifts off-system.
           </Typography>

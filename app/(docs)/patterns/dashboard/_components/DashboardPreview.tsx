@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { DataGrid } from '@/src/components/DataGrid';
 import { Divider } from '@/src/components/Divider';
 import { useSidebarToggle } from '@/src/components/Drawer';
@@ -203,8 +203,7 @@ export function DashboardPreview(): React.JSX.Element {
               >
                 Filter
                 {activeCount > 0 && (
-                  <Chip
-                    size="sm"
+                  <Tag
                     variant="primary"
                     component="span"
                     label={activeCount}

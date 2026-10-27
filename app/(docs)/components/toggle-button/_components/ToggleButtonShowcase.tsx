@@ -383,7 +383,7 @@ export function ToggleButtonShowcase() {
 
       <PreviewCard
         title="Colour roles"
-        description="`color` reaches the selected state only — an unselected toggle is neutral whatever it says, which is MUI's own behaviour. Only `secondary` is drawn in Figma; the other five borrow the fill-and-ink pairing a selected Chip already uses."
+        description="`color` reaches the selected state only — an unselected toggle is neutral whatever it says, which is MUI's own behaviour. Only `secondary` is drawn in Figma; the other five borrow the fill-and-ink pairing a selected Tag already uses."
       >
         <Stack spacing={3}>
           <Stack

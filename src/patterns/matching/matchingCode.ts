@@ -26,7 +26,7 @@ import {
   Card,
   CardContent,
   Checkbox,
-  Chip,
+  Tag,
   Divider,
   IconButton,
   NAVBAR_META_ICON_PX,
@@ -811,7 +811,7 @@ function FieldDecision({ field, acknowledged, onAcknowledge }) {
   if (!field.acknowledgeable) {
     return (
       <Tooltip title="An amount that disagrees with the purchase order means one of the two documents was read wrong. That is fixed in extraction, not waved through here.">
-        <Chip size="sm" variant="error" label="Fix in extraction" />
+        <Tag variant="error" label="Fix in extraction" />
       </Tooltip>
     );
   }
@@ -819,7 +819,7 @@ function FieldDecision({ field, acknowledged, onAcknowledge }) {
   if (isRemembered(field, acknowledged)) {
     return (
       <Tooltip title="Acknowledged three times, so it is saved. The next invoice from this vendor matches this field automatically.">
-        <Chip size="sm" variant="success" label="Saved to memory" />
+        <Tag variant="success" label="Saved to memory" />
       </Tooltip>
     );
   }
@@ -828,8 +828,7 @@ function FieldDecision({ field, acknowledged, onAcknowledge }) {
 
   if (acknowledged.has(field.key)) {
     return (
-      <Chip
-        size="sm"
+      <Tag
         variant="information"
         label={'Acknowledged - ' + count + ' of ' + ACKNOWLEDGEMENTS_TO_REMEMBER}
       />
@@ -1013,7 +1012,7 @@ function ReceiptRow({ receipt, allocated, selected, onToggle }) {
           one value on the row that names a document rather than describing
           this one. */}
       <TableCell sx={{ width: GRN_COLS.poNo }}>
-        <Chip size="sm" variant="secondary" label={receipt.poNo} />
+        <Tag variant="secondary" label={receipt.poNo} />
       </TableCell>
       <TableCell sx={{ width: GRN_COLS.grnNo }}>
         <LineId>{receipt.grnNo}</LineId>
@@ -1293,9 +1292,10 @@ export default function MatchingPage() {
         }}
       >
         {/* The workflow strip: stages of this record, not destinations in the
-            app. No brand block and no user footer - the header above owns the
-            top of the screen, and the account menu belongs to the main menu
-            the hamburger brings back. */}
+            app. No brand block and no workspace switcher - the header above owns
+            the top of the screen. Nor is the account menu here: it is the
+            avatar at the end of the app bar on the screens outside this
+            workflow, and this header carries the record's actions instead. */}
         <AppRail
           collapsed
           showBrand={false}
@@ -1586,8 +1586,7 @@ export default function MatchingPage() {
 
             <Stack sx={{ alignItems: 'center', gap: 0.5 }}>
               <ArrowsLeftRightIcon size={20} />
-              <Chip
-                size="sm"
+              <Tag
                 variant="secondary"
                 label={'Tolerance: +/- ' + formatMoney(TOLERANCE)}
               />
@@ -1615,8 +1614,7 @@ export default function MatchingPage() {
                   <Typography variant="h5">
                     {balanced ? 'Balanced' : formatMoney(Math.abs(gap))}
                   </Typography>
-                  <Chip
-                    size="sm"
+                  <Tag
                     variant={balanced ? 'success' : 'error'}
                     label={
                       balanced

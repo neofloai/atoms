@@ -5,15 +5,20 @@ import { Button as MuiButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { GoogleLogoColorIcon } from '@/src/icons/brand/GoogleLogo';
+import { CaretDownIcon } from '@/src/icons/glyphs';
 import { fontFamilies, fontWeights, radius, spacing, typography } from '@/src/tokens';
 
 import {
   appearanceStyles,
   OUTLINE_BORDER_WIDTH_PX,
   socialStyles,
+  splitDividerStyles,
+  splitRingStyles,
 } from '../_shared/actionStyles';
+import { Menu } from '../Menu';
 
 import type { CSSObject, Theme } from '@mui/material/styles';
+import type { ActionAppearance } from '../_shared/actionStyles';
 import type {
   ButtonAppearance,
   ButtonProps,
@@ -198,31 +203,105 @@ function metricsFor(size: ButtonSize, appearance: ButtonAppearance) {
   };
 }
 
+/**
+ * Which half of a split button a `StyledButton` is: the label's action
+ * (`start`) or the caret that opens the menu (`end`).
+ */
+type SplitHalf = 'start' | 'end';
+
 interface StyledButtonProps {
   neofloVariant: ButtonVariant;
   neofloAppearance: ButtonAppearance;
   neofloSize: ButtonSize;
+  neofloSplit?: SplitHalf;
+}
+
+/**
+ * What a split button's halves change about the plain button's box,
+ * from the Figma cells with `Splitbutton=Yes` (node 4137:10495).
+ *
+ * The sheet draws one box: the label, a 1px rule as tall as the glyph,
+ * and the caret, with the inline inset round the outside and the same
+ * inset between the label and the rule. Two real buttons need two boxes,
+ * so each half squares the corners it shares and the pair add up to the
+ * drawn one: the label's half is `inset + content + inset` and the
+ * caret's is `inset + glyph + inset`, which is 111 + 52 at `lg` and
+ * matches the 163px frame.
+ *
+ * `outline` draws its border round the pair rather than round each half,
+ * so each half gives back the border it would share. That leaves the
+ * outer border and a rule in the middle, as drawn; the border width is
+ * then borne by the padding on the outer side, the way `paddingFor`
+ * does it for a single button.
+ *
+ * `borders` is returned apart because MUI redraws a full border on a
+ * disabled outlined button, one specificity step above the base rule, so
+ * the caller has to repeat it under `.Mui-disabled`.
+ *
+ * `minWidth` is cleared on the caret because MUI's 64px floor is wider
+ * than the 40-52px the sheet draws it at.
+ */
+function splitGeometry(
+  size: ButtonSize,
+  appearance: ButtonAppearance,
+  half: SplitHalf
+): { box: CSSObject; borders: CSSObject } {
+  const inline =
+    appearance === 'text' ? TEXT_PADDING_INLINE_PX : sizeMetrics[size].inline;
+  const inset = isBordered(appearance) ? OUTLINE_BORDER_WIDTH_PX : 0;
+
+  if (half === 'start') {
+    return {
+      box: {
+        borderStartEndRadius: 0,
+        borderEndEndRadius: 0,
+        paddingInlineEnd: inline,
+      },
+      borders: inset ? { borderInlineEndWidth: 0 } : {},
+    };
+  }
+  return {
+    box: {
+      borderStartStartRadius: 0,
+      borderEndStartRadius: 0,
+      minWidth: 0,
+      flexShrink: 0,
+      paddingInlineStart: inline,
+      paddingInlineEnd: inline - inset,
+    },
+    borders: inset ? { borderInlineStartWidth: 0 } : {},
+  };
 }
 
 const StyledButton = styled(MuiButton, {
   shouldForwardProp: (prop) =>
     prop !== 'neofloVariant' &&
     prop !== 'neofloAppearance' &&
-    prop !== 'neofloSize',
+    prop !== 'neofloSize' &&
+    prop !== 'neofloSplit',
 })<StyledButtonProps>(({
   theme,
   neofloVariant,
   neofloAppearance,
   neofloSize,
+  neofloSplit,
 }) => {
   const { minHeight, label, icon } = metricsFor(neofloSize, neofloAppearance);
+  const split =
+    neofloSplit && splitGeometry(neofloSize, neofloAppearance, neofloSplit);
+  const colours = appearanceFor(
+    theme,
+    neofloVariant,
+    neofloAppearance,
+    neofloSplit !== undefined
+  );
 
   return {
     // 4px (`Scale/100`). The 11 August update took both action controls
-    // off the stadium radius this shipped with, matching the move Chip
-    // already made (DESIGNER_QUESTIONS.md #19); this tightens it one more
-    // rung. `IconButton`, `ToggleButton` and `Chip` still sit at 8px, so a
-    // square icon button beside a button no longer matches — see #57.
+    // off the stadium radius this shipped with (DESIGNER_QUESTIONS.md
+    // #19); this tightens it one more rung, to the radius `Tag` draws.
+    // `IconButton` and `ToggleButton` still sit at 8px, so a square icon
+    // button beside a button no longer matches — see #57.
     borderRadius: radius.xs,
     fontFamily: fontFamilies.product.sans,
     fontSize: label.size,
@@ -239,23 +318,71 @@ const StyledButton = styled(MuiButton, {
     '& .MuiButton-startIcon > *, & .MuiButton-endIcon > *': { ...icon },
     minHeight,
     ...paddingFor(neofloSize, neofloAppearance),
-    ...appearanceFor(theme, neofloVariant, neofloAppearance),
+    ...colours,
+    // After the colours: `outline` sets all four border widths, and the
+    // halves take theirs back.
+    ...(split && {
+      ...split.box,
+      ...split.borders,
+      '&.Mui-disabled': {
+        ...(colours['&.Mui-disabled'] as CSSObject),
+        ...split.borders,
+      },
+    }),
+    ...(neofloSplit === 'end' && {
+      ...splitDividerStyles(
+        theme,
+        neofloVariant,
+        neofloAppearance as ActionAppearance,
+        icon.height
+      ),
+      // The menu's backdrop takes the pointer while it is open, so the
+      // caret would drop back to rest under it. Holding the hover fill
+      // keeps it reading as the thing that opened the menu.
+      '&[aria-expanded="true"]': colours['&:hover'] as CSSObject,
+    }),
   };
 });
+
+/**
+ * The frame of a split button: the label's button and the caret's, side
+ * by side, with the one focus ring round both. Not a MUI component —
+ * there is nothing in MUI to wrap here, `ButtonGroup` being a different
+ * shape (separate buttons that touch) — so the two halves are the
+ * ordinary `Button` box, adjusted by `splitGeometry`.
+ */
+const SplitGroup = styled('div', {
+  shouldForwardProp: (prop) =>
+    prop !== 'neofloVariant' && prop !== 'neofloFullWidth',
+})<{ neofloVariant: ButtonVariant; neofloFullWidth?: boolean }>(
+  ({ theme, neofloVariant, neofloFullWidth }) => ({
+    display: neofloFullWidth ? 'flex' : 'inline-flex',
+    verticalAlign: 'middle',
+    width: neofloFullWidth ? '100%' : undefined,
+    borderRadius: radius.xs,
+    ...splitRingStyles(theme, neofloVariant),
+  })
+);
 
 /**
  * Colour and state styling for one appearance. `social`, the one
  * appearance `ButtonAppearance` adds on top of `ActionAppearance`,
  * answers from its own function; the other three go through the table
  * `IconButton` shares.
+ *
+ * `split` marks a half of a split button, whose focus ring is the
+ * group's rather than its own.
  */
 function appearanceFor(
   theme: Theme,
   variant: ButtonVariant,
-  appearance: ButtonAppearance
+  appearance: ButtonAppearance,
+  split: boolean
 ): CSSObject {
   if (appearance === 'social') return socialStyles(theme);
-  return appearanceStyles(theme, variant, appearance, 'button');
+  return appearanceStyles(theme, variant, appearance, 'button', {
+    ring: !split,
+  });
 }
 
 /**
@@ -306,6 +433,12 @@ function leadingIconFor(
  * supplies the Google mark as its own `startIcon` unless the caller
  * passes one.
  *
+ * Passing `menu` makes it a split button: the label keeps its action
+ * and a caret beside it opens the menu, anchored to the whole control
+ * and closed when an option is chosen. The two are separate buttons, so
+ * each has its own hover, press and focus; the focus ring runs round
+ * both.
+ *
  * @example Primary call to action
  * <Button variant="primary">Submit</Button>
  *
@@ -325,7 +458,21 @@ function leadingIconFor(
  * @example Low-emphasis destructive action
  * <Button variant="error" appearance="text">Delete account</Button>
  *
- * @see Related: IconButton
+ * @example Split button — the label acts, the caret opens the menu
+ * <Button
+ *   startIcon={<HeartIcon />}
+ *   onClick={save}
+ *   menu={
+ *     <>
+ *       <MenuItem onClick={saveAs}>Save as…</MenuItem>
+ *       <MenuItem onClick={saveCopy}>Save a copy</MenuItem>
+ *     </>
+ *   }
+ * >
+ *   Save
+ * </Button>
+ *
+ * @see Related: IconButton, Menu
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -334,23 +481,90 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       appearance = 'contained',
       size: sizeProp,
       startIcon,
+      menu,
+      menuLabel = 'More options',
       ...rest
     },
     ref
   ) => {
     const size = sizeProp ?? defaultSizeFor(appearance);
+    const [open, setOpen] = React.useState(false);
+    const groupRef = React.useRef<HTMLDivElement>(null);
+    const menuId = React.useId();
+
+    const shared = {
+      variant: muiVariantMap[appearance],
+      size: muiSizeMap[size],
+      disableElevation: true,
+      neofloVariant: variant,
+      neofloAppearance: appearance,
+      neofloSize: size,
+    } as const;
+
+    if (!menu || appearance === 'social') {
+      return (
+        <StyledButton
+          ref={ref}
+          {...shared}
+          startIcon={leadingIconFor(appearance, startIcon)}
+          {...rest}
+        />
+      );
+    }
+
+    const { className, style, sx, fullWidth, disabled, ...action } = rest;
+
     return (
-      <StyledButton
-        ref={ref}
-        variant={muiVariantMap[appearance]}
-        size={muiSizeMap[size]}
-        disableElevation
-        neofloVariant={variant}
-        neofloAppearance={appearance}
-        neofloSize={size}
-        startIcon={leadingIconFor(appearance, startIcon)}
-        {...rest}
-      />
+      <>
+        <SplitGroup
+          ref={groupRef}
+          className={className}
+          style={style}
+          sx={sx}
+          neofloVariant={variant}
+          neofloFullWidth={fullWidth}
+        >
+          <StyledButton
+            ref={ref}
+            {...shared}
+            neofloSplit="start"
+            startIcon={startIcon}
+            fullWidth={fullWidth}
+            disabled={disabled}
+            {...action}
+          />
+          <StyledButton
+            {...shared}
+            neofloSplit="end"
+            startIcon={<CaretDownIcon />}
+            aria-label={menuLabel}
+            aria-haspopup="menu"
+            aria-expanded={open}
+            aria-controls={open ? menuId : undefined}
+            disabled={disabled || Boolean(action.loading)}
+            onClick={() => setOpen(true)}
+          />
+        </SplitGroup>
+        <Menu
+          id={menuId}
+          anchorEl={groupRef.current}
+          open={open}
+          onClose={() => setOpen(false)}
+          // Choosing an option closes the menu. Keyed on the row rather
+          // than the click so a disabled row, a divider or a checkbox row
+          // leaves it open.
+          onClick={(event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('[role="menuitem"]:not([aria-disabled="true"])')) {
+              setOpen(false);
+            }
+          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          {menu}
+        </Menu>
+      </>
     );
   }
 );

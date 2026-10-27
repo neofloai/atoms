@@ -182,15 +182,15 @@ export type {
   IconButtonVariant,
 } from './components/IconButton';
 
-export { Chip } from './components/Chip';
+export { Tag } from './components/Tag';
 export type {
-  ChipAppearance,
-  ChipColorValue,
-  ChipColors,
-  ChipProps,
-  ChipSize,
-  ChipVariant,
-} from './components/Chip';
+  TagAppearance,
+  TagColorValue,
+  TagColors,
+  TagProps,
+  TagSize,
+  TagVariant,
+} from './components/Tag';
 
 /**
  * `Link` narrows one prop (`color`, to the house roles) and adds none.
@@ -216,6 +216,7 @@ export type {
 export { InputAdornment, TextField } from './components/TextField';
 export type {
   InputAdornmentProps,
+  PasswordRequirement,
   TextFieldProps,
   TextFieldSize,
   TextFieldStatus,
@@ -272,7 +273,7 @@ export type { CheckboxProps, CheckboxSize } from './components/Checkbox';
 /**
  * The one component here that wraps no single MUI component, because
  * MUI has no faceted filter to wrap. It is a composition of four that it
- * does have — `Chip`, `Checkbox`, `TextField`, `Button` — held in a
+ * does have — `Tag`, `Checkbox`, `TextField`, `Button` — held in a
  * `Paper` and optionally a `Popover`, and it earns its place by the same
  * test as the rest: the rail, the badge, the pane and the two bulk
  * actions are a shape a designer redlines, so the design system owns
@@ -622,7 +623,7 @@ export type {
  * ship together the way the dialog's five do.
  *
  * This is the simple table, and it is the right default: it renders the
- * markup you write, so a cell holds a `Chip` or an `Avatar` or two lines
+ * markup you write, so a cell holds a `Tag` or an `Avatar` or two lines
  * of text without a column definition, and it ships nothing you are not
  * using. `DataGrid`, below, is the one to reach for when the table is the
  * screen's work rather than one of its panels — thousands of rows to

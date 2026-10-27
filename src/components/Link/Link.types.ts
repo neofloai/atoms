@@ -12,7 +12,7 @@ import type { OverrideProps } from '@mui/material/OverridableComponent';
  * hands the root to a router.
  *
  * `variant` is the one word that could mislead, and it stays MUI's. On
- * `Button` and `Chip` `variant` is the colour role; here it is the
+ * `Button` and `Tag` `variant` is the colour role; here it is the
  * *typography* rung, because `Link` is built on `Typography` and inherits
  * its props. That is the same call `Progress` makes, where `variant`
  * means determinate-or-not. Renaming it would break the inheritance MUI

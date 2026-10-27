@@ -22,7 +22,7 @@ export const data: ComponentExamplesData = {
       type: "CircularProgress: 'indeterminate' | 'determinate'. LinearProgress: adds 'buffer' | 'query'",
       default: "'indeterminate'",
       description:
-        'Whether a percentage is known. `indeterminate` animates forever; `determinate` draws `value`. Not the emphasis axis `variant` names on Button or Chip — the colour role is on `color`.',
+        'Whether a percentage is known. `indeterminate` animates forever; `determinate` draws `value`. Not the emphasis axis `variant` names on Button or Tag — the colour role is on `color`.',
     },
     {
       name: 'value',

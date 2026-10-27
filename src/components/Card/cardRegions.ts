@@ -17,7 +17,7 @@ import type { CSSObject } from '@mui/material/styles';
  * `Scale/300` entirely — 12 then 24, nothing between. Borrowing
  * `radius.lg` for a distance would read as a radius at every call site,
  * so the padding stays a named literal here instead. Same shape of gap
- * as the Chip's raw `6`; see DESIGNER_QUESTIONS.md #31.
+ * as the Tag's raw `6`; see DESIGNER_QUESTIONS.md #31.
  */
 export const CARD_PADDING_PX = 16;
 

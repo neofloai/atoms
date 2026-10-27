@@ -23,7 +23,7 @@ import {
  * Figma's content region (node 3500:30637) is a bare padded box: 24px
  * inline, 16px block, no border, no fill of its own. What goes in it is
  * the `modal-items` set beside the modal — a dropdown, a text field, a
- * chip row, an alert, an upload area — which is to say, existing
+ * tag row, an alert, an upload area — which is to say, existing
  * components. So this region carries padding and nothing else, and the
  * cells of that set are composition rather than props here.
  *

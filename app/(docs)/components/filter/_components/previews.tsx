@@ -6,9 +6,10 @@ import Typography from '@mui/material/Typography';
 
 import { FadersHorizontalIcon } from '@/src/icons';
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { DatePicker } from '@/src/components/DatePicker';
 import { Filter, countActiveFilters } from '@/src/components/Filter';
+import { ToggleButton, ToggleButtonGroup } from '@/src/components/ToggleButton';
 
 import { groups, statusOptions, typeOptions } from './sampleData';
 
@@ -52,8 +53,7 @@ export function AnchoredPreview(): React.JSX.Element {
       >
         Filter
         {activeCount > 0 && (
-          <Chip
-            size="sm"
+          <Tag
             variant="primary"
             component="span"
             label={activeCount}
@@ -74,7 +74,7 @@ export function AnchoredPreview(): React.JSX.Element {
 
 AnchoredPreview.displayName = 'AnchoredPreview';
 
-/** Rows whose label is a `Chip`, searched through `searchText`. */
+/** Rows whose label is a `Tag`, searched through `searchText`. */
 export function StatusPreview(): React.JSX.Element {
   const [selection, setSelection] = React.useState<FilterValue>({
     status: ['answered'],
@@ -115,19 +115,19 @@ export function DateRangePreview(): React.JSX.Element {
     <Stack spacing={3} sx={{ p: 2 }}>
       <Stack spacing={1.5}>
         <PaneLabel>Filter by Date Range</PaneLabel>
-        <Stack direction="row" spacing={1}>
+        <ToggleButtonGroup
+          appearance="segmented"
+          exclusive
+          value={preset}
+          onChange={(_, next: Preset | null) => next && setPreset(next)}
+          aria-label="Date range"
+        >
           {PRESETS.map((option) => (
-            <Chip
-              key={option}
-              dense
-              label={option}
-              appearance="outline"
-              variant={option === preset ? 'primary' : 'secondary'}
-              selected={option === preset}
-              onClick={() => setPreset(option)}
-            />
+            <ToggleButton key={option} value={option}>
+              {option}
+            </ToggleButton>
           ))}
-        </Stack>
+        </ToggleButtonGroup>
       </Stack>
       <Stack spacing={1.5}>
         <PaneLabel>Custom Date Range</PaneLabel>

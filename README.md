@@ -51,7 +51,7 @@ atoms/
 ├── app/                          # Next.js App Router
 │   ├── (docs)/                   # Documentation website routes
 │   │   ├── _components/          # Docs shell, sidebar, color-mode toggle
-│   │   ├── components/           # Per-component doc pages (button, chip, ...)
+│   │   ├── components/           # Per-component doc pages (button, tag, ...)
 │   │   ├── tokens/               # Design tokens reference
 │   │   ├── icons/                # Icon browser
 │   │   ├── installation/         # Installation guide
@@ -73,7 +73,7 @@ atoms/
 │   │   │   ├── Button.types.ts    # TypeScript prop interfaces
 │   │   │   ├── Button.examples.tsx # Code examples for docs + MCP
 │   │   │   └── index.ts
-│   │   ├── Checkbox/  Chip/  IconButton/  Radio/  TextField/
+│   │   ├── Checkbox/  Tag/  IconButton/  Radio/  TextField/
 │   │   ├── _shared/              # Internals shared across components
 │   │   └── index.ts
 │   │

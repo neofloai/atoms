@@ -158,5 +158,5 @@ export const data: ComponentExamplesData = {
     "Don't use the legacy system props (`<Box mt={2} />`) — MUI deprecated them in favour of `sx={{ mt: 2 }}`",
     "Don't use `style={{}}` on a Box — it bypasses the theme and loses responsive values",
   ],
-  relatedComponents: ['Stack', 'Grid', 'Container', 'Alert', 'Chip'],
+  relatedComponents: ['Stack', 'Grid', 'Container', 'Alert', 'Tag'],
 };

@@ -11,11 +11,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { data } from '@/src/components/Chip/Chip.examples';
-import { ChipShowcase } from './_components/ChipShowcase';
+import { data } from '@/src/components/Tag/Tag.examples';
+import { TagShowcase } from './_components/TagShowcase';
 
 export const metadata = {
-  title: 'Chip — Atoms',
+  title: 'Tag — Atoms',
   description: data.tagline,
 };
 
@@ -40,7 +40,7 @@ function CodeBlock({ children }: { children: string }) {
 
 CodeBlock.displayName = 'CodeBlock';
 
-export default function ChipDocsPage() {
+export default function TagDocsPage() {
   return (
     <Container maxWidth="lg" disableGutters>
       <Stack spacing={6}>
@@ -49,11 +49,11 @@ export default function ChipDocsPage() {
             Components / Data Display
           </Typography>
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Chip
+            Tag
           </Typography>
           <Typography variant="body1" color="text.secondary">
             {data.tagline} Import with{' '}
-            <code>{`import { Chip } from '@neofloai/atoms';`}</code>
+            <code>{`import { Tag } from '@neofloai/atoms';`}</code>
           </Typography>
           {data.figmaUrl && (
             <Link
@@ -70,7 +70,7 @@ export default function ChipDocsPage() {
 
         <Divider />
 
-        <ChipShowcase />
+        <TagShowcase />
 
         <Divider />
 

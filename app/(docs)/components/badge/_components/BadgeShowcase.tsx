@@ -305,7 +305,7 @@ export function BadgeShowcase() {
       <PreviewCard
         title="Standalone"
         description={
-          'With no child the badge still renders, but its root collapses to nothing and the badge stays centred on that zero-size point — so it overhangs in all four directions and needs space of its own. For a label that sits in a run of text, reach for Chip size="sm" instead.'
+          'With no child the badge still renders, but its root collapses to nothing and the badge stays centred on that zero-size point — so it overhangs in all four directions and needs space of its own. For a label that sits in a run of text, reach for Tag instead.'
         }
       >
         <Stack

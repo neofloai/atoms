@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { ArrowUpRightIcon } from '@/src/icons';
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { IconButton } from '@/src/components/IconButton';
 import { CardActions, CardContent, CardHeader } from '@/src/components/Card';
 
@@ -87,8 +87,7 @@ export function InfoHeader() {
         Increase in fat
       </Typography>
       <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 2 }}>
-        <Chip
-          size="sm"
+        <Tag
           variant="success"
           icon={<ArrowUpRightIcon />}
           label="5%"

@@ -252,6 +252,6 @@ interface DataGridComponent {
  *   rowState={({ row }) => (row.failed ? 'error' : undefined)}
  * />
  *
- * @see Related: Table, Card, Checkbox, MenuItem, IconButton, Chip
+ * @see Related: Table, Card, Checkbox, MenuItem, IconButton, Tag
  */
 export const DataGrid = DataGridRoot as unknown as DataGridComponent;

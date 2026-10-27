@@ -38,7 +38,7 @@
  *
  * @example Only animating on state change, not on first paint
  * <Zoom in={active} appear={false}>
- *   <Chip label="Live" />
+ *   <Tag label="Live" />
  * </Zoom>
  *
  * @see Related: `Grow` when the child's size is unpredictable and

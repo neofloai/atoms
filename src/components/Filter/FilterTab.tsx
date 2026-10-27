@@ -14,7 +14,7 @@ import {
   text,
 } from '@/src/tokens';
 
-import { Chip } from '../Chip';
+import { Tag } from '../Tag';
 import { focusRing, paired } from '../_shared/actionStyles';
 
 import { FILTER_ROW_HEIGHT_PX, filterLabelType } from './filterTokens';
@@ -120,7 +120,7 @@ export interface FilterTabProps {
  * One category in the filter rail: a name, and a count of what is
  * selected under it.
  *
- * The badge is a `Chip size="sm"` — the same 20px tag `Tab` uses for its
+ * The badge is a `Tag` — the same 20px tag `Tab` uses for its
  * count, so a filter rail and a tab bar cannot drift into drawing the
  * same number two different ways. It turns `primary` on the active row
  * and stays neutral elsewhere.
@@ -145,8 +145,7 @@ export function FilterTab({
     >
       <FilterTabLabel>{label}</FilterTabLabel>
       {hasCount && (
-        <Chip
-          size="sm"
+        <Tag
           variant={selected ? 'primary' : 'secondary'}
           // A `<div>` inside the row's `<button>` would be invalid
           // markup; the badge is phrasing content here.

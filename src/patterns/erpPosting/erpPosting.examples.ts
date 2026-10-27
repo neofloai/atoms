@@ -26,7 +26,7 @@ export const data: PatternExamplesData = {
     'Select',
     'Menu',
     'MenuItem',
-    'Chip',
+    'Tag',
     'Divider',
     'DataGrid',
     'Typography',

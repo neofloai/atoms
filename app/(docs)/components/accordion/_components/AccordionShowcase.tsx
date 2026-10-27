@@ -13,7 +13,7 @@ import {
   AccordionSummary,
 } from '@/src/components/Accordion';
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { PaperclipIcon } from '@/src/icons';
 
 const BODY =
@@ -190,7 +190,7 @@ export function AccordionShowcase() {
                   <Box component="span" sx={{ flex: 1 }}>
                     Attachments
                   </Box>
-                  <Chip size="sm" variant="secondary" label="3" />
+                  <Tag variant="secondary" label="3" />
                 </AccordionSummary>
                 <AccordionDetails>
                   brief.pdf, wireframes.fig, notes.txt

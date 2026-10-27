@@ -225,7 +225,7 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  * ## The two props
  *
  * The design draws twelve cell variants, and ten of them are content —
- * a `Chip`, an `Avatar`, a `Switch`, a `Skeleton`, a `Button`, an
+ * a `Tag`, an `Avatar`, a `Switch`, a `Skeleton`, a `Button`, an
  * amount. Those compose, and no prop should stand between a caller and
  * putting a component in a cell.
  *
@@ -268,7 +268,7 @@ const SecondaryLine = styled('span')(({ theme }) => ({
  *   <Checkbox checked={selected} />
  * </TableCell>
  *
- * @see Related: Table, TableRow, TableSortLabel, Chip, Avatar, Checkbox
+ * @see Related: Table, TableRow, TableSortLabel, Tag, Avatar, Checkbox
  */
 export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
   function TableCell({ icon, secondary, children, ...rest }, ref) {

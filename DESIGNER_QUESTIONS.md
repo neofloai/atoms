@@ -1515,3 +1515,70 @@ The navigation sheet draws the top nav bar (4564:6086), the side nav bar in thre
 12. **The role chip in the account header nearly vanishes in dark mode.** The muted tag's fill is `card 2` (#68), which is also the menu's dark fill. Should a chip on a panel step up a rung, or should the muted tag have a dark fill of its own?
 13. **The sheet draws no dark mode.** Carried over from the shell. **Answered 21 October for the collapsed rail** (sample screens, 4564:9280): the main shell's toggle hides the rail outright and the bar runs the full width; hovering the toggle while it is hidden floats the rail in under the bar, 8px inset, with no brand. Shipped as a no-backdrop, no-focus-trap temporary drawer that leaves 300ms after the pointer does, so the pointer can cross the 20px between the toggle and the panel. Clicking the toggle docks it again. The 64px icon strip stays on workflow screens only. **Confirm** the peek should close on pointer-leave rather than staying until clicked away, and that it slides in rather than appearing in place.
 14. **The sidebar resizes, and the sheet draws no handle.** Added 21 October on request: the docked sidebar's trailing edge drags between 220px (the drawn width, and the narrowest at which "Invoice Processing" and its caret still fit) and 320px. The edge is a 6px full-height handle with no resting mark. Hovered, it shows a 4 x 32 grip in `border/default/default` at its middle over the hairline (`default hover` while held), and a tooltip, "Click to collapse / Drag to resize", per the reference shared 21 October. A click collapses the sidebar as the toggle does; a drag past 3px resizes it. The peek floats in at whatever width the sidebar was left at. Hiding and showing now slides, on MUI's persistent-drawer timings (out 195ms `sharp`, in 225ms `easeOut`), with the page reflowing alongside. **Confirm** the limits, the handle's look, and whether the width should be remembered between visits.
+
+---
+
+### 72. Button — the split button (added 27 October, source: Product Design System node 4137:10495)
+
+The button sheet gained a `Splitbutton` axis: 48 cells, `primary` and `secondary` × `filled` and `outline` × `large`, `medium` and `small` × the five states. Each draws one box holding the label, a 1px rule as tall as the glyph, and a caret, with the same inline inset round the outside and between the label and the rule (163 / 129 / 113px wide).
+
+- **`Button` takes `menu`**, `MenuItem`s that open under the whole control from the caret. Setting it renders two real buttons in one frame — the label keeps `onClick`, `href` and `loading`, the caret opens the menu — so each half hovers and presses on its own. The sheet draws the whole box in one state; two hit targets cannot.
+- **The halves add up to the drawn box**: label `inset + content + inset`, caret `inset + glyph + inset`, which is 111 + 52 at `lg` and 40 / 32 at `md` / `sm`. An outlined pair shares one border with the rule inside it.
+- **The focus ring runs round both halves**, shown while either has keyboard focus, in the role's own ring colour. The sheet's focus cells draw one ring round the box.
+- **The rule's colour is per cell**: `border/primary/2` on a filled primary (`border/primary/1` while held), `border/default/1` on a filled secondary, the outline's own colour on both outlined roles, `border/disabled/default` when disabled.
+
+**Confirm:**
+1. **Only four role × style cells are drawn.** `success`, `error` and `warning`, and `text`, accept `menu` and take the role's outline border for the rule. Should they be drawn, or should `menu` be limited to the four that are?
+2. **`xl` has no split cell.** It follows the same arithmetic (48px, 12px inset, 20px caret) and ships as that.
+3. **`social` ignores `menu`.** It has no split cell and a brand logo beside a caret reads as two controls.
+4. **The open state is not drawn.** The caret holds its hover fill while the menu is open, so it reads as the thing that opened it.
+5. **The menu opens flush under the control, right-aligned**, on the same `Menu` the navigation flyouts use. The sheet draws no menu on a split button.
+6. **The filled primary rule differs by size.** `large` draws it `border/primary/2` (`#AEB3F3`), `border/primary/1` while pressed and `border/disabled/default` when disabled. `medium` and `small` draw it plain white in every state (4629:7816, 4629:8126, 4629:8291) and `text/disabled/default` (`#AEABA4`) when disabled (4629:8446). The rules are unbound vectors in both. It ships as `large` draws it at every size, on border tokens like the other three role × style pairs, whose rules agree across sizes. Which one is meant?
+
+---
+
+### 73. Tag — Chip renamed, and the tag sheet redrawn (added 27 October, source: Product Design System node 4648:16784)
+
+The new `Tags` sheet draws 32 cells: eight colours (grey, primary, yellow, purple, green, orange, red, blue) × `Solid` and `Outline` × `md` (20px, `Sans/B2/Medium`, `Scale/100` all round) and `sm` (18px, `Sans/Caption - md/Medium`, `Scale/50` × `Scale/100`), each with an optional 12px glyph on either side. `Chip` is renamed `Tag` throughout to match.
+
+- **The 36px / 32px pill is gone**, and with it `dense`, `selected`, `disabled`, `onClick`, `onDelete` and `avatar`. The sheet draws no states, so a tag is a label, not a control. The one interactive use, the date presets in the filter docs, is now a segmented `ToggleButtonGroup`.
+- **`bordered` is now `appearance="outline"`**, the sheet's `Outline` property. `muted` is gone; its two uses (a user's role in the account header) are `secondary`.
+- **The old 20px tag is the new `md`**, unchanged in box and type, so every `size="sm"` call site dropped the prop and kept its look. `sm` is the new 18px.
+- **Ink and outline moved a rung on several roles** to match the sheet: yellow ink `text/warning/0`, orange `text/orange/2`, purple `text/purple/2` (both appearances), outlines `border/<role>/2` rather than `/1`, and orange's outline `orange/300`. Green and red keep the darker ink at `Outline`.
+- **The outline ships at 1px** where the sheet draws 0.5, as #61 already asks, and the box stays the drawn width.
+
+**Confirm:**
+1. **`Sans/Caption - md/Medium` (11/14) is not in the type tokens**, which carry `caption` at 10/12. It ships as a literal. Should the type collection gain the style?
+2. **`Scale/50` (2px) is not on the component spacing ladder.** It ships as a literal, as the pill's 6px did (#30).
+3. **The outlined purple fills with `surface/purple/subtle hover`** and the solid one with `surface/purple/default`. Both are `purple/75` in light; it ships as `default` for both, so the two appearances share a fill in dark too, as every other role does.
+4. **Orange and purple still have no border ramp**, so their outlines bind raw `orange/300` and `purple/200`. They ship as the surface tokens with those light values (#61).
+5. **Nothing is removable any more.** A filter's "remove this" affordance had been the pill's `onDelete`. Should the sheet draw a removable tag, or is that a different component?
+
+---
+
+### 74. Text field resynced, and a password field of its own (added 27 October, source: Product Design System nodes 3179:106529 and 4680:7190)
+
+The text-field sheet now says "Password fields in their own set", and that set draws three patterns at `lg` and `md`: **Create password** (focused, with a checklist of rules under the field, each crossed in `icon/default/b3` until met and ticked in `icon/success/4` after, the label going `text/default/b2` → `text/success/4`), **Enter password** (the field alone), and **Empty field** (a lock at the start, a placeholder, and "Forgot Password?" right-aligned under the field). Every cell carries an Eye / EyeSlash toggle at the end.
+
+- **It ships as a variant of `TextField`, `type="password"`**, not a component of its own: the toggle (the eye while hidden, the slashed eye while shown, disabled with the field), `requirements` for the checklist, and `forgotPassword` for the link row, on top of everything the field already does. Measured in a browser: 122 / 118, 60 / 56 and 80 / 76 tall, exactly the sheet's three pairs; every ink exact.
+- **The field's input is 13px now.** The sheet binds `Sans/B1/Regular` at 13, which answers #67's question: the input reads `b1` and the 14px literal is gone. `Select`, `DatePicker` and `TimePicker` follow, as they share the field.
+- **The helper row is `Sans/Caption - md/Medium`, 11/14**, down from 12/16 Regular. Stacks with a helper are 86 / 82, as drawn. 11/14 is a literal, as at `Tag size="sm"` (#73).
+- **`TextField` takes `loading`**, the sheet's `skeleton` state, as #67 offered. It draws only the rows the loaded field will have, and the field bar at the loaded height (40 at `lg`), so a form doesn't move when its data arrives. It uses `Skeleton`'s own translucent fill (#24) rather than the sheet's `surface/default/1`.
+
+**Confirm:**
+1. **The skeleton's field bar is 36 tall at `lg`** in the sheet, 4px shorter than the field it stands in for. It ships at 40.
+2. **The empty field's lock is `#AEABA4`, unbound** — the placeholder's grey — where every other field glyph is `icon/default/b3`. It ships as the field glyph. Should a start glyph dim while the field is empty?
+3. **The "Empty field" placeholder is the raw hex `#AEABA4`**, not `text/default/placeholder on-color` (the same grey in light). It ships as the token.
+4. **"Forgot Password?" is drawn as plain `text/default/b1` text** with no underline. It ships as a `Link` in `secondary`, underlined on hover, so it reads as something that can be followed.
+5. **Should a requirement turn red after a failed submit?** The sheet draws met and unmet only.
+
+### 75. Tabs — the count pill follows selection (added 27 October, source: Product Design System node 4699:14064)
+
+The redrawn tab cell draws the count pill neutral in both states — `surface/layers/card 3`, 4 / 2 padding, 4px corner, `Sans/B2/Medium` — with only its label moving: `text/default/body` on the active tab, `text/default/subtle` on the inactive one. It used to be `primary` on every enabled tab and `secondary` on a disabled one.
+
+- **It ships as the sheet draws it**, through `Tag variant="secondary"` with the label recoloured per state. `text/default/body` is the old name for `b1` (its `#2c2b27` fallback predates the rename); it ships as `b1`, `#31302e`.
+- **Only the count changed.** The same cell also draws the active label in `Sans/H6/Medium` with `text/default/body`, the inactive one in a raw `#848076`, and a 2px `border/layers/card 5 on-color` indicator on a 48px tab. Those are the values #63 overruled, and they are left as #63 ships them.
+
+**Confirm:**
+1. **No disabled tab is drawn.** A disabled tab's count ships in `text/disabled/default`, the label's own disabled ink, which sits one rung below `subtle`.
+2. **Is the label's redraw intended?** If the cell above is the new source of truth for the tab and not only for its count, #63's four calls need revisiting together.

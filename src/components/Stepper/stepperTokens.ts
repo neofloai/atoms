@@ -98,7 +98,7 @@ export const PIN_SIZE_PX = INDICATOR_COLUMN_PX;
  * side of one square in the collapse row's vertical ellipsis.
  *
  * A named literal: the component spacing ladder starts at 4, the same
- * reason `Tabs` keeps its own `RULE_WIDTH_PX` and `Chip` its own
+ * reason `Tabs` keeps its own `RULE_WIDTH_PX` and `Tag` its own
  * `DENSE_PADDING_Y_PX`.
  */
 export const LINE_WIDTH_PX = 2;

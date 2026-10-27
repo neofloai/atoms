@@ -15,7 +15,7 @@ import { data as box } from '@/src/components/Box/Box.examples';
 import { data as button } from '@/src/components/Button/Button.examples';
 import { data as card } from '@/src/components/Card/Card.examples';
 import { data as checkbox } from '@/src/components/Checkbox/Checkbox.examples';
-import { data as chip } from '@/src/components/Chip/Chip.examples';
+import { data as tag } from '@/src/components/Tag/Tag.examples';
 import { data as collapse } from '@/src/components/Collapse/Collapse.examples';
 import { data as container } from '@/src/components/Container/Container.examples';
 import { data as divider } from '@/src/components/Divider/Divider.examples';
@@ -66,7 +66,7 @@ const built: readonly (readonly [ComponentExamplesData, string])[] = [
   [checkbox, '/components/checkbox'],
   [radio, '/components/radio'],
   [avatar, '/components/avatar'],
-  [chip, '/components/chip'],
+  [tag, '/components/tag'],
   [alert, '/components/alert'],
   [skeleton, '/components/skeleton'],
   [menu, '/components/menu'],

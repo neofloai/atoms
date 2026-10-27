@@ -43,7 +43,7 @@ import type {
  *
  * `variant` on `Tabs` stays MUI's word for the overflow behaviour
  * (`standard` / `scrollable` / `fullWidth`), not the house meaning of
- * "colour role" it carries on `Button` and `Chip`. There is no colour
+ * "colour role" it carries on `Button` and `Tag`. There is no colour
  * role on this component for it to collide with, and renaming it would
  * put the docs out of step with MUI's own Tabs page for no gain —
  * the same call `Link` made for its `variant`.
@@ -101,7 +101,7 @@ export interface TabProps extends MuiTabProps {
    * A count shown after the label in a small pill — how many rows,
    * matches, or unread items sit behind this tab.
    *
-   * Rendered as `Chip size="sm"`, which is the component Figma nests
+   * Rendered as `Tag`, which is the component Figma nests
    * here, so the pill is the same one used everywhere else.
    */
   count?: React.ReactNode;

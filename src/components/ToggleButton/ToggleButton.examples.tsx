@@ -341,5 +341,5 @@ export const data: ComponentExamplesData = {
     "Don't set `appearance=\"segmented\"` on a standalone `ToggleButton`. The track is drawn by the group, so a lone one is a thumb with nothing around it",
     "Don't change what a toggle means depending on whether it is pressed. \"Mute\" that becomes \"Unmute\" is two labels for one control",
   ],
-  relatedComponents: ['IconButton', 'Chip', 'Checkbox', 'Divider', 'Drawer'],
+  relatedComponents: ['IconButton', 'Tag', 'Checkbox', 'Divider', 'Drawer'],
 };

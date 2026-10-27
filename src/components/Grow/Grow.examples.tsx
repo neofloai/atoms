@@ -95,7 +95,7 @@ export const data: ComponentExamplesData = {
         '      in={show}',
         '      timeout={{ enter: 200 + index * 60, exit: 150 }}',
         '    >',
-        '      <Chip label={tag.label} />',
+        '      <Tag label={tag.label} />',
         '    </Grow>',
         '  ))}',
         '</Stack>',
@@ -107,7 +107,7 @@ export const data: ComponentExamplesData = {
         '`"auto"` is right when the size is unpredictable and wrong when it is not: a small control of known size gets a duration measured from almost nothing, which reads as a snap. State a number for those.',
       code: [
         '<Grow in={active} timeout={200}>',
-        '  <Chip label="Live" variant="success" />',
+        '  <Tag label="Live" variant="success" />',
         '</Grow>',
       ].join('\n'),
     },

@@ -19,7 +19,7 @@ export function TableNotes() {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           This is the simple one, and it is the right default. It renders the
-          markup you write, so a cell can hold anything — a <code>Chip</code>,
+          markup you write, so a cell can hold anything — a <code>Tag</code>,
           an <code>Avatar</code>, a <code>Switch</code>, two lines of text — and
           it ships nothing you are not using. Reach for it for a fixed or short
           list of records: a summary on a dashboard, the lines of one invoice, a
@@ -95,8 +95,8 @@ export function TableNotes() {
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Of the twelve kinds of cell this table is built for, ten are content:
-          a chip, a person, an amount, an attachment, a toggle, a loading
-          placeholder, a button. Those are <code>Chip</code>,{' '}
+          a tag, a person, an amount, an attachment, a toggle, a loading
+          placeholder, a button. Those are <code>Tag</code>,{' '}
           <code>Avatar</code>, <code>Switch</code> and <code>Skeleton</code> put
           in a cell, and no prop should stand between a caller and doing that.
         </Typography>

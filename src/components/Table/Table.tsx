@@ -35,7 +35,7 @@ const TableRoot = styled(MuiTable)(({ theme }) => ({
  * ## When this and when the grid
  *
  * This is the simple one, and it is the right default. It renders the
- * markup you write, so a cell can hold anything — a `Chip`, an `Avatar`,
+ * markup you write, so a cell can hold anything — a `Tag`, an `Avatar`,
  * a `Switch`, two lines of text — and it ships nothing you are not
  * using. Reach for it for a fixed or short list of records: a summary on
  * a dashboard, the lines of one invoice, a settings matrix.
@@ -106,7 +106,7 @@ const TableRoot = styled(MuiTable)(({ theme }) => ({
  *   </TableContainer>
  * </Card>
  *
- * @see Related: TableContainer, TableHead, TableBody, TableRow, TableCell, TableSortLabel, Card, Chip
+ * @see Related: TableContainer, TableHead, TableBody, TableRow, TableCell, TableSortLabel, Card, Tag
  */
 export const Table = React.forwardRef<HTMLTableElement, TableProps>(
   function Table({ size = 'md', stickyHeader = false, ...rest }, ref) {

@@ -8,7 +8,7 @@ export const data: ComponentExamplesData = {
   name: 'TextField',
   category: 'Inputs',
   tagline:
-    'Text input with a static label, two heights, validation statuses, helper text, and single or multi-line entry.',
+    'Text input with a static label, two heights, validation statuses, helper text, single or multi-line entry, and a password variant.',
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3179-106156',
   props: [
@@ -58,7 +58,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'Element rendered at the end of the input, e.g. a clear `IconButton` or a password visibility toggle.',
+        'Element rendered at the end of the input, e.g. a clear `IconButton` or a unit. With `type="password"` it renders before the show / hide toggle.',
     },
     {
       name: 'maxLength',
@@ -92,6 +92,47 @@ export const data: ComponentExamplesData = {
       type: 'boolean',
       default: 'false',
       description: 'Disables the field and applies disabled styling.',
+    },
+    {
+      name: 'type',
+      type: 'string',
+      default: "'text'",
+      description:
+        'The input type, as on any input. `"password"` is the password variant: a show / hide toggle at the end of the field, and the `requirements` and `forgotPassword` rows below when asked for. `autoComplete` then defaults to `new-password` with requirements and `current-password` without.',
+    },
+    {
+      name: 'requirements',
+      type: '{ label: ReactNode; met: boolean }[]',
+      default: '—',
+      description:
+        '`type="password"` only. The rules a new password has to meet, listed under the field: a cross until each is met, a green tick after. The field does not test the value — work out `met` from it yourself, so the rules stay yours to define. Pass it when the field creates a password; leave it out when it signs someone in.',
+    },
+    {
+      name: 'forgotPassword',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        '`type="password"` only. Shown right-aligned under the field. Pass a `Link` with `color="secondary"`; it takes the row’s type.',
+    },
+    {
+      name: 'visible / defaultVisible / onVisibleChange',
+      type: 'boolean / boolean / (visible: boolean) => void',
+      default: '— / false / —',
+      description:
+        '`type="password"` only. Whether the password shows as text, controlled or uncontrolled. The toggle shows the eye while it is hidden and the slashed eye while it shows.',
+    },
+    {
+      name: 'showPasswordLabel / hidePasswordLabel',
+      type: 'string',
+      default: "'Show password' / 'Hide password'",
+      description: '`type="password"` only. The toggle’s label in each state.',
+    },
+    {
+      name: 'loading',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Renders the field’s skeleton in its place while its value loads: a bar for the label, the field and the helper text, each only when the loaded field has that row. The field bar is the loaded field’s height, so nothing moves when the value arrives.',
     },
     {
       name: 'fullWidth',
@@ -162,30 +203,6 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
-      title: 'Start + end adornments',
-      description:
-        'Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.',
-      code: [
-        "import { IconButton, InputAdornment, TextField } from '@neofloai/atoms';",
-        "import { EyeIcon, LockIcon } from '@neofloai/atoms/icons';",
-        '',
-        '<TextField',
-        '  label="Password"',
-        '  placeholder="Enter password"',
-        '  startAdornment={',
-        '    <InputAdornment position="start">',
-        '      <LockIcon size={16} />',
-        '    </InputAdornment>',
-        '  }',
-        '  endAdornment={',
-        '    <IconButton appearance="text" size="sm" aria-label="Show password" onClick={handleToggleVisibility}>',
-        '      <EyeIcon />',
-        '    </IconButton>',
-        '  }',
-        '/>',
-      ].join('\n'),
-    },
-    {
       title: 'Multi-line: grows with content',
       code: '<TextField label="Notes" multiline minRows={3} maxRows={8} />',
     },
@@ -197,12 +214,68 @@ export const data: ComponentExamplesData = {
       title: 'Character counter',
       code: '<TextField label="Bio" placeholder="Tell us about yourself" maxLength={100} />',
     },
+    {
+      title: 'Password: signing in',
+      description:
+        'The toggle comes with the type. Add `forgotPassword` for the way back, right-aligned under the field.',
+      code: [
+        "import { Link, TextField } from '@neofloai/atoms';",
+        '',
+        '<TextField',
+        '  type="password"',
+        '  label="Password"',
+        '  required',
+        '  forgotPassword={',
+        '    <Link color="secondary" underline="hover" href="/reset-password">',
+        '      Forgot password?',
+        '    </Link>',
+        '  }',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'Password: creating one',
+      description:
+        'Each rule is crossed until the value meets it and ticked after, so the reader sees what is left rather than being told after they submit.',
+      code: [
+        "const [value, setValue] = React.useState('');",
+        '',
+        '<TextField',
+        '  type="password"',
+        '  label="New password"',
+        '  required',
+        '  maxLength={100}',
+        '  value={value}',
+        '  onChange={(event) => setValue(event.target.value)}',
+        '  requirements={[',
+        "    { label: 'Minimum 8 letters', met: value.length >= 8 },",
+        "    { label: 'At least one number', met: /\\d/.test(value) },",
+        "    { label: 'At least one special character', met: /[^A-Za-z0-9]/.test(value) },",
+        '  ]}',
+        '/>',
+      ].join('\n'),
+    },
+    {
+      title: 'While the value loads',
+      description:
+        'The skeleton keeps the loaded field’s rows and height, so the form does not shift when the data arrives.',
+      code: [
+        '<TextField',
+        '  label="Company name"',
+        '  helperText="As registered"',
+        '  value={company?.name ?? \'\'}',
+        '  loading={!company}',
+        '/>',
+      ].join('\n'),
+    },
   ],
   dos: [
     'Always provide a `label`',
     'Pair every `status` with a `helperText` explaining what to fix or confirm',
     'Use `minRows`/`maxRows` for free-form text so the field grows with content',
     'Keep helper text to one short sentence',
+    'List the rules with `requirements` when a password is being created, so each one is visible before it is broken',
+    'Offer `forgotPassword` wherever someone signs in',
   ],
   donts: [
     "Don't use placeholder text as a substitute for a label",
@@ -210,6 +283,9 @@ export const data: ComponentExamplesData = {
     "Don't override the 1px border or 4px radius — they are part of the field identity",
     "Don't mix `md` and `lg` fields in one form row — pick one height per form",
     "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended",
+    "Don't add your own show / hide button to a password field — `type=\"password\"` brings one, with its labels and `autoComplete`",
+    "Don't show `requirements` on a sign-in field — the rules are for choosing a password, not for typing one",
+    "Don't set `status=\"error\"` for a password rule that is not met yet — the checklist already says so; keep the status for a password that was rejected",
   ],
-  relatedComponents: ['Button', 'IconButton'],
+  relatedComponents: ['Select', 'IconButton', 'Link'],
 };

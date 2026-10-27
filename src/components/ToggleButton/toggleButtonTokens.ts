@@ -51,7 +51,7 @@ export const muiSizeMap: Record<
  * while a CSS border sits outside the content box. Every toggle
  * reserves the border whether or not it paints it, which is also what
  * keeps `appearance="text"` the same size as `appearance="outline"`.
- * `Chip` makes the same subtraction for the same reason.
+ * `Tag` makes the same subtraction for the same reason.
  */
 export const TOGGLE_PADDING_PX = spacing.component.xs;
 
@@ -147,11 +147,11 @@ interface RoleTokens {
  * `icon/default/b1`, straight off node 3763:4989.
  *
  * The other five have no toggle drawn anywhere in the Figma file, so
- * they are not transcribed — they reuse the pairing `Chip` already
+ * they are not transcribed — they reuse the pairing `Tag` already
  * ships for a selected `contained` pill: the role's `subtle` fill under
  * its own `caption` ink, moving to `subtleHover` under the pointer.
  * That keeps a coloured toggle recognisably the same object as a
- * coloured chip, and means no new colour decisions were invented here.
+ * coloured tag, and means no new colour decisions were invented here.
  * They exist because MUI documents `color` on this component; the sheet
  * only asks for the neutral one. See DESIGNER_QUESTIONS.md #37.
  *

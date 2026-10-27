@@ -19,7 +19,7 @@ export const data: PatternExamplesData = {
     'ToggleButton',
     'Select',
     'Card',
-    'Chip',
+    'Tag',
     'Progress',
     'Tooltip',
     'Divider',

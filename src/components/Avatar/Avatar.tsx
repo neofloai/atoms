@@ -153,7 +153,7 @@ interface RoleColor {
  * Two light values have no exact token:
  *
  * - `purple/300` has none. Its line is `surface.purple.defaultPressed`
- *   (`purple/200`), the rung the chip outlines purple in.
+ *   (`purple/200`), the rung the tag outlines purple in.
  * - `information` (blue) is inked in `text/primary/1` on the sheet, not
  *   `text/information/1`. Followed as drawn.
  *
@@ -313,7 +313,7 @@ const StyledBadge = styled(MuiBadge, {
  * @example Photo with online badge
  * <Avatar src="/users/olivia.jpg" alt="Olivia Park" badge />
  *
- * @see Related: Chip
+ * @see Related: Tag
  */
 export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
   (

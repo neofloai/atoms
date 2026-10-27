@@ -148,7 +148,7 @@ Studio renders what the file carries. Callbacks and state are not re-run. A data
 
 - Component names need React. On other pages, measurements and token lookups still work.
 - Exact names and drift need a development build of an Atoms release with marks. Without marks, two tokens that share a value are both listed.
-- Colours a caller passes as bare strings (e.g. `colors={{ bg: '#f1edfc' }}` on Chip) show as "raw colour". Pass the token object instead to get an exact name.
+- Colours a caller passes as bare strings (e.g. `colors={{ bg: '#f1edfc' }}` on Tag) show as "raw colour". Pass the token object instead to get an exact name.
 - `sx` written as a function is read by calling it with a stand-in theme, so its keys are exact but theme-derived values show as `theme(…)`. Responsive `sx` is checked at the current width only.
 - Tokens come from this repo's current release. A prototype built on an older Atoms release may show a few values as off-system.
 - The panel covers part of the page. Use the dock button to move it to the other side.

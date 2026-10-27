@@ -5,10 +5,10 @@ import type { BadgeProps as MuiBadgeProps } from '@mui/material';
  * rest of the library uses.
  *
  * The five action roles (`primary`, `secondary`, `success`, `error`,
- * `warning`) are the same set `Button`, `IconButton`, and the `Chip`
- * pill expose. `information` is added because MUI's `Badge` has an
+ * `warning`) are the same set `Button`, `IconButton`, and `Tag`
+ * expose. `information` is added because MUI's `Badge` has an
  * `info` colour and the token set carries a full `information` ladder —
- * `Chip`'s 20px tag already exposes it under that name.
+ * `Tag` already exposes it under that name.
  *
  * MUI's `'default'` has no entry here: its neutral grey badge is what
  * this system calls `secondary`.
@@ -53,7 +53,7 @@ export interface BadgeProps extends Omit<MuiBadgeProps, 'color'> {
    * Colour role.
    *
    * Defaults to `'primary'` rather than MUI's `'default'`, matching the
-   * `Chip` default — a badge is nearly always drawing attention to
+   * `Tag` default — a badge is nearly always drawing attention to
    * something, and the neutral treatment is available as `'secondary'`.
    *
    * @default 'primary'

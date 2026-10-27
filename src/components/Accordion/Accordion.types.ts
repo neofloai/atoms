@@ -16,7 +16,7 @@ import type { OverrideProps } from '@mui/material/OverridableComponent';
  *
  * Unusual for this repo, and worth saying plainly. Every other wrapper
  * here translates Material vocabulary into house words — `Button`'s
- * `appearance`, `Chip`'s `variant`, `Progress`'s `information`. This one
+ * `appearance`, `Tag`'s `variant`, `Progress`'s `information`. This one
  * has nothing to translate. The Figma set's only axis is `Property 1`
  * with four values (`closed`, `open`, `open-button`, `stack`), and not
  * one of them is a prop:

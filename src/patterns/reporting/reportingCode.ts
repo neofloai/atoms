@@ -29,7 +29,7 @@ import {
   Box,
   Card,
   CardContent,
-  Chip,
+  Tag,
   Divider,
   IconButton,
   LinearProgress,
@@ -923,8 +923,7 @@ function TrendPill({
 
   return (
     <Stack direction="row" sx={{ gap: 1, alignItems: 'center', mt: 'auto' }}>
-      <Chip
-        size="sm"
+      <Tag
         variant={
           improved === null ? 'secondary' : improved ? 'success' : 'error'
         }

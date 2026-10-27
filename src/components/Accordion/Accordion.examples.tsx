@@ -216,7 +216,7 @@ export const data: ComponentExamplesData = {
         '<Accordion>',
         '  <AccordionSummary>',
         '    <span style={{ flex: 1 }}>Attachments</span>',
-        '    <Chip size="sm" variant="secondary" label="3" />',
+        '    <Tag variant="secondary" label="3" />',
         '  </AccordionSummary>',
         '  <AccordionDetails>brief.pdf, wireframes.fig, notes.txt</AccordionDetails>',
         '</Accordion>',

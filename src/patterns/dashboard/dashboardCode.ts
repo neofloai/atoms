@@ -24,7 +24,7 @@ import {
   Avatar,
   Box,
   Button,
-  Chip,
+  Tag,
   Collapse,
   DataGrid,
   Divider,
@@ -1076,8 +1076,7 @@ export default function QueryLogPage() {
               >
                 Filter
                 {activeCount > 0 && (
-                  <Chip
-                    size="sm"
+                  <Tag
                     variant="primary"
                     component="span"
                     label={activeCount}

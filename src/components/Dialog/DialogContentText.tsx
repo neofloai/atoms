@@ -29,7 +29,7 @@ const bodyType = typography.body.b1;
  * off in dark.
  *
  * Figma has no cell for this text: the `modal-items` set covers fields and
- * chips and an alert, not prose. But both places the set *does* set a
+ * tags and an alert, not prose. But both places the set *does* set a
  * sentence — the title's subtitle and the footer's description — use
  * `Sans/B1/Regular`, so that is the rung a dialog's own body copy takes
  * rather than a new one.

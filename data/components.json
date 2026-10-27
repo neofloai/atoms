@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T17:27:25.230Z",
+  "generatedAt": "2026-10-27T16:46:38.383Z",
   "components": [
     {
       "name": "Accordion",
@@ -125,7 +125,7 @@
         {
           "title": "More than a title in the row",
           "description": "The summary is a flex row, so a count or a status can ride along with the title. Keep it non-interactive: the whole row is already one button, and a button inside a button is invalid HTML.",
-          "code": "<Accordion>\n  <AccordionSummary>\n    <span style={{ flex: 1 }}>Attachments</span>\n    <Chip size=\"sm\" variant=\"secondary\" label=\"3\" />\n  </AccordionSummary>\n  <AccordionDetails>brief.pdf, wireframes.fig, notes.txt</AccordionDetails>\n</Accordion>"
+          "code": "<Accordion>\n  <AccordionSummary>\n    <span style={{ flex: 1 }}>Attachments</span>\n    <Tag variant=\"secondary\" label=\"3\" />\n  </AccordionSummary>\n  <AccordionDetails>brief.pdf, wireframes.fig, notes.txt</AccordionDetails>\n</Accordion>"
         },
         {
           "title": "Ending a group without a rule",
@@ -371,7 +371,7 @@
         "Don't rely on the badge colour alone to convey status — pair it with text elsewhere"
       ],
       "relatedComponents": [
-        "Chip"
+        "Tag"
       ]
     },
     {
@@ -482,7 +482,7 @@
         "Use `variant=\"dot\"` when the fact that something changed matters more than how much did",
         "Keep `badgeContent` to a number or one short word; the counter is 20px tall and grows sideways",
         "Let the default `showZero={false}` hide an empty count instead of rendering a `0`",
-        "Reach for `Chip size=\"sm\"` when you want a label beside text — a badge is anchored to a corner, not set inline"
+        "Reach for `Tag` when you want a label beside text — a badge is anchored to a corner, not set inline"
       ],
       "donts": [
         "Don't rely on the colour alone to carry meaning — a `warning` and an `error` dot are two shades of the same 8px circle to most people",
@@ -494,7 +494,7 @@
       ],
       "relatedComponents": [
         "Avatar",
-        "Chip",
+        "Tag",
         "IconButton"
       ]
     },
@@ -577,7 +577,7 @@
         "Grid",
         "Container",
         "Alert",
-        "Chip"
+        "Tag"
       ]
     },
     {
@@ -603,6 +603,18 @@
           "type": "'sm' | 'md' | 'lg' | 'xl'",
           "default": "'md' ('lg' for social)",
           "description": "Control height: 28px, 32px, 40px, or 48px. Each size sets its own inline padding (8 / 12 / 16 / 12px) and glyph size (16 / 16 / 20 / 20px; `social` keeps its mark at 16 throughout); `lg` and `xl` take a heading-sized label, `sm` and `md` a body-sized one. `xl` is the page-level size — the one action a screen exists for, beside its title — and works with every `variant` and `appearance`. With `appearance=\"social\"` the default is `lg` (40px), the size the sign-in button is drawn at — omit `size` to get it, and pass `md` or `sm` only when a layout genuinely needs a smaller one."
+        },
+        {
+          "name": "menu",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The menu’s options, as `MenuItem`s. Passing it makes a split button: the label keeps its own action and a caret beside it opens the menu, anchored to the whole control and closed when an option is chosen. Drawn for `primary` and `secondary`, `contained` and `outline`, at `sm`, `md` and `lg`; ignored with `appearance=\"social\"`. `onClick`, `href`, `loading`, the icons and every other MUI prop belong to the label’s button, and `ref` points at it; `className`, `style` and `sx` apply to the control as a whole, and `disabled` and `fullWidth` to both halves."
+        },
+        {
+          "name": "menuLabel",
+          "type": "string",
+          "default": "'More options'",
+          "description": "Label of the caret button, which has no text of its own. Only read when `menu` is set."
         },
         {
           "name": "loading",
@@ -653,6 +665,15 @@
           "code": "<Button appearance=\"social\" fullWidth>Continue with Google</Button>"
         },
         {
+          "title": "Split button",
+          "description": "The label does one thing and the caret offers the others. They are two buttons, so each has its own hover and press; the menu opens under the whole control, aligned to its right edge, and closes when an option is chosen. Pass `MenuItem`s as `menu` — there is no state to wire.",
+          "code": "import { HeartIcon } from '@neofloai/atoms/icons';\n\n<Button\n  startIcon={<HeartIcon />}\n  onClick={save}\n  menu={\n    <>\n      <MenuItem onClick={saveAs}>Save as…</MenuItem>\n      <MenuItem onClick={saveCopy}>Save a copy</MenuItem>\n    </>\n  }\n>\n  Save\n</Button>"
+        },
+        {
+          "title": "Split button, outlined and secondary",
+          "code": "<Button appearance=\"outline\" menu={<MenuItem>Export as PDF</MenuItem>}>\n  Export\n</Button>\n<Button variant=\"secondary\" menu={<MenuItem>Export as PDF</MenuItem>}>\n  Export\n</Button>"
+        },
+        {
           "title": "Sizes",
           "code": "<Button size=\"sm\">Small</Button>\n<Button size=\"md\">Medium</Button>\n<Button size=\"lg\">Large</Button>\n<Button size=\"xl\">Extra large</Button>"
         },
@@ -671,7 +692,8 @@
         "Use `appearance=\"outline\"` or `appearance=\"text\"` for secondary actions",
         "Pair `variant=\"secondary\"` with a primary button for cancel/back actions",
         "Use `size=\"xl\"` for the one action a screen exists for, beside its title",
-        "Use `appearance=\"social\"` for sign-in buttons that carry a third-party logo, at its default `lg` size — omit `size`"
+        "Use `appearance=\"social\"` for sign-in buttons that carry a third-party logo, at its default `lg` size — omit `size`",
+        "Make the label the action people want most often, and put the alternatives in `menu` — a split button is one action with variations"
       ],
       "donts": [
         "Don't use multiple `primary` contained buttons in the same section",
@@ -681,10 +703,14 @@
         "Don't put two `xl` buttons on one screen — it is the page's single call to action, and a second one cancels the first",
         "Don't reach for `size=\"xl\"` inside a card, a toolbar, a dialog or a table row; it is sized for a page header",
         "Don't pass `variant` alongside `appearance=\"social\"` expecting a colour — it is drawn neutral only",
-        "Don't pass Phosphor's monochrome `GoogleLogoIcon` to a social button — the default mark is already the right one"
+        "Don't pass Phosphor's monochrome `GoogleLogoIcon` to a social button — the default mark is already the right one",
+        "Don't use `menu` when the label has no action of its own — a button that only opens a menu is a menu trigger, not a split button",
+        "Don't put the one primary action in `menu` — if it is the page's call to action it belongs on the label"
       ],
       "relatedComponents": [
-        "IconButton"
+        "IconButton",
+        "Menu",
+        "MenuItem"
       ]
     },
     {
@@ -774,7 +800,7 @@
         {
           "title": "Metric card",
           "description": "Figma’s `info` header, built as a composition rather than a `CardHeader`. The badge sits directly beside the number, 8px away — `CardHeader`’s `action` slot would push it to the far edge of the card instead, because MUI stretches the title block to fill the row.",
-          "code": "import { ArrowUpRightIcon } from '@neofloai/atoms/icons';\nimport { Card, CardContent, Chip, IconButton, Stack, Typography } from '@neofloai/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardContent>\n    <Stack direction=\"row\" spacing={1} sx={{ alignItems: \"center\" }}>\n      <Typography variant=\"h4\">420%</Typography>\n      <IconButton variant=\"success\" size=\"sm\" aria-label=\"Trending up\">\n        <ArrowUpRightIcon />\n      </IconButton>\n    </Stack>\n    <Typography variant=\"body1\" color=\"text.secondary\">Increase in fat</Typography>\n    <Stack direction=\"row\" spacing={0.5} sx={{ alignItems: \"center\", mt: 2 }}>\n      <Chip size=\"sm\" variant=\"success\" icon={<ArrowUpRightIcon />} label=\"5%\" />\n      <Typography variant=\"body2\" color=\"text.secondary\">vs prev 30d</Typography>\n    </Stack>\n  </CardContent>\n</Card>"
+          "code": "import { ArrowUpRightIcon } from '@neofloai/atoms/icons';\nimport { Card, CardContent, Tag, IconButton, Stack, Typography } from '@neofloai/atoms';\n\n<Card sx={{ maxWidth: 400 }}>\n  <CardContent>\n    <Stack direction=\"row\" spacing={1} sx={{ alignItems: \"center\" }}>\n      <Typography variant=\"h4\">420%</Typography>\n      <IconButton variant=\"success\" size=\"sm\" aria-label=\"Trending up\">\n        <ArrowUpRightIcon />\n      </IconButton>\n    </Stack>\n    <Typography variant=\"body1\" color=\"text.secondary\">Increase in fat</Typography>\n    <Stack direction=\"row\" spacing={0.5} sx={{ alignItems: \"center\", mt: 2 }}>\n      <Tag variant=\"success\" icon={<ArrowUpRightIcon />} label=\"5%\" />\n      <Typography variant=\"body2\" color=\"text.secondary\">vs prev 30d</Typography>\n    </Stack>\n  </CardContent>\n</Card>"
         },
         {
           "title": "Body content that is not a header",
@@ -823,7 +849,7 @@
       "relatedComponents": [
         "Button",
         "IconButton",
-        "Chip",
+        "Tag",
         "Divider",
         "Grid",
         "Avatar"
@@ -916,166 +942,6 @@
       "relatedComponents": [
         "TextField",
         "Button"
-      ]
-    },
-    {
-      "name": "Chip",
-      "category": "Data Display",
-      "tagline": "Compact pill for tags, filters, and statuses with the same colour roles as Button.",
-      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=977-17709",
-      "props": [
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "default": "—",
-          "description": "Chip content. Inherited from MUI."
-        },
-        {
-          "name": "variant",
-          "type": "'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'information' | 'orange' | 'purple' | 'muted'",
-          "default": "'primary'",
-          "description": "`information`/`orange`/`purple`/`muted` are only drawn at `size=\"sm\"`; at `size=\"md\"` they fall back to the `secondary` look. `muted` is a paler grey than `secondary` with a lighter label, for metadata that should recede — a file type beside a file name. It is not `information`, which is blue."
-        },
-        {
-          "name": "appearance",
-          "type": "'contained' | 'outline'",
-          "default": "'contained'",
-          "description": "Visual emphasis: subtle fill or 1px border. Only applies at `size=\"md\"` — `size=\"sm\"` always renders a flat swatch."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md'",
-          "default": "'md'",
-          "description": "`md` = 36px pill (five roles, contained/outline, interactive). `sm` = 20px flat tag (nine roles, no states)."
-        },
-        {
-          "name": "dense",
-          "type": "boolean",
-          "default": "false",
-          "description": "Renders the 32px pill instead of the 36px one. Only the vertical padding changes. No effect at `size=\"sm\"`."
-        },
-        {
-          "name": "colors",
-          "type": "{ bg?: ModeToken | string; border?: ModeToken | string; text?: ModeToken | string }",
-          "default": "undefined",
-          "description": "Overrides the three colours `variant` would paint, per key — pass one and the other two still come from the role. `size=\"sm\"` only, and `border` shows only with `bordered`; `disabled` still wins over all three. Reach for a role first: a status column is read by meaning, and a reader cannot tell from a decorative hue which of two statuses is the bad one. This is for a colour the roles genuinely do not carry. Pass design tokens rather than hexes — a token is a `{ light, dark }` pair and resolves per scheme, where a bare hex is light-mode only by definition and paints the same colour on a near-black page."
-        },
-        {
-          "name": "bordered",
-          "type": "boolean",
-          "default": "false",
-          "description": "Outlines the fill with a 1px border in the role’s own border token — the treatment a Status column uses. `size=\"sm\"` only; the pill already carries a border on `appearance=\"outline\"`. Every role has a border rung, so a bordered chip is still chosen by meaning rather than by colour, and it resolves in both schemes with no hex at the call site. On `success`, `error` and `purple` the label also steps a rung darker to hold against the outline. The border is taken out of the inline padding, so a bordered chip is exactly as wide as a plain one."
-        },
-        {
-          "name": "selected",
-          "type": "boolean",
-          "default": "—",
-          "description": "Persistent selected state for filter chips: draws the role border plus the selected fill. No effect at `size=\"sm\"`."
-        },
-        {
-          "name": "avatar",
-          "type": "ReactElement",
-          "default": "—",
-          "description": "Leading avatar element. Inherited from MUI."
-        },
-        {
-          "name": "icon",
-          "type": "ReactElement",
-          "default": "—",
-          "description": "Leading icon element. Inherited from MUI."
-        },
-        {
-          "name": "onDelete",
-          "type": "(event) => void",
-          "default": "—",
-          "description": "Shows a trailing delete affordance and fires when activated. Inherited from MUI."
-        },
-        {
-          "name": "onClick",
-          "type": "(event) => void",
-          "default": "—",
-          "description": "Makes the chip clickable; hover and pressed states only render on clickable chips."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "default": "false",
-          "description": "Disables the chip and applies disabled styling."
-        }
-      ],
-      "examples": [
-        {
-          "title": "Status tag",
-          "code": "<Chip variant=\"success\" label=\"Active\" />"
-        },
-        {
-          "title": "Removable filter",
-          "code": "<Chip\n  appearance=\"outline\"\n  label=\"Design\"\n  onDelete={handleRemove}\n/>"
-        },
-        {
-          "title": "With avatar",
-          "code": "<Chip\n  variant=\"secondary\"\n  avatar={<Avatar>OP</Avatar>}\n  label=\"Olivia Park\"\n/>"
-        },
-        {
-          "title": "Clickable chip",
-          "code": "<Chip label=\"View report\" onClick={handleOpen} />"
-        },
-        {
-          "title": "Selectable filter",
-          "description": "The selected state persists after the pointer leaves, so it draws a border rather than relying on the hover fill.",
-          "code": "<Chip\n  label=\"Design\"\n  appearance=\"outline\"\n  selected={isSelected}\n  onClick={toggle}\n/>"
-        },
-        {
-          "title": "Sizes",
-          "description": "`dense` is the 32px pill; the 36px pill is the default. `size=\"sm\"` is the separate 20px flat tag.",
-          "code": "<Chip size=\"sm\" variant=\"purple\" label=\"Small\" />\n<Chip dense label=\"Dense\" />\n<Chip label=\"Medium\" />"
-        },
-        {
-          "title": "Bordered status tags",
-          "description": "A table’s Status column: the role’s fill with its own border token outlined over it. Pick the role for what the status means — `information` for in-flight, `success` for done, `error` for failed — and the colour follows from the token in both light and dark.",
-          "code": "<Chip size=\"sm\" variant=\"information\" bordered label=\"Extraction\" />\n<Chip size=\"sm\" variant=\"warning\" bordered label=\"Matching\" />\n<Chip size=\"sm\" variant=\"success\" bordered label=\"ERP Posting\" />\n<Chip size=\"sm\" variant=\"error\" bordered label=\"Error\" />"
-        },
-        {
-          "title": "A status the roles have no colour for",
-          "description": "The escape hatch, and the last resort. `colors` takes the fill, the outline and the label separately, so a status the semantic roles do not cover can still be built out of tokens rather than hexes — which is what keeps it working in dark mode. Everything else about the chip is unchanged: same 20px box, same 4px radius, same hairline.",
-          "code": "import { border, surface, text } from '@neofloai/atoms/tokens';\n\n<Chip\n  size=\"sm\"\n  bordered\n  label=\"Extraction\"\n  colors={{\n    bg: surface.information.subtle,\n    border: border.information.default,\n    text: text.information[3],\n  }}\n/>"
-        },
-        {
-          "title": "A status with a glyph",
-          "description": "The `icon` slot needs no wiring: the glyph inherits the role’s label colour and is sized by the chip. Keep it for the status that needs attention — a glyph on every row is decoration, and it stops the one that matters from standing out.",
-          "code": "import { WarningCircleIcon } from '@neofloai/atoms/icons';\n\n<Chip\n  size=\"sm\"\n  variant=\"error\"\n  bordered\n  icon={<WarningCircleIcon />}\n  label=\"Error\"\n/>"
-        },
-        {
-          "title": "Flat tag colours",
-          "description": "`size=\"sm\"` adds four colour roles with no pill equivalent.",
-          "code": "<Chip size=\"sm\" variant=\"information\" label=\"Info\" />\n<Chip size=\"sm\" variant=\"orange\" label=\"Orange\" />\n<Chip size=\"sm\" variant=\"purple\" label=\"Purple\" />\n<Chip size=\"sm\" variant=\"muted\" label=\"Muted\" />"
-        },
-        {
-          "title": "A tag with glyphs",
-          "description": "The tag holds a 12px glyph on either side: `icon` leads, and `onDelete` puts its affordance on the trailing side at the same size. Both inherit the label colour.",
-          "code": "import { FilePdfIcon, XIcon } from '@neofloai/atoms/icons';\n\n<Chip\n  size=\"sm\"\n  variant=\"muted\"\n  icon={<FilePdfIcon />}\n  label=\"invoice.pdf\"\n  onDelete={handleRemove}\n  deleteIcon={<XIcon />}\n/>"
-        }
-      ],
-      "dos": [
-        "Match the `variant` to the meaning (e.g. `success` for healthy states, `error` for failures)",
-        "Use `appearance=\"outline\"` for filter chips and lower-emphasis tags",
-        "Use `onDelete` for removable selections so the affordance is consistent",
-        "Pair `selected` with `onClick` so the chip is a real control rather than a static pill",
-        "Keep labels short — one or two words"
-      ],
-      "donts": [
-        "Don't use a Chip as a primary action — use `Button` instead",
-        "Don't rely on colour alone to communicate status — the label must carry the meaning",
-        "Don't mix sizes within one group of chips",
-        "Don't hardcode background or border colours — the variant covers both colour schemes",
-        "Don't use `information`/`orange`/`purple`/`muted` at `size=\"md\"` — they have no pill styling and fall back to `secondary`",
-        "Don't use `muted` for a status — it is drawn to recede, and a status is what a reader scans the column for",
-        "Don't use `selected` to mean \"active nav item\" — it reads as a toggle, not a location",
-        "Don't mix `dense` and default pills in the same row — the 4px difference reads as misalignment"
-      ],
-      "relatedComponents": [
-        "Button",
-        "IconButton"
       ]
     },
     {
@@ -1359,7 +1225,7 @@
           "name": "columns",
           "type": "GridColDef[]",
           "default": "—",
-          "description": "The column definitions, MUI X’s own. `type` is worth setting on every one: it picks the comparator, the filter operators, the editor, and the wording of the sort menu. `renderCell` is where a `Chip`, an `Avatar` or a `Button` goes — the same content the table puts in a cell, one level of indirection further out. A column that defines one is given `display: 'flex'` so what it renders centres in the row; pass `display: 'text'` to keep the cell’s own ellipsis instead."
+          "description": "The column definitions, MUI X’s own. `type` is worth setting on every one: it picks the comparator, the filter operators, the editor, and the wording of the sort menu. `renderCell` is where a `Tag`, an `Avatar` or a `Button` goes — the same content the table puts in a cell, one level of indirection further out. A column that defines one is given `display: 'flex'` so what it renders centres in the row; pass `display: 'text'` to keep the cell’s own ellipsis instead."
         }
       ],
       "examples": [
@@ -1381,7 +1247,7 @@
         {
           "title": "A cell that holds a component",
           "description": "Same answer as the table’s, one level further out: the cell renders whatever you return.",
-          "code": "const columns = [\n  { field: 'reference', headerName: 'Invoice', width: 160 },\n  {\n    field: 'status',\n    headerName: 'Status',\n    width: 140,\n    sortable: false,\n    renderCell: ({ row }) => (\n      <Chip size=\"sm\" variant={row.statusVariant} label={row.status} />\n    ),\n  },\n  {\n    field: 'actions',\n    headerName: 'Action',\n    width: 120,\n    align: 'right',\n    headerAlign: 'right',\n    sortable: false,\n    renderCell: ({ row }) => (\n      <Button appearance=\"outline\" variant=\"secondary\" size=\"sm\">\n        Review\n      </Button>\n    ),\n  },\n];"
+          "code": "const columns = [\n  { field: 'reference', headerName: 'Invoice', width: 160 },\n  {\n    field: 'status',\n    headerName: 'Status',\n    width: 140,\n    sortable: false,\n    renderCell: ({ row }) => (\n      <Tag variant={row.statusVariant} label={row.status} />\n    ),\n  },\n  {\n    field: 'actions',\n    headerName: 'Action',\n    width: 120,\n    align: 'right',\n    headerAlign: 'right',\n    sortable: false,\n    renderCell: ({ row }) => (\n      <Button appearance=\"outline\" variant=\"secondary\" size=\"sm\">\n        Review\n      </Button>\n    ),\n  },\n];"
         },
         {
           "title": "Loading",
@@ -1423,7 +1289,7 @@
         "Table",
         "Card",
         "Checkbox",
-        "Chip",
+        "Tag",
         "IconButton",
         "MenuItem"
       ]
@@ -2288,17 +2154,17 @@
         {
           "title": "Anchored to a button",
           "description": "Passing `anchorEl` floats the panel under a control instead of rendering it in flow. The trigger carries the count: `countActiveFilters` sums the same numbers the rail shows, so the closed button and the open panel always agree — and unlike summing `value` by hand it also counts groups that declare their own `count`.",
-          "code": "const activeCount = countActiveFilters(groups, selection);\n\n<Button\n  variant=\"secondary\"\n  appearance=\"outline\"\n  startIcon={<FadersHorizontalIcon />}\n  onClick={(event) => setAnchorEl(event.currentTarget)}\n>\n  Filter\n  {activeCount > 0 && (\n    <Chip size=\"sm\" variant=\"primary\" component=\"span\" label={activeCount} />\n  )}\n</Button>\n\n<Filter\n  groups={groups}\n  value={selection}\n  onChange={setSelection}\n  anchorEl={anchorEl}\n  open={anchorEl !== null}\n  onClose={() => setAnchorEl(null)}\n/>"
+          "code": "const activeCount = countActiveFilters(groups, selection);\n\n<Button\n  variant=\"secondary\"\n  appearance=\"outline\"\n  startIcon={<FadersHorizontalIcon />}\n  onClick={(event) => setAnchorEl(event.currentTarget)}\n>\n  Filter\n  {activeCount > 0 && (\n    <Tag variant=\"primary\" component=\"span\" label={activeCount} />\n  )}\n</Button>\n\n<Filter\n  groups={groups}\n  value={selection}\n  onChange={setSelection}\n  anchorEl={anchorEl}\n  open={anchorEl !== null}\n  onClose={() => setAnchorEl(null)}\n/>"
         },
         {
           "title": "Filtering a data grid",
           "description": "What the panel is mostly for. A search box and a badged trigger sit above the grid; `Clear Filters` resets both, because from the reader's side there is one filtered table, not two. The rows are narrowed here rather than through the grid's own filter model — the panel already produces the selection, and translating it into MUI X's filter items would only hide what is happening.",
-          "code": "const activeCount = countActiveFilters(groups, selection);\nconst query = search.trim().toLowerCase();\n\nconst rows = QUERY_ROWS.filter(\n  (row) =>\n    (query === '' || rowSearchText(row).includes(query)) &&\n    groups.every((group) =>\n      matchesFacet(row, group.id, selection[group.id] ?? [])\n    )\n);\n\n<Stack direction=\"row\" justifyContent=\"space-between\">\n  <TextField\n    placeholder=\"Search...\"\n    value={search}\n    onChange={(event) => setSearch(event.target.value)}\n    startAdornment={<MagnifyingGlassIcon />}\n  />\n  <Stack direction=\"row\" spacing={1}>\n    <Button\n      variant=\"secondary\"\n      appearance=\"outline\"\n      disabled={!isFiltered}\n      onClick={handleClearFilters}\n    >\n      Clear Filters\n    </Button>\n    <Button\n      variant=\"secondary\"\n      appearance=\"outline\"\n      startIcon={<FadersHorizontalIcon />}\n      onClick={(event) => setAnchorEl(event.currentTarget)}\n    >\n      Filter\n      {activeCount > 0 && (\n        <Chip size=\"sm\" variant=\"primary\" component=\"span\" label={activeCount} />\n      )}\n    </Button>\n  </Stack>\n</Stack>\n\n<DataGrid size=\"sm\" rows={rows} columns={QUERY_COLUMNS} />\n\n<Filter\n  groups={groups}\n  value={selection}\n  onChange={setSelection}\n  anchorEl={anchorEl}\n  open={anchorEl !== null}\n  onClose={() => setAnchorEl(null)}\n  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}\n  transformOrigin={{ vertical: 'top', horizontal: 'right' }}\n/>"
+          "code": "const activeCount = countActiveFilters(groups, selection);\nconst query = search.trim().toLowerCase();\n\nconst rows = QUERY_ROWS.filter(\n  (row) =>\n    (query === '' || rowSearchText(row).includes(query)) &&\n    groups.every((group) =>\n      matchesFacet(row, group.id, selection[group.id] ?? [])\n    )\n);\n\n<Stack direction=\"row\" justifyContent=\"space-between\">\n  <TextField\n    placeholder=\"Search...\"\n    value={search}\n    onChange={(event) => setSearch(event.target.value)}\n    startAdornment={<MagnifyingGlassIcon />}\n  />\n  <Stack direction=\"row\" spacing={1}>\n    <Button\n      variant=\"secondary\"\n      appearance=\"outline\"\n      disabled={!isFiltered}\n      onClick={handleClearFilters}\n    >\n      Clear Filters\n    </Button>\n    <Button\n      variant=\"secondary\"\n      appearance=\"outline\"\n      startIcon={<FadersHorizontalIcon />}\n      onClick={(event) => setAnchorEl(event.currentTarget)}\n    >\n      Filter\n      {activeCount > 0 && (\n        <Tag variant=\"primary\" component=\"span\" label={activeCount} />\n      )}\n    </Button>\n  </Stack>\n</Stack>\n\n<DataGrid size=\"sm\" rows={rows} columns={QUERY_COLUMNS} />\n\n<Filter\n  groups={groups}\n  value={selection}\n  onChange={setSelection}\n  anchorEl={anchorEl}\n  open={anchorEl !== null}\n  onClose={() => setAnchorEl(null)}\n  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}\n  transformOrigin={{ vertical: 'top', horizontal: 'right' }}\n/>"
         },
         {
-          "title": "Chips as option labels",
-          "description": "An option label can be any node, and a status facet should use the same chip its column draws — one that reads differently in the dropdown makes the reader check whether it is the same thing. Give those rows a `searchText`: a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.",
-          "code": "const statusOptions = STATUSES.map((status) => ({\n  value: status.value,\n  // The same component the Status column renders, not a copy of it.\n  label: <StatusChip status={status.value} />,\n  searchText: status.label,\n}));"
+          "title": "Tags as option labels",
+          "description": "An option label can be any node, and a status facet should use the same tag its column draws — one that reads differently in the dropdown makes the reader check whether it is the same thing. Give those rows a `searchText`: a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.",
+          "code": "const statusOptions = STATUSES.map((status) => ({\n  value: status.value,\n  // The same component the Status column renders, not a copy of it.\n  label: <StatusTag status={status.value} />,\n  searchText: status.label,\n}));"
         },
         {
           "title": "A category with its own pane",
@@ -2335,7 +2201,7 @@
       ],
       "relatedComponents": [
         "DataGrid",
-        "Chip",
+        "Tag",
         "Checkbox",
         "TextField"
       ]
@@ -2559,12 +2425,12 @@
         {
           "title": "Staggering a group",
           "description": "Offsetting each child by a fixed step turns a set of simultaneous appearances into one movement across the group. Keep the exit uniform — staggering the way out reads as hesitation.",
-          "code": "<Stack direction=\"row\" spacing={1}>\n  {tags.map((tag, index) => (\n    <Grow\n      key={tag.id}\n      in={show}\n      timeout={{ enter: 200 + index * 60, exit: 150 }}\n    >\n      <Chip label={tag.label} />\n    </Grow>\n  ))}\n</Stack>"
+          "code": "<Stack direction=\"row\" spacing={1}>\n  {tags.map((tag, index) => (\n    <Grow\n      key={tag.id}\n      in={show}\n      timeout={{ enter: 200 + index * 60, exit: 150 }}\n    >\n      <Tag label={tag.label} />\n    </Grow>\n  ))}\n</Stack>"
         },
         {
           "title": "A fixed duration instead",
           "description": "`\"auto\"` is right when the size is unpredictable and wrong when it is not: a small control of known size gets a duration measured from almost nothing, which reads as a snap. State a number for those.",
-          "code": "<Grow in={active} timeout={200}>\n  <Chip label=\"Live\" variant=\"success\" />\n</Grow>"
+          "code": "<Grow in={active} timeout={200}>\n  <Tag label=\"Live\" variant=\"success\" />\n</Grow>"
         },
         {
           "title": "Already used by Menu",
@@ -2976,6 +2842,25 @@
       "category": "Navigation",
       "tagline": "Floating panel of choices anchored to a control — the branded surface around MUI Menu, with the full MUI prop surface intact.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6085",
+      "keywords": [
+        "dropdown",
+        "dropdown menu",
+        "popup menu",
+        "context menu",
+        "overflow menu",
+        "account menu",
+        "user menu",
+        "profile",
+        "profile menu",
+        "profile dropdown",
+        "avatar menu",
+        "avatar dropdown",
+        "sign out",
+        "log out",
+        "logout",
+        "theme switch",
+        "workspace switcher"
+      ],
       "props": [
         {
           "name": "open",
@@ -3090,8 +2975,8 @@
         },
         {
           "title": "Account menu",
-          "description": "The dropdown off the avatar in the top bar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — then three groups divided by rules, a theme switch on a row of its own, and Sign out last in the `error` tone. Right-aligned under the avatar, at the 240px the design draws.",
-          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  anchorOrigin={{ vertical: \"bottom\", horizontal: \"right\" }}\n  transformOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n  sx={{ '& .MuiMenu-paper': { width: 240 } }}\n>\n  <AccountHeader user={user} />\n  <Divider />\n  <MenuItem onClick={close}><GearSixIcon size={16} />Settings</MenuItem>\n  <MenuItem onClick={close}><CreditCardIcon size={16} />Billings</MenuItem>\n  <MenuItem onClick={close}><ChartBarIcon size={16} />Reporting</MenuItem>\n  <Divider />\n  <MenuItem onClick={close}><QuestionIcon size={16} />Help</MenuItem>\n  <MenuItem onClick={close}><BookOpenIcon size={16} />Documentation</MenuItem>\n  <MenuItem onClick={close}><BugIcon size={16} />Report an issue</MenuItem>\n  <Divider />\n  <ThemeRow />\n  <Divider />\n  <MenuItem variant=\"error\" onClick={signOut}>\n    <SignOutIcon size={16} />\n    Sign out\n  </MenuItem>\n</Menu>"
+          "description": "The profile dropdown off the avatar at the end of the app bar — the standard account menu, and the one place it lives: in the `Navbar`, not in the sidebar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — as a 36px avatar beside the name, the address under it in caption ink, and the role as a small grey tag. Then three groups divided by rules: Settings, Billings and Reporting; Help, Documentation and Report an issue; a System / Light / Dark theme switch on a row of its own. Sign out comes last in the `error` tone. The panel is 240px wide, right-aligned under the avatar 12px below the bar, and opens with `variant=\"menu\"` because the header is not an option. Neither the header nor the theme row is a library component, so both are written out here in full — copy the whole file.",
+          "code": "import * as React from \"react\";\nimport {\n  Avatar,\n  Box,\n  Tag,\n  Divider,\n  IconButton,\n  Menu,\n  MenuItem,\n  Stack,\n  ToggleButton,\n  ToggleButtonGroup,\n  Typography,\n  useColorScheme,\n} from \"@neofloai/atoms\";\nimport {\n  BookOpenIcon,\n  BugIcon,\n  ChartBarIcon,\n  CreditCardIcon,\n  DesktopIcon,\n  GearSixIcon,\n  MoonIcon,\n  QuestionIcon,\n  SignOutIcon,\n  SunIcon,\n} from \"@neofloai/atoms/icons\";\nimport { fontWeights, text } from \"@neofloai/atoms/tokens\";\nimport { neofloTheme } from \"@neofloai/atoms/theme\";\nimport type { ModeToken } from \"@neofloai/atoms/tokens\";\n\ntype Theme = typeof neofloTheme;\n\ninterface User {\n  name: string;\n  email: string;\n  initials: string;\n  role: string;\n}\n\n/** Paint one property from a token, in both schemes. */\nfunction ink(property: string, token: ModeToken) {\n  return (theme: Theme) => ({\n    [property]: token.light,\n    ...theme.applyStyles(\"dark\", { [property]: token.dark }),\n  });\n}\n\n/** The signed-in user, heading the panel. */\nfunction AccountHeader({ user }: { user: User }) {\n  return (\n    <Box sx={{ display: \"flex\", gap: 1.5, px: 1, py: 1.5 }}>\n      <Avatar size=\"md\" color=\"error\">{user.initials}</Avatar>\n      <Stack sx={{ gap: 1, minWidth: 0, alignItems: \"flex-start\" }}>\n        <Stack sx={{ gap: 0.25, minWidth: 0, maxWidth: \"100%\" }}>\n          <Typography\n            variant=\"body1\"\n            noWrap\n            sx={(theme) => ({\n              fontWeight: fontWeights.medium,\n              ...ink(\"color\", text.default.b1)(theme),\n            })}\n          >\n            {user.name}\n          </Typography>\n          <Typography\n            variant=\"body2\"\n            noWrap\n            sx={(theme) => ({\n              fontWeight: fontWeights.medium,\n              ...ink(\"color\", text.default.b3)(theme),\n            })}\n          >\n            {user.email}\n          </Typography>\n        </Stack>\n        <Tag variant=\"secondary\" label={user.role} />\n      </Stack>\n    </Box>\n  );\n}\n\n/** System, light or dark — wired to the real colour scheme. */\nfunction ThemeRow() {\n  const { mode, setMode } = useColorScheme();\n\n  return (\n    <Box\n      sx={(theme) => ({\n        display: \"flex\",\n        alignItems: \"center\",\n        justifyContent: \"space-between\",\n        minHeight: 28,\n        px: 1,\n        typography: \"body1\",\n        fontWeight: fontWeights.medium,\n        ...ink(\"color\", text.default.b1)(theme),\n      })}\n    >\n      Theme\n      <ToggleButtonGroup\n        appearance=\"segmented\"\n        exclusive\n        aria-label=\"Theme\"\n        value={mode ?? \"system\"}\n        onChange={(_, next: \"system\" | \"light\" | \"dark\" | null) => {\n          if (next) setMode(next);\n        }}\n      >\n        <ToggleButton value=\"system\" aria-label=\"System\"><DesktopIcon /></ToggleButton>\n        <ToggleButton value=\"light\" aria-label=\"Light\"><SunIcon /></ToggleButton>\n        <ToggleButton value=\"dark\" aria-label=\"Dark\"><MoonIcon /></ToggleButton>\n      </ToggleButtonGroup>\n    </Box>\n  );\n}\n\nexport function AccountMenu({\n  user,\n  onSignOut,\n}: {\n  user: User;\n  onSignOut: () => void;\n}) {\n  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);\n  const close = () => setAnchorEl(null);\n\n  return (\n    <>\n      {/* The trigger: the last thing in the Navbar's row. */}\n      <IconButton\n        variant=\"secondary\"\n        appearance=\"text\"\n        size=\"sm\"\n        aria-label=\"Account\"\n        aria-haspopup=\"menu\"\n        aria-expanded={Boolean(anchorEl)}\n        onClick={(event) => setAnchorEl(event.currentTarget)}\n      >\n        <Avatar size=\"sm\" color=\"error\">{user.initials}</Avatar>\n      </IconButton>\n\n      <Menu\n        anchorEl={anchorEl}\n        open={Boolean(anchorEl)}\n        onClose={close}\n        anchorOrigin={{ vertical: \"bottom\", horizontal: \"right\" }}\n        transformOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n        variant=\"menu\"\n        sx={{ '& .MuiMenu-paper': { width: 240, mt: 1.5 } }}\n      >\n        <AccountHeader user={user} />\n        <Divider />\n        <MenuItem onClick={close}><GearSixIcon size={16} />Settings</MenuItem>\n        <MenuItem onClick={close}><CreditCardIcon size={16} />Billings</MenuItem>\n        <MenuItem onClick={close}><ChartBarIcon size={16} />Reporting</MenuItem>\n        <Divider />\n        <MenuItem onClick={close}><QuestionIcon size={16} />Help</MenuItem>\n        <MenuItem onClick={close}><BookOpenIcon size={16} />Documentation</MenuItem>\n        <MenuItem onClick={close}><BugIcon size={16} />Report an issue</MenuItem>\n        <Divider />\n        <ThemeRow />\n        <Divider />\n        <MenuItem\n          variant=\"error\"\n          onClick={() => {\n            close();\n            onSignOut();\n          }}\n        >\n          <SignOutIcon size={16} />\n          Sign out\n        </MenuItem>\n      </Menu>\n    </>\n  );\n}"
         },
         {
           "title": "Positioning",
@@ -3289,7 +3174,9 @@
         "page layout",
         "layout",
         "title bar",
-        "breadcrumb bar"
+        "breadcrumb bar",
+        "account menu",
+        "profile dropdown"
       ],
       "props": [
         {
@@ -3350,8 +3237,8 @@
       "examples": [
         {
           "title": "An app bar: toggle, page name, account",
-          "description": "The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar opens the account menu; see the Menu page for its contents.",
-          "code": "<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label=\"Account\"\n      onClick={(event) => setAccountAnchor(event.currentTarget)}\n    >\n      <Avatar size=\"sm\" color=\"error\">JD</Avatar>\n    </IconButton>\n  </Stack>\n</Navbar>"
+          "description": "The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is the account menu, and the top bar is where it lives on every screen of the shell. `AccountMenu` renders the avatar button and the dropdown it opens; its full code is the \"Account menu\" example on `Menu` — call `get_component` for `Menu`.",
+          "code": "// AccountMenu: the \"Account menu\" example on Menu, copied whole.\nimport { AccountMenu } from \"./AccountMenu\";\n\n<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    {/* The avatar and the profile dropdown it opens. */}\n    <AccountMenu user={user} onSignOut={signOut} />\n  </Stack>\n</Navbar>"
         },
         {
           "title": "The shell: a full-height rail, the bar beside it",
@@ -3414,7 +3301,7 @@
           "name": "variant",
           "type": "CircularProgress: 'indeterminate' | 'determinate'. LinearProgress: adds 'buffer' | 'query'",
           "default": "'indeterminate'",
-          "description": "Whether a percentage is known. `indeterminate` animates forever; `determinate` draws `value`. Not the emphasis axis `variant` names on Button or Chip — the colour role is on `color`."
+          "description": "Whether a percentage is known. `indeterminate` animates forever; `determinate` draws `value`. Not the emphasis axis `variant` names on Button or Tag — the colour role is on `color`."
         },
         {
           "name": "value",
@@ -4580,8 +4467,8 @@
       "examples": [
         {
           "title": "A table of records",
-          "description": "The whole family in the order it nests. Every cell is markup you control, which is the reason to use this rather than a grid: an amount is a right-aligned cell, a status is a `Chip`, and neither needs a column definition.",
-          "code": "<Table size=\"sm\">\n  <TableHead>\n    <TableRow>\n      <TableCell>Invoice</TableCell>\n      <TableCell>Vendor</TableCell>\n      <TableCell>Status</TableCell>\n      <TableCell align=\"right\">Amount</TableCell>\n    </TableRow>\n  </TableHead>\n  <TableBody>\n    {invoices.map((invoice) => (\n      <TableRow key={invoice.id} hover>\n        <TableCell>{invoice.number}</TableCell>\n        <TableCell>{invoice.vendor}</TableCell>\n        <TableCell>\n          <Chip variant=\"success\" size=\"sm\" label={invoice.status} />\n        </TableCell>\n        <TableCell align=\"right\">{invoice.total}</TableCell>\n      </TableRow>\n    ))}\n  </TableBody>\n</Table>"
+          "description": "The whole family in the order it nests. Every cell is markup you control, which is the reason to use this rather than a grid: an amount is a right-aligned cell, a status is a `Tag`, and neither needs a column definition.",
+          "code": "<Table size=\"sm\">\n  <TableHead>\n    <TableRow>\n      <TableCell>Invoice</TableCell>\n      <TableCell>Vendor</TableCell>\n      <TableCell>Status</TableCell>\n      <TableCell align=\"right\">Amount</TableCell>\n    </TableRow>\n  </TableHead>\n  <TableBody>\n    {invoices.map((invoice) => (\n      <TableRow key={invoice.id} hover>\n        <TableCell>{invoice.number}</TableCell>\n        <TableCell>{invoice.vendor}</TableCell>\n        <TableCell>\n          <Tag variant=\"success\" label={invoice.status} />\n        </TableCell>\n        <TableCell align=\"right\">{invoice.total}</TableCell>\n      </TableRow>\n    ))}\n  </TableBody>\n</Table>"
         },
         {
           "title": "Two lines in one row, and a leading glyph",
@@ -4622,7 +4509,7 @@
       "dos": [
         "Set `size` once on the table — every row reads it, and a table with two densities is two tables",
         "Use `align=\"right\"` for amounts, counts and dates so digits line up on their units",
-        "Put a `Chip`, an `Avatar` or a `Switch` straight into a cell — the design’s cell variants are content, not props",
+        "Put a `Tag`, an `Avatar` or a `Switch` straight into a cell — the design’s cell variants are content, not props",
         "Use `secondary` for the fact that qualifies the cell — a timestamp under a reference, a role under a name — rather than a second column",
         "Turn on `hover` when rows are clickable or selectable, and leave it off when the table is only being read",
         "Use `state` for an outcome in the data and `selected` for a choice the reader made; they are different colours because they answer different questions",
@@ -4641,7 +4528,7 @@
       ],
       "relatedComponents": [
         "Card",
-        "Chip",
+        "Tag",
         "Checkbox",
         "Avatar",
         "Skeleton"
@@ -4681,7 +4568,7 @@
           "name": "Tabs variant",
           "type": "'standard' | 'scrollable' | 'fullWidth'",
           "default": "'standard'",
-          "description": "MUI’s overflow behaviour, not the house “colour role” meaning `variant` has on `Button` and `Chip` — this component has no colour axis for it to collide with. `scrollable` lets the row scroll and adds overflow buttons; `fullWidth` stretches the tabs to fill the bar, which suits a narrow viewport."
+          "description": "MUI’s overflow behaviour, not the house “colour role” meaning `variant` has on `Button` and `Tag` — this component has no colour axis for it to collide with. `scrollable` lets the row scroll and adds overflow buttons; `fullWidth` stretches the tabs to fill the bar, which suits a narrow viewport."
         },
         {
           "name": "Tabs orientation",
@@ -4723,7 +4610,7 @@
           "name": "Tab count",
           "type": "ReactNode",
           "default": "—",
-          "description": "A count after the label: how many rows, matches, or unread items sit behind this tab. This is the Figma `tag` axis, and it renders the same `Chip size=\"sm\"` that Figma nests here — `primary` normally, `secondary` when the tab is disabled."
+          "description": "A count after the label: how many rows, matches, or unread items sit behind this tab. It renders the neutral `Tag` in every state; its number darkens on the selected tab and lightens on the others, as the label does."
         },
         {
           "name": "Tab disabled",
@@ -4758,7 +4645,7 @@
         },
         {
           "title": "With counts",
-          "description": "The Figma `tag` axis — a count beside the label, in the design’s small chip.",
+          "description": "The Figma `tag` axis — a count beside the label, in the design’s small tag.",
           "code": "<Tabs value={status} onChange={(_, next) => setStatus(next)} aria-label=\"Invoice status\">\n  <Tab label=\"All\" value=\"all\" count={48} />\n  <Tab label=\"Open\" value=\"open\" count={12} aria-label=\"Open, 12 invoices\" />\n  <Tab label=\"Paid\" value=\"paid\" count={36} />\n</Tabs>"
         },
         {
@@ -4821,13 +4708,111 @@
         "ToggleButtonGroup",
         "Divider",
         "Card",
-        "Chip"
+        "Tag"
+      ]
+    },
+    {
+      "name": "Tag",
+      "category": "Data Display",
+      "tagline": "Small coloured label for a status, a category or a count, in eight colour roles.",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4648-16784",
+      "props": [
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "Tag content. Inherited from MUI."
+        },
+        {
+          "name": "variant",
+          "type": "'secondary' | 'primary' | 'warning' | 'purple' | 'success' | 'orange' | 'error' | 'information'",
+          "default": "'primary'",
+          "description": "Colour role, named by meaning: `secondary` is grey, `warning` yellow, `success` green, `error` red, `information` blue. `orange` and `purple` carry no meaning of their own and are for categories rather than statuses."
+        },
+        {
+          "name": "appearance",
+          "type": "'contained' | 'outline'",
+          "default": "'contained'",
+          "description": "`outline` draws a 1px border in the role’s own border colour over the same fill — the treatment a table’s Status column uses. On `success` and `error` the label also steps a rung darker. The border is taken out of the padding, so an outlined tag is exactly as wide as a contained one."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "default": "'md'",
+          "description": "`md` = 20px with a 12px label, `sm` = 18px with an 11px label."
+        },
+        {
+          "name": "icon",
+          "type": "ReactElement",
+          "default": "—",
+          "description": "A 12px glyph before the label. Inherits the label colour. Inherited from MUI."
+        },
+        {
+          "name": "endIcon",
+          "type": "ReactElement",
+          "default": "—",
+          "description": "A 12px glyph after the label. Inherits the label colour."
+        },
+        {
+          "name": "colors",
+          "type": "{ bg?: ModeToken | string; border?: ModeToken | string; text?: ModeToken | string }",
+          "default": "undefined",
+          "description": "Overrides the three colours `variant` would paint, per key — pass one and the other two still come from the role. `border` shows only with `appearance=\"outline\"`. Reach for a role first: a status column is read by meaning, and a reader cannot tell from a decorative hue which of two statuses is the bad one. This is for a colour the roles genuinely do not carry. Pass design tokens rather than hexes — a token is a `{ light, dark }` pair and resolves per scheme, where a bare hex is light-mode only by definition and paints the same colour on a near-black page."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Status tag",
+          "code": "<Tag variant=\"success\" label=\"Active\" />"
+        },
+        {
+          "title": "Colours",
+          "description": "Eight roles. Pick the one for what the tag means, and the colour follows in both light and dark.",
+          "code": "<Tag variant=\"secondary\" label=\"Draft\" />\n<Tag variant=\"primary\" label=\"New\" />\n<Tag variant=\"warning\" label=\"Pending\" />\n<Tag variant=\"purple\" label=\"Design\" />\n<Tag variant=\"success\" label=\"Paid\" />\n<Tag variant=\"orange\" label=\"Research\" />\n<Tag variant=\"error\" label=\"Overdue\" />\n<Tag variant=\"information\" label=\"In review\" />"
+        },
+        {
+          "title": "Outlined status tags",
+          "description": "A table’s Status column: the role’s fill with its own border outlined over it.",
+          "code": "<Tag appearance=\"outline\" variant=\"information\" label=\"Extraction\" />\n<Tag appearance=\"outline\" variant=\"warning\" label=\"Matching\" />\n<Tag appearance=\"outline\" variant=\"success\" label=\"ERP Posting\" />\n<Tag appearance=\"outline\" variant=\"error\" label=\"Error\" />"
+        },
+        {
+          "title": "Sizes",
+          "description": "`md` is 20px and the default; `sm` is 18px.",
+          "code": "<Tag label=\"Medium\" />\n<Tag size=\"sm\" label=\"Small\" />"
+        },
+        {
+          "title": "With glyphs",
+          "description": "`icon` leads and `endIcon` trails, both at 12px and both in the label’s colour. Keep a glyph for the tag that needs attention — a glyph on every row is decoration, and it stops the one that matters from standing out.",
+          "code": "import { FilePdfIcon, LockIcon, WarningCircleIcon } from '@neofloai/atoms/icons';\n\n<Tag\n  variant=\"error\"\n  appearance=\"outline\"\n  icon={<WarningCircleIcon />}\n  label=\"Error\"\n/>\n<Tag\n  variant=\"secondary\"\n  icon={<FilePdfIcon />}\n  label=\"invoice.pdf\"\n  endIcon={<LockIcon />}\n/>"
+        },
+        {
+          "title": "A status the roles have no colour for",
+          "description": "The escape hatch, and the last resort. `colors` takes the fill, the outline and the label separately, so a status the roles do not cover can still be built out of tokens rather than hexes — which is what keeps it working in dark mode.",
+          "code": "import { border, surface, text } from '@neofloai/atoms/tokens';\n\n<Tag\n  appearance=\"outline\"\n  label=\"Extraction\"\n  colors={{\n    bg: surface.information.subtle,\n    border: border.information.default,\n    text: text.information[3],\n  }}\n/>"
+        }
+      ],
+      "dos": [
+        "Match the `variant` to the meaning (e.g. `success` for healthy states, `error` for failures)",
+        "Use `appearance=\"outline\"` for a status in a table column",
+        "Keep labels short — one or two words"
+      ],
+      "donts": [
+        "Don't make a tag clickable — use `Button` for an action, `ToggleButton` for a choice, `Checkbox` for a selection",
+        "Don't rely on colour alone to communicate status — the label must carry the meaning",
+        "Don't mix sizes within one group of tags",
+        "Don't use `orange` or `purple` for a status — they carry no meaning a reader can learn",
+        "Don't hardcode background or border colours — the variant covers both colour schemes"
+      ],
+      "relatedComponents": [
+        "Badge",
+        "Button",
+        "ToggleButton"
       ]
     },
     {
       "name": "TextField",
       "category": "Inputs",
-      "tagline": "Text input with a static label, two heights, validation statuses, helper text, and single or multi-line entry.",
+      "tagline": "Text input with a static label, two heights, validation statuses, helper text, single or multi-line entry, and a password variant.",
       "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=3179-106156",
       "props": [
         {
@@ -4870,7 +4855,7 @@
           "name": "endAdornment",
           "type": "ReactNode",
           "default": "—",
-          "description": "Element rendered at the end of the input, e.g. a clear `IconButton` or a password visibility toggle."
+          "description": "Element rendered at the end of the input, e.g. a clear `IconButton` or a unit. With `type=\"password\"` it renders before the show / hide toggle."
         },
         {
           "name": "maxLength",
@@ -4903,6 +4888,42 @@
           "description": "Disables the field and applies disabled styling."
         },
         {
+          "name": "type",
+          "type": "string",
+          "default": "'text'",
+          "description": "The input type, as on any input. `\"password\"` is the password variant: a show / hide toggle at the end of the field, and the `requirements` and `forgotPassword` rows below when asked for. `autoComplete` then defaults to `new-password` with requirements and `current-password` without."
+        },
+        {
+          "name": "requirements",
+          "type": "{ label: ReactNode; met: boolean }[]",
+          "default": "—",
+          "description": "`type=\"password\"` only. The rules a new password has to meet, listed under the field: a cross until each is met, a green tick after. The field does not test the value — work out `met` from it yourself, so the rules stay yours to define. Pass it when the field creates a password; leave it out when it signs someone in."
+        },
+        {
+          "name": "forgotPassword",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "`type=\"password\"` only. Shown right-aligned under the field. Pass a `Link` with `color=\"secondary\"`; it takes the row’s type."
+        },
+        {
+          "name": "visible / defaultVisible / onVisibleChange",
+          "type": "boolean / boolean / (visible: boolean) => void",
+          "default": "— / false / —",
+          "description": "`type=\"password\"` only. Whether the password shows as text, controlled or uncontrolled. The toggle shows the eye while it is hidden and the slashed eye while it shows."
+        },
+        {
+          "name": "showPasswordLabel / hidePasswordLabel",
+          "type": "string",
+          "default": "'Show password' / 'Hide password'",
+          "description": "`type=\"password\"` only. The toggle’s label in each state."
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "default": "false",
+          "description": "Renders the field’s skeleton in its place while its value loads: a bar for the label, the field and the helper text, each only when the loaded field has that row. The field bar is the loaded field’s height, so nothing moves when the value arrives."
+        },
+        {
           "name": "fullWidth",
           "type": "boolean",
           "default": "false",
@@ -4933,11 +4954,6 @@
           "code": "import { XIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Search\"\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Clear\" onClick={handleClear}>\n      <XIcon />\n    </IconButton>\n  }\n/>"
         },
         {
-          "title": "Start + end adornments",
-          "description": "Combine a decorative start icon with an interactive end icon, e.g. a password field with a show/hide toggle.",
-          "code": "import { IconButton, InputAdornment, TextField } from '@neofloai/atoms';\nimport { EyeIcon, LockIcon } from '@neofloai/atoms/icons';\n\n<TextField\n  label=\"Password\"\n  placeholder=\"Enter password\"\n  startAdornment={\n    <InputAdornment position=\"start\">\n      <LockIcon size={16} />\n    </InputAdornment>\n  }\n  endAdornment={\n    <IconButton appearance=\"text\" size=\"sm\" aria-label=\"Show password\" onClick={handleToggleVisibility}>\n      <EyeIcon />\n    </IconButton>\n  }\n/>"
-        },
-        {
           "title": "Multi-line: grows with content",
           "code": "<TextField label=\"Notes\" multiline minRows={3} maxRows={8} />"
         },
@@ -4948,24 +4964,45 @@
         {
           "title": "Character counter",
           "code": "<TextField label=\"Bio\" placeholder=\"Tell us about yourself\" maxLength={100} />"
+        },
+        {
+          "title": "Password: signing in",
+          "description": "The toggle comes with the type. Add `forgotPassword` for the way back, right-aligned under the field.",
+          "code": "import { Link, TextField } from '@neofloai/atoms';\n\n<TextField\n  type=\"password\"\n  label=\"Password\"\n  required\n  forgotPassword={\n    <Link color=\"secondary\" underline=\"hover\" href=\"/reset-password\">\n      Forgot password?\n    </Link>\n  }\n/>"
+        },
+        {
+          "title": "Password: creating one",
+          "description": "Each rule is crossed until the value meets it and ticked after, so the reader sees what is left rather than being told after they submit.",
+          "code": "const [value, setValue] = React.useState('');\n\n<TextField\n  type=\"password\"\n  label=\"New password\"\n  required\n  maxLength={100}\n  value={value}\n  onChange={(event) => setValue(event.target.value)}\n  requirements={[\n    { label: 'Minimum 8 letters', met: value.length >= 8 },\n    { label: 'At least one number', met: /\\d/.test(value) },\n    { label: 'At least one special character', met: /[^A-Za-z0-9]/.test(value) },\n  ]}\n/>"
+        },
+        {
+          "title": "While the value loads",
+          "description": "The skeleton keeps the loaded field’s rows and height, so the form does not shift when the data arrives.",
+          "code": "<TextField\n  label=\"Company name\"\n  helperText=\"As registered\"\n  value={company?.name ?? ''}\n  loading={!company}\n/>"
         }
       ],
       "dos": [
         "Always provide a `label`",
         "Pair every `status` with a `helperText` explaining what to fix or confirm",
         "Use `minRows`/`maxRows` for free-form text so the field grows with content",
-        "Keep helper text to one short sentence"
+        "Keep helper text to one short sentence",
+        "List the rules with `requirements` when a password is being created, so each one is visible before it is broken",
+        "Offer `forgotPassword` wherever someone signs in"
       ],
       "donts": [
         "Don't use placeholder text as a substitute for a label",
         "Don't rely on border colour alone to communicate validation — set `helperText` too",
         "Don't override the 1px border or 4px radius — they are part of the field identity",
         "Don't mix `md` and `lg` fields in one form row — pick one height per form",
-        "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended"
+        "Don't use `rows` for inputs that commonly exceed the visible area unless scrolling is intended",
+        "Don't add your own show / hide button to a password field — `type=\"password\"` brings one, with its labels and `autoComplete`",
+        "Don't show `requirements` on a sign-in field — the rules are for choosing a password, not for typing one",
+        "Don't set `status=\"error\"` for a password rule that is not met yet — the checklist already says so; keep the status for a password that was rejected"
       ],
       "relatedComponents": [
-        "Button",
-        "IconButton"
+        "Select",
+        "IconButton",
+        "Link"
       ]
     },
     {
@@ -5340,7 +5377,7 @@
       ],
       "relatedComponents": [
         "IconButton",
-        "Chip",
+        "Tag",
         "Checkbox",
         "Divider",
         "Drawer"
@@ -5667,11 +5704,11 @@
         {
           "title": "Skipping the entrance on load",
           "description": "A control that is present from the start should not scale in as the page arrives — that reads as the interface still assembling itself.",
-          "code": "<Zoom in={enabled} appear={false}>\n  <Chip label=\"Live\" variant=\"success\" />\n</Zoom>"
+          "code": "<Zoom in={enabled} appear={false}>\n  <Tag label=\"Live\" variant=\"success\" />\n</Zoom>"
         }
       ],
       "dos": [
-        "Use `Zoom` for small controls of known size — icon buttons, chips, badges",
+        "Use `Zoom` for small controls of known size — icon buttons, tags, badges",
         "Pass `unmountOnExit` so a control scaled to nothing is not still focusable and clickable",
         "Delay the entering element by the exiting one's duration when two zooms share a slot",
         "Give a swap a fixed-size container if the surrounding layout should not move",
@@ -5707,7 +5744,6 @@
     "CardHeader",
     "CardMedia",
     "Checkbox",
-    "Chip",
     "CircularProgress",
     "Collapse",
     "Container",
@@ -5766,6 +5802,7 @@
     "TableRow",
     "TableSortLabel",
     "Tabs",
+    "Tag",
     "TextField",
     "TimePicker",
     "ToggleButton",

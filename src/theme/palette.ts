@@ -36,7 +36,7 @@ import { colors } from '@/src/tokens/colors';
  * points at a named scale variable — read as a leftover default in the
  * Figma file rather than an intentional colour, since it would
  * otherwise put `theme.palette.info` on a different blue than
- * `surface.information` / `text.information` / Alert / Chip everywhere
+ * `surface.information` / `text.information` / Alert / Tag everywhere
  * else in the system. Kept on our own `blue` scale, continuing the
  * same corrected light/main/dark formula, per explicit confirmation.
  *

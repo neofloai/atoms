@@ -249,7 +249,7 @@ export const HEADER_META = {
  *
  * A rounding difference is not a dispute, and blocking on one would train the
  * user to accept everything. Five dollars against a twenty-nine thousand
- * dollar invoice, per the frame's chip.
+ * dollar invoice, per the frame's tag.
  */
 export const TOLERANCE = 5.0;
 

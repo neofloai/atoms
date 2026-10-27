@@ -16,7 +16,7 @@ import * as React from 'react';
 import {
   Box,
   Button,
-  Chip,
+  Tag,
   DataGrid,
   Divider,
   Filter,
@@ -54,7 +54,7 @@ import {
   typography,
 } from '@neofloai/atoms/tokens';
 
-import type { ChipColors, FilterValue, GridColDef } from '@neofloai/atoms';
+import type { TagColors, FilterValue, GridColDef } from '@neofloai/atoms';
 
 // The rail, the invoices and the facets are the application's. The rail is
 // the same one every other screen in the workflow mounts, so it is imported
@@ -65,22 +65,22 @@ import { INVOICE_FILTER_GROUPS, filterInvoices } from './invoices';
 
 import type { Invoice, InvoiceStage } from './invoices';
 
-/** The glyph in a status chip. */
+/** The glyph in a status tag. */
 const STATUS_ICON_PX = 14;
 
 /** One status: its label, its colours, and an optional glyph. */
 interface StageMeta {
   label: string;
   variant?: 'information';
-  colors?: ChipColors;
+  colors?: TagColors;
   icon?: React.ReactElement;
 }
 
 /**
  * Paints a status glyph in a colour of its own rather than the label's.
  *
- * Chip sets \`color: inherit\` on its icon slot, two classes deep from the
- * chip root, so a colour set on the slot element itself loses to it. \`&&&\`
+ * Tag sets \`color: inherit\` on its icon slot, two classes deep from the
+ * tag root, so a colour set on the slot element itself loses to it. \`&&&\`
  * lifts this to three and settles it without an \`!important\`. A \`color\`
  * prop on the icon would have been shorter and light-mode only; this
  * resolves per scheme.
@@ -109,13 +109,13 @@ function GlyphInk({
 }
 
 /**
- * The stage an invoice is parked at, and the chip that says so.
+ * The stage an invoice is parked at, and the tag that says so.
  *
  * This map is the screen. Every other column tells you *which* invoice; the
  * stage tells you what the invoice is waiting for, and it is the only thing
  * on the row that decides where Review takes you.
  *
- * Six of the seven carry their own colours rather than a chip role, because
+ * Six of the seven carry their own colours rather than a tag role, because
  * the workflow needs seven that are tellable apart down a column and the
  * semantic roles supply four. \`extraction\` is the exception and still uses
  * \`information\`: its colour is specified as three literal hexes, in a hue
@@ -123,7 +123,7 @@ function GlyphInk({
  *
  * Every colour here is a \`{ light, dark }\` token rather than a ramp step.
  * A ramp step — \`colors.purple[75]\` and the like — is a plain string, so a
- * chip built from one paints the same colour on a near-black page. Where a
+ * tag built from one paints the same colour on a near-black page. Where a
  * specification named a ramp step, the semantic token carrying the identical
  * light value was used instead.
  *
@@ -504,9 +504,8 @@ function invoiceColumns(
       renderCell: ({ row }) => {
         const meta = STAGE_META[row.stage];
         return (
-          <Chip
-            size="sm"
-            bordered
+          <Tag
+            appearance="outline"
             variant={meta.variant}
             colors={meta.colors}
             label={meta.label}
@@ -669,8 +668,7 @@ export default function InvoiceDashboardPage() {
             >
               Filter
               {activeCount > 0 && (
-                <Chip
-                  size="sm"
+                <Tag
                   variant="primary"
                   component="span"
                   label={activeCount}

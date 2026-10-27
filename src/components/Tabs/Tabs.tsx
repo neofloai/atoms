@@ -26,7 +26,7 @@ import type { TabsProps } from './Tabs.types';
 /**
  * Caret size for the overflow buttons. The bar has no Figma cell for
  * them, so this borrows the 16px glyph `ToggleButton size="sm"` and
- * `Chip size="sm"` both use next to 12-13px type.
+ * `Tag` both use next to 12-13px type.
  */
 const SCROLL_GLYPH_PX = 16;
 
@@ -177,7 +177,7 @@ EndCaret.displayName = 'TabsEndCaret';
  *   for one, so the panels stay yours: render the selected panel next to
  *   the bar and swap it on `onChange`. The docs page shows the wiring.
  * - **`variant` here is MUI's overflow behaviour**, not the house
- *   "colour role" meaning it has on `Button` and `Chip`. Use
+ *   "colour role" meaning it has on `Button` and `Tag`. Use
  *   `variant="scrollable"` when the tabs can outgrow their container.
  * - **`divider={false}` when the container draws the line.** The bar
  *   owns its bottom edge by default; inside a panel that already has a

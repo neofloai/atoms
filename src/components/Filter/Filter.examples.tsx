@@ -140,7 +140,7 @@ export const data: ComponentExamplesData = {
         '>',
         '  Filter',
         '  {activeCount > 0 && (',
-        '    <Chip size="sm" variant="primary" component="span" label={activeCount} />',
+        '    <Tag variant="primary" component="span" label={activeCount} />',
         '  )}',
         '</Button>',
         '',
@@ -194,7 +194,7 @@ export const data: ComponentExamplesData = {
         '    >',
         '      Filter',
         '      {activeCount > 0 && (',
-        '        <Chip size="sm" variant="primary" component="span" label={activeCount} />',
+        '        <Tag variant="primary" component="span" label={activeCount} />',
         '      )}',
         '    </Button>',
         '  </Stack>',
@@ -215,14 +215,14 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
-      title: 'Chips as option labels',
+      title: 'Tags as option labels',
       description:
-        'An option label can be any node, and a status facet should use the same chip its column draws — one that reads differently in the dropdown makes the reader check whether it is the same thing. Give those rows a `searchText`: a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.',
+        'An option label can be any node, and a status facet should use the same tag its column draws — one that reads differently in the dropdown makes the reader check whether it is the same thing. Give those rows a `searchText`: a node has no text for the search box to read, so without it the row drops out as soon as anything is typed.',
       code: [
         'const statusOptions = STATUSES.map((status) => ({',
         '  value: status.value,',
         '  // The same component the Status column renders, not a copy of it.',
-        '  label: <StatusChip status={status.value} />,',
+        '  label: <StatusTag status={status.value} />,',
         '  searchText: status.label,',
         '}));',
       ].join('\n'),
@@ -297,5 +297,5 @@ export const data: ComponentExamplesData = {
     "Don't put a single-choice category in `options` — a checkbox list says multi-select; use `content` with a `Radio` group",
     "Don't stretch the panel to the page width; it is sized for a rail of categories, not a full-page form",
   ],
-  relatedComponents: ['DataGrid', 'Chip', 'Checkbox', 'TextField'],
+  relatedComponents: ['DataGrid', 'Tag', 'Checkbox', 'TextField'],
 };

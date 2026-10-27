@@ -12,7 +12,7 @@ export interface FilterOption {
   readonly value: string;
   /**
    * Row content beside the checkbox. Plain text, or a node — a status
-   * `Chip`, an `Avatar` next to a name — when the option carries more
+   * `Tag`, an `Avatar` next to a name — when the option carries more
    * than a label.
    */
   readonly label: React.ReactNode;

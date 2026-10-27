@@ -1,4 +1,4 @@
-import type { ChipVariant } from '@/src/components/Chip';
+import type { TagVariant } from '@/src/components/Tag';
 
 /**
  * The rows the previews are built from — the same shape of record the
@@ -15,7 +15,7 @@ export interface InvoiceRecord {
   readonly vendor: string;
   readonly vendorRef: string;
   readonly status: string;
-  readonly statusVariant: ChipVariant;
+  readonly statusVariant: TagVariant;
   readonly attachment: string;
   readonly amount: number;
   readonly owner: string;

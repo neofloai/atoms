@@ -46,9 +46,9 @@
  * rather than a bundled namespace.
  *
  * Adding an icon to a component means adding its name below. That is the
- * cost of this approach and it is the whole cost: the list is 16 entries
+ * cost of this approach and it is the whole cost: the list is 18 entries
  * because the design system draws carets, arrows and a close X, and a
- * component reaching for a seventeenth glyph is worth one line here.
+ * component reaching for a nineteenth glyph is worth one line here.
  *
  * `scripts/check-icon-leak.mjs` fails the build if the namespace object
  * ever comes back, because nothing else would catch it.
@@ -63,9 +63,11 @@ export {
   CaretDownIcon,
   CaretLeftIcon,
   CaretRightIcon,
+  CheckIcon,
   ClockIcon,
   ColumnsIcon,
   DotsThreeVerticalIcon,
+  EyeIcon,
   EyeSlashIcon,
   FunnelIcon,
   MagnifyingGlassIcon,

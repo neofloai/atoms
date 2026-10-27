@@ -20,7 +20,7 @@ export const data: PatternExamplesData = {
     'Table',
     'TextField',
     'Alert',
-    'Chip',
+    'Tag',
     'Button',
     'IconButton',
     'Tooltip',

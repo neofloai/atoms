@@ -17,7 +17,7 @@ export type AvatarShape = 'round' | 'mid' | 'sharp';
 /**
  * Colour role for initials and icon avatars — a pale fill, a hairline a
  * rung deeper, and a dark ink, all from one hue. Ignored when an image
- * renders. Named as `Chip`'s small tag names the same eight hues: the
+ * renders. Named as `Tag` names the same eight hues: the
  * sheet's blue is `information`, green `success`, yellow `warning`, red
  * `error` and grey `secondary`.
  */

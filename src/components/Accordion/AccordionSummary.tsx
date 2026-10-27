@@ -120,7 +120,7 @@ import type {
  * @example No caret, and a trailing count instead
  * <AccordionSummary expandIcon={null}>
  *   <span style={{ flex: 1 }}>Attachments</span>
- *   <Chip size="sm" label="3" />
+ *   <Tag label="3" />
  * </AccordionSummary>
  *
  * @see Related: Accordion, AccordionDetails, AccordionActions

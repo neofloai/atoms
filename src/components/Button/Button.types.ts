@@ -1,4 +1,5 @@
 import type { ButtonProps as MuiButtonProps } from '@mui/material';
+import type { ReactNode } from 'react';
 import type {
   ActionAppearance,
   ActionVariant,
@@ -66,4 +67,27 @@ export interface ButtonProps
    * @default 'md' ('lg' for appearance="social")
    */
   size?: ButtonSize;
+  /**
+   * The menu's options, as `MenuItem`s. Passing it makes this a split
+   * button: the label keeps its own action, and a caret beside it — a
+   * second, separate button — opens the menu anchored to the whole
+   * control. The menu closes when an option is chosen.
+   *
+   * Drawn for `primary` and `secondary`, `contained` and `outline`, at
+   * `sm`, `md` and `lg`. Ignored when `appearance="social"`.
+   *
+   * With a menu, `onClick`, `href`, `type`, `loading`, `startIcon`,
+   * `endIcon` and the rest of the MUI props belong to the label's
+   * button, and `ref` points at it; `className`, `style` and `sx` land
+   * on the control as a whole. `disabled` and `fullWidth` apply to both
+   * halves.
+   */
+  menu?: ReactNode;
+  /**
+   * Label of the caret button, which has no text of its own.
+   * Only read when `menu` is set.
+   *
+   * @default 'More options'
+   */
+  menuLabel?: string;
 }

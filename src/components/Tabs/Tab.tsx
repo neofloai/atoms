@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 
 import { fontFamilies, fontWeights, radius } from '@/src/tokens';
 
-import { Chip } from '../Chip';
+import { Tag } from '../Tag';
 import { FOCUS_RING_WIDTH_PX, paired } from '../_shared/actionStyles';
 
 import { TabsContext } from './TabsContext';
@@ -15,6 +15,7 @@ import {
   TAB_LABEL_LEADING_PX,
   TAB_PADDING_BLOCK_PX,
   TAB_PADDING_INLINE_PX,
+  countInk,
   hoverFill,
   ink,
   labelType,
@@ -151,8 +152,10 @@ const TabLabel = styled('span')({
  *
  * Two things worth knowing:
  *
- * - **`count` renders a `Chip size="sm"`**, which is the component Figma
- *   nests here, so the pill is the same one used everywhere else.
+ * - **`count` renders a `Tag`**, which is the component Figma
+ *   nests here, so the pill is the same one used everywhere else. It is
+ *   the neutral one in every state; its label darkens on the selected
+ *   tab and lightens on the rest, as the tab's own label does.
  * - **`disabled` is inherited from the bar and cannot be undone.**
  *   `Tabs disabled` disables every tab; a tab can add its own on top,
  *   but not opt back in.
@@ -169,7 +172,7 @@ const TabLabel = styled('span')({
  * @example With a glyph
  * <Tab label="Activity" value="activity" icon={<PulseIcon />} iconPosition="start" />
  *
- * @see Related: Tabs, Chip, Divider
+ * @see Related: Tabs, Tag, Divider
  */
 export const Tab = React.forwardRef<HTMLDivElement, TabProps>(
   ({ count, label, disabled, ...rest }, ref) => {
@@ -177,6 +180,9 @@ export const Tab = React.forwardRef<HTMLDivElement, TabProps>(
     // OR-ed rather than "own prop wins": a bar that has been switched
     // off cannot be switched back on by one of its tabs.
     const isDisabled = Boolean(disabled) || Boolean(bar.disabled);
+    // `Tabs` hands each child `selected` when it clones it. MUI does not
+    // type it on `TabProps`, so it is read here and still passed on.
+    const { selected } = rest as { selected?: boolean };
 
     const content =
       count === undefined || count === null ? (
@@ -184,13 +190,18 @@ export const Tab = React.forwardRef<HTMLDivElement, TabProps>(
       ) : (
         <TabLabel>
           {label}
-          <Chip
-            size="sm"
-            // Figma moves the pill to the neutral role on a disabled tab
-            // rather than dimming it — node 3463:12465 draws
-            // `surface.layers.card3` + `text/default/b2`, which is
-            // exactly what `variant="secondary"` paints.
-            variant={isDisabled ? 'secondary' : 'primary'}
+          <Tag
+            // The neutral pill in every state (node 4699:14064): the
+            // fill stays `surface/layers/card 3` and the ink follows the
+            // tab's state.
+            variant="secondary"
+            colors={{
+              text: isDisabled
+                ? countInk.disabled
+                : selected
+                  ? countInk.selected
+                  : countInk.unselected,
+            }}
             // A `<div>` inside the tab's `<button>` would be invalid
             // markup; the pill is phrasing content here.
             component="span"

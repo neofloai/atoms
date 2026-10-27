@@ -137,7 +137,7 @@ export const data: ComponentExamplesData = {
         'Figma’s `info` header, built as a composition rather than a `CardHeader`. The badge sits directly beside the number, 8px away — `CardHeader`’s `action` slot would push it to the far edge of the card instead, because MUI stretches the title block to fill the row.',
       code: [
         "import { ArrowUpRightIcon } from '@neofloai/atoms/icons';",
-        "import { Card, CardContent, Chip, IconButton, Stack, Typography } from '@neofloai/atoms';",
+        "import { Card, CardContent, Tag, IconButton, Stack, Typography } from '@neofloai/atoms';",
         '',
         '<Card sx={{ maxWidth: 400 }}>',
         '  <CardContent>',
@@ -149,7 +149,7 @@ export const data: ComponentExamplesData = {
         '    </Stack>',
         '    <Typography variant="body1" color="text.secondary">Increase in fat</Typography>',
         '    <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", mt: 2 }}>',
-        '      <Chip size="sm" variant="success" icon={<ArrowUpRightIcon />} label="5%" />',
+        '      <Tag variant="success" icon={<ArrowUpRightIcon />} label="5%" />',
         '      <Typography variant="body2" color="text.secondary">vs prev 30d</Typography>',
         '    </Stack>',
         '  </CardContent>',
@@ -273,7 +273,7 @@ export const data: ComponentExamplesData = {
   relatedComponents: [
     'Button',
     'IconButton',
-    'Chip',
+    'Tag',
     'Divider',
     'Grid',
     'Avatar',

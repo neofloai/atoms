@@ -109,10 +109,10 @@ const roleTokens: Record<BadgeColor, RoleTokens> = {
 /**
  * Height of the counter, and its minimum width — equal, so a
  * single-digit count is a circle and only two or more digits stretch it
- * into a pill. 20px is the same height as `Chip`'s flat tag, which is
+ * into a pill. 20px is the same height as a `Tag` at `size="md"`, which is
  * the other 12px indicator in the library; it is not on a token ladder
  * (neither spacing nor radius has a 20 rung), so it is carried here the
- * way `Chip` carries its own heights.
+ * way `Tag` carries its own heights.
  */
 const COUNT_SIZE_PX = 20;
 
@@ -188,7 +188,7 @@ const StyledBadge = styled(MuiBadge, {
  * @example Standalone
  * <Badge badgeContent="Beta" color="information" />
  *
- * @see Related: Avatar, Chip, IconButton
+ * @see Related: Avatar, Tag, IconButton
  */
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   ({ color = 'primary', ...rest }, ref) => (

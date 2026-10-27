@@ -34,7 +34,7 @@ export type ProgressColor =
  * is renamed, removed, or re-defaulted:
  *
  *   - `variant` — `'indeterminate'` (default) or `'determinate'`. This
- *     is not the emphasis axis `variant` names on `Button` / `Chip`:
+ *     is not the emphasis axis `variant` names on `Button` / `Tag`:
  *     MUI uses the word here for *whether a value is known*, which is
  *     behaviour rather than styling, so it stays as MUI wrote it and
  *     the colour role sits on `color`.

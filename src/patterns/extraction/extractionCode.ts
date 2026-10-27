@@ -22,7 +22,7 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
+  Tag,
   Divider,
   IconButton,
   NAVBAR_META_ICON_PX,
@@ -1415,8 +1415,7 @@ function LineItemsTab({
         {/* Three answers, not two: before the net is captured the lines have
             nothing to agree or disagree with, and calling that a failure would
             put a second complaint on screen for one missing field. */}
-        <Chip
-          size="sm"
+        <Tag
           variant={
             reconciles === null ? 'secondary' : reconciles ? 'success' : 'error'
           }
