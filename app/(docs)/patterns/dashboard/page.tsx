@@ -95,7 +95,7 @@ export default function DashboardPatternPage() {
             <code>useSidebarToggle</code>: the docked rail is a persistent
             drawer that slides away and gives the page its width back, its
             edge collapses it on a click and resizes it on a drag, between
-            220 and 320px, and the peek is a second,
+            216 and 320px, and the peek is a second,
             temporary drawer with no backdrop that hangs under the bar. Its
             contents are the
             same ones the <Link href="/components/drawer">Drawer</Link> page

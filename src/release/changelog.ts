@@ -19,6 +19,25 @@ import type { Release } from './types';
  */
 export const RELEASES: readonly Release[] = [
   {
+    version: '4.0.1',
+    tag: 'v4.0.1',
+    date: '2026-10-27',
+    headline: 'The sidebar rail is 216px wide, down from 220.',
+    summary:
+      'A patch release. Nothing is added, removed or renamed. `Drawer size="sm"`, the app sidebar, is 216px, and the resize handle\'s floor moves with it, so `SIDEBAR_MIN_WIDTH_PX` is 216. The ceiling stays 320.',
+    changes: [
+      {
+        kind: 'changed',
+        summary:
+          '`Drawer` `size="sm"` is 216px where it was 220, and `useSidebarToggle` starts the sidebar there. `SIDEBAR_MIN_WIDTH_PX` is 216, so a drag stops at the new width; `SIDEBAR_MAX_WIDTH_PX` stays 320. The page beside the rail gains 4px.',
+        scope: ['Drawer'],
+      },
+    ],
+    migration: [
+      'Nothing has to change. Check any layout that hard-codes 220 to line something up with the rail; read `SIDEBAR_MIN_WIDTH_PX` instead, or 216.',
+    ],
+  },
+  {
     version: '4.0.0',
     tag: 'v4.0.0',
     date: '2026-10-27',

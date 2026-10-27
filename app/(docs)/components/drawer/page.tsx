@@ -111,7 +111,7 @@ export default function DrawerDocsPage() {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             <code>size</code> does both. Three rungs: <code>sm</code> is the
-            220px nav rail, <code>md</code> (the default) is 400px for a form
+            216px nav rail, <code>md</code> (the default) is 400px for a form
             or a record, <code>lg</code> is the 520px detail sheet. They are
             shipped widths rather than a ladder invented to fill out three
             names, which is why the scale stops there — for anything else{' '}

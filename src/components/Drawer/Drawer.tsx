@@ -235,7 +235,7 @@ export const Drawer = styled(MuiDrawer, {
         boxShadow: 'none',
         backgroundImage: 'none',
         // `border-box` so the hairline is inside the declared width and a
-        // rail measures 220 rather than 221 against the layout beside it.
+        // rail measures 216 rather than 217 against the layout beside it.
         // `overflow-x: hidden` so a label wider than a folded rail is
         // clipped by it instead of pushing the panel back open.
         //

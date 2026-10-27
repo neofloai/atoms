@@ -46,7 +46,7 @@ const EMPTY: FilterValue = {};
  * Which columns this preview shows, and how they share its width.
  *
  * The same cells the Filter page's grid draws, minus `Type`. A docs
- * column is not a 1440px screen, and this one hands 220px of it to the
+ * column is not a 1440px screen, and this one hands 216px of it to the
  * rail whenever the rail is open — but the columns that are facets have
  * to stay, because filtering by a category whose column is off screen
  * looks like nothing happened. `Type`, which is not a facet, goes.

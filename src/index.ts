@@ -551,8 +551,9 @@ export type {
  *
  * Neither has a cell in the Product Design System file. Their colour comes
  * from the app's own frames, and their dimensions — the bar's 48px height,
- * the rail's 220px width, the sheet's 400 and 520 — are measured from the
- * Vendor Query shell, the one place a Neoflo drawer and navbar ship today.
+ * the sheet's 400 and 520 — are measured from the Vendor Query shell, the
+ * one place a Neoflo drawer and navbar ship today. The rail is the
+ * exception: Vendor Query draws it at 220, and it ships at 216.
  *
  * `Drawer` adds one prop to MUI's and locks nothing. `Navbar` folds MUI's
  * `Toolbar` into its `AppBar`, because the two are never useful apart,

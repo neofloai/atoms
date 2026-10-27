@@ -56,7 +56,7 @@ import type { NavbarSize } from '@/src/components/Navbar';
  * The behaviour is the library's `useSidebarToggle`.
  *
  * Docked, the rail's trailing edge is a handle: click it to collapse the
- * rail, drag it to resize between 220 and 320px. The peek floats in at
+ * rail, drag it to resize between 216 and 320px. The peek floats in at
  * whatever width it was left at.
  *
  * ## The bar, at `sm`

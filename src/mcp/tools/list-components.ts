@@ -48,7 +48,7 @@ function formatShellLead(components: ComponentData[]): string {
   return [
     '## The app shell: build this first',
     '',
-    'Most screens sit in a shell, and it is two components: **Drawer** is the sidebar / sidenav down the left — `variant="permanent" size="sm"` for the 220px rail — and **Navbar** is the topbar above the content. Lay the page out as a row, rail first: the rail owns the full height and the bar begins where the rail ends rather than running the full width above it. Getting that backwards is the single most common mistake, which is why the `dashboard` pattern already arranges it — start from that rather than composing the shell by hand.',
+    'Most screens sit in a shell, and it is two components: **Drawer** is the sidebar / sidenav down the left — `variant="permanent" size="sm"` for the 216px rail — and **Navbar** is the topbar above the content. Lay the page out as a row, rail first: the rail owns the full height and the bar begins where the rail ends rather than running the full width above it. Getting that backwards is the single most common mistake, which is why the `dashboard` pattern already arranges it — start from that rather than composing the shell by hand.',
     '',
   ].join('\n');
 }

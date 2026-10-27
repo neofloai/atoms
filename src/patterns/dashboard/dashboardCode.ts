@@ -1005,7 +1005,7 @@ export default function QueryLogPage() {
     >
       {/* Kept mounted: the toggle slides it away and back, and its
           trailing edge collapses it on a click and resizes it on a
-          drag, between 220 and 320px. */}
+          drag, between 216 and 320px. */}
       <AppRail
         dockProps={sidebar.dockProps}
         resizeHandleProps={sidebar.resizeHandleProps}

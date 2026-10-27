@@ -71,10 +71,10 @@ export interface UseSidebarToggleOptions {
    * The width the sidebar starts at. Held between `minWidth` and
    * `maxWidth`.
    *
-   * @default 220 — `size="sm"`
+   * @default 216 — `size="sm"`
    */
   defaultWidth?: number;
-  /** @default SIDEBAR_MIN_WIDTH_PX (220) */
+  /** @default SIDEBAR_MIN_WIDTH_PX (216) */
   minWidth?: number;
   /** @default SIDEBAR_MAX_WIDTH_PX (320) */
   maxWidth?: number;
@@ -160,7 +160,7 @@ export interface UseSidebarToggleResult {
  *
  * Docked, the sidebar's trailing edge is a handle with two gestures:
  * click it to collapse the sidebar, as the toggle does, or drag it to
- * resize between 220 and 320px. Hovered, it shows a grip and a tooltip
+ * resize between 216 and 320px. Hovered, it shows a grip and a tooltip
  * naming both. The arrow keys step the width, and Enter collapses. The
  * width is the peek's too, so the sidebar floats in at the size it was
  * docked at.
