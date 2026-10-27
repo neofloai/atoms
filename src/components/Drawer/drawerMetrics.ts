@@ -28,7 +28,9 @@ export const DRAWER_BORDER_WIDTH_PX = 1;
  * a top or bottom drawer keeps MUI's content-driven height
  * (`Drawer.tsx`).
  *
- *   - `sm` is the nav rail — the expanded sidebar's own 220px.
+ *   - `sm` is the nav rail, 216px. Vendor Query and the navigation sheet
+ *     (4564:6206) both draw it at 220; it was narrowed to 216 on 27
+ *     October at Neoflo's request. See DESIGNER_QUESTIONS.md #76.
  *   - `md` is the narrowest a detail sheet reads at, the point below
  *     which the Vendor Query sheet's meta row stops fitting on one
  *     line. The default, because it is the width that holds a form or a
@@ -55,11 +57,11 @@ export const RESIZE_GRIP_HEIGHT_PX = 32;
  * fitting — and stops at 320px, past which it takes width the page needs
  * more than a longer label does.
  */
-export const SIDEBAR_MIN_WIDTH_PX = 220;
+export const SIDEBAR_MIN_WIDTH_PX = 216;
 export const SIDEBAR_MAX_WIDTH_PX = 320;
 
 export const DRAWER_WIDTH_PX: Record<DrawerSize, number> = {
-  sm: 220,
+  sm: 216,
   md: 400,
   lg: 520,
 };

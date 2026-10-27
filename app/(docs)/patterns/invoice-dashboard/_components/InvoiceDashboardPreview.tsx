@@ -142,7 +142,7 @@ ActionCell.displayName = 'ActionCell';
  * Which columns this preview shows, and how they share its width.
  *
  * The screen's six, minus `Invoice attachment`. A docs column is not a
- * 1440px page, and this one hands 220px of its width to the rail whenever the
+ * 1440px page, and this one hands 216px of its width to the rail whenever the
  * rail is open. Something had to go, and the attachment is the only cell here
  * that is neither a facet nor a decision: it is provenance, read to confirm
  * the row is about the document you meant. `Status` and `Vendor` are what the

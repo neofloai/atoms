@@ -51,7 +51,7 @@ export function DrawerShowcase() {
   return (
     <PreviewCard
       title="An app rail, composed"
-      description="A permanent drawer at the 220px sm width, running the full height of the app with the bar starting where it ends. Three blocks: the brand, the nav, and the workspace switcher behind a rule at the foot — the nav taking the slack, which is what holds the switcher on the bottom edge. Each workflow carries a second level: the children indent behind a branch rule, and a parent takes the selected row's weight but never its fill. The toggle in the bar hides the rail outright and the page takes the full width; with it hidden, hover the toggle and the same rail floats in under the bar as a temporary drawer with no backdrop, leaving again when the pointer does."
+      description="A permanent drawer at the 216px sm width, running the full height of the app with the bar starting where it ends. Three blocks: the brand, the nav, and the workspace switcher behind a rule at the foot — the nav taking the slack, which is what holds the switcher on the bottom edge. Each workflow carries a second level: the children indent behind a branch rule, and a parent takes the selected row's weight but never its fill. The toggle in the bar hides the rail outright and the page takes the full width; with it hidden, hover the toggle and the same rail floats in under the bar as a temporary drawer with no backdrop, leaving again when the pointer does."
     >
       <AppShell height={SHELL_PREVIEW_HEIGHT_PX} />
     </PreviewCard>

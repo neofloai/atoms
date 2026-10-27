@@ -1582,3 +1582,10 @@ The redrawn tab cell draws the count pill neutral in both states — `surface/la
 **Confirm:**
 1. **No disabled tab is drawn.** A disabled tab's count ships in `text/disabled/default`, the label's own disabled ink, which sits one rung below `subtle`.
 2. **Is the label's redraw intended?** If the cell above is the new source of truth for the tab and not only for its count, #63's four calls need revisiting together.
+
+### 76. Drawer — the sidebar rail is 216px (added 27 October, source: Neoflo request)
+
+The side nav rail, `Drawer size="sm"`, is 216px wide where the navigation sheet (node 4564:6206) and the Vendor Query shell both draw it at 220. The resize handle's floor moves with it, to 216, so a dragged rail can still come back to its drawn width; the ceiling stays 320.
+
+**Confirm:**
+1. **Redraw the rail at 216** in the navigation sheet, so the frame and the code agree.

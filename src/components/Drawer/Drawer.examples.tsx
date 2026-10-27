@@ -5,7 +5,8 @@ import type { ComponentExamplesData } from '@/src/types/docs';
  * through the MCP `get_component` tool and the docs site.
  *
  * `figmaUrl` is the side nav bar in the navigation sheet (4564:6206),
- * which draws the 220px rail this panel holds. The sheet draws the rail's
+ * which draws the rail this panel holds, at 220px where it ships at 216
+ * (see `drawerMetrics.ts`). The sheet draws the rail's
  * contents, not a drawer component, so the other widths are still
  * measured from the Vendor Query shell — see `drawerMetrics.ts`.
  */
@@ -15,7 +16,7 @@ export const data: ComponentExamplesData = {
   figmaUrl:
     'https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6206',
   tagline:
-    'The side navigation an app shell is built from — the sidebar down the left, permanent, 220px, filled with `List variant="nav"`, hidden, peeked at and resized with `useSidebarToggle` — and the same panel used as a sheet that slides in over the page. With `Navbar` it is the shell every screen starts from: lay the page out as a row, rail first, and the bar begins where the rail ends. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.',
+    'The side navigation an app shell is built from — the sidebar down the left, permanent, 216px, filled with `List variant="nav"`, hidden, peeked at and resized with `useSidebarToggle` — and the same panel used as a sheet that slides in over the page. With `Navbar` it is the shell every screen starts from: lay the page out as a row, rail first, and the bar begins where the rail ends. Drawn on the `card 2` chrome surface, closed by a hairline on the edge that faces the content.',
   // The house name for this is `Drawer`, which is MUI's word and nobody's
   // first guess for a sidebar. Every term below returned nothing before it
   // was added, so the app shell was unreachable unless you already knew to
@@ -69,7 +70,7 @@ export const data: ComponentExamplesData = {
       type: "'sm' | 'md' | 'lg' | number",
       default: "'md'",
       description:
-        'Width of the panel: 220px for a nav rail, 400px for a form or a record, 520px for a full detail sheet, or pixels for a width that is a state rather than a rung — a folded rail, a resized sheet. Changes animate. It lands on the panel and on the space a docked drawer reserves, which is why the width is a prop and not something to put on `slotProps.paper`. Ignored on `top` and `bottom`, where the height follows the content.',
+        'Width of the panel: 216px for a nav rail, 400px for a form or a record, 520px for a full detail sheet, or pixels for a width that is a state rather than a rung — a folded rail, a resized sheet. Changes animate. It lands on the panel and on the space a docked drawer reserves, which is why the width is a prop and not something to put on `slotProps.paper`. Ignored on `top` and `bottom`, where the height follows the content.',
     },
     {
       name: 'open',
@@ -104,7 +105,7 @@ export const data: ComponentExamplesData = {
       type: '{ defaultHidden?, offsetTop?, container?, defaultWidth?, minWidth?, maxWidth? } → { hidden, width, toggleProps, dockProps, resizeHandleProps, resizeTooltipProps, peekProps, closePeek, setHidden, setWidth }',
       default: '—',
       description:
-        'The app shell\'s sidebar, as a hook. Spread `toggleProps` on the toggle in the bar — press to slide the docked rail away or back, hover while it is hidden to peek. Spread `dockProps` on the docked Drawer, keep it mounted, and put `resizeHandleProps` on an empty element inside it, in a Tooltip given `resizeTooltipProps`: the trailing edge collapses the sidebar on a click and resizes it on a drag, between 220 and 320px, showing a grip and "Click to collapse / Drag to resize" on hover. Spread `peekProps` on a second Drawer holding the same navigation — it peeks at the docked width — and call `closePeek` when a page is picked from it. `container` keeps the peek inside an element rather than the window.',
+        'The app shell\'s sidebar, as a hook. Spread `toggleProps` on the toggle in the bar — press to slide the docked rail away or back, hover while it is hidden to peek. Spread `dockProps` on the docked Drawer, keep it mounted, and put `resizeHandleProps` on an empty element inside it, in a Tooltip given `resizeTooltipProps`: the trailing edge collapses the sidebar on a click and resizes it on a drag, between 216 and 320px, showing a grip and "Click to collapse / Drag to resize" on hover. Spread `peekProps` on a second Drawer holding the same navigation — it peeks at the docked width — and call `closePeek` when a page is picked from it. `container` keeps the peek inside an element rather than the window.',
     },
     {
       name: 'slotProps',
@@ -140,7 +141,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A permanent nav rail',
       description:
-        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 220px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rows are `List variant="nav"`: MUI\'s navigation-drawer composition, drawn as the sidebar — 28px rows, `b2` ink at rest, the current page on a grey fill. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. For the whole screen, start from the Dashboard pattern.',
+        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 216px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rows are `List variant="nav"`: MUI\'s navigation-drawer composition, drawn as the sidebar — 28px rows, `b2` ink at rest, the current page on a grey fill. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. For the whole screen, start from the Dashboard pattern.',
       code: [
         '<Stack direction="row" sx={{ minHeight: "100vh" }}>',
         '  <Drawer variant="permanent" size="sm">',
@@ -232,7 +233,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A sidebar that hides, peeks on hover, and resizes',
       description:
-        '`useSidebarToggle` is the app shell\'s sidebar. The docked rail is a `persistent` Drawer: pressed, the toggle slides it out on MUI\'s own timings and the bar and the page widen into its space as it goes — keep it mounted, and `open` does the rest. Its trailing edge is a handle: click it to collapse, drag it to resize between 220 and 320px. While it is hidden, hovering the toggle floats the same navigation in under the bar: a second, `temporary` Drawer on 12px corners with a border all round and a shadow, 8px in. It has no backdrop and no focus trap, so the page stays live; it leaves 300ms after the pointer does, and `closePeek` closes it when a page is picked. Pressing the toggle slides the rail back.',
+        '`useSidebarToggle` is the app shell\'s sidebar. The docked rail is a `persistent` Drawer: pressed, the toggle slides it out on MUI\'s own timings and the bar and the page widen into its space as it goes — keep it mounted, and `open` does the rest. Its trailing edge is a handle: click it to collapse, drag it to resize between 216 and 320px. While it is hidden, hovering the toggle floats the same navigation in under the bar: a second, `temporary` Drawer on 12px corners with a border all round and a shadow, 8px in. It has no backdrop and no focus trap, so the page stays live; it leaves 300ms after the pointer does, and `closePeek` closes it when a page is picked. Pressing the toggle slides the rail back.',
       code: [
         'const sidebar = useSidebarToggle();',
         '',
@@ -331,13 +332,13 @@ export const data: ComponentExamplesData = {
   ],
   dos: [
     'Use `temporary` for anything the user opens, reads and dismisses — it brings the backdrop, the Escape key and the scroll lock with it',
-    'Use `permanent` for the app rail and `size="sm"`, so every Neoflo shell has the same 220px column',
+    'Use `permanent` for the app rail and `size="sm"`, so every Neoflo shell has the same 216px column',
     'Mount a `temporary` drawer only while it has something to show, so its contents rebuild per record instead of holding the last one',
     'Match the `anchor` to what the panel is: a rail belongs on the left, a record on the right, a row of actions at the bottom',
     'Drive a collapsing rail from `size` with a pixel number, so the panel and the space it reserves fold together and animate',
     'Fill the rail with `List variant="nav"` — MUI\'s navigation-drawer composition, drawn as the sidebar',
     'Let the shell\'s toggle hide the rail and hover peek at it with `useSidebarToggle` — `dockProps` on the docked Drawer, kept mounted so it slides, and `peekProps` on a second `temporary` Drawer holding the same navigation',
-    'Give the docked rail its edge handle from `resizeHandleProps`, in a Tooltip given `resizeTooltipProps`, and leave the limits at 220–320px: narrower truncates a workflow\'s name, wider takes width the page needs',
+    'Give the docked rail its edge handle from `resizeHandleProps`, in a Tooltip given `resizeTooltipProps`, and leave the limits at 216–320px: narrower truncates a workflow\'s name, wider takes width the page needs',
     'Stop a nav rail at one level of nesting, and put that level behind a `Collapse` with a hairline standing between the parent’s glyph and the children’s',
     'Move a folded rail’s second level into a `Menu` anchored to the parent’s glyph, headed with the parent’s name — the labels are gone at 64px and the branch has to be named somewhere',
   ],
