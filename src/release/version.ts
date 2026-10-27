@@ -22,7 +22,7 @@
  * import { ATOMS_VERSION } from '@neofloai/atoms';
  * console.error(`Atoms ${ATOMS_VERSION}`);
  */
-export const ATOMS_VERSION = '3.3.0';
+export const ATOMS_VERSION = '4.0.0';
 
 export interface ParsedVersion {
   major: number;

@@ -1,11 +1,95 @@
 {
-  "generatedAt": "2026-10-21T17:32:11.280Z",
+  "generatedAt": "2026-10-27T16:46:38.383Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "3.3.0",
-  "currentTag": "v3.3.0",
+  "current": "4.0.0",
+  "currentTag": "v4.0.0",
   "minimumSupported": "3.0.0",
   "releases": [
+    {
+      "version": "4.0.0",
+      "tag": "v4.0.0",
+      "date": "2026-10-27",
+      "headline": "`Chip` is now `Tag`, redrawn as a label rather than a control. `Button` gains a split button, `TextField` gains a password variant and a loading state, and a tab's count follows its selection.",
+      "summary": "A breaking release, and TypeScript finds every part of it: `Chip` and its six types are renamed to `Tag`, and the props that made it a control are gone. A tag is now always the small label: 20px at `md`, 18px at `sm`, eight colour roles, `contained` or `outline`, with an optional glyph on either side. The rest is additive or visual. `Button` takes `menu` for a split button. `TextField` takes `type=\"password\"` for a show / hide toggle, a checklist of password rules and a forgot-password link, and `loading` for a skeleton. Its input is 13px and its helper text 11px, which `Select`, `DatePicker` and `TimePicker` share. No token was renamed or retuned.",
+      "changes": [
+        {
+          "kind": "breaking",
+          "summary": "`Chip` is renamed `Tag`, and `ChipProps`, `ChipVariant`, `ChipAppearance`, `ChipSize`, `ChipColors` and `ChipColorValue` become `TagProps`, `TagVariant`, `TagAppearance`, `TagSize`, `TagColors` and `TagColorValue`. No alias is kept.",
+          "scope": [
+            "Tag"
+          ]
+        },
+        {
+          "kind": "breaking",
+          "summary": "`Tag` is a label, not a control. `onClick`, `onDelete`, `deleteIcon`, `clickable`, `avatar`, `disabled`, `selected` and `dense` are removed, and so is the 36px pill that `Chip`'s default `size=\"md\"` drew. `size` is now `md` (20px, 12/16, the old `size=\"sm\"` tag) or `sm` (18px, 11/14), and `md` is the default.",
+          "scope": [
+            "Tag"
+          ]
+        },
+        {
+          "kind": "breaking",
+          "summary": "`Tag` `bordered` is replaced by `appearance=\"outline\"`, which now works on every role, and `variant=\"muted\"` by `variant=\"secondary\"`. The roles are `primary` (the default), `secondary`, `information`, `success`, `warning`, `error`, `orange` and `purple`.",
+          "scope": [
+            "Tag"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Tag` `endIcon`: a 12px glyph after the label, to go with the leading `icon`. `colors` still recolours the fill, outline and label per key.",
+          "scope": [
+            "Tag"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`Button` `menu`: pass `MenuItem`s and the button becomes a split button. The label keeps its own `onClick`, and a caret beside it opens the menu, anchored to the whole control. `menuLabel` names the caret (default \"More options\"). Drawn for `primary` and `secondary`, `contained` and `outline`, at `sm`, `md` and `lg`.",
+          "scope": [
+            "Button",
+            "Menu",
+            "MenuItem"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`TextField` `type=\"password\"`: the same field with a show / hide toggle at its end. `requirements` lists the rules a new password has to meet, crossed until met and ticked after; `forgotPassword` puts a link right-aligned under the field. `visible`, `defaultVisible` and `onVisibleChange` control the toggle, and `showPasswordLabel` / `hidePasswordLabel` name it. `autoComplete` defaults to `new-password` with `requirements` and `current-password` without. The `PasswordRequirement` type is exported.",
+          "scope": [
+            "TextField"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`TextField` `loading`: draws the field's skeleton in its place, with a bar only for each row the loaded field has and the field bar at the loaded height, so the form does not move when the value arrives.",
+          "scope": [
+            "TextField"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "Field type: the input is 13px where it was 14, and helper text is 11/14 Medium where it was 12/16 Regular. A field with helper text is 86px tall at `lg` and 82px at `md`. `Select`, `DatePicker` and `TimePicker` share the field and change with it.",
+          "scope": [
+            "TextField",
+            "Select",
+            "DatePicker",
+            "TimePicker"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`Tab` `count` is the neutral `Tag` in every state, where it was `primary`. Only its number moves: `text/default/b1` on the selected tab, `text/default/subtle` on the others, and `text/disabled/default` on a disabled tab.",
+          "scope": [
+            "Tab",
+            "Tabs"
+          ]
+        }
+      ],
+      "migration": [
+        "Rename `Chip` to `Tag` in imports and JSX, and each `Chip*` type to `Tag*`. Upgrade, run `tsc` and fix each error: every removed prop is gone from the types.",
+        "A `Chip` with `size=\"sm\"` becomes a `Tag` with no `size`. Replace `bordered` with `appearance=\"outline\"` and `variant=\"muted\"` with `variant=\"secondary\"`.",
+        "A `Chip` left on its default `size=\"md\"` was a 36px pill and is now a 20px tag. If it labelled something, that is the intent. If it was pressed, selected or deleted, it was a control and wants one: a `ToggleButtonGroup` for a set of filters, a `Button` for an action.",
+        "Check any form that pinned a height to a field with helper text. The helper row is 4px shorter, so the field and its helper are 86 / 82px tall."
+      ]
+    },
     {
       "version": "3.3.0",
       "tag": "v3.3.0",
@@ -511,8 +595,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^3.3.0",
-    "pin": "npm install github:neofloai/atoms#semver:^3.3.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^4.0.0",
+    "pin": "npm install github:neofloai/atoms#semver:^4.0.0"
   },
   "keywords": [
     "changelog",
