@@ -20,7 +20,7 @@
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run test:run"
   },
   "dependencies": {
-    "@neofloai/atoms": "github:neofloai/atoms#semver:^4.0.1",
+    "@neofloai/atoms": "github:neofloai/atoms#semver:^4.1.0",
     "@tanstack/react-query": "^5.105.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

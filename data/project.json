@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T18:14:15.787Z",
+  "generatedAt": "2026-10-27T18:20:02.164Z",
   "questions": [
     {
       "id": "purpose",
@@ -119,7 +119,7 @@
       "id": "react",
       "label": "React + Vite + TypeScript (Atoms template)",
       "chooseWhen": "it is a prototype, or a new project whose frontend does not need a server of its own",
-      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.0.1 {{name}}",
+      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.1.0 {{name}}",
       "fromTemplate": true,
       "iconStep": null,
       "steps": [
@@ -281,7 +281,7 @@
   },
   "structure": {
     "templatePath": "templates/react",
-    "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.0.1 {{name}}",
+    "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.1.0 {{name}}",
     "tree": "src/\n├── main.tsx              Mounts <App />. Nothing else goes here.\n├── app/                  Composition root: wiring, never features.\n│   ├── App.tsx\n│   ├── providers/        NeofloThemeProvider, QueryClient, Snackbar.\n│   ├── router/           Route table. Every page is lazy-loaded.\n│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows.\n│   └── errors/           Route error boundary.\n├── pages/                One folder per route. Thin: composes features.\n│   └── <route>/<Route>Page.tsx\n├── features/             One folder per business capability.\n│   └── <feature>/        See the slice shape below.\n├── shared/               Domain-free building blocks.\n│   ├── api/              httpClient, mockResponse.\n│   ├── config/           env.ts (every env var), paths.ts (every route).\n│   ├── lib/              Pure helpers: formatting, dates, maths.\n│   ├── ui/               Compositions of Atoms used by 2+ pages.\n│   └── hooks/            Domain-free hooks (useDebounce, …).\n└── test/                 Test setup and renderWithProviders.",
     "featureTree": "features/<feature>/\n├── index.ts              The public API. The only file outside code imports.\n├── model/                Types and pure functions. No React, no fetching.\n├── api/                  <feature>Api.ts (transport) and <feature>Queries.ts\n│                         (query keys + TanStack Query hooks).\n├── mocks/                Sample data in the API's exact shape. Read only by api/.\n├── components/           The feature's UI, built from Atoms components.\n└── hooks/                Feature hooks that are not queries (optional).",
     "layers": [
