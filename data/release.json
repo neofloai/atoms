@@ -1,11 +1,30 @@
 {
-  "generatedAt": "2026-10-27T16:46:38.383Z",
+  "generatedAt": "2026-10-27T17:12:35.646Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "4.0.0",
-  "currentTag": "v4.0.0",
+  "current": "4.0.1",
+  "currentTag": "v4.0.1",
   "minimumSupported": "3.0.0",
   "releases": [
+    {
+      "version": "4.0.1",
+      "tag": "v4.0.1",
+      "date": "2026-10-27",
+      "headline": "The sidebar rail is 216px wide, down from 220.",
+      "summary": "A patch release. Nothing is added, removed or renamed. `Drawer size=\"sm\"`, the app sidebar, is 216px, and the resize handle's floor moves with it, so `SIDEBAR_MIN_WIDTH_PX` is 216. The ceiling stays 320.",
+      "changes": [
+        {
+          "kind": "changed",
+          "summary": "`Drawer` `size=\"sm\"` is 216px where it was 220, and `useSidebarToggle` starts the sidebar there. `SIDEBAR_MIN_WIDTH_PX` is 216, so a drag stops at the new width; `SIDEBAR_MAX_WIDTH_PX` stays 320. The page beside the rail gains 4px.",
+          "scope": [
+            "Drawer"
+          ]
+        }
+      ],
+      "migration": [
+        "Nothing has to change. Check any layout that hard-codes 220 to line something up with the rail; read `SIDEBAR_MIN_WIDTH_PX` instead, or 216."
+      ]
+    },
     {
       "version": "4.0.0",
       "tag": "v4.0.0",
@@ -595,8 +614,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^4.0.0",
-    "pin": "npm install github:neofloai/atoms#semver:^4.0.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^4.0.1",
+    "pin": "npm install github:neofloai/atoms#semver:^4.0.1"
   },
   "keywords": [
     "changelog",
