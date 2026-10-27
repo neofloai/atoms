@@ -67,7 +67,7 @@ Each layer imports only from the layers below it. oxlint fails the build on anyt
 3. **Features never import other features. When two features need each other, compose them in a page; when they need the same code, move it to `shared` if it has no domain knowledge.**
    Features that import each other stop being separable — a change to one is a change to all of them, and none can be removed or rewritten alone. *Checked by oxlint.*
 4. **Import a feature only through its `index.ts` (`@/features/invoices`), never a file inside it. Export from `index.ts` only what a page needs.**
-   The index is the feature's contract. Everything behind it can be reorganised without breaking a caller. *Checked by oxlint.*
+   The index is the feature's contract. Everything behind it can be reorganised without breaking a caller — and because `package.json` declares the app free of side effects, a page that imports one hook from the index does not bundle the feature's table along with it. *Checked by oxlint.*
 5. **Inside a feature, use relative imports (`../model/invoice`). Across folders, use the `@/` alias. Never `../../`.**
    The alias says which layer an import comes from at a glance, and it survives a file moving one folder deeper. *Checked by oxlint.*
 6. **Keep `shared` free of business words. If code names an invoice, a vendor or a user role, it belongs to a feature.**
@@ -118,11 +118,13 @@ Each layer imports only from the layers below it. oxlint fails the build on anyt
    A named export is the same name at every import site, so search and rename find all of them. *Checked by oxlint.*
 2. **TypeScript stays strict. No `any`, no non-null `!`, no `@ts-ignore` or `@ts-expect-error`, no `as` cast to silence an error. Records are typed in the feature's `model/`.**
    Each escape hatch is a place the compiler stops checking — and the place the next bug comes from. *Checked by oxlint.*
-3. **Name files by what they export: components `PascalCase.tsx` with one component per file, hooks `useThing.ts`, everything else `camelCase.ts`. Tests sit next to the file as `<file>.test.ts(x)`.**
+3. **A module does nothing when it is imported: only declarations at the top level — no registration, no global mutation, no code that runs for its effect. The one exception is a `.css` import. Anything that must run at startup goes in `main.tsx` or `app/providers/`.**
+   `package.json` declares `"sideEffects": ["**/*.css"]` so the bundler can drop every export a page does not use. A module that runs code on import would be dropped along with it, and the bug would only show in the production build.
+4. **Name files by what they export: components `PascalCase.tsx` with one component per file, hooks `useThing.ts`, everything else `camelCase.ts`. Tests sit next to the file as `<file>.test.ts(x)`.**
    The file name is then the import name, and a test is found by looking next to what it tests.
-4. **Every feature ships with tests for its `model/` logic; a page with real behaviour gets a render test using `renderWithProviders`.**
+5. **Every feature ships with tests for its `model/` logic; a page with real behaviour gets a render test using `renderWithProviders`.**
    Model functions are pure, so their tests are cheap and never flaky. They are the ones that catch a wrong total before a customer does.
-5. **Do not add a dependency without asking. Never a second router, data-fetching library, state library, HTTP client, date library or UI kit.**
+6. **Do not add a dependency without asking. Never a second router, data-fetching library, state library, HTTP client, date library or UI kit.**
    Every dependency is code you now maintain. Two of the same kind means every engineer has to learn both.
 
 ### Before calling it done

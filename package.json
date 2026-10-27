@@ -35,9 +35,10 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build:lib": "tsup && npm run check:icons && npm run check:dev-marks",
+    "build:lib": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && tsup && npm run check:icons && npm run check:dev-marks && npm run check:treeshake",
     "check:icons": "node scripts/check-icon-leak.mjs",
     "check:dev-marks": "node scripts/check-dev-marks.mjs",
+    "check:treeshake": "node scripts/check-treeshake.mjs",
     "prepare": "npm run build:lib",
     "prebuild": "npm run generate",
     "build": "next build",

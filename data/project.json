@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T17:56:41.228Z",
+  "generatedAt": "2026-10-27T18:14:15.787Z",
   "questions": [
     {
       "id": "purpose",
@@ -336,7 +336,7 @@
           },
           {
             "rule": "Import a feature only through its `index.ts` (`@/features/invoices`), never a file inside it. Export from `index.ts` only what a page needs.",
-            "why": "The index is the feature's contract. Everything behind it can be reorganised without breaking a caller.",
+            "why": "The index is the feature's contract. Everything behind it can be reorganised without breaking a caller — and because `package.json` declares the app free of side effects, a page that imports one hook from the index does not bundle the feature's table along with it.",
             "enforcedBy": "oxlint"
           },
           {
@@ -453,6 +453,11 @@
             "rule": "TypeScript stays strict. No `any`, no non-null `!`, no `@ts-ignore` or `@ts-expect-error`, no `as` cast to silence an error. Records are typed in the feature's `model/`.",
             "why": "Each escape hatch is a place the compiler stops checking — and the place the next bug comes from.",
             "enforcedBy": "oxlint"
+          },
+          {
+            "rule": "A module does nothing when it is imported: only declarations at the top level — no registration, no global mutation, no code that runs for its effect. The one exception is a `.css` import. Anything that must run at startup goes in `main.tsx` or `app/providers/`.",
+            "why": "`package.json` declares `\"sideEffects\": [\"**/*.css\"]` so the bundler can drop every export a page does not use. A module that runs code on import would be dropped along with it, and the bug would only show in the production build.",
+            "enforcedBy": "review"
           },
           {
             "rule": "Name files by what they export: components `PascalCase.tsx` with one component per file, hooks `useThing.ts`, everything else `camelCase.ts`. Tests sit next to the file as `<file>.test.ts(x)`.",
