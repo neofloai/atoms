@@ -108,7 +108,7 @@ export function LinkShowcase() {
 
       <PreviewCard
         title="Colour roles"
-        description="Six roles, each resting on its text/<role>/body rung — the same ink an outline Button of that role uses for its label. warning is included for parity with Chip and Badge, and it is the one role whose hover rung measures under 4.5:1 on a light page."
+        description="Six roles, each resting on its text/<role>/body rung — the same ink an outline Button of that role uses for its label. warning is included for parity with Tag and Badge, and it is the one role whose hover rung measures under 4.5:1 on a light page."
       >
         <Stack direction="row" spacing={3} useFlexGap sx={{ flexWrap: 'wrap' }}>
           {ROLES.map((role) => (

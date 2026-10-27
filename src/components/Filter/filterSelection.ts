@@ -74,7 +74,7 @@ export function unselectVisible(
  * A `label` that is a node has no text to read, so those options must
  * declare `searchText` or they match nothing — silently dropping out of
  * the list the moment anything is typed is worse than a caller having
- * to say what their `Chip` says.
+ * to say what their `Tag` says.
  */
 function searchTextOf(option: FilterOption): string {
   if (option.searchText !== undefined) {

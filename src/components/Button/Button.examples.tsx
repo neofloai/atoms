@@ -34,6 +34,20 @@ export const data: ComponentExamplesData = {
         'Control height: 28px, 32px, 40px, or 48px. Each size sets its own inline padding (8 / 12 / 16 / 12px) and glyph size (16 / 16 / 20 / 20px; `social` keeps its mark at 16 throughout); `lg` and `xl` take a heading-sized label, `sm` and `md` a body-sized one. `xl` is the page-level size — the one action a screen exists for, beside its title — and works with every `variant` and `appearance`. With `appearance="social"` the default is `lg` (40px), the size the sign-in button is drawn at — omit `size` to get it, and pass `md` or `sm` only when a layout genuinely needs a smaller one.',
     },
     {
+      name: 'menu',
+      type: 'ReactNode',
+      default: '—',
+      description:
+        'The menu’s options, as `MenuItem`s. Passing it makes a split button: the label keeps its own action and a caret beside it opens the menu, anchored to the whole control and closed when an option is chosen. Drawn for `primary` and `secondary`, `contained` and `outline`, at `sm`, `md` and `lg`; ignored with `appearance="social"`. `onClick`, `href`, `loading`, the icons and every other MUI prop belong to the label’s button, and `ref` points at it; `className`, `style` and `sx` apply to the control as a whole, and `disabled` and `fullWidth` to both halves.',
+    },
+    {
+      name: 'menuLabel',
+      type: 'string',
+      default: "'More options'",
+      description:
+        'Label of the caret button, which has no text of its own. Only read when `menu` is set.',
+    },
+    {
       name: 'loading',
       type: 'boolean',
       default: 'false',
@@ -94,6 +108,38 @@ export const data: ComponentExamplesData = {
       ].join('\n'),
     },
     {
+      title: 'Split button',
+      description:
+        'The label does one thing and the caret offers the others. They are two buttons, so each has its own hover and press; the menu opens under the whole control, aligned to its right edge, and closes when an option is chosen. Pass `MenuItem`s as `menu` — there is no state to wire.',
+      code: [
+        "import { HeartIcon } from '@neofloai/atoms/icons';",
+        '',
+        '<Button',
+        '  startIcon={<HeartIcon />}',
+        '  onClick={save}',
+        '  menu={',
+        '    <>',
+        '      <MenuItem onClick={saveAs}>Save as…</MenuItem>',
+        '      <MenuItem onClick={saveCopy}>Save a copy</MenuItem>',
+        '    </>',
+        '  }',
+        '>',
+        '  Save',
+        '</Button>',
+      ].join('\n'),
+    },
+    {
+      title: 'Split button, outlined and secondary',
+      code: [
+        '<Button appearance="outline" menu={<MenuItem>Export as PDF</MenuItem>}>',
+        '  Export',
+        '</Button>',
+        '<Button variant="secondary" menu={<MenuItem>Export as PDF</MenuItem>}>',
+        '  Export',
+        '</Button>',
+      ].join('\n'),
+    },
+    {
       title: 'Sizes',
       code: [
         '<Button size="sm">Small</Button>',
@@ -124,6 +170,7 @@ export const data: ComponentExamplesData = {
     'Pair `variant="secondary"` with a primary button for cancel/back actions',
     'Use `size="xl"` for the one action a screen exists for, beside its title',
     'Use `appearance="social"` for sign-in buttons that carry a third-party logo, at its default `lg` size — omit `size`',
+    'Make the label the action people want most often, and put the alternatives in `menu` — a split button is one action with variations',
   ],
   donts: [
     "Don't use multiple `primary` contained buttons in the same section",
@@ -134,7 +181,8 @@ export const data: ComponentExamplesData = {
     "Don't reach for `size=\"xl\"` inside a card, a toolbar, a dialog or a table row; it is sized for a page header",
     "Don't pass `variant` alongside `appearance=\"social\"` expecting a colour — it is drawn neutral only",
     "Don't pass Phosphor's monochrome `GoogleLogoIcon` to a social button — the default mark is already the right one",
-
+    "Don't use `menu` when the label has no action of its own — a button that only opens a menu is a menu trigger, not a split button",
+    "Don't put the one primary action in `menu` — if it is the page's call to action it belongs on the label",
   ],
-  relatedComponents: ['IconButton'],
+  relatedComponents: ['IconButton', 'Menu', 'MenuItem'],
 };

@@ -24,7 +24,7 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
+  Tag,
   DataGrid,
   Divider,
   Grid,
@@ -766,8 +766,7 @@ export default function ErpPostingPage() {
                 </Typography>
                 <UploadFiles />
               </Stack>
-              <Chip
-                size="sm"
+              <Tag
                 variant="secondary"
                 icon={<FilePdfIcon />}
                 label="Invoice-A.pdf"

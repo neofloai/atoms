@@ -11,8 +11,8 @@ import { colors } from '@/src/tokens';
  *
  * Deliberately does not enumerate the semantic status colours (those are
  * palette roles — see `PaletteSection`) or `orange`/`purple` (those are
- * Chip tag tints with one consumer each, documented on /tokens under
- * Surface/Text and on the Chip page). Both are read from `colors`, so
+ * `Tag` tints with one consumer each, documented on /tokens under
+ * Surface/Text and on the Tag page). Both are read from `colors`, so
  * nothing here can drift from the token source.
  */
 

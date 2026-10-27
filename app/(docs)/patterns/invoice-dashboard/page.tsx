@@ -5,9 +5,9 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { invoiceDashboard } from '@/src/patterns';
-import { StageChip } from './_components/invoiceQueue';
+import { StageTag } from './_components/invoiceQueue';
 
 import type { InvoiceStage } from './_components/invoiceQueue';
 import { CodeBlock } from '../../_components/CodeBlock';
@@ -33,7 +33,7 @@ function componentHref(name: string): string {
 /**
  * The seven statuses, and where each one's colour comes from.
  *
- * Six carry their own colours rather than a chip role: the workflow needs
+ * Six carry their own colours rather than a tag role: the workflow needs
  * seven that are tellable apart down a column, and the four semantic roles
  * cannot supply seven. `extraction` is the exception and still uses
  * `information` — its colour is specified as three literal hexes in a cyan
@@ -130,7 +130,7 @@ export default function InvoiceDashboardPatternPage() {
             status tells you what it is waiting for, and it is the only field
             on the row that changes where the button goes. It is scanned down
             a column rather than read row by row, which is why the four stages
-            take the four <em>semantic</em> chip roles — the same ones every
+            take the four <em>semantic</em> tag roles — the same ones every
             other status pill in the library uses:
           </Typography>
           <Stack component="ul" spacing={1.5} sx={{ pl: 0, m: 0, listStyle: 'none' }}>
@@ -147,7 +147,7 @@ export default function InvoiceDashboardPatternPage() {
                   spacing={1}
                   sx={{ flexShrink: 0, alignItems: 'center', minWidth: 200 }}
                 >
-                  <StageChip stage={stage.stage} />
+                  <StageTag stage={stage.stage} />
                   <Typography variant="caption" color="text.disabled">
                     <code>{stage.source}</code>
                   </Typography>
@@ -166,7 +166,7 @@ export default function InvoiceDashboardPatternPage() {
             blue. One vocabulary across the library is worth more than
             per-screen fidelity: someone who has learned that amber means a row
             is waiting on them should not have to relearn it per table.{' '}
-            <Link href="/components/chip">Chip</Link> does carry{' '}
+            <Link href="/components/tag">Tag</Link> does carry{' '}
             <code>purple</code> and <code>orange</code>, but they are
             decorative roles that stand for no state, so a reader could not tell
             from them which of two stages was the bad one.
@@ -233,7 +233,7 @@ export default function InvoiceDashboardPatternPage() {
             Built from
           </Typography>
           <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
-            {/* The anchor is the interactive element and the chip is the
+            {/* The anchor is the interactive element and the tag is the
                 shape of it — `clickable` would put a button inside a link. */}
             {invoiceDashboard.components.map((name) => (
               <Link
@@ -242,8 +242,7 @@ export default function InvoiceDashboardPatternPage() {
                 underline="none"
                 sx={{ display: 'inline-flex' }}
               >
-                <Chip
-                  size="sm"
+                <Tag
                   variant="secondary"
                   label={name}
                   sx={{ cursor: 'pointer' }}

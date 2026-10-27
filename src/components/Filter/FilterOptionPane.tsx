@@ -122,7 +122,7 @@ export interface FilterOptionPaneProps {
  * list of checkboxes.
  *
  * Rows are the house `Checkbox`, so a filter list and a form use the
- * same control. A row's `label` can be any node — a status `Chip`, a
+ * same control. A row's `label` can be any node — a status `Tag`, a
  * name beside an `Avatar` — which is why searching matches against
  * `searchText` rather than trying to read text out of the tree.
  */

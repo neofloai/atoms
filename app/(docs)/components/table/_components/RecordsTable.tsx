@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { TABLE_CELL_ICON_PX } from '@/src/components/Table';
 import { IconButton } from '@/src/components/IconButton';
 import {
@@ -36,7 +36,7 @@ const CELL_ICON_PX = TABLE_CELL_ICON_PX;
  *
  *   - the reference is `icon` plus `secondary`, the two pieces of cell
  *     geometry the component does own;
- *   - the status is a `Chip` at `size="sm"`, the 20px flat tag;
+ *   - the status is an outlined `Tag`;
  *   - the attachment is a glyph and a filename;
  *   - the amount is `align="right"`, so digits line up on their units;
  *   - the actions are a `Button` and an `IconButton`, and the row is as
@@ -79,9 +79,8 @@ export function RecordsTable({
                 {invoice.vendor}
               </TableCell>
               <TableCell>
-                <Chip
-                  size="sm"
-                  bordered
+                <Tag
+                  appearance="outline"
                   variant={invoice.statusVariant}
                   label={invoice.status}
                 />

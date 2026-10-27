@@ -378,10 +378,20 @@ export function appearanceStyles(
   theme: Theme,
   variant: ActionVariant,
   appearance: ActionAppearance,
-  control: ActionControl
+  control: ActionControl,
+  options: { ring?: boolean } = {}
 ): CSSObject {
   const role = roleTokens[variant];
   const soft = role.soft[control];
+
+  // A split button draws one ring round the whole group (see
+  // `splitRingStyles`), so its halves keep the hover fill and drop their
+  // own — two rings would cross the seam between them.
+  const { ring = true } = options;
+  const focused = (styles: Record<string, ModeToken>): CSSObject =>
+    ring
+      ? pairedFocusRing(theme, styles, role.focusRing)
+      : paired(theme, styles);
 
   if (appearance === 'contained') {
     return {
@@ -391,11 +401,7 @@ export function appearanceStyles(
       }),
       '&:hover': paired(theme, { backgroundColor: role.containedBgHover }),
       '&:active': paired(theme, { backgroundColor: role.containedBgPressed }),
-      '&.Mui-focusVisible': pairedFocusRing(
-        theme,
-        { backgroundColor: role.containedBgHover },
-        role.focusRing
-      ),
+      '&.Mui-focusVisible': focused({ backgroundColor: role.containedBgHover }),
       '&.Mui-disabled': paired(theme, {
         backgroundColor: surface.disabled.default,
         color: text.disabled.default,
@@ -423,11 +429,10 @@ export function appearanceStyles(
         color: role.accentText,
         borderColor: soft.outlineBorderPressed,
       }),
-      '&.Mui-focusVisible': pairedFocusRing(
-        theme,
-        { backgroundColor: soft.hover, color: role.accentText },
-        role.focusRing
-      ),
+      '&.Mui-focusVisible': focused({
+        backgroundColor: soft.hover,
+        color: role.accentText,
+      }),
       '&.Mui-disabled': paired(theme, {
         color: text.disabled.default,
         borderColor: border.disabled.default,
@@ -457,12 +462,79 @@ export function appearanceStyles(
     ...paired(theme, { color: role.accentText }),
     '&:hover': paired(theme, { backgroundColor: soft.hover }),
     '&:active': paired(theme, { backgroundColor: soft.pressed }),
-    '&.Mui-focusVisible': pairedFocusRing(
-      theme,
-      { backgroundColor: soft.hover },
-      role.focusRing
-    ),
+    '&.Mui-focusVisible': focused({ backgroundColor: soft.hover }),
     '&.Mui-disabled': paired(theme, { color: text.disabled.default }),
+  };
+}
+
+/** Width of the rule between a split button's action and its caret. */
+export const SPLIT_DIVIDER_WIDTH_PX = 1;
+
+/**
+ * The rule between a split button's action and its caret, drawn as the
+ * toggle's `::before`.
+ *
+ * Figma draws it per cell as a 1px line in the group's own palette
+ * rather than from one token: `border/primary/2` on a filled primary
+ * (one rung lighter, `border/primary/1`, while it is held),
+ * `border/default/1` on a filled secondary, and the same colour as the
+ * outline itself on both outlined roles, so an outlined control reads as
+ * one box with a short tick in it. Only those four cells are drawn.
+ * `success`, `error` and `warning`, and `text`, take the role's outline
+ * border — the nearest rung that exists — until the sheet says
+ * otherwise.
+ *
+ * Disabled is `border/disabled/default` everywhere.
+ *
+ * `height` is the glyph's, so the rule is as tall as the caret beside
+ * it; geometry is the caller's, colour is this function's.
+ */
+export function splitDividerStyles(
+  theme: Theme,
+  variant: ActionVariant,
+  appearance: ActionAppearance,
+  height: number
+): CSSObject {
+  const soft = roleTokens[variant].soft.button;
+  let rest = soft.outlineBorder;
+  let pressed = soft.outlineBorderPressed;
+  if (appearance === 'contained' && variant === 'primary') {
+    rest = border.primary.defaultHover;
+    pressed = border.primary.default;
+  } else if (appearance === 'contained' && variant === 'secondary') {
+    rest = border.default.default;
+    pressed = border.default.default;
+  }
+
+  return {
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      insetInlineStart: 0,
+      top: '50%',
+      width: SPLIT_DIVIDER_WIDTH_PX,
+      height,
+      transform: 'translateY(-50%)',
+      ...paired(theme, { backgroundColor: rest }),
+    },
+    '&:active::before': paired(theme, { backgroundColor: pressed }),
+    '&.Mui-disabled::before': paired(theme, {
+      backgroundColor: border.disabled.default,
+    }),
+  };
+}
+
+/**
+ * The focus ring round a whole split button, shown while either half
+ * has keyboard focus. The role's own ring colour, as on every other
+ * action control.
+ */
+export function splitRingStyles(
+  theme: Theme,
+  variant: ActionVariant
+): CSSObject {
+  return {
+    '&:has(.Mui-focusVisible)': focusRing(theme, roleTokens[variant].focusRing),
   };
 }
 

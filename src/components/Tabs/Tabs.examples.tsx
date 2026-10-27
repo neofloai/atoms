@@ -48,7 +48,7 @@ export const data: ComponentExamplesData = {
       type: "'standard' | 'scrollable' | 'fullWidth'",
       default: "'standard'",
       description:
-        'MUI’s overflow behaviour, not the house “colour role” meaning `variant` has on `Button` and `Chip` — this component has no colour axis for it to collide with. `scrollable` lets the row scroll and adds overflow buttons; `fullWidth` stretches the tabs to fill the bar, which suits a narrow viewport.',
+        'MUI’s overflow behaviour, not the house “colour role” meaning `variant` has on `Button` and `Tag` — this component has no colour axis for it to collide with. `scrollable` lets the row scroll and adds overflow buttons; `fullWidth` stretches the tabs to fill the bar, which suits a narrow viewport.',
     },
     {
       name: 'Tabs orientation',
@@ -97,7 +97,7 @@ export const data: ComponentExamplesData = {
       type: 'ReactNode',
       default: '—',
       description:
-        'A count after the label: how many rows, matches, or unread items sit behind this tab. This is the Figma `tag` axis, and it renders the same `Chip size="sm"` that Figma nests here — `primary` normally, `secondary` when the tab is disabled.',
+        'A count after the label: how many rows, matches, or unread items sit behind this tab. It renders the neutral `Tag` in every state; its number darkens on the selected tab and lightens on the others, as the label does.',
     },
     {
       name: 'Tab disabled',
@@ -150,7 +150,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'With counts',
       description:
-        'The Figma `tag` axis — a count beside the label, in the design’s small chip.',
+        'The Figma `tag` axis — a count beside the label, in the design’s small tag.',
       code: `<Tabs value={status} onChange={(_, next) => setStatus(next)} aria-label="Invoice status">
   <Tab label="All" value="all" count={48} />
   <Tab label="Open" value="open" count={12} aria-label="Open, 12 invoices" />
@@ -264,5 +264,5 @@ export const data: ComponentExamplesData = {
     'Don’t nest a tab bar inside another one; two rows of tabs on one screen leaves no way to tell which owns the panel',
     'Don’t put more than a handful of tabs in a `standard` bar — past that it wants `scrollable`, or a `Select`',
   ],
-  relatedComponents: ['Tab', 'ToggleButtonGroup', 'Divider', 'Card', 'Chip'],
+  relatedComponents: ['Tab', 'ToggleButtonGroup', 'Divider', 'Card', 'Tag'],
 };

@@ -12,6 +12,14 @@ import type {
  */
 export type InputAdornmentProps = MuiInputAdornmentProps;
 
+/** One rule a new password has to meet, for the password variant's checklist. */
+export interface PasswordRequirement {
+  /** What the rule asks for, e.g. "At least one number". */
+  label: React.ReactNode;
+  /** Whether the current value meets it. */
+  met: boolean;
+}
+
 /**
  * Validation status of the field, mapped from the Figma `type` axis
  * (error / success / warning variants). Colours the border and helper
@@ -56,4 +64,45 @@ export interface TextFieldProps
    * `label`) and enforces it as the native HTML `maxlength`.
    */
   maxLength?: number;
+  /**
+   * Renders the field's skeleton in its place while its value loads: a
+   * bar for the label, one for the field and one for the helper text,
+   * each only when the loaded field has that row, and the field bar at
+   * the loaded field's height so nothing moves when the value arrives.
+   *
+   * @default false
+   */
+  loading?: boolean;
+
+  /* ---------------------------------------------- the password variant */
+
+  /**
+   * The rules a new password has to meet, listed under the field with a
+   * cross until each is met and a tick after. Pass it when the field
+   * creates a password; leave it out when it signs someone in. The field
+   * does not test the value — work out `met` from it, so the rules stay
+   * yours to define. Only read when `type="password"`.
+   */
+  requirements?: readonly PasswordRequirement[];
+  /**
+   * Shown right-aligned under the field: the way back for someone who
+   * has forgotten their password. Pass a `Link` with `color="secondary"`;
+   * it takes the row's type. Only read when `type="password"`.
+   */
+  forgotPassword?: React.ReactNode;
+  /** Whether the password shows as text. Controlled. Only read when `type="password"`. */
+  visible?: boolean;
+  /**
+   * Whether the password starts out as text. Uncontrolled. Only read
+   * when `type="password"`.
+   *
+   * @default false
+   */
+  defaultVisible?: boolean;
+  /** Called with the new state when the toggle is pressed. */
+  onVisibleChange?: (visible: boolean) => void;
+  /** The toggle's label while the password is hidden. @default 'Show password' */
+  showPasswordLabel?: string;
+  /** The toggle's label while the password shows. @default 'Hide password' */
+  hidePasswordLabel?: string;
 }

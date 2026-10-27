@@ -27,13 +27,13 @@ import type {
  * ## Dropped
  *
  * MUI's `size="large"`. The Figma component set (node 3763:4790) draws
- * two sizes and no third, so there is no 44px toggle to name. `Chip`
+ * two sizes and no third, so there is no 44px toggle to name. `Tag`
  * has the same two-value ladder for the same reason.
  *
  * ## Added
  *
  * `appearance`, which is the Figma `border` axis under the house name
- * for that axis. `Button`, `IconButton`, and `Chip` all call the
+ * for that axis. `Button`, `IconButton`, and `Tag` all call the
  * "how much chrome does this control carry" axis `appearance`, so this
  * reuses that word instead of introducing a `border` or `disableBorder`
  * prop of its own. Figma ships exactly two of the three house values —
@@ -68,7 +68,7 @@ export type ToggleButtonColor =
 /**
  * Control size. `md` is a 36px box with a 20px glyph, `sm` is 32px with
  * 16px — both from node 3763:4790, and both the same heights
- * `IconButton` and the `Chip` pill use.
+ * `IconButton` uses.
  */
 export type ToggleButtonSize = 'sm' | 'md';
 

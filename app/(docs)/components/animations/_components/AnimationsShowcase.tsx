@@ -10,7 +10,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { Alert } from '@/src/components/Alert';
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { Collapse } from '@/src/components/Collapse';
 import { Fade } from '@/src/components/Fade';
 import { Grow } from '@/src/components/Grow';
@@ -460,7 +460,7 @@ function SwapSlot() {
                 unmountOnExit
               >
                 <Box sx={{ gridArea: '1 / 1' }}>
-                  <Chip label={label} variant="primary" />
+                  <Tag label={label} variant="primary" />
                 </Box>
               </Zoom>
             ))}

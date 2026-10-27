@@ -49,7 +49,7 @@
  *     in={open}
  *     timeout={{ enter: 200 + index * 60, exit: 150 }}
  *   >
- *     <Chip label={item.label} />
+ *     <Tag label={item.label} />
  *   </Grow>
  * ))}
  *

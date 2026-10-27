@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles';
 
 import { Alert } from '@/src/components/Alert';
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { DataGrid } from '@/src/components/DataGrid';
 import { Divider } from '@/src/components/Divider';
 import { IconButton } from '@/src/components/IconButton';
@@ -716,8 +716,7 @@ export function ErpPostingPreview(): React.JSX.Element {
                 </Typography>
                 <UploadFiles />
               </Stack>
-              <Chip
-                size="sm"
+              <Tag
                 variant="secondary"
                 icon={<FilePdfIcon />}
                 label="Invoice-A.pdf"

@@ -9,7 +9,7 @@ import { Alert } from '@/src/components/Alert';
 import { Button } from '@/src/components/Button';
 import { Card, CardContent } from '@/src/components/Card';
 import { Checkbox } from '@/src/components/Checkbox';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { Divider } from '@/src/components/Divider';
 import { IconButton } from '@/src/components/IconButton';
 import {
@@ -416,7 +416,7 @@ function FieldDecision({
   if (!field.acknowledgeable) {
     return (
       <Tooltip title="An amount or an identifier that disagrees with the purchase order means one of the two documents was read wrong. That is fixed in extraction, not waved through here.">
-        <Chip size="sm" variant="error" label="Fix in extraction" />
+        <Tag variant="error" label="Fix in extraction" />
       </Tooltip>
     );
   }
@@ -424,7 +424,7 @@ function FieldDecision({
   if (isRemembered(field, acknowledged)) {
     return (
       <Tooltip title="Acknowledged three times, so it is saved. The next invoice from this vendor will match this field automatically.">
-        <Chip size="sm" variant="success" label="Saved to memory" />
+        <Tag variant="success" label="Saved to memory" />
       </Tooltip>
     );
   }
@@ -433,8 +433,7 @@ function FieldDecision({
 
   if (acknowledged.has(field.key)) {
     return (
-      <Chip
-        size="sm"
+      <Tag
         variant="information"
         label={
           'Acknowledged · ' + count + ' of ' + ACKNOWLEDGEMENTS_TO_REMEMBER
@@ -655,7 +654,7 @@ function ReceiptRow({
           one value on the row that names a document rather than describing
           this one. */}
       <TableCell sx={{ width: GRN_COLS.poNo }}>
-        <Chip size="sm" variant="secondary" label={receipt.poNo} />
+        <Tag variant="secondary" label={receipt.poNo} />
       </TableCell>
       <TableCell sx={{ width: GRN_COLS.grnNo }}>
         <Index>{receipt.grnNo}</Index>
@@ -1275,8 +1274,7 @@ export function MatchingPreview() {
 
             <Stack sx={{ alignItems: 'center', gap: 0.5 }}>
               <ArrowsLeftRightIcon size={20} />
-              <Chip
-                size="sm"
+              <Tag
                 variant="secondary"
                 label={'Tolerance: ± ' + formatMoney(TOLERANCE)}
               />
@@ -1297,7 +1295,7 @@ export function MatchingPreview() {
 
             {/* The frame draws this as a green-bordered status card. Atoms has
                 no tinted card, so the surface is a stock `Card` and the
-                verdict is the `Chip` inside it. */}
+                verdict is the `Tag` inside it. */}
             <Card>
               <CardContent>
                 <Stack sx={{ gap: 0.5, minWidth: 180 }}>
@@ -1307,8 +1305,7 @@ export function MatchingPreview() {
                   <Typography variant="h5">
                     {balanced ? 'Balanced' : formatMoney(Math.abs(gap))}
                   </Typography>
-                  <Chip
-                    size="sm"
+                  <Tag
                     variant={balanced ? 'success' : 'error'}
                     label={
                       balanced

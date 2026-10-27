@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { matching } from '@/src/patterns';
 import { CodeBlock } from '../../_components/CodeBlock';
 import { MatchingPreview } from './_components/MatchingPreview';
@@ -294,7 +294,7 @@ export default function MatchingPatternPage() {
             <Typography component="li" variant="body2" color="text.secondary">
               The variance verdict sits in a plain{' '}
               <Link href="/components/card">Card</Link> with a{' '}
-              <Link href="/components/chip">Chip</Link> carrying the colour,
+              <Link href="/components/tag">Tag</Link> carrying the colour,
               where a tinted status card with a matching border would say it in
               one element. A status card is a component to add.
             </Typography>
@@ -322,7 +322,7 @@ export default function MatchingPatternPage() {
             Built from
           </Typography>
           <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
-            {/* The anchor is the interactive element and the chip is the
+            {/* The anchor is the interactive element and the tag is the
                 shape of it — `clickable` would put a button inside a link. */}
             {matching.components.map((name) => (
               <Link
@@ -331,8 +331,7 @@ export default function MatchingPatternPage() {
                 underline="none"
                 sx={{ display: 'inline-flex' }}
               >
-                <Chip
-                  size="sm"
+                <Tag
                   variant="secondary"
                   label={name}
                   sx={{ cursor: 'pointer' }}

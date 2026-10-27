@@ -22,7 +22,7 @@ import type {
  * the row.
  *
  * Everything else is composition. The design's twelve cell variants —
- * chip, person, amount, attachment, toggle, loader — are `Chip`,
+ * tag, person, amount, attachment, toggle, loader — are `Tag`,
  * `Avatar`, `Switch` and `Skeleton` inside a cell, not props on it. Two
  * of the twelve are geometry rather than content, and those two are
  * props: a leading slot 8px clear of the text (`icon`), and a muted

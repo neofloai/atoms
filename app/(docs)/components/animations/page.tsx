@@ -65,7 +65,7 @@ const CHOOSING: readonly {
   },
   {
     name: 'Zoom',
-    use: 'A small control of known size — an icon button, a chip, a badge.',
+    use: 'A small control of known size — an icon button, a tag, a badge.',
     layout: 'Never moves the page',
   },
   {

@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 
 import { Avatar } from '@/src/components/Avatar';
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import {
   TABLE_CELL_GAP_PX,
   TABLE_CELL_GAP_TWO_LINE_PX,
@@ -216,7 +216,7 @@ export const RECORD_COLUMNS: GridColDef<GridInvoice>[] = [
     width: 132,
     sortable: false,
     renderCell: ({ row }) => (
-      <Chip size="sm" bordered variant={row.statusVariant} label={row.status} />
+      <Tag appearance="outline" variant={row.statusVariant} label={row.status} />
     ),
   },
   {

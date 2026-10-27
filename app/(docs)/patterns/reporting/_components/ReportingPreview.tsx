@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { Card } from '@/src/components/Card';
 import { CardContent } from '@/src/components/Card';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { Divider } from '@/src/components/Divider';
 import { useSidebarToggle } from '@/src/components/Drawer';
 import { IconButton } from '@/src/components/IconButton';
@@ -180,8 +180,7 @@ function TrendPill({
 
   return (
     <Stack direction="row" sx={{ gap: 1, alignItems: 'center', mt: 'auto' }}>
-      <Chip
-        size="sm"
+      <Tag
         variant={
           improved === null ? 'secondary' : improved ? 'success' : 'error'
         }

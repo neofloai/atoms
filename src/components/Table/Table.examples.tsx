@@ -113,7 +113,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A table of records',
       description:
-        'The whole family in the order it nests. Every cell is markup you control, which is the reason to use this rather than a grid: an amount is a right-aligned cell, a status is a `Chip`, and neither needs a column definition.',
+        'The whole family in the order it nests. Every cell is markup you control, which is the reason to use this rather than a grid: an amount is a right-aligned cell, a status is a `Tag`, and neither needs a column definition.',
       code: [
         '<Table size="sm">',
         '  <TableHead>',
@@ -130,7 +130,7 @@ export const data: ComponentExamplesData = {
         '        <TableCell>{invoice.number}</TableCell>',
         '        <TableCell>{invoice.vendor}</TableCell>',
         '        <TableCell>',
-        '          <Chip variant="success" size="sm" label={invoice.status} />',
+        '          <Tag variant="success" label={invoice.status} />',
         '        </TableCell>',
         '        <TableCell align="right">{invoice.total}</TableCell>',
         '      </TableRow>',
@@ -289,7 +289,7 @@ export const data: ComponentExamplesData = {
   dos: [
     'Set `size` once on the table — every row reads it, and a table with two densities is two tables',
     'Use `align="right"` for amounts, counts and dates so digits line up on their units',
-    'Put a `Chip`, an `Avatar` or a `Switch` straight into a cell — the design’s cell variants are content, not props',
+    'Put a `Tag`, an `Avatar` or a `Switch` straight into a cell — the design’s cell variants are content, not props',
     'Use `secondary` for the fact that qualifies the cell — a timestamp under a reference, a role under a name — rather than a second column',
     'Turn on `hover` when rows are clickable or selectable, and leave it off when the table is only being read',
     'Use `state` for an outcome in the data and `selected` for a choice the reader made; they are different colours because they answer different questions',
@@ -306,5 +306,5 @@ export const data: ComponentExamplesData = {
     "Don't build sorting, filtering or pagination on top of this by hand once there are more than a few hundred rows — that is the data grid's work",
     "Don't reach for `stickyHeader` without a scrolling ancestor; sticky pins to `TableContainer`, and without one it does nothing",
   ],
-  relatedComponents: ['Card', 'Chip', 'Checkbox', 'Avatar', 'Skeleton'],
+  relatedComponents: ['Card', 'Tag', 'Checkbox', 'Avatar', 'Skeleton'],
 };

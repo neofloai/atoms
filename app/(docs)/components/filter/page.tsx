@@ -61,7 +61,7 @@ export default function FilterDocsPage() {
             are one thing — splitting them across children invites a rail
             row with no pane behind it. Everything the panel draws is a
             component from this library: the rail badges are{' '}
-            <code>Chip size=&quot;sm&quot;</code>, the option rows are{' '}
+            <code>Tag size=&quot;sm&quot;</code>, the option rows are{' '}
             <code>Checkbox</code>, the search field is{' '}
             <code>TextField</code>, and the three actions are text{' '}
             <code>Button</code>s.

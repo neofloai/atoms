@@ -217,7 +217,7 @@ function DisabledStates() {
         </Tabs>
         <Typography variant="caption" color="text.secondary">
           the whole bar disabled — the Figma `enabled` axis, which dims the
-          indicator and moves the count pill to the neutral role
+          indicator and the number in each count pill
         </Typography>
       </Stack>
     </Stack>
@@ -277,7 +277,7 @@ export function TabsShowcase() {
 
       <PreviewCard
         title="With counts"
-        description="The Figma tag axis, rendered as the same Chip size=&quot;sm&quot; the design nests here."
+        description="A count beside the label, in the neutral Tag. Its number darkens on the selected tab and lightens on the others, as the label does."
       >
         <InvoiceStatus />
       </PreviewCard>

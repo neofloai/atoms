@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Avatar } from '@/src/components/Avatar';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { Divider } from '@/src/components/Divider';
 import { IconButton } from '@/src/components/IconButton';
 import { Menu } from '@/src/components/Menu';
@@ -82,8 +82,8 @@ function ink(property: string, token: ModeToken) {
  *
  * Not a menu row: there is nothing to pick. A 36px avatar beside the name
  * in `Sans/B1/Medium`, the address under it in `Sans/B2/Medium` caption
- * ink, and the role as a small muted chip — the metadata tag, which is
- * what the sheet's chip is.
+ * ink, and the role as a small grey tag — the metadata tag, which is
+ * what the sheet's tag is.
  */
 function AccountHeader() {
   return (
@@ -114,7 +114,7 @@ function AccountHeader() {
             {USER.email}
           </Typography>
         </Stack>
-        <Chip size="sm" variant="muted" label={USER.role} />
+        <Tag variant="secondary" label={USER.role} />
       </Stack>
     </Box>
   );

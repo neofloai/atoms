@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 
 import { Alert } from '@/src/components/Alert';
 import { Button } from '@/src/components/Button';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { Divider } from '@/src/components/Divider';
 import { IconButton } from '@/src/components/IconButton';
 import {
@@ -908,8 +908,7 @@ function LineItemsTab({
         {/* Three answers, not two: before the net is captured the lines have
             nothing to agree or disagree with, and calling that a failure would
             put a second complaint on screen for one missing field. */}
-        <Chip
-          size="sm"
+        <Tag
           variant={
             reconciles === null
               ? 'secondary'

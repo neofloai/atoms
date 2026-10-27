@@ -3,7 +3,7 @@
 import { styled } from '@mui/material/styles';
 
 import { Avatar } from '@/src/components/Avatar';
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { text, typography } from '@/src/tokens';
 
 import {
@@ -172,8 +172,7 @@ const TypeRow = styled('span')({
 function TypeCell({ types }: { types: readonly string[] }) {
   return (
     <TypeRow>
-      <Chip
-        size="sm"
+      <Tag
         variant="secondary"
         label={types[0]}
         sx={{
@@ -186,8 +185,7 @@ function TypeCell({ types }: { types: readonly string[] }) {
         }}
       />
       {types.length > 1 && (
-        <Chip
-          size="sm"
+        <Tag
           variant="secondary"
           label={`+${types.length - 1}`}
           sx={{ flexShrink: 0 }}
@@ -240,7 +238,7 @@ export const QUERY_COLUMNS: GridColDef<QueryRecord>[] = [
     sortable: false,
     renderCell: ({ row }) => {
       const meta = statusMeta(row.status);
-      return <Chip size="sm" bordered variant={meta.variant} label={meta.label} />;
+      return <Tag appearance="outline" variant={meta.variant} label={meta.label} />;
     },
   },
   {

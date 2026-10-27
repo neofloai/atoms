@@ -16,7 +16,7 @@ import type { HandoverNode } from '../shared/schema';
 const STARTERS: Record<string, { props?: Record<string, unknown>; text?: string }> = {
   Button: { props: { variant: 'primary' }, text: 'Button' },
   IconButton: { props: { 'aria-label': 'Action' } },
-  Chip: { props: { label: 'Chip' } },
+  Tag: { props: { label: 'Tag' } },
   Typography: { props: { variant: 'body1' }, text: 'Text' },
   TextField: { props: { placeholder: 'Placeholder', label: 'Label' } },
   Select: { props: { label: 'Label', value: '' } },

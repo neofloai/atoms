@@ -30,7 +30,7 @@ export const data: PatternExamplesData = {
     'Avatar',
     'TextField',
     'Button',
-    'Chip',
+    'Tag',
     'Filter',
     'DataGrid',
     'Divider',

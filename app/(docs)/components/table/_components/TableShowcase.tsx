@@ -229,7 +229,7 @@ export function TableShowcase() {
     <Stack spacing={4}>
       <PreviewCard
         title="A table of records"
-        description="A table of records, rebuilt from Atoms parts: a reference with its timestamp under it, a vendor, a status Chip, an attachment, a right-aligned amount, and the row's actions. None of those columns is a prop on the table — a cell holds whatever you put in it, which is the whole reason to reach for this rather than a grid."
+        description="A table of records, rebuilt from Atoms parts: a reference with its timestamp under it, a vendor, a status Tag, an attachment, a right-aligned amount, and the row's actions. None of those columns is a prop on the table — a cell holds whatever you put in it, which is the whole reason to reach for this rather than a grid."
       >
         <RecordsTable size="sm" />
       </PreviewCard>

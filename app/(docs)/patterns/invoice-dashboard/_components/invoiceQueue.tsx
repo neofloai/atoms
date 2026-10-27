@@ -2,7 +2,7 @@
 
 import { styled } from '@mui/material/styles';
 
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 import { Link } from '@/src/components/Link';
 import { Tooltip } from '@/src/components/Tooltip';
 import { border, fontFamilies, icon, surface, text, typography } from '@/src/tokens';
@@ -23,7 +23,7 @@ import {
 } from '@/src/icons';
 
 import type * as React from 'react';
-import type { ChipColors, ChipVariant } from '@/src/components/Chip';
+import type { TagColors, TagVariant } from '@/src/components/Tag';
 import type { ModeToken } from '@/src/tokens';
 import type { FilterGroup, FilterValue } from '@/src/components/Filter';
 import type { GridColDef } from '@mui/x-data-grid';
@@ -85,8 +85,8 @@ export interface Invoice {
  * The colour and the glyph each stage is drawn in.
  *
  * Seven statuses, and the colour of each is given directly rather than
- * picked from the semantic chip roles. That is a change of approach: this
- * map used to carry a `ChipVariant` per stage, on the argument that one
+ * picked from the semantic tag roles. That is a change of approach: this
+ * map used to carry a `TagVariant` per stage, on the argument that one
  * vocabulary across the library beats per-screen fidelity. The workflow has
  * since outgrown the four roles — it needs seven colours that are tellable
  * apart down a column, and `information` / `warning` / `success` / `error`
@@ -96,7 +96,7 @@ export interface Invoice {
  *
  * The specification named several of these as raw ramp steps —
  * `colors.purple[75]`, `colors.orange[600]`, `colors.yellow[400]` and so on.
- * A ramp step is a plain string, not a `{ light, dark }` pair, so a chip
+ * A ramp step is a plain string, not a `{ light, dark }` pair, so a tag
  * built from one paints the same colour on a near-black page. Each was
  * swapped for the semantic token carrying the *identical* light value, so
  * light mode is pixel-for-pixel what was asked for and dark mode works:
@@ -130,14 +130,14 @@ export interface Invoice {
  * between them is the kind of thing that is a decision once and an
  * inconsistency forever after.
  */
-/** The glyph in a status chip. */
+/** The glyph in a status tag. */
 const STATUS_ICON_PX = 14;
 
 /**
  * Paints a status glyph in a colour of its own rather than the label's.
  *
- * `Chip` sets `color: inherit` on its icon slot, two classes deep from the
- * chip root, so a colour set on the slot element itself loses to it. `&&&`
+ * `Tag` sets `color: inherit` on its icon slot, two classes deep from the
+ * tag root, so a colour set on the slot element itself loses to it. `&&&`
  * lifts this to three and settles it without an `!important`.
  *
  * It exists at all because two of the three glyphs are specified in their
@@ -163,8 +163,8 @@ const GlyphInk = styled('span', {
  */
 interface StageMeta {
   label: string;
-  variant?: ChipVariant;
-  colors?: ChipColors;
+  variant?: TagVariant;
+  colors?: TagColors;
   /** `ReactElement` rather than `ReactNode`: MUI clones it to add its slot class. */
   icon?: React.ReactElement;
 }
@@ -235,15 +235,14 @@ const STAGE_META: Record<InvoiceStage, StageMeta> = {
 };
 
 /**
- * The chip for one status, so the grid column and the pattern page cannot
+ * The tag for one status, so the grid column and the pattern page cannot
  * draw it two different ways.
  */
-export function StageChip({ stage }: { stage: InvoiceStage }) {
+export function StageTag({ stage }: { stage: InvoiceStage }) {
   const meta = STAGE_META[stage];
   return (
-    <Chip
-      size="sm"
-      bordered
+    <Tag
+      appearance="outline"
       variant={meta.variant}
       colors={meta.colors}
       label={meta.label}
@@ -377,14 +376,14 @@ export const INVOICE_FILTER_GROUPS: readonly FilterGroup[] = [
   {
     id: 'stage',
     label: 'Status',
-    // The same chip the Status column draws, not a copy of its text: a
+    // The same tag the Status column draws, not a copy of its text: a
     // status that reads one way in the table and another in the dropdown
     // that filters it makes the reader check whether they are the same
     // thing. `searchText` is what the option pane's search box matches
     // on, and a node has none of its own.
     options: (Object.keys(STAGE_META) as InvoiceStage[]).map((stage) => ({
       value: stage,
-      label: <StageChip stage={stage} />,
+      label: <StageTag stage={stage} />,
       searchText: STAGE_META[stage].label,
     })),
   },
@@ -543,7 +542,7 @@ export const INVOICE_COLUMNS: GridColDef<Invoice>[] = [
     width: 148,
     sortable: false,
     renderCell: ({ row }) => {
-      return <StageChip stage={row.stage} />;
+      return <StageTag stage={row.stage} />;
     },
   },
   {

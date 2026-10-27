@@ -256,13 +256,13 @@ export const data: ComponentExamplesData = {
     {
       title: 'Account menu',
       description:
-        'The profile dropdown off the avatar at the end of the app bar — the standard account menu, and the one place it lives: in the `Navbar`, not in the sidebar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — as a 36px avatar beside the name, the address under it in caption ink, and the role as a small muted chip. Then three groups divided by rules: Settings, Billings and Reporting; Help, Documentation and Report an issue; a System / Light / Dark theme switch on a row of its own. Sign out comes last in the `error` tone. The panel is 240px wide, right-aligned under the avatar 12px below the bar, and opens with `variant="menu"` because the header is not an option. Neither the header nor the theme row is a library component, so both are written out here in full — copy the whole file.',
+        'The profile dropdown off the avatar at the end of the app bar — the standard account menu, and the one place it lives: in the `Navbar`, not in the sidebar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — as a 36px avatar beside the name, the address under it in caption ink, and the role as a small grey tag. Then three groups divided by rules: Settings, Billings and Reporting; Help, Documentation and Report an issue; a System / Light / Dark theme switch on a row of its own. Sign out comes last in the `error` tone. The panel is 240px wide, right-aligned under the avatar 12px below the bar, and opens with `variant="menu"` because the header is not an option. Neither the header nor the theme row is a library component, so both are written out here in full — copy the whole file.',
       code: [
         'import * as React from "react";',
         'import {',
         '  Avatar,',
         '  Box,',
-        '  Chip,',
+        '  Tag,',
         '  Divider,',
         '  IconButton,',
         '  Menu,',
@@ -334,7 +334,7 @@ export const data: ComponentExamplesData = {
         '            {user.email}',
         '          </Typography>',
         '        </Stack>',
-        '        <Chip size="sm" variant="muted" label={user.role} />',
+        '        <Tag variant="secondary" label={user.role} />',
         '      </Stack>',
         '    </Box>',
         '  );',

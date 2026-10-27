@@ -6,9 +6,10 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { UploadSimpleIcon } from '@phosphor-icons/react';
+import { HeartIcon, UploadSimpleIcon } from '@phosphor-icons/react';
 
 import { Button } from '@/src/components/Button';
+import { MenuItem } from '@/src/components/MenuItem';
 
 import type {
   ButtonAppearance,
@@ -49,6 +50,14 @@ function PreviewCard({
 }
 
 PreviewCard.displayName = 'PreviewCard';
+
+const splitMenu = (
+  <>
+    <MenuItem>Save as…</MenuItem>
+    <MenuItem>Save a copy</MenuItem>
+    <MenuItem disabled>Revert</MenuItem>
+  </>
+);
 
 /**
  * Live rendering of every Button variant from the Figma component set:
@@ -138,6 +147,54 @@ export function ButtonShowcase() {
             you hand it something else. Disabled is the only state that moves the
             hairline rather than the fill, and the mark keeps its own
             colours through it, because they are not ours to grey out.
+          </Typography>
+        </Stack>
+      </PreviewCard>
+
+      <PreviewCard title="Split button">
+        <Stack spacing={2.5}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, max-content)',
+              gap: 2,
+              alignItems: 'center',
+            }}
+          >
+            {(['lg', 'md', 'sm'] as const).map((size) =>
+              (['primary', 'secondary'] as const).map((variant) =>
+                (['contained', 'outline'] as const).map((appearance) => (
+                  <Button
+                    key={`${size}-${variant}-${appearance}`}
+                    size={size}
+                    variant={variant}
+                    appearance={appearance}
+                    startIcon={<HeartIcon />}
+                    menu={splitMenu}
+                  >
+                    Button
+                  </Button>
+                ))
+              )
+            )}
+            <Button startIcon={<HeartIcon />} menu={splitMenu} disabled>
+              Button
+            </Button>
+            <Button
+              appearance="outline"
+              startIcon={<HeartIcon />}
+              menu={splitMenu}
+              disabled
+            >
+              Button
+            </Button>
+          </Box>
+          <Typography variant="body2" color="text.secondary">
+            Pass <code>menu</code> and the label keeps its action while a
+            caret beside it opens the options. They are two buttons, so each
+            hovers and presses on its own, and the focus ring runs round
+            both. The menu opens under the whole control, aligned to its
+            right edge, and closes when an option is chosen.
           </Typography>
         </Stack>
       </PreviewCard>

@@ -66,7 +66,7 @@ function sizeStyles(size: ToggleButtonSize): CSSObject {
     borderWidth: OUTLINE_BORDER_WIDTH_PX,
     borderStyle: 'solid',
     // Only reached by a toggle holding both a glyph and a label, which
-    // Figma does not draw. `Chip` spaces its icon from its label the
+    // Figma does not draw. `Tag` spaces its icon from its label the
     // same way.
     gap: spacing.component.xxs,
     fontFamily: fontFamilies.product.sans,
@@ -85,8 +85,7 @@ function sizeStyles(size: ToggleButtonSize): CSSObject {
  * colour, in both schemes.
  *
  * Selection is applied as a nested rule rather than a separate branch
- * because it is a persistent state that hover and press still read over
- * — the same reason `Chip` treats its own `selected` that way.
+ * because it is a persistent state that hover and press still read over.
  */
 function stateStyles(
   theme: Theme,
@@ -259,7 +258,7 @@ const StyledToggleButton = styled(MuiToggleButton, {
  * `appearance="segmented"` is set on the group, which draws the track;
  * see `ToggleButtonGroup`.
  *
- * @see Related: ToggleButtonGroup, IconButton, Chip, Checkbox
+ * @see Related: ToggleButtonGroup, IconButton, Tag, Checkbox
  */
 export const ToggleButton = React.forwardRef<
   HTMLButtonElement,

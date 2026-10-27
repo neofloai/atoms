@@ -1,8 +1,8 @@
 'use client';
 
-import { Chip } from '@/src/components/Chip';
+import { Tag } from '@/src/components/Tag';
 
-import type { ChipVariant } from '@/src/components/Chip';
+import type { TagVariant } from '@/src/components/Tag';
 import type { FilterGroup, FilterOption } from '@/src/components/Filter';
 
 /**
@@ -61,11 +61,11 @@ export const TYPES = [
 
 export const typeOptions = textOptions(TYPES);
 
-/** A status, and the chip that stands for it wherever it is drawn. */
+/** A status, and the tag that stands for it wherever it is drawn. */
 export interface StatusMeta {
   readonly value: string;
   readonly label: string;
-  readonly variant: ChipVariant;
+  readonly variant: TagVariant;
 }
 
 export const STATUSES: readonly StatusMeta[] = [
@@ -92,7 +92,7 @@ export const statusOptions: readonly FilterOption[] = STATUSES.map(
   (status) => ({
     value: status.value,
     label: (
-      <Chip size="sm" bordered variant={status.variant} label={status.label} />
+      <Tag appearance="outline" variant={status.variant} label={status.label} />
     ),
     searchText: status.label,
   })

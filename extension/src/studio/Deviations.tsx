@@ -101,7 +101,7 @@ export function Deviations({ doc, update, select }: { doc: Handover; update: Upd
           <div style={{ marginTop: 6 }}>
             <CommitInput
               autoFocus
-              placeholder="Why it stays — e.g. the library has no dense Chip yet"
+              placeholder="Why it stays — e.g. the library has no removable Tag yet"
               value=""
               onCommit={(v) => {
                 resolve(d, { status: 'accepted', note: v || undefined });

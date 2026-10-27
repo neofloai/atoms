@@ -85,7 +85,7 @@ function useControllable<T>(
  * rail and the panes together, because the two are one thing and
  * splitting them across children invites a rail row with no pane behind
  * it. Every part it draws is a component from this library: the rail
- * badges are `Chip size="sm"`, the option rows are `Checkbox`, the
+ * badges are `Tag`, the option rows are `Checkbox`, the
  * search field is `TextField`, and the three actions are text `Button`s.
  *
  * ## Selection
@@ -138,7 +138,7 @@ function useControllable<T>(
  *   onClose={handleClose}
  * />
  *
- * @see Related: Chip, Checkbox, TextField, Button, Drawer
+ * @see Related: Tag, Checkbox, TextField, Button, Drawer
  */
 export const Filter = React.forwardRef<HTMLDivElement, FilterProps>(
   (

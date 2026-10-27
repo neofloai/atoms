@@ -28,7 +28,7 @@ export const demos: readonly ComponentDemo[] = [
   demo('Faceted filter', <FacetedPreview />),
   demo('Anchored to a button', <AnchoredPreview />),
   demo('Filtering a data grid', <QueryLogPreview />),
-  demo('Chips as option labels', <StatusPreview />),
+  demo('Tags as option labels', <StatusPreview />),
   demo('A category with its own pane', <DateRangePreview />),
   demo('A short, fixed list', <CompactPreview />),
   demo('House wording', <LabelsPreview />),

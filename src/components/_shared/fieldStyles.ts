@@ -179,14 +179,12 @@ export const FIELD_MULTILINE_PADDING_BLOCK_PX = spacing.component.xs;
 export const FIELD_ROW_GLYPH_PX = 14;
 
 /**
- * The input's size: 14px, which the sheet calls `Sans/B1/Regular`.
- *
- * A literal, because `typography.body.b1` is 13 — and so is the
- * `Sans/B1/Medium` the button sheet binds, so one rung name resolves to two
- * sizes in two component sets. The leading and tracking do agree with `b1`
- * and are read from it. DESIGNER_QUESTIONS.md #67.
+ * `Sans/Caption - md/Medium`, the helper row and the password field's
+ * requirement rows: 11/14 at 500, no tracking. The type tokens have no
+ * 11px slot — `caption` is 10/12 — so it is a literal, the same one `Tag`
+ * carries at `size="sm"`. See DESIGNER_QUESTIONS.md #73 and #74.
  */
-const FIELD_INPUT_SIZE_PX = 14;
+export const FIELD_CAPTION_TYPE = { size: 11, leading: 14 } as const;
 
 /**
  * Vertical padding for a single-line field: whatever centres the 20px line
@@ -202,11 +200,17 @@ export function fieldBlockPadding(size: FieldSize): number {
 
 const sans = fontFamilies.product.sans;
 
-/** The four type treatments a field carries. */
+/**
+ * The four type treatments a field carries.
+ *
+ * The input is `Sans/B1/Regular`, 13/20, read straight off `b1`. It shipped
+ * at a literal 14 while the sheet bound B1 at 14 and the button sheet at 13
+ * (#67); the 24 October sheet binds 13, so the literal is gone.
+ */
 export const fieldType = {
   input: {
     fontFamily: sans,
-    fontSize: FIELD_INPUT_SIZE_PX,
+    fontSize: typography.body.b1.size,
     fontWeight: fontWeights.regular,
     lineHeight: `${typography.body.b1.leading}px`,
     letterSpacing: `${typography.body.b1.letterSpacing}em`,
@@ -222,10 +226,10 @@ export const fieldType = {
   },
   helper: {
     fontFamily: sans,
-    fontSize: typography.body.b2.size,
-    fontWeight: fontWeights.regular,
-    lineHeight: `${typography.body.b2.leading}px`,
-    letterSpacing: `${typography.body.b2.letterSpacing}em`,
+    fontSize: FIELD_CAPTION_TYPE.size,
+    fontWeight: fontWeights.medium,
+    lineHeight: `${FIELD_CAPTION_TYPE.leading}px`,
+    letterSpacing: 0,
   },
   counter: {
     fontFamily: sans,
@@ -320,7 +324,7 @@ export interface FieldStyleOptions {
  *
  * `TextField` uses it as it stands; `Select` layers its caret and its
  * pointer cursor on top. Measured in a browser against the sheet: 40/36px
- * boxes, 88/84px stacks with a helper row, and every state's fill, border,
+ * boxes, 86/82px stacks with a helper row, and every state's fill, border,
  * helper and glyph colour exact.
  */
 export function outlinedFieldStyles(

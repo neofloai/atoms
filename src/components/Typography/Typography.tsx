@@ -84,7 +84,7 @@ interface StyledTypographyProps {
  */
 const StyledTypography = styled(MuiTypography, {
   // The public prop is `weight` rather than an internal `neofloWeight`
-  // like `Chip` and `Alert` carry, because there is no wrapper component
+  // like `Tag` and `Alert` carry, because there is no wrapper component
   // here to rename it in: keeping the polymorphic root means `styled()`
   // plus a cast, so whatever the style function reads is also what the
   // consumer writes. MUI's `Typography` has no `weight` of its own, so

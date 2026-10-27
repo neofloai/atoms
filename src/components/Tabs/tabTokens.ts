@@ -193,6 +193,22 @@ export const ink = {
  */
 export const hoverFill = surface.layers.card2;
 
+/**
+ * The count pill's label, per state (node 4699:14064). The pill itself
+ * is the neutral `Tag` in every state — `surface/layers/card 3` — and
+ * only its ink moves with selection, as the tab's own label does.
+ *
+ * The sheet binds the selected one to `text/default/body`, the old name
+ * for `b1`; its `#2c2b27` fallback predates the rename. It draws no
+ * disabled tab, so that one takes the label's disabled ink, which is the
+ * one rung lighter than `subtle`. See DESIGNER_QUESTIONS.md #75.
+ */
+export const countInk = {
+  selected: text.default.b1,
+  unselected: text.default.subtle,
+  disabled: text.disabled.default,
+} as const satisfies Record<string, ModeToken>;
+
 /** The hairline under the whole bar (`border/layers/card 2`). */
 export const rule = border.layers.card2;
 

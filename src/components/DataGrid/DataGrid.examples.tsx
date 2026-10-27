@@ -79,7 +79,7 @@ export const data: ComponentExamplesData = {
       type: 'GridColDef[]',
       default: '—',
       description:
-        "The column definitions, MUI X’s own. `type` is worth setting on every one: it picks the comparator, the filter operators, the editor, and the wording of the sort menu. `renderCell` is where a `Chip`, an `Avatar` or a `Button` goes — the same content the table puts in a cell, one level of indirection further out. A column that defines one is given `display: 'flex'` so what it renders centres in the row; pass `display: 'text'` to keep the cell’s own ellipsis instead.",
+        "The column definitions, MUI X’s own. `type` is worth setting on every one: it picks the comparator, the filter operators, the editor, and the wording of the sort menu. `renderCell` is where a `Tag`, an `Avatar` or a `Button` goes — the same content the table puts in a cell, one level of indirection further out. A column that defines one is given `display: 'flex'` so what it renders centres in the row; pass `display: 'text'` to keep the cell’s own ellipsis instead.",
     },
   ],
   examples: [
@@ -141,7 +141,7 @@ const columns = [
     width: 140,
     sortable: false,
     renderCell: ({ row }) => (
-      <Chip size="sm" variant={row.statusVariant} label={row.status} />
+      <Tag variant={row.statusVariant} label={row.status} />
     ),
   },
   {
@@ -220,7 +220,7 @@ const columns = [
     'Table',
     'Card',
     'Checkbox',
-    'Chip',
+    'Tag',
     'IconButton',
     'MenuItem',
   ],
