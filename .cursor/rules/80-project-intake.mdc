@@ -26,7 +26,9 @@ Each one costs a rebuild and is prevented by a question.
 
 Never your own working directory, never a temp path, never inside the Atoms repo. If a folder of that name is already there, **stop and ask** — do not write into or over it. If `~/Desktop` does not exist on the machine, ask where the project should go rather than guessing.
 
-`scaffold_app` returns the ordered commands: create, install, wire `NeofloThemeProvider`, pin the colour scheme if one was asked for, download the favicon set, declare it, put `NeofloLogo` in the rail, run it.
+`scaffold_app` returns the ordered commands. A prototype or a new React project is copied from its Atoms template, which arrives with the provider, the favicon set and `NeofloLogo` in the rail already wired: name it, install, pin the colour scheme if one was asked for, run it. A Next app is created, then wired step by step: install, wire `NeofloThemeProvider`, pin the scheme, download the favicon set, declare it, put `NeofloLogo` in the rail, run it.
+
+Both templates are laid out the same way, and their structure lives in `src/project/` (`structure.ts` for the full template, `prototypeStructure.ts` for the prototype, sharing every rule that is not about data). `npm run generate` renders each into its template's `AGENTS.md`.
 
 ## Which framework
 
@@ -34,8 +36,8 @@ Atoms is used for three things, and `purpose` is the fork the whole brief hangs 
 
 | Purpose | Target |
 |---------|--------|
-| `prototype` | React + Vite, always. Sample data in the app, no backend |
-| `new-project` | Ask: React or Next. **React is the recommended default** — Next is not more capable for the UI, only for what sits behind it (auth, a reload that has to persist, API routes, a secret) |
+| `prototype` | React + Vite, always, from the prototype template (`templates/prototype`): sample data held in React state, no TanStack Query, no backend, nothing that needs a network |
+| `new-project` | Ask: React or Next. **React is the recommended default** — Next is not more capable for the UI, only for what sits behind it (auth, a reload that has to persist, API routes, a secret). React starts from the full template (`templates/react`) |
 | `existing-project` | Nothing is created. `get_installation` for that app's framework, and reconcile any theme provider it already mounts |
 
 Asked, not inferred. A prototype never gets asked which framework it wants, and an existing project never gets asked what its screens are.

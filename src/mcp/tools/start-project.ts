@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   missingRequired,
   resolveTarget,
+  structureRuleLines,
   unansweredRecommended,
 } from '@/src/project';
 import { checkVersion } from '@/src/release';
@@ -242,6 +243,23 @@ function renderPlan(
       ? 'Nothing is created. The work goes into the app that already exists.'
       : `\`${guide.parentDir}/${name}\` — create it there. Not a temp directory, not inside the Atoms repo, not whatever directory this conversation started in. If a folder of that name is already there, stop and ask.`;
 
+  // A project made from the template is built in its structure, so the
+  // rules arrive with the plan rather than after the first file is
+  // already in the wrong place.
+  const structure = recipe?.structure;
+  const structureSection = structure
+    ? [
+        '',
+        '## Project structure — mandatory',
+        '',
+        `The project starts from the Atoms template at \`${structure.templatePath}\` and is built in its four layers (\`app → pages → features → shared\`, imports only downwards). The rules are in the project's \`AGENTS.md\` with the reason for each; read it before writing code. Those marked *(oxlint)* fail \`npm run check\`. When a request cannot be met without breaking one, stop and say which rather than working around it.`,
+        '',
+        structureRuleLines(structure)
+          .map((rule) => `- ${rule}`)
+          .join('\n'),
+      ]
+    : [];
+
   const mode = brief.colorMode ?? 'light';
   // The version call leads for an integration, because the two calls
   // after it withhold their code until it has been made. Ordering it
@@ -294,6 +312,7 @@ function renderPlan(
     nextCalls.join('\n'),
     ...renderVersionSection(brief, release, decision.target === 'existing'),
     ...purposeSection,
+    ...structureSection,
     '',
     '## Rules',
     '',

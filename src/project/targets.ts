@@ -1,3 +1,6 @@
+import { prototypeStructure } from './prototypeStructure';
+import { projectStructure } from './structure';
+
 import type { BrandAsset, ProjectTargetRecipe } from './types';
 
 /**
@@ -57,45 +60,65 @@ export const metadata = {
   },
 };`;
 
-const VITE_ICON_MARKUP = `<!-- index.html, inside <head> -->
-<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
-<link rel="icon" type="image/png" href="/brand/favicon-dark.png" />
-<link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
-<title>Your product name</title>`;
-
 const LOGO_USAGE = `import { NeofloLogo } from '@neofloai/atoms';
 
 // Top of the nav rail, above the switcher.
 <NeofloLogo variant="full" size={20} />`;
 
-const SAMPLE_DATA_STEP = {
-  title: 'Put the sample data in one file',
-  body: 'A prototype changes through its data far more often than through its components. One `src/data.ts` holding the rows, the options and the nav labels means a change to what is on screen is one file, and someone who is not an engineer can make it without opening a component.',
-};
-
-const NO_STORAGE_STEP = {
-  title: 'Keep state in React state',
-  body: 'Hold everything in `useState`. Do not reach for `localStorage`, `sessionStorage`, cookies or IndexedDB to make a change survive a reload — a prototype that remembers what the last person did is a prototype that cannot be reset before the next demo, and stale state read back at the wrong moment looks like a bug in the design. If persistence is genuinely wanted, the user will ask for it; do not add it on your own.',
+/**
+ * A prototype: React with Vite from the lighter template, sample data in
+ * React state, nothing behind it. See `./prototypeStructure.ts` for why
+ * it is not the full template.
+ */
+const PROTOTYPE_TARGET: ProjectTargetRecipe = {
+  id: 'prototype',
+  label: 'React + Vite prototype (Atoms prototype template)',
+  chooseWhen:
+    'it is a prototype: no server, sample data held in React state, and nothing that needs a network',
+  createCommand: prototypeStructure.createCommand,
+  structure: prototypeStructure,
+  iconStep: null,
+  steps: [
+    {
+      title: 'Name it and install',
+      body: 'The template arrives named `atoms-prototype` and titled "Atoms Prototype". Give it the project\'s name, then install.',
+      code: 'npm pkg set name={{name}}\n# and set <title> in index.html to the product name\nnpm install',
+      language: 'bash',
+    },
+    {
+      title: 'Read AGENTS.md before writing anything',
+      body: 'The project\'s `AGENTS.md` (which `CLAUDE.md` imports) is the structure and the rules for working in it: every file goes in one of four layers, each layer imports only downwards, and oxlint fails `npm run check` on a boundary crossed or a network call. Sample data lives in each feature\'s `mocks/` and is held in React state by the feature\'s provider, so a change made on one screen shows on every other and a reload resets it. `features/invoices` is the worked example — copy its shape for each feature, then delete it, its page and its nav row once the prototype has its own.',
+    },
+    {
+      title: 'Run it',
+      body: 'Vite serves on port 5173. Leave it running while you build; it reloads on save. Run `npm run check` and `npm run build`, then click through every screen, before calling anything done.',
+      code: 'npm run dev\n# http://localhost:5173',
+      language: 'bash',
+    },
+  ],
 };
 
 const REACT_TARGET: ProjectTargetRecipe = {
   id: 'react',
-  label: 'React + Vite + TypeScript',
-  chooseWhen:
-    'it is a prototype, or a new project whose frontend does not need a server of its own',
-  createCommand: 'npm create vite@latest {{name}} -- --template react-ts',
-  iconStep: {
-    title: 'Point the icons at the files',
-    body: 'Vite serves `public/` from the site root, so the paths are the ones the files were just downloaded to. Set the title in the same place — the tab says "Vite + React + TS" until something else does.',
-    code: VITE_ICON_MARKUP,
-    language: 'html',
-  },
+  label: 'React + Vite + TypeScript (Atoms template)',
+  chooseWhen: 'it is a new project whose frontend does not need a server of its own',
+  createCommand: projectStructure.createCommand,
+  structure: projectStructure,
+  iconStep: null,
   steps: [
-    SAMPLE_DATA_STEP,
-    NO_STORAGE_STEP,
+    {
+      title: 'Name it and install',
+      body: 'The template arrives named `atoms-app` and titled "Atoms App". Give it the project\'s name, then install. Commit the `package-lock.json` this writes.',
+      code: 'npm pkg set name={{name}}\n# and set <title> in index.html to the product name\nnpm install',
+      language: 'bash',
+    },
+    {
+      title: 'Read AGENTS.md before writing anything',
+      body: 'The project\'s `AGENTS.md` (which `CLAUDE.md` imports) is the structure and the rules for working in it, and they are strict: every file goes in one of four layers, each layer imports only downwards, and oxlint fails `npm run check` on a boundary crossed. `features/invoices` is the worked example — copy its shape for each feature, then delete it, its page and its nav row once the app has its own.',
+    },
     {
       title: 'Run it',
-      body: 'Vite serves on port 5173. Leave it running while you build; it reloads on save.',
+      body: 'Vite serves on port 5173. Leave it running while you build; it reloads on save. Run `npm run check` and `npm run build` before calling anything done.',
       code: 'npm run dev\n# http://localhost:5173',
       language: 'bash',
     },
@@ -109,6 +132,7 @@ const NEXTJS_TARGET: ProjectTargetRecipe = {
     'a new project was asked for with Next: something behind the UI needs a server — a sign-in, data that outlives a reload, an API route, or a secret that must stay out of the browser',
   createCommand:
     'npx create-next-app@latest {{name}} --typescript --app --eslint --no-tailwind --no-src-dir --use-npm --yes',
+  structure: null,
   iconStep: {
     title: 'Declare the icons in the root layout',
     body: 'The `app/icon.png` file convention cannot express a `media` query, so the icons are declared as metadata instead. One PNG rather than a light/dark pair — the off-white disc is legible on both chromes, and a browser that ignores `media` on an icon link would otherwise show nothing at all.',
@@ -135,6 +159,7 @@ const EXISTING_TARGET: ProjectTargetRecipe = {
   chooseWhen:
     'Atoms is being added to an app that is already running, so nothing is created and nothing is scaffolded',
   createCommand: null,
+  structure: null,
   iconStep: null,
   steps: [
     {
@@ -157,6 +182,7 @@ const EXISTING_TARGET: ProjectTargetRecipe = {
 };
 
 export const PROJECT_TARGETS: readonly ProjectTargetRecipe[] = [
+  PROTOTYPE_TARGET,
   REACT_TARGET,
   NEXTJS_TARGET,
   EXISTING_TARGET,

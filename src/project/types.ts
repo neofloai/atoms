@@ -10,6 +10,7 @@
  */
 
 import type { InstallStep } from '@/src/install';
+import type { ProjectStructure } from './structure';
 
 /**
  * What is being made. This is the fork the whole brief turns on, which
@@ -26,8 +27,13 @@ export type ProjectPurpose = 'prototype' | 'new-project' | 'existing-project';
 /** Framework for a new project. Asked rather than inferred. */
 export type ProjectTechStack = 'react' | 'nextjs';
 
-/** What gets created on disk, resolved from purpose and stack. */
-export type ProjectTarget = 'react' | 'nextjs' | 'existing';
+/**
+ * What gets created on disk, resolved from purpose and stack.
+ *
+ * `prototype` and `react` are both React with Vite, from two templates:
+ * a prototype has no server, so it starts from the lighter one.
+ */
+export type ProjectTarget = 'prototype' | 'react' | 'nextjs' | 'existing';
 
 /** How much chrome the screens sit inside. */
 export type ProjectShell = 'rail-and-bar' | 'bar-only' | 'none';
@@ -128,6 +134,17 @@ export interface ProjectTargetRecipe {
   chooseWhen: string;
   /** Create command, with `{{name}}` for the project name. */
   createCommand: string | null;
+  /**
+   * The structure of the Atoms template the create command copies, or
+   * null when nothing is copied.
+   *
+   * A template arrives with the install, the provider, the brand icons,
+   * the logo and this structure already in place. `scaffold_app` then
+   * leaves out every step the template has already done, rather than
+   * having an agent redo them by hand on top of it, and serves this
+   * structure's rules with the plan.
+   */
+  structure: ProjectStructure | null;
   /**
    * How the downloaded icon files get declared, which is the one step
    * that differs between a framework's own conventions. Held apart from

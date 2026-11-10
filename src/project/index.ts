@@ -34,6 +34,25 @@ import type {
 export * from './types';
 export { BRIEF_QUESTIONS } from './questions';
 export {
+  projectStructure,
+  renderAgentsMd,
+  structureRuleLines,
+  REACT_TEMPLATE_COMMAND,
+  REACT_TEMPLATE_PATH,
+} from './structure';
+export {
+  prototypeStructure,
+  PROTOTYPE_TEMPLATE_COMMAND,
+  PROTOTYPE_TEMPLATE_PATH,
+} from './prototypeStructure';
+export type {
+  ProjectStructure,
+  StructureLayer,
+  StructureRecipe,
+  StructureRule,
+  StructureRuleGroup,
+} from './structure';
+export {
   BRAND_ASSETS,
   BRAND_ORIGIN,
   LOGO_STEP,
@@ -62,7 +81,8 @@ const PURPOSE_NOTES: Record<ProjectPurpose, readonly string[]> = {
   prototype: [
     'Every screen has to be reachable by clicking. No sign-in gate, no route that can only be reached by editing the URL.',
     'Assume it gets shown to other people, live. Every click has to land somewhere — a dead control in front of a room is the only thing anyone remembers.',
-    'Put the sample data in one file with an obvious name. What is on screen changes far more often than the components do, and nobody should have to open a component to change a vendor name.',
+    'Put the sample data in each feature\'s `mocks/` folder, in the shape the real API will return, read only by that feature\'s `state/` provider. What is on screen changes far more often than the components do, and nobody should have to open a component to change a vendor name — and if the prototype becomes a real project, the records and the mocks carry over unchanged.',
+    'Make every control that changes data actually change it, through the feature\'s provider. Its state sits above the router, so an approval on one screen still shows on the next, and a reload resets the demo.',
     'Nothing half-styled. A control that is not wired yet still has to look finished, because in a review it will be read as the design rather than as a placeholder.',
     'Nothing that needs a network. If the room has no wifi it still has to run.',
     'One obvious path through the screens, and the two commands that start it at the top of the README: `npm install`, `npm run dev`. Anything more than that will not survive being handed on.',
@@ -203,10 +223,10 @@ export function unansweredRecommended(
  * What to build, and the answer that decided it.
  *
  * Asked rather than inferred, which is the whole change from guessing at
- * it: a prototype is always React, an existing project is never
- * scaffolded, and a new project gets the stack the user picked. React is
- * the default for a new project because Next is not more capable for the
- * UI, only for what sits behind it.
+ * it: a prototype is always React from the prototype template, an
+ * existing project is never scaffolded, and a new project gets the stack
+ * the user picked. React is the default for a new project because Next is
+ * not more capable for the UI, only for what sits behind it.
  */
 export function resolveTarget(brief: ProjectBrief): TargetDecision {
   if (brief.purpose === 'existing-project') {
@@ -218,9 +238,9 @@ export function resolveTarget(brief: ProjectBrief): TargetDecision {
   }
   if (brief.purpose === 'prototype') {
     return {
-      target: 'react',
+      target: 'prototype',
       trigger:
-        'it is a prototype: React with Vite, sample data in the app, no backend and no stored state',
+        'it is a prototype: React with Vite from the prototype template, sample data held in React state, no backend and no stored state',
     };
   }
   if (brief.techStack === 'nextjs') {

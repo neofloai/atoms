@@ -1,0 +1,202 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // The architecture in AGENTS.md is enforced here. Each layer may import
+  // only from the layers below it: app -> pages -> features -> shared.
+  // Overrides replace a rule's options rather than merging them, so every
+  // layer below restates the bans that hold everywhere.
+  "plugins": ["react", "typescript", "import", "oxc", "unicorn", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "env": { "browser": true, "es2024": true },
+  "ignorePatterns": ["dist", "coverage", "node_modules"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "react/jsx-key": "error",
+    "react/react-in-jsx-scope": "off",
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/ban-ts-comment": "error",
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+    "import/no-duplicates": "error",
+    "import/no-default-export": "error",
+    "import/no-unassigned-import": [
+      "warn",
+      { "allow": ["**/*.css", "@testing-library/jest-dom/vitest"] }
+    ],
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "localStorage",
+        "message": "No browser storage for app data. Server state lives in TanStack Query; UI state in React state or the URL."
+      },
+      {
+        "name": "sessionStorage",
+        "message": "No browser storage for app data. Server state lives in TanStack Query; UI state in React state or the URL."
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@mui/**", "@emotion/**"],
+            "message": "Import from @neofloai/atoms (or /icons, /tokens, /theme). MUI and Emotion bypass the design system."
+          },
+          {
+            "group": ["@neofloai/atoms/dist", "@neofloai/atoms/dist/**"],
+            "message": "Build internals. Use the four public entry points."
+          },
+          {
+            "group": ["react-router-dom"],
+            "message": "Use react-router (and react-router/dom for RouterProvider)."
+          },
+          { "group": ["axios"], "message": "Use the shared HTTP client in @/shared/api." },
+          {
+            "group": ["@/features/*/**"],
+            "message": "Import a feature through its public API: @/features/<name>."
+          },
+          {
+            "group": ["../../**"],
+            "message": "Reach across folders with the @/ alias, not ../../."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/shared/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@mui/**", "@emotion/**"],
+                "message": "Import from @neofloai/atoms (or /icons, /tokens, /theme). MUI and Emotion bypass the design system."
+              },
+              {
+                "group": ["@neofloai/atoms/dist", "@neofloai/atoms/dist/**"],
+                "message": "Build internals. Use the four public entry points."
+              },
+              {
+                "group": ["react-router-dom"],
+                "message": "Use react-router (and react-router/dom for RouterProvider)."
+              },
+              { "group": ["axios"], "message": "Use the shared HTTP client in @/shared/api." },
+              {
+                "group": ["../../**"],
+                "message": "Reach across folders with the @/ alias, not ../../."
+              },
+              {
+                "group": [
+                  "@/app",
+                  "@/app/**",
+                  "@/pages",
+                  "@/pages/**",
+                  "@/features",
+                  "@/features/**"
+                ],
+                "message": "shared is the bottom layer: it knows nothing about app, pages or features."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@mui/**", "@emotion/**"],
+                "message": "Import from @neofloai/atoms (or /icons, /tokens, /theme). MUI and Emotion bypass the design system."
+              },
+              {
+                "group": ["@neofloai/atoms/dist", "@neofloai/atoms/dist/**"],
+                "message": "Build internals. Use the four public entry points."
+              },
+              {
+                "group": ["react-router-dom"],
+                "message": "Use react-router (and react-router/dom for RouterProvider)."
+              },
+              { "group": ["axios"], "message": "Use the shared HTTP client in @/shared/api." },
+              {
+                "group": ["../../**"],
+                "message": "Reach across folders with the @/ alias, not ../../."
+              },
+              {
+                "group": ["@/app", "@/app/**", "@/pages", "@/pages/**"],
+                "message": "A feature may import only from shared. Compose features in a page."
+              },
+              {
+                "group": ["@/features", "@/features/**"],
+                "message": "Features do not import each other. Compose them in a page, or move what both need into shared. Inside a feature, use relative imports."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/pages/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@mui/**", "@emotion/**"],
+                "message": "Import from @neofloai/atoms (or /icons, /tokens, /theme). MUI and Emotion bypass the design system."
+              },
+              {
+                "group": ["@neofloai/atoms/dist", "@neofloai/atoms/dist/**"],
+                "message": "Build internals. Use the four public entry points."
+              },
+              {
+                "group": ["react-router-dom"],
+                "message": "Use react-router (and react-router/dom for RouterProvider)."
+              },
+              { "group": ["axios"], "message": "Use the shared HTTP client in @/shared/api." },
+              {
+                "group": ["@/features/*/**"],
+                "message": "Import a feature through its public API: @/features/<name>."
+              },
+              {
+                "group": ["../../**"],
+                "message": "Reach across folders with the @/ alias, not ../../."
+              },
+              {
+                "group": ["@/app", "@/app/**"],
+                "message": "Pages sit below app. The router imports pages, never the reverse."
+              },
+              {
+                "group": ["@/pages", "@/pages/**"],
+                "message": "Pages do not import each other. Shared screen parts go in a feature or in shared/ui."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.config.ts"],
+      "rules": { "import/no-default-export": "off" }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "src/test/**"],
+      "rules": { "typescript/no-non-null-assertion": "off" }
+    }
+  ]
+}

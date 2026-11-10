@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "dist/**",
     // Atoms Inspector extension build output.
     "extension/dist/**",
+    // App templates carry their own tsconfig and oxlint config.
+    "templates/**",
   ]),
   {
     // Atoms Studio is a Chrome extension page, not a Next app: next/image does not exist there.

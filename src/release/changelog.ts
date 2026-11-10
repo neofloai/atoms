@@ -19,6 +19,51 @@ import type { Release } from './types';
  */
 export const RELEASES: readonly Release[] = [
   {
+    version: '4.1.0',
+    tag: 'v4.1.0',
+    date: '2026-10-27',
+    headline:
+      'Every new React app starts from an Atoms template — a full one for a project, a lighter one for a prototype — with a fixed structure and rules for the agents that build in it. Apps now ship only the components they import.',
+    summary:
+      'A minor release; nothing is removed or renamed. `scaffold_app` copies a template instead of wiring a Vite app step by step. A new React project gets the full one: Vite, React Router, TanStack Query, Vitest, oxlint and oxfmt. A prototype gets a lighter one: Vite, React Router and oxlint, with sample data held in React state and nothing that needs a network. Both arrive with the provider, brand, rail and an example feature in place, laid out in the same four layers that import only downwards. The structure and its rules ship in each project as `AGENTS.md` and come back with every plan that creates one; oxlint fails the check on the ones it can see. Separately, the ESM build is now split per component, so an app that imports `Button` no longer ships DataGrid or the date pickers.',
+    changes: [
+      {
+        kind: 'added',
+        summary:
+          'A React template at `templates/react`, which `scaffold_app` copies at the release tag for a new React project: Vite, strict TypeScript, React Router with lazy pages, TanStack Query, Vitest, oxlint, oxfmt and CI, with `NeofloThemeProvider`, the favicons, the rail and an example `invoices` feature already wired.',
+        scope: ['scaffold_app', 'templates/react'],
+      },
+      {
+        kind: 'added',
+        summary:
+          'A prototype template at `templates/prototype`, which `scaffold_app` copies when `framework` is `"prototype"` — what `start_project` now resolves every prototype to. Vite, strict TypeScript, React Router and oxlint, with no TanStack Query, HTTP client, test runner or formatter. Each feature\'s sample data seeds a provider mounted above the router, so an approval on one screen still shows on the next and a reload resets the demo; oxlint rejects `fetch`, data-fetching libraries and global stores.',
+        scope: ['scaffold_app', 'start_project', 'templates/prototype'],
+      },
+      {
+        kind: 'added',
+        summary:
+          'A project structure and the rules for working in it: four layers (`app → pages → features → shared`) that import only downwards, one shape for every feature, and rules on data, routing, UI and when work is done. They ship in each project as `AGENTS.md` (imported by `CLAUDE.md`), come back with every `scaffold_app` and `start_project` plan for a new React project or a prototype, and are on the Start a project page. Ten are enforced by oxlint in each template.',
+        scope: ['scaffold_app', 'start_project', 'templates/react', 'templates/prototype'],
+      },
+      {
+        kind: 'changed',
+        summary:
+          'The ESM build is split per component. `dist/index.mjs` re-exports from chunks, so a bundler drops every component an app does not import: an app using `Button` alone no longer ships DataGrid, the date pickers, `Stepper` or `Slider`. The template\'s first load fell from 1.57 MB to 458 KB. The CommonJS build, the four entry points and their types are unchanged.',
+        scope: ['@neofloai/atoms'],
+      },
+      {
+        kind: 'changed',
+        summary:
+          'A prototype keeps its sample data in each feature\'s `mocks/` folder, in the shape the real API returns, rather than in one `src/data.ts`, and holds it in React state through the feature\'s provider.',
+        scope: ['start_project', 'templates/prototype'],
+      },
+    ],
+    migration: [
+      'Nothing has to change in an existing app. Upgrade and rebuild; the bundle gets smaller on its own.',
+      'If your app lists `sideEffects` in its own `package.json`, make sure any module that has to run on import is listed — the split relies on the bundler being allowed to drop what is unused.',
+    ],
+  },
+  {
     version: '4.0.1',
     tag: 'v4.0.1',
     date: '2026-10-27',
