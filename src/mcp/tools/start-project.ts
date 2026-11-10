@@ -246,14 +246,15 @@ function renderPlan(
   // A project made from the template is built in its structure, so the
   // rules arrive with the plan rather than after the first file is
   // already in the wrong place.
-  const structureSection = recipe?.fromTemplate
+  const structure = recipe?.structure;
+  const structureSection = structure
     ? [
         '',
         '## Project structure — mandatory',
         '',
-        `Every React project starts from the Atoms template and is built in its four layers (\`app → pages → features → shared\`, imports only downwards). The rules are in the project's \`AGENTS.md\` with the reason for each; read it before writing code. Those marked *(oxlint)* fail \`npm run check\`. When a request cannot be met without breaking one, stop and say which rather than working around it.`,
+        `The project starts from the Atoms template at \`${structure.templatePath}\` and is built in its four layers (\`app → pages → features → shared\`, imports only downwards). The rules are in the project's \`AGENTS.md\` with the reason for each; read it before writing code. Those marked *(oxlint)* fail \`npm run check\`. When a request cannot be met without breaking one, stop and say which rather than working around it.`,
         '',
-        structureRuleLines(guide.structure)
+        structureRuleLines(structure)
           .map((rule) => `- ${rule}`)
           .join('\n'),
       ]

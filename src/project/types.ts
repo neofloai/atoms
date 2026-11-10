@@ -27,8 +27,13 @@ export type ProjectPurpose = 'prototype' | 'new-project' | 'existing-project';
 /** Framework for a new project. Asked rather than inferred. */
 export type ProjectTechStack = 'react' | 'nextjs';
 
-/** What gets created on disk, resolved from purpose and stack. */
-export type ProjectTarget = 'react' | 'nextjs' | 'existing';
+/**
+ * What gets created on disk, resolved from purpose and stack.
+ *
+ * `prototype` and `react` are both React with Vite, from two templates:
+ * a prototype has no server, so it starts from the lighter one.
+ */
+export type ProjectTarget = 'prototype' | 'react' | 'nextjs' | 'existing';
 
 /** How much chrome the screens sit inside. */
 export type ProjectShell = 'rail-and-bar' | 'bar-only' | 'none';
@@ -130,13 +135,16 @@ export interface ProjectTargetRecipe {
   /** Create command, with `{{name}}` for the project name. */
   createCommand: string | null;
   /**
-   * The create command copies the Atoms template, which arrives with the
-   * install, the provider, the brand icons, the logo and the project
-   * structure already in place. `scaffold_app` then leaves out every
-   * step the template has already done, rather than having an agent
-   * redo them by hand on top of it.
+   * The structure of the Atoms template the create command copies, or
+   * null when nothing is copied.
+   *
+   * A template arrives with the install, the provider, the brand icons,
+   * the logo and this structure already in place. `scaffold_app` then
+   * leaves out every step the template has already done, rather than
+   * having an agent redo them by hand on top of it, and serves this
+   * structure's rules with the plan.
    */
-  fromTemplate: boolean;
+  structure: ProjectStructure | null;
   /**
    * How the downloaded icon files get declared, which is the one step
    * that differs between a framework's own conventions. Held apart from
@@ -199,6 +207,4 @@ export interface ProjectGuide {
   brandAssets: readonly BrandAsset[];
   /** How the mark gets into the app, which needs no file. */
   logoStep: InstallStep;
-  /** The layout and rules every React project is built in. */
-  structure: ProjectStructure;
 }

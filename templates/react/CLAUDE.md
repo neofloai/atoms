@@ -1,3 +1,3 @@
-<!-- Generated from src/project/structure.ts in neofloai/atoms. -->
+<!-- Generated from src/project/ in neofloai/atoms. -->
 
 @AGENTS.md

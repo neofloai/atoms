@@ -1,8 +1,8 @@
 import { ATOMS_VERSION } from '../release/version';
 
 /**
- * The one project structure every Atoms React app is built in, and the
- * rules an agent follows while working inside it.
+ * The project structure every Atoms React app is built in, and the rules
+ * an agent follows while working inside it.
  *
  * Written once, here, and delivered three ways so they cannot drift:
  *   - `npm run generate` renders it into `templates/react/AGENTS.md`
@@ -12,6 +12,11 @@ import { ATOMS_VERSION } from '../release/version';
  *     new React project;
  *   - the Start a project docs page renders it for people.
  *
+ * A prototype starts from a lighter template with its own structure
+ * (`./prototypeStructure.ts`). The rule groups that hold for both — where
+ * code goes, routing, UI, most of the code rules — are exported from here
+ * and reused there, so the two cannot disagree about them.
+ *
  * Every rule an `.oxlintrc.json` rule can check says so in `enforcedBy`,
  * and the template's config is where that check lives. A rule with no
  * check is the one most likely to be broken, which is why each carries
@@ -19,14 +24,19 @@ import { ATOMS_VERSION } from '../release/version';
  * cannot see.
  */
 
-/** Where the template lives in this repo, and the command that copies it. */
-export const REACT_TEMPLATE_PATH = 'templates/react';
-
 /**
+ * The command that copies a template out of this repo.
+ *
  * Pinned to the release tag, so the template a project starts from is
  * the one written for the Atoms version it installs.
  */
-export const REACT_TEMPLATE_COMMAND = `npx giget@3 gh:neofloai/atoms/${REACT_TEMPLATE_PATH}#v${ATOMS_VERSION} {{name}}`;
+export function templateCommand(templatePath: string): string {
+  return `npx giget@3 gh:neofloai/atoms/${templatePath}#v${ATOMS_VERSION} {{name}}`;
+}
+
+/** Where the full React template lives in this repo, and the command that copies it. */
+export const REACT_TEMPLATE_PATH = 'templates/react';
+export const REACT_TEMPLATE_COMMAND = templateCommand(REACT_TEMPLATE_PATH);
 
 export interface StructureLayer {
   /** Folder under `src/`. */
@@ -59,6 +69,8 @@ export interface StructureRecipe {
 export interface ProjectStructure {
   templatePath: string;
   createCommand: string;
+  /** The opening of AGENTS.md: what kind of app this is and what it is built with. */
+  intro: string;
   tree: string;
   featureTree: string;
   layers: readonly StructureLayer[];
@@ -119,167 +131,184 @@ const LAYERS: readonly StructureLayer[] = [
   },
 ];
 
+/** Where code goes. The same in every Atoms template. */
+export const STRUCTURE_RULES: readonly StructureRule[] = [
+  {
+    rule: 'Put every file in one of the four layers — `app`, `pages`, `features`, `shared` — in the folder this document names for it. Do not create new top-level folders under `src/` (no `src/components`, `src/utils`, `src/helpers`, `src/services`, `src/store`).',
+    why: 'A second place for the same kind of code is how two engineers end up writing the same thing twice. One answer to "where does this go" is what keeps a codebase navigable at fifty features.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Import only downwards: `app → pages → features → shared`. `shared` imports no layer; a feature imports only `shared`; a page imports features and `shared`.',
+    why: 'Dependencies that point one way can be reasoned about, tested and deleted one layer at a time. A single upward import makes the bottom layer depend on everything above it.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Features never import other features. When two features need each other, compose them in a page; when they need the same code, move it to `shared` if it has no domain knowledge.',
+    why: 'Features that import each other stop being separable — a change to one is a change to all of them, and none can be removed or rewritten alone.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Import a feature only through its `index.ts` (`@/features/invoices`), never a file inside it. Export from `index.ts` only what a page needs.',
+    why: 'The index is the feature\'s contract. Everything behind it can be reorganised without breaking a caller — and because `package.json` declares the app free of side effects, a page that imports one hook from the index does not bundle the feature\'s table along with it.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Inside a feature, use relative imports (`../model/invoice`). Across folders, use the `@/` alias. Never `../../`.',
+    why: 'The alias says which layer an import comes from at a glance, and it survives a file moving one folder deeper.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Keep `shared` free of business words. If code names an invoice, a vendor or a user role, it belongs to a feature.',
+    why: '`shared` is imported by everything, so domain logic there leaks into every feature and is owned by none of them.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Promote code to `shared` on its second user, not its first. Until then it stays in the feature that has it.',
+    why: 'An abstraction with one caller is a guess about the second. Waiting costs one copy; guessing wrong costs a refactor across every caller.',
+    enforcedBy: 'review',
+  },
+];
+
+/** Pages and routes. The same in every Atoms template. */
+export const ROUTING_RULES: readonly StructureRule[] = [
+  {
+    rule: 'One folder per route under `pages/`, one `<Name>Page.tsx` in it, registered in `app/router/router.tsx` with `lazy`. Pages do not import each other.',
+    why: 'Lazy routes keep the first load paying only for the first page. Pages importing pages is how a route ends up bundling three others.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Pages compose: they call feature hooks and pass the data to feature components. A page holds no fetch, no business rule and no data transformation.',
+    why: 'Logic in a page cannot be reused by the next page that needs it, and is tested only through a full screen render.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Every route path lives in `shared/config/paths.ts`. Link and navigate with `paths.x`, never a string literal.',
+    why: 'Renaming a route is then one edit, and a typo is a type error rather than a 404 found in a demo.',
+    enforcedBy: 'review',
+  },
+];
+
+const DATA_RULES: readonly StructureRule[] = [
+  {
+    rule: 'Server state goes through TanStack Query: transport functions in `features/<f>/api/<f>Api.ts`, query keys and hooks in `features/<f>/api/<f>Queries.ts`. Components never call `fetch` or the HTTP client directly.',
+    why: 'One cache gives every screen loading, error, retry, deduplication and invalidation for free. A component that fetches for itself gets none of it and duplicates the request the next one makes.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'All HTTP goes through `shared/api/httpClient.ts`. Do not add axios, ky or a second client.',
+    why: 'Auth headers, base URLs and error shapes then change in one file.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Build query keys from the feature\'s key factory (`invoiceKeys.list()`), always prefixed with the feature name.',
+    why: 'Invalidating `invoiceKeys.all` then refreshes exactly what the feature cached and nothing else.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Sample data lives in `features/<f>/mocks/`, in the exact shape the API returns, and only the feature\'s `api/` folder reads it, behind `env.useMocks`.',
+    why: 'Swapping to the real endpoint is then one file in `api/`, and no component knows the data was ever fake.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'UI state lives in React state, or in the URL (`useSearchParams`) when it should survive a reload or be shareable — filters, tabs, the selected row. Never `localStorage` or `sessionStorage` for app data. Do not add Redux, Zustand, Jotai or any global store unless the user asks for one.',
+    why: 'With server state in the query cache, what is left is almost always local. A global store added "for later" becomes the place everything goes, and a stored value read back at the wrong moment looks like a bug in the design.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Read environment variables only from `shared/config/env.ts`. A new variable is declared in three places: `env.ts`, `src/vite-env.d.ts` and `.env.example`. Never put a secret in a `VITE_` variable.',
+    why: 'Every `VITE_` variable ships to the browser. One file that reads them all is the list of what a deploy needs.',
+    enforcedBy: 'review',
+  },
+];
+
+/** Building UI from Atoms. The same in every Atoms template. */
+export const UI_RULES: readonly StructureRule[] = [
+  {
+    rule: 'Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).',
+    why: 'MUI resolves because Atoms ships it, and importing it silently bypasses the design system. A second styling system means two ways to draw every control.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'Before composing a screen call the Atoms MCP `get_pattern`; before using a component call `get_component`; before writing any colour, spacing, radius or type value call `get_tokens`. Never hardcode a hex or pixel value a token carries.',
+    why: 'A pattern carries an arrangement that has already been reviewed, and a component\'s Related section says when a different one is right. Hardcoded values stop following the theme, including dark mode.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Use Atoms components unmodified. No `sx` selector reaching inside a component (`& .MuiButton-…`), no wrapper that overrides its styles. When a design needs a variant Atoms lacks, use the closest one and report the gap.',
+    why: 'A local override stops tracking the design system the day it is written, and every project ends up with a different button.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: '`NeofloThemeProvider` is mounted once, in `app/providers/AppProviders.tsx`. Never call `createTheme` or mount a second theme provider.',
+    why: 'Two providers fight, and the inner one silently wins for everything inside it.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'A component used by two or more pages and free of business words goes in `shared/ui/`; anything else stays in its feature\'s `components/`.',
+    why: 'Same rule as `shared` itself — reuse is earned by the second caller.',
+    enforcedBy: 'review',
+  },
+];
+
+/** The code rules that hold in every Atoms template. */
+export const SHARED_CODE_RULES: readonly StructureRule[] = [
+  {
+    rule: 'Named exports only, no default exports (config files excepted).',
+    why: 'A named export is the same name at every import site, so search and rename find all of them.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'TypeScript stays strict. No `any`, no non-null `!`, no `@ts-ignore` or `@ts-expect-error`, no `as` cast to silence an error. Records are typed in the feature\'s `model/`.',
+    why: 'Each escape hatch is a place the compiler stops checking — and the place the next bug comes from.',
+    enforcedBy: 'oxlint',
+  },
+  {
+    rule: 'A module does nothing when it is imported: only declarations at the top level — no registration, no global mutation, no code that runs for its effect. The one exception is a `.css` import. Anything that must run at startup goes in `main.tsx` or `app/providers/`.',
+    why: '`package.json` declares `"sideEffects": ["**/*.css"]` so the bundler can drop every export a page does not use. A module that runs code on import would be dropped along with it, and the bug would only show in the production build.',
+    enforcedBy: 'review',
+  },
+];
+
+const CODE_RULES: readonly StructureRule[] = [
+  ...SHARED_CODE_RULES,
+  {
+    rule: 'Name files by what they export: components `PascalCase.tsx` with one component per file, hooks `useThing.ts`, everything else `camelCase.ts`. Tests sit next to the file as `<file>.test.ts(x)`.',
+    why: 'The file name is then the import name, and a test is found by looking next to what it tests.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Every feature ships with tests for its `model/` logic; a page with real behaviour gets a render test using `renderWithProviders`.',
+    why: 'Model functions are pure, so their tests are cheap and never flaky. They are the ones that catch a wrong total before a customer does.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Do not add a dependency without asking. Never a second router, data-fetching library, state library, HTTP client, date library or UI kit.',
+    why: 'Every dependency is code you now maintain. Two of the same kind means every engineer has to learn both.',
+    enforcedBy: 'review',
+  },
+];
+
+/** The "done" rules that hold in every Atoms template. */
+export const SHARED_DONE_RULES: readonly StructureRule[] = [
+  {
+    rule: 'Never weaken a check to make it pass: do not disable or downgrade a lint rule, add an `oxlint-disable` comment, loosen `tsconfig`, or edit `.oxlintrc.json`, `tsconfig*.json`, `vite.config.ts` or `AGENTS.md` unless the user asked for that change.',
+    why: 'These files are the architecture. An agent that edits them to get to green has removed the rule rather than followed it.',
+    enforcedBy: 'review',
+  },
+  {
+    rule: 'Report what was built, how to see it (`npm run dev`, then the route), and which interactions are real and which run on mock data.',
+    why: 'A demo whose limits go unsaid gets presented as though it has none.',
+    enforcedBy: 'review',
+  },
+];
+
 const RULE_GROUPS: readonly StructureRuleGroup[] = [
-  {
-    title: 'Structure',
-    rules: [
-      {
-        rule: 'Put every file in one of the four layers — `app`, `pages`, `features`, `shared` — in the folder this document names for it. Do not create new top-level folders under `src/` (no `src/components`, `src/utils`, `src/helpers`, `src/services`, `src/store`).',
-        why: 'A second place for the same kind of code is how two engineers end up writing the same thing twice. One answer to "where does this go" is what keeps a codebase navigable at fifty features.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Import only downwards: `app → pages → features → shared`. `shared` imports no layer; a feature imports only `shared`; a page imports features and `shared`.',
-        why: 'Dependencies that point one way can be reasoned about, tested and deleted one layer at a time. A single upward import makes the bottom layer depend on everything above it.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Features never import other features. When two features need each other, compose them in a page; when they need the same code, move it to `shared` if it has no domain knowledge.',
-        why: 'Features that import each other stop being separable — a change to one is a change to all of them, and none can be removed or rewritten alone.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Import a feature only through its `index.ts` (`@/features/invoices`), never a file inside it. Export from `index.ts` only what a page needs.',
-        why: 'The index is the feature\'s contract. Everything behind it can be reorganised without breaking a caller — and because `package.json` declares the app free of side effects, a page that imports one hook from the index does not bundle the feature\'s table along with it.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Inside a feature, use relative imports (`../model/invoice`). Across folders, use the `@/` alias. Never `../../`.',
-        why: 'The alias says which layer an import comes from at a glance, and it survives a file moving one folder deeper.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Keep `shared` free of business words. If code names an invoice, a vendor or a user role, it belongs to a feature.',
-        why: '`shared` is imported by everything, so domain logic there leaks into every feature and is owned by none of them.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Promote code to `shared` on its second user, not its first. Until then it stays in the feature that has it.',
-        why: 'An abstraction with one caller is a guess about the second. Waiting costs one copy; guessing wrong costs a refactor across every caller.',
-        enforcedBy: 'review',
-      },
-    ],
-  },
-  {
-    title: 'Pages and routing',
-    rules: [
-      {
-        rule: 'One folder per route under `pages/`, one `<Name>Page.tsx` in it, registered in `app/router/router.tsx` with `lazy`. Pages do not import each other.',
-        why: 'Lazy routes keep the first load paying only for the first page. Pages importing pages is how a route ends up bundling three others.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Pages compose: they call feature hooks and pass the data to feature components. A page holds no fetch, no business rule and no data transformation.',
-        why: 'Logic in a page cannot be reused by the next page that needs it, and is tested only through a full screen render.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Every route path lives in `shared/config/paths.ts`. Link and navigate with `paths.x`, never a string literal.',
-        why: 'Renaming a route is then one edit, and a typo is a type error rather than a 404 found in a demo.',
-        enforcedBy: 'review',
-      },
-    ],
-  },
-  {
-    title: 'Data',
-    rules: [
-      {
-        rule: 'Server state goes through TanStack Query: transport functions in `features/<f>/api/<f>Api.ts`, query keys and hooks in `features/<f>/api/<f>Queries.ts`. Components never call `fetch` or the HTTP client directly.',
-        why: 'One cache gives every screen loading, error, retry, deduplication and invalidation for free. A component that fetches for itself gets none of it and duplicates the request the next one makes.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'All HTTP goes through `shared/api/httpClient.ts`. Do not add axios, ky or a second client.',
-        why: 'Auth headers, base URLs and error shapes then change in one file.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Build query keys from the feature\'s key factory (`invoiceKeys.list()`), always prefixed with the feature name.',
-        why: 'Invalidating `invoiceKeys.all` then refreshes exactly what the feature cached and nothing else.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Sample data lives in `features/<f>/mocks/`, in the exact shape the API returns, and only the feature\'s `api/` folder reads it, behind `env.useMocks`.',
-        why: 'Swapping to the real endpoint is then one file in `api/`, and no component knows the data was ever fake.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'UI state lives in React state, or in the URL (`useSearchParams`) when it should survive a reload or be shareable — filters, tabs, the selected row. Never `localStorage` or `sessionStorage` for app data. Do not add Redux, Zustand, Jotai or any global store unless the user asks for one.',
-        why: 'With server state in the query cache, what is left is almost always local. A global store added "for later" becomes the place everything goes, and a stored value read back at the wrong moment looks like a bug in the design.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Read environment variables only from `shared/config/env.ts`. A new variable is declared in three places: `env.ts`, `src/vite-env.d.ts` and `.env.example`. Never put a secret in a `VITE_` variable.',
-        why: 'Every `VITE_` variable ships to the browser. One file that reads them all is the list of what a deploy needs.',
-        enforcedBy: 'review',
-      },
-    ],
-  },
-  {
-    title: 'UI and Atoms',
-    rules: [
-      {
-        rule: 'Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).',
-        why: 'MUI resolves because Atoms ships it, and importing it silently bypasses the design system. A second styling system means two ways to draw every control.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'Before composing a screen call the Atoms MCP `get_pattern`; before using a component call `get_component`; before writing any colour, spacing, radius or type value call `get_tokens`. Never hardcode a hex or pixel value a token carries.',
-        why: 'A pattern carries an arrangement that has already been reviewed, and a component\'s Related section says when a different one is right. Hardcoded values stop following the theme, including dark mode.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Use Atoms components unmodified. No `sx` selector reaching inside a component (`& .MuiButton-…`), no wrapper that overrides its styles. When a design needs a variant Atoms lacks, use the closest one and report the gap.',
-        why: 'A local override stops tracking the design system the day it is written, and every project ends up with a different button.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: '`NeofloThemeProvider` is mounted once, in `app/providers/AppProviders.tsx`. Never call `createTheme` or mount a second theme provider.',
-        why: 'Two providers fight, and the inner one silently wins for everything inside it.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'A component used by two or more pages and free of business words goes in `shared/ui/`; anything else stays in its feature\'s `components/`.',
-        why: 'Same rule as `shared` itself — reuse is earned by the second caller.',
-        enforcedBy: 'review',
-      },
-    ],
-  },
-  {
-    title: 'Code',
-    rules: [
-      {
-        rule: 'Named exports only, no default exports (config files excepted).',
-        why: 'A named export is the same name at every import site, so search and rename find all of them.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'TypeScript stays strict. No `any`, no non-null `!`, no `@ts-ignore` or `@ts-expect-error`, no `as` cast to silence an error. Records are typed in the feature\'s `model/`.',
-        why: 'Each escape hatch is a place the compiler stops checking — and the place the next bug comes from.',
-        enforcedBy: 'oxlint',
-      },
-      {
-        rule: 'A module does nothing when it is imported: only declarations at the top level — no registration, no global mutation, no code that runs for its effect. The one exception is a `.css` import. Anything that must run at startup goes in `main.tsx` or `app/providers/`.',
-        why: '`package.json` declares `"sideEffects": ["**/*.css"]` so the bundler can drop every export a page does not use. A module that runs code on import would be dropped along with it, and the bug would only show in the production build.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Name files by what they export: components `PascalCase.tsx` with one component per file, hooks `useThing.ts`, everything else `camelCase.ts`. Tests sit next to the file as `<file>.test.ts(x)`.',
-        why: 'The file name is then the import name, and a test is found by looking next to what it tests.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Every feature ships with tests for its `model/` logic; a page with real behaviour gets a render test using `renderWithProviders`.',
-        why: 'Model functions are pure, so their tests are cheap and never flaky. They are the ones that catch a wrong total before a customer does.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Do not add a dependency without asking. Never a second router, data-fetching library, state library, HTTP client, date library or UI kit.',
-        why: 'Every dependency is code you now maintain. Two of the same kind means every engineer has to learn both.',
-        enforcedBy: 'review',
-      },
-    ],
-  },
+  { title: 'Structure', rules: STRUCTURE_RULES },
+  { title: 'Pages and routing', rules: ROUTING_RULES },
+  { title: 'Data', rules: DATA_RULES },
+  { title: 'UI and Atoms', rules: UI_RULES },
+  { title: 'Code', rules: CODE_RULES },
   {
     title: 'Before calling it done',
     rules: [
@@ -288,30 +317,24 @@ const RULE_GROUPS: readonly StructureRuleGroup[] = [
         why: 'A change that only works in the dev server has not been checked by anything the CI will run.',
         enforcedBy: 'npm run check',
       },
-      {
-        rule: 'Never weaken a check to make it pass: do not disable or downgrade a lint rule, add an `oxlint-disable` comment, loosen `tsconfig`, or edit `.oxlintrc.json`, `tsconfig*.json`, `vite.config.ts` or `AGENTS.md` unless the user asked for that change.',
-        why: 'These files are the architecture. An agent that edits them to get to green has removed the rule rather than followed it.',
-        enforcedBy: 'review',
-      },
-      {
-        rule: 'Report what was built, how to see it (`npm run dev`, then the route), and which interactions are real and which run on mock data.',
-        why: 'A demo whose limits go unsaid gets presented as though it has none.',
-        enforcedBy: 'review',
-      },
+      ...SHARED_DONE_RULES,
     ],
   },
 ];
 
+/** Adding a page. The same in every Atoms template. */
+export const ADD_PAGE_RECIPE: StructureRecipe = {
+  task: 'Add a page',
+  steps: [
+    'Add its path to `shared/config/paths.ts`.',
+    'Create `pages/<route>/<Route>Page.tsx` exporting `<Route>Page`.',
+    'Register it in `app/router/router.tsx` with `lazy`.',
+    'If it belongs in the rail, add a row to `app/layout/navigation.ts`.',
+  ],
+};
+
 const RECIPES: readonly StructureRecipe[] = [
-  {
-    task: 'Add a page',
-    steps: [
-      'Add its path to `shared/config/paths.ts`.',
-      'Create `pages/<route>/<Route>Page.tsx` exporting `<Route>Page`.',
-      'Register it in `app/router/router.tsx` with `lazy`.',
-      'If it belongs in the rail, add a row to `app/layout/navigation.ts`.',
-    ],
-  },
+  ADD_PAGE_RECIPE,
   {
     task: 'Add a feature',
     steps: [
@@ -350,6 +373,8 @@ const COMMANDS: readonly { command: string; does: string }[] = [
 export const projectStructure: ProjectStructure = {
   templatePath: REACT_TEMPLATE_PATH,
   createCommand: REACT_TEMPLATE_COMMAND,
+  intro:
+    'This is a Neoflo Atoms React app: Vite, TypeScript, React Router, TanStack Query, oxlint and oxfmt, with UI from `@neofloai/atoms`.',
   tree: TREE,
   featureTree: FEATURE_TREE,
   layers: LAYERS,
@@ -402,11 +427,11 @@ export function renderAgentsMd(structure: ProjectStructure): string {
     .map((c) => `| \`${c.command}\` | ${c.does} |`)
     .join('\n');
 
-  return `<!-- Generated from src/project/structure.ts in neofloai/atoms. Edit it there, not here. -->
+  return `<!-- Generated from src/project/ in neofloai/atoms. Edit it there, not here. -->
 
 # Working in this project
 
-This is a Neoflo Atoms React app: Vite, TypeScript, React Router, TanStack Query, oxlint and oxfmt, with UI from \`@neofloai/atoms\`. Every Atoms app is laid out the same way, so anyone who has worked in one can work in any of them.
+${structure.intro} Every Atoms app is laid out the same way, so anyone who has worked in one can work in any of them.
 
 **These rules are not suggestions.** If you are an AI agent, follow every one of them exactly, on every change, without being reminded. When a request cannot be met without breaking one, stop and say which rule and why rather than working around it.
 

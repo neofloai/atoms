@@ -1,4 +1,4 @@
-<!-- Generated from src/project/structure.ts in neofloai/atoms. Edit it there, not here. -->
+<!-- Generated from src/project/ in neofloai/atoms. Edit it there, not here. -->
 
 # Working in this project
 

@@ -5,7 +5,7 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { projectGuide } from '@/src/project';
+import { projectGuide, projectStructure, prototypeStructure } from '@/src/project';
 
 import { CodeBlock } from '../_components/CodeBlock';
 import { QuestionSections, TargetTable } from './_components/BriefSections';
@@ -20,7 +20,10 @@ export const metadata = {
 /** Body copy width — long prose stays readable at wide viewports. */
 const PROSE = 760;
 
-const structure = projectGuide.structure;
+const structure = projectStructure;
+const prototype = prototypeStructure;
+// Only the data rules differ in kind; the page shows those and says so.
+const prototypeDataRules = prototype.ruleGroups.filter((group) => group.title === 'Data');
 const required = projectGuide.questions.filter((q) => q.required);
 const recommended = projectGuide.questions.filter((q) => !q.required);
 
@@ -106,9 +109,10 @@ export default function StartAProjectPage() {
             What gets built
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Asked, not guessed at. A prototype is always React with Vite —
-            fastest to start, nothing to configure, and a prototype has no
-            server behind it. A new project is asked which stack it wants,
+            Asked, not guessed at. A prototype is always React with Vite, from
+            a template of its own — fastest to start, nothing to configure, and
+            a prototype has no server behind it. A new project is asked which
+            stack it wants,
             with React the recommended default: Next is not more capable for
             the UI, only for what sits behind it. A project that already
             exists gets an install and nothing else.
@@ -116,12 +120,13 @@ export default function StartAProjectPage() {
           <TargetTable targets={projectGuide.targets} />
           <Typography variant="body2" color="text.secondary">
             Once the target is known, <code>scaffold_app</code> returns the
-            ordered commands. A React project is copied from the Atoms
-            template, which arrives with the install, the provider, the{' '}
-            <Link href="/branding#favicon">favicon set</Link>, the rail and the
-            project structure already in place, so what is left is naming it,
-            the colour scheme and running it. A Next app is created, then
-            wired step by step. Nothing about either is improvised per project.
+            ordered commands. A prototype and a new React project are each
+            copied from an Atoms template, which arrives with the install, the
+            provider, the <Link href="/branding#favicon">favicon set</Link>,
+            the rail and the project structure already in place, so what is
+            left is naming it, the colour scheme and running it. A Next app is
+            created, then wired step by step. Nothing about any of them is
+            improvised per project.
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Prototypes hold their state in React and nothing else. No{' '}
@@ -190,6 +195,41 @@ export default function StartAProjectPage() {
           </Stack>
           <Box sx={{ maxWidth: PROSE }}>
             <RuleGroups groups={structure.ruleGroups} />
+          </Box>
+        </Stack>
+
+        <Stack spacing={3}>
+          <Stack spacing={2} sx={{ maxWidth: PROSE }}>
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+              Prototypes
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              A prototype starts from a lighter template, laid out in the same
+              four layers:
+            </Typography>
+            <CodeBlock>{prototype.createCommand.replace('{{name}}', 'my-prototype')}</CodeBlock>
+            <Typography variant="body2" color="text.secondary">
+              Vite, TypeScript in strict mode, React Router and oxlint. No
+              TanStack Query, HTTP client, test runner or formatter: each exists
+              for a server, a team or a deploy that a prototype does not have.
+              Sample data lives in each feature&apos;s <code>mocks/</code> and is
+              held in React state by a provider mounted above the router, so an
+              approval on one screen still shows on the next, and a reload puts
+              the demo back where it started. A query cache over fixed sample
+              data would do the opposite: refetching after a change reads the
+              unchanged sample and the change disappears.
+            </Typography>
+            <CodeBlock>{prototype.featureTree}</CodeBlock>
+            <Typography variant="body2" color="text.secondary">
+              The structure, routing and UI rules are the ones above. The data
+              rules are below; the rest differ only in dropping tests and
+              formatting, and in asking for a click through every screen before
+              the work is called done. The prototype&apos;s own{' '}
+              <code>AGENTS.md</code> carries all of them.
+            </Typography>
+          </Stack>
+          <Box sx={{ maxWidth: PROSE }}>
+            <RuleGroups groups={prototypeDataRules} />
           </Box>
         </Stack>
 

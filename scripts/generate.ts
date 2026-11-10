@@ -7,8 +7,8 @@ import { patterns as patternData } from '../src/patterns';
 import {
   projectGuide,
   projectStructure,
+  prototypeStructure,
   renderAgentsMd,
-  REACT_TEMPLATE_PATH,
 } from '../src/project';
 import { release } from '../src/release';
 import { ATOMS_VERSION } from '../src/release/version';
@@ -27,6 +27,7 @@ import {
   typography,
 } from '../src/tokens';
 
+import type { ProjectStructure } from '../src/project';
 import type {
   ComponentExamplesData,
   PatternExamplesData,
@@ -47,9 +48,9 @@ import type {
  * until it is added on purpose. The installation, brand and project
  * guides are hand-written modules serialized as they are.
  *
- * It also writes two files outside `data/`: the React template's
- * AGENTS.md and the Atoms range in its package.json (see
- * `writeReactTemplate`).
+ * It also writes outside `data/`: each app template's AGENTS.md and
+ * CLAUDE.md, and the Atoms range in its package.json (see
+ * `writeTemplate`).
  */
 
 const ROOT = path.resolve(__dirname, '..');
@@ -234,25 +235,27 @@ async function main(): Promise<void> {
     writeManifest('brand.json', { brand: branding }),
     writeManifest('project.json', { ...projectGuide }),
     writeManifest('release.json', { ...release }),
-    writeReactTemplate(),
+    writeTemplate(projectStructure),
+    writeTemplate(prototypeStructure),
   ]);
 }
 
 /**
- * Keep the React template in step with the release it ships in.
+ * Keep an app template in step with the release it ships in.
  *
- * Its AGENTS.md is rendered from `src/project/structure.ts`, so the rules
- * an agent reads in a scaffolded project are the ones `scaffold_app`
- * serves. Its Atoms dependency is set to the current range, because the
- * scaffolder copies the template at this release's tag and a template
- * that installed an older Atoms would build against the wrong docs.
+ * Its AGENTS.md is rendered from its structure in `src/project/`, so the
+ * rules an agent reads in a scaffolded project are the ones
+ * `scaffold_app` serves. Its Atoms dependency is set to the current
+ * range, because the scaffolder copies the template at this release's tag
+ * and a template that installed an older Atoms would build against the
+ * wrong docs.
  */
-async function writeReactTemplate(): Promise<void> {
-  const dir = path.join(ROOT, REACT_TEMPLATE_PATH);
-  await writeIfChanged(path.join(dir, 'AGENTS.md'), renderAgentsMd(projectStructure));
+async function writeTemplate(structure: ProjectStructure): Promise<void> {
+  const dir = path.join(ROOT, structure.templatePath);
+  await writeIfChanged(path.join(dir, 'AGENTS.md'), renderAgentsMd(structure));
   await writeIfChanged(
     path.join(dir, 'CLAUDE.md'),
-    '<!-- Generated from src/project/structure.ts in neofloai/atoms. -->\n\n@AGENTS.md\n'
+    '<!-- Generated from src/project/ in neofloai/atoms. -->\n\n@AGENTS.md\n'
   );
 
   const pkgPath = path.join(dir, 'package.json');

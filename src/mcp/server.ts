@@ -53,9 +53,10 @@ export function createAtomsMcpServer(): McpServer {
   const server = new McpServer(
     {
       name: 'atoms',
-      // Minor: `build_from_json` added. Nothing an existing client called
-      // changed, so this is not a major.
-      version: '1.3.0',
+      // Minor: `scaffold_app` accepts `framework: "prototype"`, the lighter
+      // template a prototype now starts from. Every existing call still
+      // validates, so this is not a major.
+      version: '1.4.0',
     },
     { instructions: INSTRUCTIONS }
   );

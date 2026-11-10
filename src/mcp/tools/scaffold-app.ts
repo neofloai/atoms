@@ -151,13 +151,15 @@ function renderSwitchStep(framework: 'react' | 'nextjs'): InstallStep {
 function renderPlan(
   guide: ProjectGuide,
   install: InstallationManifest,
-  framework: 'react' | 'nextjs',
+  framework: 'prototype' | 'react' | 'nextjs',
   projectName: string,
   parentDir: string,
   colorMode: 'light' | 'dark' | 'switch'
 ): string {
   const recipe = guide.targets.find((target) => target.id === framework);
-  const setup = install.frameworks.find((f) => f.id === framework);
+  // A prototype is a React app; only its template differs.
+  const host = framework === 'nextjs' ? 'nextjs' : 'react';
+  const setup = install.frameworks.find((f) => f.id === host);
 
   if (!recipe?.createCommand || !setup) {
     return `No scaffold recipe for "${framework}". Available: ${guide.targets
@@ -189,7 +191,8 @@ function renderPlan(
   // the mark, so its list is the copy, the scheme if it is not light,
   // and the recipe's own steps. Re-running the others on top of it would
   // write a second provider into a file that has one.
-  const steps: InstallStep[] = recipe.fromTemplate
+  const structure = recipe.structure;
+  const steps: InstallStep[] = structure
     ? [
         renderCreateStep(guide, recipe.createCommand, projectName, parentDir),
         ...recipeSteps.slice(0, 1),
@@ -201,8 +204,8 @@ function renderPlan(
         install.shared[0],
         ...required,
         colorMode === 'switch'
-          ? renderSwitchStep(framework)
-          : renderSchemeStep(framework, colorMode),
+          ? renderSwitchStep(host)
+          : renderSchemeStep(host, colorMode),
         renderBrandStep(guide.brandAssets, guide.brandOrigin),
         ...(recipe.iconStep ? [recipe.iconStep] : []),
         guide.logoStep,
@@ -230,19 +233,19 @@ function renderPlan(
     '',
     renderSteps(steps, 1),
     '',
-    ...(recipe.fromTemplate
+    ...(structure
       ? [
           '## Project structure — mandatory',
           '',
           'The project is laid out in four layers, each importing only from those below it:',
           '',
           '```',
-          guide.structure.tree,
+          structure.tree,
           '```',
           '',
           'Follow every rule below on every change, without being reminded. They are also in the project\'s `AGENTS.md`, with the reason for each; those marked *(oxlint)* fail `npm run check`. When a request cannot be met without breaking one, stop and say which rule rather than working around it.',
           '',
-          structureRuleLines(guide.structure)
+          structureRuleLines(structure)
             .map((rule) => `- ${rule}`)
             .join('\n'),
           '',
@@ -277,12 +280,12 @@ export function registerScaffoldApp(server: McpServer): void {
     {
       title: 'Scaffold a new app',
       description:
-        'Returns the exact ordered commands to create a new app with @neofloai/atoms already wired, and how to run it. Framework "react" copies the Atoms template — Vite, React Router, TanStack Query, oxlint and oxfmt, with the provider, brand, shell and a strict four-layer structure in place — and returns the structure rules every change in it must follow. Pass "nextjs" when the app needs a server. Creates the project in the user\'s Desktop folder, never in a temp directory or the current working directory. Call start_project first to decide which framework the brief actually needs.',
+        'Returns the exact ordered commands to create a new app with @neofloai/atoms already wired, and how to run it. "prototype" copies the Atoms prototype template — Vite, React Router and oxlint, sample data held in React state, no network — and "react" copies the full Atoms template — Vite, React Router, TanStack Query, Vitest, oxlint and oxfmt. Both arrive with the provider, brand, shell and a strict four-layer structure in place, and return the structure rules every change must follow. Pass "nextjs" when the app needs a server. Creates the project in the user\'s Desktop folder, never in a temp directory or the current working directory. Call start_project first to decide which target the brief actually needs.',
       inputSchema: {
         framework: z
-          .enum(['react', 'nextjs'])
+          .enum(['prototype', 'react', 'nextjs'])
           .describe(
-            'Target: "react" for the Atoms Vite + React template (prototypes, demos, anything with no server-side work), "nextjs" when the app needs auth, persistence, API routes, or secrets. Resolve this with start_project rather than guessing.'
+            'Target: "prototype" for a prototype or demo (the Atoms prototype template: React + Vite, sample data, no backend), "react" for a new project with no server-side work (the full Atoms template), "nextjs" when the app needs auth, persistence, API routes, or secrets. Resolve this with start_project rather than guessing.'
           ),
         projectName: z
           .string()
