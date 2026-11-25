@@ -45,13 +45,22 @@
       "types": "./dist/chat/mock.d.ts",
       "import": "./dist/chat/mock.mjs",
       "require": "./dist/chat/mock.js"
+    },
+    "./chat/conformance": {
+      "types": "./dist/chat/conformance.d.ts",
+      "import": "./dist/chat/conformance.mjs",
+      "require": "./dist/chat/conformance.js"
     }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "atoms-chat-conformance": "./bin/atoms-chat-conformance.mjs"
+  },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "scripts": {
     "dev": "next dev",

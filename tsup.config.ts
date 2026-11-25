@@ -16,14 +16,17 @@ const CORE_ENTRIES = {
  * The chat's entry points, each its own subpath so an app pays only for
  * the layer it imports: `chat` (the UI and the headless engine under it),
  * `chat/core` and `chat/mock` (no React, so server code can import them),
- * and `chat/charts` (the only one that reaches Recharts). The root barrel
- * never imports any of them — `check:treeshake` proves it.
+ * `chat/charts` (the only one that reaches Recharts) and
+ * `chat/conformance` (the backend check, behind the
+ * `atoms-chat-conformance` command). The root barrel never imports any of
+ * them, and `/chat` never imports the check — `check:treeshake` proves it.
  */
 const CHAT_ENTRIES = {
   chat: 'src/chat/index.ts',
   'chat/core': 'src/chat/core.ts',
   'chat/charts': 'src/chat/charts.ts',
   'chat/mock': 'src/chat/mock.ts',
+  'chat/conformance': 'src/chat/conformance.ts',
 };
 
 /** Every public entry point — the only paths `exports` lets a consumer import. */
@@ -40,7 +43,7 @@ const PUBLIC_ENTRIES = { ...CORE_ENTRIES, ...CHAT_ENTRIES };
  * chunks under the package's `sideEffects` list, an unused component is
  * an unused file and is dropped whole. `check:treeshake` proves it.
  *
- * These files are not public: `exports` only maps the four entries
+ * These files are not public: `exports` only maps the public entries
  * above, so nothing outside the package can import them.
  */
 const COMPONENT_ENTRIES = Object.fromEntries(
@@ -103,7 +106,7 @@ export default defineConfig([
     dts: { entry: CORE_ENTRIES },
   },
   {
-    // The chat's CommonJS build is split, unlike the core one: its four
+    // The chat's CommonJS build is split, unlike the core one: its
     // entries share live state — React contexts, the error classes the
     // runtime checks with `instanceof`, the block registry — and one copy
     // per file would give `/chat/charts` a context `/chat` never provides

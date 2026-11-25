@@ -68,7 +68,7 @@ flowchart LR
 
 **Stack:** Next.js 16 (App Router), React 19, TypeScript 5 in strict mode, MUI 9 with MUI X (DataGrid, date pickers, free tier), Emotion, Phosphor icons, Day.js, and self-hosted DM Sans, DM Mono and Instrument Serif. The library is built with tsup and the MCP server with the official MCP SDK. Node 22 or later.
 
-**Size today (v4.3.0):** 46 documented components (83 runtime exports once sub-parts like `CardHeader` and `MenuItem` are counted), 6 page patterns, the agentic chat with a 14-topic guide, and 11 MCP tools, across 14 releases since June 2026.
+**Size today (v4.4.0):** 46 documented components (83 runtime exports once sub-parts like `CardHeader` and `MenuItem` are counted), 6 page patterns, the agentic chat with a 14-topic guide, and 11 MCP tools, across 15 releases since June 2026.
 
 ---
 
@@ -234,7 +234,7 @@ Some details:
 
 ## 6. The npm package
 
-### Eight doors in: four for the design system, four for the chat
+### Nine doors in: four for the design system, five for the chat
 
 Apps import from exactly these paths:
 
@@ -248,10 +248,11 @@ Apps import from exactly these paths:
 | `@neofloai/atoms/chat/core` | The chat engine and the chat standard's types, with no React, so server code can import it |
 | `@neofloai/atoms/chat/charts` | The chart blocks, on Recharts |
 | `@neofloai/atoms/chat/mock` | An in-memory backend on the chat standard, with no React |
+| `@neofloai/atoms/chat/conformance` | The backend conformance check, also the `atoms-chat-conformance` command, with no React |
 
 Importing from `@mui/material` in an app *does* work, and that is exactly the danger: it bypasses the design system without any visible sign. The docs, the MCP server's instructions and a CI check on every code snippet we publish all steer people to these paths.
 
-The root barrel never imports the chat. The chat's own dependencies (`react-markdown`, `remark-gfm`, `@radix-ui/react-slot`, and `recharts` for charts) are **optional peer dependencies**: an app installs them only when it renders a chat, and an app that never imports `/chat` never resolves them. `check:treeshake` proves it on every build ([how the chat is put together](#the-chat-one-feature-four-subpaths)).
+The root barrel never imports the chat. The chat's own dependencies (`react-markdown`, `remark-gfm`, `@radix-ui/react-slot`, and `recharts` for charts) are **optional peer dependencies**: an app installs them only when it renders a chat, and an app that never imports `/chat` never resolves them. `check:treeshake` proves it on every build ([how the chat is put together](#the-chat-one-feature-five-subpaths)).
 
 ### Installed from GitHub, not a registry
 
@@ -294,15 +295,15 @@ Three of the build's decisions were each learned from a real problem:
 - **The icon leak (v1.0.1).** Re-exporting all icons with `export *` from an external package makes esbuild build a runtime object containing every icon. No bundler can prune that object, so an app that imported one button shipped **all 1,512 icons, about 5 MB**. Nobody could see it in review, because the published package itself stays small. The fix is `src/icons/glyphs.ts`, which names each icon the library's own code uses (49 today, the chat's included). `check:icons` fails the build if the leak comes back.
 - **Development marks stay out of production.** The inspector's CSS marks are gated on `process.env.NODE_ENV === 'development'`, written inline every time, because bundlers only fold that exact expression. `check:dev-marks` bundles the package as production and as development, and fails if the marks survive the first or are missing from the second.
 
-### The chat: one feature, four subpaths
+### The chat: one feature, five subpaths
 
 The agentic chat was a separate package, `@neofloai/agentic-chat`, that followed every Atoms major a release behind. Since v4.3.0 it lives in `src/chat/` and ships from the package itself. Three decisions shape it:
 
-- **Layers, enforced by lint.** `core/` is the framework-free engine (the chat standard's types, the REST/SSE adapter, the stores, persistence, the runtime). `react/`, `registry/` and `blocks/` are the headless layer: provider, hooks, primitives, block registry and parsers, with no styling. `ui/` is the styled chat, built from Atoms components imported by path like any component's siblings. `charts/` is the only code that reaches Recharts. `mock/` is an in-memory backend with no React. `eslint.config.mjs` fails a file that imports across those lines, so `/chat/core` and `/chat/mock` stay importable from server code, and an app on `/chat` without charts never resolves Recharts.
-- **The CommonJS build of the chat is split.** Unlike the core entries, the chat's four share live state: React contexts, the error classes the runtime checks with `instanceof`, and the block registry. One copy per file would hand `/chat/charts` a context `/chat` never provides, so the chat's CommonJS entries share chunks.
+- **Layers, enforced by lint.** `core/` is the framework-free engine (the chat standard's types, the REST/SSE adapter, the stores, persistence, the runtime). `react/`, `registry/` and `blocks/` are the headless layer: provider, hooks, primitives, block registry and parsers, with no styling. `ui/` is the styled chat, built from Atoms components imported by path like any component's siblings. `charts/` is the only code that reaches Recharts. `mock/` is an in-memory backend with no React, and `conformance/` checks a backend against the standard using the engine's own transport code. `eslint.config.mjs` fails a file that imports across those lines, so `/chat/core`, `/chat/mock` and `/chat/conformance` stay importable from server code, and an app on `/chat` without charts never resolves Recharts.
+- **The CommonJS build of the chat is split.** Unlike the core entries, the chat's entries share live state: React contexts, the error classes the runtime checks with `instanceof`, and the block registry. One copy per file would hand `/chat/charts` a context `/chat` never provides, so the chat's CommonJS entries share chunks.
 - **One guide, two readers.** The guide is Markdown in `src/chat/guide/`, one file per topic, listed in `index.ts`. The generator copies it into `data/chat.json`. The docs render every topic under `/chat/<slug>`, and the MCP `get_chat` tool serves the same text, so a chat integration written from the MCP and one written from the docs say the same thing.
 
-The backend conformance check did not move. It stays a standalone CLI in `agentic-chat-ui`, so a backend team can check its server without installing the design system. The chat's unit tests (the SSE reader, the stream reducer, the runtime, persistence) live in `test/chat/` and run with `npm test`.
+The backend conformance check followed in v4.4.0. It stayed in `agentic-chat-ui` at first, but there it checked against a frozen copy of the engine, which would drift from the chat backends actually serve. Now it runs on the chat's own engine, ships as `/chat/conformance`, and is the package's one command: a backend team runs `npx --package=github:neofloai/atoms#semver:^4.4.0 atoms-chat-conformance` without adding Atoms to its own dependencies. It imports nothing, and neither the root nor `/chat` carries it, so an app pays nothing for it. The chat's unit tests (the SSE reader, the stream reducer, the runtime, persistence) live in `test/chat/` and run with `npm test`.
 
 ---
 
@@ -568,7 +569,7 @@ Each automated check exists because of a specific failure that a person reviewin
 | Data freshness (CI) | `data/*.json` differs from a fresh generate | Docs and MCP must match the code |
 | `check:imports` (CI) | A published snippet imports `@mui/material` | It happened: examples told readers to import from MUI while the install guide said not to, and a prototype did exactly that |
 | `check:icons` | The icon namespace object reappears | The ~5 MB leak only shows up in a consumer's bundle |
-| `check:treeshake` | Grid, picker or Day.js code survives in a Button-only app; the root reaches a chat dependency; `/chat` reaches Recharts; `/chat/core` or `/chat/mock` imports anything | Keeps the per-component split working, and the chat's dependencies optional in fact as well as in `package.json` |
+| `check:treeshake` | Grid, picker or Day.js code survives in a Button-only app; the root reaches a chat dependency; `/chat` reaches Recharts; `/chat/core`, `/chat/mock` or `/chat/conformance` imports anything; the root or `/chat` carries the conformance check | Keeps the per-component split working, and the chat's dependencies optional in fact as well as in `package.json` |
 | Tests (CI) | A chat unit test fails | The chat's engine is logic no docs page exercises |
 | `check:dev-marks` | Inspector marks reach production, or vanish from development | Production stays clean; the Inspector keeps working |
 | Version agreement (generate) | The three version sources disagree | Every tool downstream would state a version confidently, and one would be wrong |
@@ -613,7 +614,8 @@ Atoms is built largely with AI coding assistants, so the rules those assistants 
 | `src/theme/` | The MUI theme built from tokens, `NeofloThemeProvider`, `useColorScheme` |
 | `src/icons/` | The icon subpath, and `glyphs.ts` (the icons the library uses itself) |
 | `src/patterns/` | Whole-screen patterns, served as code |
-| `src/chat/` | The agentic chat: engine, headless layer, styled UI, chart blocks, mock backend, and its guide (`guide/`) |
+| `src/chat/` | The agentic chat: engine, headless layer, styled UI, chart blocks, mock backend, the backend conformance check, and its guide (`guide/`) |
+| `bin/` | The package's one command, `atoms-chat-conformance`, a shim over the built conformance check |
 | `src/mcp/` | MCP server, its eleven tools, the version gate, `screen-code.ts` (`build_from_json`) |
 | `src/project/` | The intake questions, scaffold targets, and both templates' structure and rules (`structure.ts`, `prototypeStructure.ts`) |
 | `src/release/` | Version, changelog and version checks |

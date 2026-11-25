@@ -94,7 +94,8 @@ for (const pkg of HEAVY) {
 // that renders a chat. That promise holds only while nothing outside the
 // chat's own subpaths reaches them, and while each subpath reaches only
 // its own: an app on `/chat` without charts never resolves Recharts, and
-// server code on `/chat/core` or `/chat/mock` never resolves React.
+// server code on `/chat/core`, `/chat/mock` or `/chat/conformance` never
+// resolves React.
 
 /** Every package an import or re-export in `code` names. */
 function importedPackages(code) {
@@ -135,11 +136,27 @@ if (!reaches(charts, 'recharts')) {
   failures.push('/chat/charts reaches no recharts — the charts check has lost its control');
 }
 
-for (const entry of ['chat/core', 'chat/mock']) {
+for (const entry of ['chat/core', 'chat/mock', 'chat/conformance']) {
   const reached = importedPackages(await bundle(`export * from './dist/${entry}.mjs';`));
   const framework = [...reached].filter((source) => !source.startsWith('node:'));
   if (framework.length > 0) {
     failures.push(`/${entry} must be framework-free, but imports ${framework.join(', ')}`);
+  }
+}
+
+// The backend conformance check is a tool for a backend's CI, not part of
+// any chat an app renders: neither the root entry nor `/chat` may carry it.
+// One of its check titles marks its code, since it is a string literal
+// that survives minification.
+const CONFORMANCE_MARK = 'Rejects a repeated client_message_id';
+const conformance = await bundle("export * from './dist/chat/conformance.mjs';");
+if (!conformance.includes(CONFORMANCE_MARK)) {
+  failures.push('/chat/conformance lacks its own check titles — the conformance check has lost its control');
+}
+const chatEverything = await bundle("export * from './dist/chat.mjs';");
+for (const [name, code] of [['the root entry', all], ['/chat', chatEverything]]) {
+  if (code.includes(CONFORMANCE_MARK)) {
+    failures.push(`${name} carries the backend conformance check, which belongs to /chat/conformance only`);
   }
 }
 

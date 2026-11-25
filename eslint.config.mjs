@@ -49,7 +49,7 @@ const NO_STYLED = [
 const NO_REACT = [
   {
     group: ["react", "react-dom", "react/*", "@radix-ui/*"],
-    message: "`/chat/core` and `/chat/mock` are framework-free so server code can import them.",
+    message: "`/chat/core`, `/chat/mock` and `/chat/conformance` are framework-free so server code can import them.",
   },
 ];
 
@@ -126,9 +126,17 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    // `/chat/core` and `/chat/mock` have no React at all, so server code —
-    // a route handler, a server action — can import them.
-    files: ["src/chat/core/**", "src/chat/mock/**", "src/chat/core.ts", "src/chat/mock.ts"],
+    // `/chat/core`, `/chat/mock` and `/chat/conformance` have no React at
+    // all, so server code — a route handler, a server action, a backend's
+    // CI — can import them.
+    files: [
+      "src/chat/core/**",
+      "src/chat/mock/**",
+      "src/chat/conformance/**",
+      "src/chat/core.ts",
+      "src/chat/mock.ts",
+      "src/chat/conformance.ts",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",

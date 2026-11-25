@@ -97,6 +97,7 @@ atoms/
 │   │   ├── ui/                   # The styled chat, built from Atoms components
 │   │   ├── charts/               # Chart blocks (Recharts)
 │   │   ├── mock/                 # In-memory backend (no React)
+│   │   ├── conformance/          # Backend conformance check → atoms-chat-conformance (no React)
 │   │   └── guide/                # The guide: one Markdown file per topic → docs + get_chat
 │   │
 │   ├── mcp/                      # MCP server logic
@@ -144,6 +145,7 @@ atoms/
 ├── .github/workflows/ci.yml      # CI: lint, typecheck, build, docker validate
 ├── buildspec.yml                 # AWS CodeBuild -> ECR -> ECS (deploy)
 ├── Dockerfile                    # Multi-stage standalone image
+├── bin/atoms-chat-conformance.mjs # The conformance CLI (shim over dist/chat/conformance.mjs)
 ├── tsup.config.ts                # Library build (src -> dist)
 ├── tsconfig.json  tsconfig.lib.json
 ├── next.config.ts  eslint.config.mjs

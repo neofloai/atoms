@@ -44,6 +44,7 @@ Requirements:
 | `@neofloai/atoms/chat/core` | The framework-free engine and the standard's types — no React, so server code can import it | nothing |
 | `@neofloai/atoms/chat/charts` | `chartBlock` (bar, line, area, donut) and the chart kit | `recharts` |
 | `@neofloai/atoms/chat/mock` | An in-memory backend on the standard, with demo scenarios — no React | nothing |
+| `@neofloai/atoms/chat/conformance` | The [backend conformance check](/chat/conformance), also the `atoms-chat-conformance` command — no React | nothing |
 
 ## Quick start
 
@@ -100,7 +101,7 @@ It reads all nine stream events (`message_start` through `error`), treats `snaps
 The chat is plain React and works in any React app. If yours renders on the server:
 
 - Nothing touches `window` or storage at import time or during server render. Persistence hydrates on the client.
-- `@neofloai/atoms/chat/core` and `@neofloai/atoms/chat/mock` contain no React, so server code (a route handler, a server action) can import them.
+- `@neofloai/atoms/chat/core`, `@neofloai/atoms/chat/mock` and `@neofloai/atoms/chat/conformance` contain no React, so server code (a route handler, a server action) can import them.
 - Create the adapter and render `<AgenticChat>` from a client component — in the Next.js App Router, a file that starts with `'use client'`. An adapter holds functions, and functions can't be passed as props from a server component.
 
 ## Where to go next
