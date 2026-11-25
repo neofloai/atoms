@@ -1,11 +1,75 @@
 {
-  "generatedAt": "2026-11-10T13:19:38.032Z",
+  "generatedAt": "2026-11-25T14:08:57.536Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "4.1.0",
-  "currentTag": "v4.1.0",
+  "current": "4.2.0",
+  "currentTag": "v4.2.0",
   "minimumSupported": "3.0.0",
   "releases": [
+    {
+      "version": "4.2.0",
+      "tag": "v4.2.0",
+      "date": "2026-11-25",
+      "headline": "The account menu and the workspace switcher ship as components, so the shell every app starts from — and every new project — has both: the user at the end of the top bar, the workspace at the foot of the sidebar. The MCP server now understands the words people use for them.",
+      "summary": "A minor release; nothing is removed or renamed. `AccountMenu` is the avatar at the end of the `Navbar` and the dropdown it opens — the user, your rows, a System / Light / Dark switch and Sign out. `WorkspaceSwitcher` is the footer of the `Drawer`'s rail and the list it opens upwards. Until now both were copy-paste examples on `Menu` that stopped tracking the design system the day they were pasted. The dashboard pattern and both app templates use them, so a new project opens with the shell complete. On the MCP side, `search_docs` matches a query word by word and ranks the hits, so \"navbar sidebar\" or \"account dropdown\" finds what it names instead of nothing, and `get_component` resolves a name in any case or by its everyday word — `Sidebar` returns `Drawer`.",
+      "changes": [
+        {
+          "kind": "added",
+          "summary": "`AccountMenu`: the signed-in user's avatar for the trailing edge of the `Navbar`, and the 240px panel it opens — name, address and role tag; the rows you pass as children, which close the menu when chosen; a System / Light / Dark switch wired to the theme provider; and Sign out in the `error` tone when `onSignOut` is given. Renders its own trigger and holds its own open state. `labels` translates the words it draws itself.",
+          "scope": [
+            "AccountMenu"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`WorkspaceSwitcher`: the footer of the sidebar — the current workspace's square avatar and name behind a rule — and the list it opens upwards, with the current workspace filled and checked and Create workspace behind a rule when `onCreate` is given. Controlled with `value` / `onChange` or left to hold its own state; `collapsed` folds it to the avatar for a 64px rail.",
+          "scope": [
+            "WorkspaceSwitcher"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "The \"Account menu\" and \"Workspace switcher\" examples on `Menu`, which had to be copied whole, are replaced by `AccountMenu` and `WorkspaceSwitcher`. Code copied from them still works; swap it for the components to pick up later fixes.",
+          "scope": [
+            "Menu",
+            "AccountMenu",
+            "WorkspaceSwitcher"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "The dashboard pattern's app bar ends in `AccountMenu`, and its rail's footer is `WorkspaceSwitcher` instead of 150 hand-written lines.",
+          "scope": [
+            "get_pattern",
+            "dashboard"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "Both app templates open with the shell complete: `AccountMenu` at the end of the top bar and `WorkspaceSwitcher` at the foot of the sidebar, with the sample user and workspaces in `app/layout/account.ts`. They install `^4.2.0`.",
+          "scope": [
+            "scaffold_app",
+            "templates/react",
+            "templates/prototype"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`search_docs` matches each word of a query on its own and ranks the hits, best first. A query that names two things (\"navbar sidebar\") finds both, where it used to need the whole phrase in one component's text and returned nothing.",
+          "scope": [
+            "search_docs"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "`get_component` takes a name in any case (`navbar`, `account-menu`) or the everyday word for a component (`Sidebar` returns `Drawer`, `Topbar` returns `Navbar`) and says what it resolved to. A word two components share returns both to choose from. `list_components` shows each component's everyday names beside it.",
+          "scope": [
+            "get_component",
+            "list_components"
+          ]
+        }
+      ]
+    },
     {
       "version": "4.1.0",
       "tag": "v4.1.0",
@@ -669,8 +733,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^4.1.0",
-    "pin": "npm install github:neofloai/atoms#semver:^4.1.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^4.2.0",
+    "pin": "npm install github:neofloai/atoms#semver:^4.2.0"
   },
   "keywords": [
     "changelog",

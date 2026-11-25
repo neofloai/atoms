@@ -141,7 +141,7 @@ export const data: ComponentExamplesData = {
     {
       title: 'A permanent nav rail',
       description:
-        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 216px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rows are `List variant="nav"`: MUI\'s navigation-drawer composition, drawn as the sidebar — 28px rows, `b2` ink at rest, the current page on a grey fill. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. For the whole screen, start from the Dashboard pattern.',
+        'The app shell. `permanent` has no open state and never closes, and `size="sm"` is the 216px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, `WorkspaceSwitcher` — with the nav taking the slack so the switcher sits on the bottom edge. The rows are `List variant="nav"`: MUI\'s navigation-drawer composition, drawn as the sidebar — 28px rows, `b2` ink at rest, the current page on a grey fill. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. For the whole screen, start from the Dashboard pattern.',
       code: [
         '<Stack direction="row" sx={{ minHeight: "100vh" }}>',
         '  <Drawer variant="permanent" size="sm">',
@@ -165,7 +165,8 @@ export const data: ComponentExamplesData = {
         '      ))}',
         '    </List>',
         '',
-        '    <WorkspaceSwitcherOfYourOwn />',
+        '    {/* The footer: the current workspace, and the list it opens. */}',
+        '    <WorkspaceSwitcher workspaces={WORKSPACES} value={workspaceId} onChange={setWorkspaceId} />',
         '  </Drawer>',
         '',
         '  <Box sx={{ flex: 1 }}>{children}</Box>',
@@ -355,6 +356,8 @@ export const data: ComponentExamplesData = {
   ],
   relatedComponents: [
     'Navbar',
+    // The rail's footer: the current workspace and the list it opens.
+    'WorkspaceSwitcher',
     'Dialog',
     'Card',
     'Menu',

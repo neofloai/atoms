@@ -17,8 +17,8 @@ import type { MenuProps as MuiMenuProps } from '@mui/material';
  * tracks MUI's declaration exactly, including props added in future
  * MUI releases. Consumers can still extend it:
  *
- *   interface AccountMenuProps extends MenuProps {
- *     onSignOut: () => void;
+ *   interface RowActionsMenuProps extends MenuProps {
+ *     onDelete: () => void;
  *   }
  */
 export type MenuProps = MuiMenuProps;

@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@neofloai/atoms';
 import type { DrawerProps, SidebarResizeHandleProps, TooltipProps } from '@neofloai/atoms';
+import type { ReactNode } from 'react';
 import { Link, matchPath, useLocation } from 'react-router';
 
 import { NAV_ITEMS } from './navigation';
@@ -27,10 +28,13 @@ interface AppRailProps {
   /** The floating peek, from `useSidebarToggle().peekProps`. Takes the place of `dockProps`. */
   peekProps?: DrawerProps;
   onNavigate?: () => void;
+  /** The rail's footer, under the nav: the `WorkspaceSwitcher`. */
+  footer?: ReactNode;
 }
 
 /**
- * The app's sidebar: the mark, then one row per page.
+ * The app's sidebar: the mark, one row per page, and the footer — the
+ * workspace switcher — on the bottom edge.
  *
  * Rendered twice by the layout — docked, and as the peek that floats in
  * while the rail is hidden — so it takes whichever props it was handed.
@@ -41,6 +45,7 @@ export function AppRail({
   resizeTooltipProps,
   peekProps,
   onNavigate,
+  footer,
 }: AppRailProps) {
   const { pathname } = useLocation();
 
@@ -60,6 +65,7 @@ export function AppRail({
           <NeofloLogo variant="full" size={LOGO_PX} />
         </Box>
       )}
+      {/* The nav takes the slack, which holds the footer on the bottom edge. */}
       <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto', p: `${RAIL_INSET_PX}px` }}>
         <List variant="nav" component="nav" aria-label="Main">
           {NAV_ITEMS.map(({ label, path, Icon }) => {
@@ -82,6 +88,7 @@ export function AppRail({
           })}
         </List>
       </Box>
+      {footer}
     </>
   );
 

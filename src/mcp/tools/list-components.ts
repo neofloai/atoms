@@ -45,12 +45,34 @@ function formatShellLead(components: ComponentData[]): string {
     return '';
   }
 
+  // The two dropdowns the shell carries, named only once they ship, so
+  // the lead never points at a component this catalogue does not have.
+  const ends =
+    names.has('AccountMenu') && names.has('WorkspaceSwitcher')
+      ? ' The topbar ends in **AccountMenu** — the avatar and the account dropdown (profile, theme switch, Sign out) — and the sidebar\'s footer is **WorkspaceSwitcher**, the workspace dropdown. Both are one element each; do not rebuild either from `Menu`.'
+      : '';
+
   return [
     '## The app shell: build this first',
     '',
-    'Most screens sit in a shell, and it is two components: **Drawer** is the sidebar / sidenav down the left — `variant="permanent" size="sm"` for the 216px rail — and **Navbar** is the topbar above the content. Lay the page out as a row, rail first: the rail owns the full height and the bar begins where the rail ends rather than running the full width above it. Getting that backwards is the single most common mistake, which is why the `dashboard` pattern already arranges it — start from that rather than composing the shell by hand.',
+    `Most screens sit in a shell, and it is two components: **Drawer** is the sidebar / sidenav down the left — \`variant="permanent" size="sm"\` for the 216px rail — and **Navbar** is the topbar above the content.${ends} Lay the page out as a row, rail first: the rail owns the full height and the bar begins where the rail ends rather than running the full width above it. Getting that backwards is the single most common mistake, which is why the \`dashboard\` pattern already arranges it — start from that rather than composing the shell by hand.`,
     '',
   ].join('\n');
+}
+
+/** How many everyday names to show beside a component. */
+const MAX_ALIASES = 4;
+
+/**
+ * The first few everyday names a component carries, in parentheses.
+ *
+ * A reader scanning for "sidebar" in a list that only says `Drawer` does
+ * not find it; the words they would use belong beside the name they would
+ * not. `search_docs` and `get_component` take the rest.
+ */
+function aliasesOf(component: ComponentData): string {
+  const aliases = (component.keywords ?? []).slice(0, MAX_ALIASES);
+  return aliases.length > 0 ? ` (${aliases.join(', ')})` : '';
 }
 
 /**
@@ -85,7 +107,7 @@ function formatComponentList(
   const sections = [...byCategory.entries()].map(
     ([category, group]) =>
       `## ${category}\n\n${group
-        .map((c) => `- **${c.name}** — ${c.tagline}`)
+        .map((c) => `- **${c.name}**${aliasesOf(c)} — ${c.tagline}`)
         .join('\n')}`
   );
 

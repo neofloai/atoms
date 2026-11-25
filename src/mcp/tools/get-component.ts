@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { loadComponents, loadPatterns } from '../data-loader';
+import { resolveComponent } from '../lookup';
 import { gateVersion, installedVersionSchema } from '../version-gate';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -136,11 +137,13 @@ export function registerGetComponent(server: McpServer): void {
     {
       title: 'Get component spec',
       description:
-        "Get full details for a specific component: props with TypeScript types, defaults, code examples, do's and don'ts, the patterns it appears in, and the related components worth comparing against it first. Returns markdown. Always call this before using a component to get the correct API — and read the Related section before committing, since several components look alike in a screenshot and are meant for different contexts. Pass `installedVersion` with the version of @neofloai/atoms in the target project: the props and guidance are returned either way, but the code examples are withheld until it is known, since code written against a version the project does not have fails at import.",
+        "Get full details for a specific component: props with TypeScript types, defaults, code examples, do's and don'ts, the patterns it appears in, and the related components worth comparing against it first. Returns markdown. Always call this before using a component to get the correct API — and read the Related section before committing, since several components look alike in a screenshot and are meant for different contexts. The name can be the Atoms name in any case (\"navbar\", \"account-menu\") or the everyday word for it: \"Sidebar\" returns Drawer, \"Topbar\" returns Navbar, and the response says which component it resolved to. Pass `installedVersion` with the version of @neofloai/atoms in the target project: the props and guidance are returned either way, but the code examples are withheld until it is known, since code written against a version the project does not have fails at import.",
       inputSchema: {
         name: z
           .string()
-          .describe('Component name, e.g. "Button", "TextField". Case-sensitive.'),
+          .describe(
+            'Component name, e.g. "Button", "TextField", "AccountMenu". Any case; an everyday name such as "Sidebar" or "Topbar" resolves to the Atoms component.'
+          ),
         installedVersion: installedVersionSchema,
       },
     },
@@ -150,27 +153,53 @@ export function registerGetComponent(server: McpServer): void {
         loadPatterns(),
         gateVersion(installedVersion),
       ]);
-      const component = manifest.components.find((c) => c.name === name);
+      const resolution = resolveComponent(name, manifest.components);
+      const component = resolution.component;
 
       if (!component) {
         const available =
           manifest.components.map((c) => c.name).join(', ') ||
           'none published yet';
+        // Name the likely ones first, with what each is for, so the next
+        // call is a choice rather than a guess from a bare list of names.
+        const suggestions =
+          resolution.candidates.length > 0
+            ? [
+                `"${name}" could be any of these — pick by what each is for, then call \`get_component\` with its name:`,
+                '',
+                ...resolution.candidates.map((c) => `- **${c.name}** — ${c.tagline}`),
+                '',
+              ]
+            : [];
         return {
           content: [
             {
               type: 'text',
-              text: `Component "${name}" not found. Available: ${available}`,
+              text: [
+                `Component "${name}" not found.`,
+                '',
+                ...suggestions,
+                `Available: ${available}. \`search_docs\` takes the user's own words if none of these is it.`,
+              ].join('\n'),
             },
           ],
         };
       }
 
+      // Say what the name resolved to, so an agent writes the import with
+      // the real name rather than the word it asked with.
+      const resolvedNote =
+        resolution.via === 'exact'
+          ? ''
+          : resolution.via === 'keyword'
+            ? `> "${name}" is what Atoms calls **${component.name}** — import it by that name.\n\n`
+            : `> "${name}" resolved to **${component.name}** — import it by that name.\n\n`;
+
       return {
         content: [
           {
             type: 'text',
-            text: formatComponentResponse(component, patterns.patterns, gate),
+            text: `${resolvedNote}${formatComponentResponse(component, patterns.patterns, gate)}`,
           },
         ],
       };

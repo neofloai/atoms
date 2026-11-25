@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T13:19:38.032Z",
+  "generatedAt": "2026-11-25T14:08:57.536Z",
   "questions": [
     {
       "id": "purpose",
@@ -119,12 +119,12 @@
       "id": "prototype",
       "label": "React + Vite prototype (Atoms prototype template)",
       "chooseWhen": "it is a prototype: no server, sample data held in React state, and nothing that needs a network",
-      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.1.0 {{name}}",
+      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.2.0 {{name}}",
       "structure": {
         "templatePath": "templates/prototype",
-        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.1.0 {{name}}",
+        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.2.0 {{name}}",
         "intro": "This is a Neoflo Atoms prototype: Vite, TypeScript, React Router and oxlint, with UI from `@neofloai/atoms`. It has no backend and needs no network: sample data lives in each feature's `mocks/` and is held in React state, so a change made on one screen shows on every other and a reload resets it.",
-        "tree": "src/\n├── main.tsx              Mounts <App />. Nothing else goes here.\n├── app/                  Composition root: wiring, never features.\n│   ├── App.tsx\n│   ├── providers/        NeofloThemeProvider, Snackbar, each feature's state.\n│   ├── router/           Route table. Every page is lazy-loaded.\n│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows.\n│   └── errors/           Route error boundary.\n├── pages/                One folder per route. Thin: composes features.\n│   └── <route>/<Route>Page.tsx\n├── features/             One folder per business capability.\n│   └── <feature>/        See the slice shape below.\n└── shared/               Domain-free building blocks.\n    ├── config/           paths.ts (every route).\n    ├── lib/              Pure helpers: formatting, dates, maths.\n    ├── ui/               Compositions of Atoms used by 2+ pages.\n    └── hooks/            Domain-free hooks (useDebounce, …).",
+        "tree": "src/\n├── main.tsx              Mounts <App />. Nothing else goes here.\n├── app/                  Composition root: wiring, never features.\n│   ├── App.tsx\n│   ├── providers/        NeofloThemeProvider, Snackbar, each feature's state.\n│   ├── router/           Route table. Every page is lazy-loaded.\n│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows, account.\n│   └── errors/           Route error boundary.\n├── pages/                One folder per route. Thin: composes features.\n│   └── <route>/<Route>Page.tsx\n├── features/             One folder per business capability.\n│   └── <feature>/        See the slice shape below.\n└── shared/               Domain-free building blocks.\n    ├── config/           paths.ts (every route).\n    ├── lib/              Pure helpers: formatting, dates, maths.\n    ├── ui/               Compositions of Atoms used by 2+ pages.\n    └── hooks/            Domain-free hooks (useDebounce, …).",
         "featureTree": "features/<feature>/\n├── index.ts              The public API. The only file outside code imports.\n├── model/                Types and pure functions, including every change\n│                         to the data. No React.\n├── mocks/                Sample data in the real API's shape. Read only by state/.\n├── state/                <Feature>Provider.tsx (React state seeded from the\n│                         mocks), use<Feature>.ts (the hook), and the context\n│                         they share.\n└── components/           The feature's UI, built from Atoms components.",
         "layers": [
           {
@@ -341,7 +341,7 @@
               "Add its path to `shared/config/paths.ts`.",
               "Create `pages/<route>/<Route>Page.tsx` exporting `<Route>Page`.",
               "Register it in `app/router/router.tsx` with `lazy`.",
-              "If it belongs in the rail, add a row to `app/layout/navigation.ts`."
+              "If it belongs in the rail, add a row to `app/layout/navigation.ts`. If it belongs in the account menu (settings, billing), point that row at it in `app/layout/AppLayout.tsx`."
             ]
           },
           {
@@ -413,12 +413,12 @@
       "id": "react",
       "label": "React + Vite + TypeScript (Atoms template)",
       "chooseWhen": "it is a new project whose frontend does not need a server of its own",
-      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.1.0 {{name}}",
+      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.2.0 {{name}}",
       "structure": {
         "templatePath": "templates/react",
-        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.1.0 {{name}}",
+        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.2.0 {{name}}",
         "intro": "This is a Neoflo Atoms React app: Vite, TypeScript, React Router, TanStack Query, oxlint and oxfmt, with UI from `@neofloai/atoms`.",
-        "tree": "src/\n├── main.tsx              Mounts <App />. Nothing else goes here.\n├── app/                  Composition root: wiring, never features.\n│   ├── App.tsx\n│   ├── providers/        NeofloThemeProvider, QueryClient, Snackbar.\n│   ├── router/           Route table. Every page is lazy-loaded.\n│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows.\n│   └── errors/           Route error boundary.\n├── pages/                One folder per route. Thin: composes features.\n│   └── <route>/<Route>Page.tsx\n├── features/             One folder per business capability.\n│   └── <feature>/        See the slice shape below.\n├── shared/               Domain-free building blocks.\n│   ├── api/              httpClient, mockResponse.\n│   ├── config/           env.ts (every env var), paths.ts (every route).\n│   ├── lib/              Pure helpers: formatting, dates, maths.\n│   ├── ui/               Compositions of Atoms used by 2+ pages.\n│   └── hooks/            Domain-free hooks (useDebounce, …).\n└── test/                 Test setup and renderWithProviders.",
+        "tree": "src/\n├── main.tsx              Mounts <App />. Nothing else goes here.\n├── app/                  Composition root: wiring, never features.\n│   ├── App.tsx\n│   ├── providers/        NeofloThemeProvider, QueryClient, Snackbar.\n│   ├── router/           Route table. Every page is lazy-loaded.\n│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows, account.\n│   └── errors/           Route error boundary.\n├── pages/                One folder per route. Thin: composes features.\n│   └── <route>/<Route>Page.tsx\n├── features/             One folder per business capability.\n│   └── <feature>/        See the slice shape below.\n├── shared/               Domain-free building blocks.\n│   ├── api/              httpClient, mockResponse.\n│   ├── config/           env.ts (every env var), paths.ts (every route).\n│   ├── lib/              Pure helpers: formatting, dates, maths.\n│   ├── ui/               Compositions of Atoms used by 2+ pages.\n│   └── hooks/            Domain-free hooks (useDebounce, …).\n└── test/                 Test setup and renderWithProviders.",
         "featureTree": "features/<feature>/\n├── index.ts              The public API. The only file outside code imports.\n├── model/                Types and pure functions. No React, no fetching.\n├── api/                  <feature>Api.ts (transport) and <feature>Queries.ts\n│                         (query keys + TanStack Query hooks).\n├── mocks/                Sample data in the API's exact shape. Read only by api/.\n├── components/           The feature's UI, built from Atoms components.\n└── hooks/                Feature hooks that are not queries (optional).",
         "layers": [
           {
@@ -640,7 +640,7 @@
               "Add its path to `shared/config/paths.ts`.",
               "Create `pages/<route>/<Route>Page.tsx` exporting `<Route>Page`.",
               "Register it in `app/router/router.tsx` with `lazy`.",
-              "If it belongs in the rail, add a row to `app/layout/navigation.ts`."
+              "If it belongs in the rail, add a row to `app/layout/navigation.ts`. If it belongs in the account menu (settings, billing), point that row at it in `app/layout/AppLayout.tsx`."
             ]
           },
           {

@@ -8,6 +8,12 @@ import {
   loadRelease,
   loadTokens,
 } from '../data-loader';
+import {
+  STRONG_MATCH,
+  componentSearchable,
+  matchesEveryTerm,
+  scoreMatch,
+} from '../lookup';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
@@ -28,9 +34,17 @@ interface SearchHit {
   details?: string;
 }
 
-function matches(haystack: string, query: string): boolean {
-  return haystack.toLowerCase().includes(query);
+/** A ranked hit, before it is formatted. */
+interface ScoredHit extends SearchHit {
+  score: number;
 }
+
+/**
+ * How many components a search lists. A broad query ("menu", "layout")
+ * touches a third of the catalogue in passing; past the first few, a hit
+ * is noise that pushes the answer off the screen.
+ */
+const MAX_COMPONENT_HITS = 8;
 
 /**
  * Registers the `search_docs` tool: keyword search across components,
@@ -42,13 +56,13 @@ export function registerSearchDocs(server: McpServer): void {
     {
       title: 'Search docs',
       description:
-        'Searches across @neofloai/atoms components, patterns, token categories, Neoflo brand guidelines (logo, brand colours, fonts, theme), the release changelog, and the project intake guide by keyword. Returns a markdown list of hits; brand, guide and release hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need.',
+        'Searches across @neofloai/atoms components, patterns, token categories, Neoflo brand guidelines (logo, brand colours, fonts, theme), the release changelog, and the project intake guide. Takes the words a user would use — "sidebar", "account dropdown", "navbar sidebar", "workspace switcher" — and matches each word on its own, so a query naming two things finds both; hits are ranked best first. Returns a markdown list; brand, guide and release hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need, or what Atoms calls the thing the user named.',
       inputSchema: {
         query: z
           .string()
           .min(1)
           .describe(
-            'Search keyword, e.g. "button", "spacing", "dashboard", "logo", "brand fonts".'
+            'What to find, in the user\'s words, e.g. "sidebar", "account menu", "navbar sidebar", "spacing", "dashboard", "logo", "brand fonts".'
           ),
       },
     },
@@ -63,7 +77,6 @@ export function registerSearchDocs(server: McpServer): void {
           loadRelease(),
         ]);
 
-      const q = query.toLowerCase();
       const hits: SearchHit[] = [];
 
       // The release record goes first when it matches, for the same
@@ -81,7 +94,9 @@ export function registerSearchDocs(server: McpServer): void {
       //
       // So a release becomes findable by adding a keyword in
       // `src/release/index.ts`, deliberately, rather than by whatever
-      // words its summary happened to use.
+      // words its summary happened to use. Every term has to match, not
+      // just one: "navbar version" is a question about the release, and
+      // "navbar" alone is not.
       const releaseText = [
         'changelog',
         release.current,
@@ -89,7 +104,7 @@ export function registerSearchDocs(server: McpServer): void {
         ...release.keywords,
         ...release.releases.flatMap((entry) => [entry.version, entry.tag]),
       ].join(' ');
-      if (matches(releaseText, q)) {
+      if (matchesEveryTerm(query, releaseText)) {
         hits.push({
           kind: 'release',
           name: `Changelog (current: ${release.current})`,
@@ -109,7 +124,7 @@ export function registerSearchDocs(server: McpServer): void {
         ...project.keywords,
         ...project.targets.map((target) => target.label),
       ].join(' ');
-      if (matches(projectText, q)) {
+      if (matchesEveryTerm(query, projectText)) {
         hits.push({
           kind: 'guide',
           name: 'Starting a project',
@@ -120,62 +135,90 @@ export function registerSearchDocs(server: McpServer): void {
         });
       }
 
+      // Everything else is ranked together, best first, so a pattern that
+      // is the whole answer ("dashboard", "app shell") is not listed under
+      // every component that mentions it in passing.
+      const ranked: ScoredHit[] = [];
+
       for (const section of brand.brand.sections) {
-        const text = [
-          brand.brand.name,
-          section.title,
-          section.summary,
-          section.body,
-          ...section.keywords,
-        ].join(' ');
-        if (matches(text, q)) {
-          hits.push({
+        const score = scoreMatch(query, {
+          name: section.title,
+          keywords: [brand.brand.name, ...section.keywords],
+          summary: section.summary,
+          body: section.body,
+        });
+        if (score > 0) {
+          ranked.push({
             kind: 'brand',
             name: `${brand.brand.name} ${section.title}`,
             summary: section.summary,
             details: section.body,
+            score,
           });
         }
       }
 
+      // The everyday names a component carries in `keywords` count almost
+      // as much as its own name. Without them, finding the app shell
+      // requires already knowing it is called `Drawer`.
+      const componentHits: ScoredHit[] = [];
       for (const component of components.components) {
-        const text = [
-          component.name,
-          component.category,
-          component.tagline,
-          // The everyday names for the thing, which the tagline cannot
-          // carry and still read as a sentence. Without these, finding the
-          // app shell requires already knowing it is called `Drawer`.
-          ...(component.keywords ?? []),
-          ...component.props.map((p) => `${p.name} ${p.description}`),
-        ].join(' ');
-        if (matches(text, q)) {
-          hits.push({
+        const score = scoreMatch(query, componentSearchable(component));
+        if (score > 0) {
+          componentHits.push({
             kind: 'component',
             name: component.name,
             summary: component.tagline,
+            score,
           });
         }
       }
+      componentHits.sort((a, b) => b.score - a.score);
+      ranked.push(...componentHits.slice(0, MAX_COMPONENT_HITS));
 
       for (const pattern of patterns.patterns) {
-        if (matches(`${pattern.name} ${pattern.slug} ${pattern.description}`, q)) {
-          hits.push({
+        const score = scoreMatch(query, {
+          name: pattern.name,
+          keywords: [pattern.slug],
+          summary: pattern.description,
+          body: pattern.components.join(' '),
+        });
+        if (score > 0) {
+          ranked.push({
             kind: 'pattern',
             name: pattern.slug,
             summary: pattern.description,
+            score,
           });
         }
       }
 
       for (const category of Object.keys(tokens.tokens)) {
-        if (matches(category, q)) {
-          hits.push({
+        // Every category answers to the word for all of them, so "tokens"
+        // lists the categories rather than whichever components happen to
+        // mention a token in their prose.
+        const score = scoreMatch(query, {
+          name: category,
+          keywords: ['tokens', 'design tokens'],
+          summary: '',
+        });
+        if (score > 0) {
+          ranked.push({
             kind: 'token category',
             name: category,
             summary: `Design tokens for ${category}. Fetch with get_tokens.`,
+            score,
           });
         }
+      }
+
+      // A term found only in a body is a mention in passing. Show those
+      // only when nothing better matched, rather than as a tail of noise
+      // under the real answers.
+      ranked.sort((a, b) => b.score - a.score);
+      const strong = ranked.filter((hit) => hit.score >= STRONG_MATCH);
+      for (const hit of strong.length > 0 ? strong : ranked) {
+        hits.push({ kind: hit.kind, name: hit.name, summary: hit.summary, details: hit.details });
       }
 
       if (hits.length === 0) {
@@ -183,7 +226,7 @@ export function registerSearchDocs(server: McpServer): void {
           content: [
             {
               type: 'text',
-              text: `No results for "${query}". Try list_components to browse everything that exists.`,
+              text: `No results for "${query}". Try the everyday word for the thing ("sidebar", "dropdown", "topbar"), or list_components to browse everything that exists.`,
             },
           ],
         };

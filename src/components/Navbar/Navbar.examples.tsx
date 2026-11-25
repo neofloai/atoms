@@ -37,8 +37,8 @@ export const data: ComponentExamplesData = {
     'layout',
     'title bar',
     'breadcrumb bar',
-    'account menu',
-    'profile dropdown',
+    'nav bar',
+    'navigation bar',
   ],
   props: [
     {
@@ -109,10 +109,10 @@ export const data: ComponentExamplesData = {
     {
       title: 'An app bar: toggle, page name, account',
       description:
-        'The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is the account menu, and the top bar is where it lives on every screen of the shell. `AccountMenu` renders the avatar button and the dropdown it opens; its full code is the "Account menu" example on `Menu` — call `get_component` for `Menu`.',
+        'The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is `AccountMenu`, and the top bar is where it lives on every screen of the shell: it renders the avatar button and the dropdown it opens, and takes the rows as children — call `get_component` for `AccountMenu`.',
       code: [
-        '// AccountMenu: the "Account menu" example on Menu, copied whole.',
-        'import { AccountMenu } from "./AccountMenu";',
+        'import { AccountMenu, Box, IconButton, MenuItem, Navbar, Stack, Typography } from "@neofloai/atoms";',
+        'import { GearSixIcon, SidebarSimpleIcon, StarFourIcon } from "@neofloai/atoms/icons";',
         '',
         '<Navbar>',
         '  <Stack direction="row" sx={{ flex: 1, alignItems: "center", gap: 2 }}>',
@@ -132,8 +132,13 @@ export const data: ComponentExamplesData = {
         '    <IconButton variant="primary" appearance="outline" size="sm" aria-label="Ask Neo">',
         '      <StarFourIcon />',
         '    </IconButton>',
-        '    {/* The avatar and the profile dropdown it opens. */}',
-        '    <AccountMenu user={user} onSignOut={signOut} />',
+        '    {/* The avatar and the account dropdown it opens. */}',
+        '    <AccountMenu user={user} onSignOut={signOut}>',
+        '      <MenuItem onClick={openSettings}>',
+        '        <GearSixIcon size={16} />',
+        '        Settings',
+        '      </MenuItem>',
+        '    </AccountMenu>',
         '  </Stack>',
         '</Navbar>',
       ].join('\n'),
@@ -264,6 +269,7 @@ export const data: ComponentExamplesData = {
     'Use `size="md"` with a `NavbarTitle` when the bar names a page or a record, and `size="sm"` when it only carries controls',
     'Put the record’s facts in `meta` rather than in the title — a title that reads "Matching #345 · Nike Sales" cannot truncate gracefully',
     'Put one `Box sx={{ flex: 1 }}` between the leading group and the trailing one, so the bar has a single split point',
+    'End the `sm` bar with `AccountMenu` — the signed-in user and the account dropdown, on every screen of the shell',
     'Use `appearance="text"` icon buttons in the bar — the bar is already a surface, so contained buttons read as a second layer on it',
     'Pair it with a `permanent` Drawer for the standard shell — the rail runs the full height and the bar starts where the rail ends, so the outer box is a row (rail, then a column) and the two share their surface and edge tokens',
     'Name the row with `slotProps={{ toolbar: { component: "nav" } }}` when the bar carries the page’s navigation',
@@ -277,5 +283,5 @@ export const data: ComponentExamplesData = {
     "Don't put more than one primary action in the bar — it is the screen's chrome, not its call to action",
     "Don't run the bar across the top of the whole window with the rail underneath it — at `sm` the rail owns the full height and the bar spans the content column only, so the brand mark is the app's top-left corner. `size=\"md\"` is the one place the bar spans the top, and that is a different screen rather than a second band on this one",
   ],
-  relatedComponents: ['Drawer', 'Tabs', 'IconButton', 'Avatar', 'Menu'],
+  relatedComponents: ['Drawer', 'AccountMenu', 'Tabs', 'IconButton', 'Avatar', 'Menu'],
 };

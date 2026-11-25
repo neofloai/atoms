@@ -17,10 +17,10 @@ The MCP server exposes exactly these ten tools — no more, no less:
 | `check_version` | Returns the current release, the changelog, and a verdict on a project's installed version |
 | `scaffold_app` | Returns the ordered commands to create a new app on the user's own disk, brand wired |
 | `list_components` | Lists all components grouped by category, led by the published patterns |
-| `get_component` | Returns full spec for a named component, plus its related components and the patterns it appears in |
+| `get_component` | Returns full spec for a named component, plus its related components and the patterns it appears in. Resolves the name in any case or by a component's `keywords` |
 | `get_tokens` | Returns design tokens for a category |
 | `get_pattern` | Returns full page layout code |
-| `search_docs` | Searches across components, patterns, guidelines, changelog |
+| `search_docs` | Searches across components, patterns, guidelines, changelog, word by word, ranked |
 | `get_installation` | Returns framework-specific setup steps (nextjs, react) |
 | `build_from_json` | Turns an Atoms JSON export (`.atoms.json`, from the Atoms Inspector or Atoms Studio) into a React file, with the components to look up, what to wire, and the gaps |
 
@@ -84,7 +84,7 @@ export const getComponentTool = {
   name: 'get_component',
   description: 'Get full details for a specific component: props with TypeScript types, defaults, code examples, do\'s and don\'ts, and related components. Always call this before using a component to get the correct API.',
   schema: {
-    name: z.string().describe('Component name, e.g. "Button", "TextField". Case-sensitive.'),
+    name: z.string().describe('Component name, e.g. "Button", "TextField". Any case, or an everyday name such as "Sidebar".'),
   },
   handler: async ({ name }: { name: string }) => {
     const comp = (componentsData as any)[name];
@@ -100,6 +100,15 @@ export const getComponentTool = {
   },
 };
 ```
+
+## Matching what the caller typed
+
+Agents ask with the user's words, not the house names: "sidebar", "navbar sidebar", "account dropdown". Both lookups go through `src/mcp/lookup.ts` so they cannot disagree:
+
+- `search_docs` matches each word of the query on its own and ranks the hits — the whole query as a name or a keyword counts most, then each word by where it landed (name, keyword, summary, body). A query naming two things finds both; one that only mentions a thing in passing does not bury the answer.
+- `get_component` resolves a name exactly, then ignoring case and separators (`navbar`, `account-menu`), then through `keywords` (`Sidebar` is `Drawer`). A keyword two components share returns both as candidates rather than picking one.
+
+So a component becomes findable by its everyday name by adding the word to `keywords` in its `.examples.tsx`. Keep a keyword on one component unless it genuinely names both — a shared keyword makes `get_component` ask instead of answer.
 
 ## Tool description rules
 

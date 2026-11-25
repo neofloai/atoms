@@ -47,7 +47,7 @@ const TREE = `src/
 │   ├── App.tsx
 │   ├── providers/        NeofloThemeProvider, Snackbar, each feature's state.
 │   ├── router/           Route table. Every page is lazy-loaded.
-│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows.
+│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows, account.
 │   └── errors/           Route error boundary.
 ├── pages/                One folder per route. Thin: composes features.
 │   └── <route>/<Route>Page.tsx

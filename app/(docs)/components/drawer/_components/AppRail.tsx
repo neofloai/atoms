@@ -2,13 +2,10 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
 import Stack from '@mui/material/Stack';
 
 import { NeofloLogo } from '@/src/brand';
-import { Avatar } from '@/src/components/Avatar';
 import { Collapse } from '@/src/components/Collapse';
-import { Divider } from '@/src/components/Divider';
 import { Drawer } from '@/src/components/Drawer';
 import {
   List,
@@ -21,24 +18,16 @@ import { Menu } from '@/src/components/Menu';
 import { MenuItem } from '@/src/components/MenuItem';
 import { NAVBAR_HEIGHT_PX } from '@/src/components/Navbar';
 import { Tooltip } from '@/src/components/Tooltip';
+import { WorkspaceSwitcher } from '@/src/components/WorkspaceSwitcher';
 import {
-  border,
   elevation,
-  fontFamilies,
-  fontWeights,
-  icon,
   radius,
-  surface,
-  text,
-  typography,
 } from '@/src/tokens';
 import {
   BriefcaseIcon,
   CaretDownIcon,
-  CaretUpDownIcon,
   ChartLineIcon,
   ChatsIcon,
-  CheckCircleIcon,
   ClockCounterClockwiseIcon,
   CurrencyCircleDollarIcon,
   DatabaseIcon,
@@ -46,19 +35,16 @@ import {
   FilesIcon,
   GearIcon,
   HouseIcon,
-  PlusIcon,
   QuestionIcon,
   ScrollIcon,
 } from '@/src/icons';
 
-import type { CSSObject, Theme } from '@mui/material/styles';
-import type { AvatarColor } from '@/src/components/Avatar';
 import type {
   DrawerProps,
   SidebarResizeHandleProps,
 } from '@/src/components/Drawer';
 import type { TooltipProps } from '@/src/components/Tooltip';
-import type { ModeToken } from '@/src/tokens';
+import type { WorkspaceOption } from '@/src/components/WorkspaceSwitcher';
 
 /**
  * The app sidebar, rebuilt out of Atoms parts from the navigation sheet's
@@ -75,8 +61,9 @@ import type { ModeToken } from '@/src/tokens';
  *     top bar beside it, 20px from the rail's edge;
  *   - **the nav**, which takes the slack: sections 16px apart, rows 4px
  *     apart inside a 12px inset, an optional mono label heading a section;
- *   - **the workspace switcher**, pinned to the foot behind a rule, which
- *     opens the workspace menu upwards.
+ *   - **the workspace switcher** — the library's `WorkspaceSwitcher` —
+ *     pinned to the foot behind a rule, which opens the workspace menu
+ *     upwards.
  *
  * The sheet draws three states of it. The default rail; the same rail
  * with the workspace menu open (4564:6288); and a floating rail with no
@@ -131,13 +118,11 @@ const BRAND_INSET_PX = 20;
 /**
  * Nav row geometry. The row itself — 28px, 8px in, the glyph 12px from
  * the label — is `ListItemButton`'s in a `nav` list; these are what the
- * rail still needs to know: the row's height to fold it to a square, the
- * glyph size, and the switcher's inset and gap, which match the rows.
+ * rail still needs to know: the row's height to fold it to a square, and
+ * the glyph size.
  */
 const NAV_ROW_PX = 28;
-const NAV_ROW_INSET_PX = 8;
 const NAV_GLYPH_PX = 16;
-const NAV_GLYPH_GAP_PX = 12;
 
 /** A parent's caret, and a section label's. */
 const NAV_CARET_PX = 14;
@@ -145,23 +130,10 @@ const NAV_CARET_PX = 14;
 /** Between sections — `Scale/300`. */
 const NAV_SECTION_GAP_PX = 16;
 
-/**
- * The workspace switcher: a 40px row (8 + 24px avatar + 8) inside a 4px
- * inline and 8px block inset, which puts the avatar 12px from the rail's
- * edge and the block at 56px — the same footprint as the sheet's resting
- * footer, whose row carries no padding of its own.
- */
-const SWITCHER_ROW_PX = 40;
-const SWITCHER_INSET_INLINE_PX = 4;
-const SWITCHER_INSET_BLOCK_PX = 8;
-
-/** Width of both flyouts — the workspace menu and a folded parent's level. */
+/** Width of a folded parent's flyout — the workspace menu's width too. */
 const FLYOUT_WIDTH_PX = 240;
 
-/**
- * Gap between the rail's edge and a folded parent's flyout, and between
- * the switcher and the workspace menu above it. `Scale/200`.
- */
+/** Gap between the rail's edge and a folded parent's flyout. `Scale/200`. */
 const FLYOUT_OFFSET_PX = 8;
 
 /**
@@ -208,30 +180,6 @@ const LOGO_MARK_PX = 16;
 
 /** The floating rail's inset from the region it floats over — `Scale/200`. */
 const FLOAT_INSET_PX = 8;
-
-type Mode = 'light' | 'dark';
-
-/** One set of rules per scheme, landed in a single `applyStyles` block. */
-function bothSchemes(
-  theme: Theme,
-  scheme: (mode: Mode) => CSSObject
-): CSSObject {
-  return { ...scheme('light'), ...theme.applyStyles('dark', scheme('dark')) };
-}
-
-/** Paint one property from a token, in both schemes. */
-function ink(property: string, token: ModeToken) {
-  return (theme: Theme): CSSObject =>
-    bothSchemes(theme, (mode) => ({ [property]: token[mode] }));
-}
-
-/** `Sans/B1`, the type every row in the rail is set in. */
-const B1_TYPE: CSSObject = {
-  fontFamily: fontFamilies.product.sans,
-  fontSize: typography.body.b1.size,
-  lineHeight: `${typography.body.b1.leading}px`,
-  letterSpacing: `${typography.body.b1.letterSpacing}em`,
-};
 
 /** A caret that points down open and right shut. */
 function Caret({ open, size }: { open: boolean; size: number }) {
@@ -358,17 +306,10 @@ export const WORKFLOW_SECONDARY_NAV: readonly RailItem[] = [
   { key: 'help', label: 'Help', Icon: QuestionIcon },
 ];
 
-interface Workspace {
-  key: string;
-  name: string;
-  initials: string;
-  color: AvatarColor;
-}
-
 /** The switcher's workspaces, in the sheet's colours: primary, then green. */
-const WORKSPACES: readonly Workspace[] = [
-  { key: 'finance', name: 'Finance', initials: 'FI', color: 'primary' },
-  { key: 'procurement', name: 'Procurement', initials: 'PR', color: 'success' },
+const WORKSPACES: readonly WorkspaceOption[] = [
+  { id: 'finance', name: 'Finance', color: 'primary' },
+  { id: 'procurement', name: 'Procurement', color: 'success' },
 ];
 
 /**
@@ -695,155 +636,6 @@ function NavSection({
 NavSection.displayName = 'NavSection';
 
 /**
- * The workspace switcher at the foot of the rail, and the menu it opens.
- *
- * The trigger is the current workspace — its avatar on the `mid` square,
- * its name in `Sans/B1/Medium`, and an up-down caret saying the list opens
- * on either side. The menu opens upwards off it, 8px clear, and is the
- * sheet's flyout: a `Workspaces` label, a row per workspace with the
- * current one filled and checked, and "Create workspace" behind a rule.
- */
-function WorkspaceSwitcher({ collapsed }: { collapsed: boolean }) {
-  const [current, setCurrent] = React.useState(WORKSPACES[0].key);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const workspace =
-    WORKSPACES.find((space) => space.key === current) ?? WORKSPACES[0];
-  const close = () => setAnchorEl(null);
-
-  const trigger = (
-    <ButtonBase
-      onClick={(event) => setAnchorEl(event.currentTarget)}
-      aria-haspopup="menu"
-      aria-expanded={Boolean(anchorEl)}
-      aria-label={collapsed ? workspace.name : undefined}
-      sx={(theme) => ({
-        ...B1_TYPE,
-        fontWeight: fontWeights.medium,
-        width: collapsed ? SWITCHER_ROW_PX : '100%',
-        height: SWITCHER_ROW_PX,
-        p: collapsed ? 0 : `${NAV_ROW_INSET_PX}px`,
-        gap: `${NAV_GLYPH_GAP_PX}px`,
-        justifyContent: collapsed ? 'center' : 'flex-start',
-        borderRadius: `${radius.xs}px`,
-        whiteSpace: 'nowrap',
-        '& .MuiAvatar-root, & svg': { flexShrink: 0 },
-        ...bothSchemes(theme, (mode) => ({
-          color: text.default.b1[mode],
-          '&:hover, &.Mui-focusVisible, &[aria-expanded="true"]': {
-            backgroundColor: surface.layers.card3[mode],
-          },
-        })),
-      })}
-    >
-      <Avatar size="sm" shape="mid" color={workspace.color}>
-        {workspace.initials}
-      </Avatar>
-      {!collapsed && (
-        <>
-          <Box
-            component="span"
-            sx={{
-              flex: 1,
-              minWidth: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              textAlign: 'left',
-            }}
-          >
-            {workspace.name}
-          </Box>
-          <Box
-            component="span"
-            sx={(theme) => ({
-              display: 'flex',
-              ...ink('color', icon.default.b3)(theme),
-            })}
-          >
-            <CaretUpDownIcon size={NAV_GLYPH_PX} />
-          </Box>
-        </>
-      )}
-    </ButtonBase>
-  );
-
-  return (
-    <Box
-      sx={(theme) => ({
-        flexShrink: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        px: collapsed ? 0 : `${SWITCHER_INSET_INLINE_PX}px`,
-        py: `${SWITCHER_INSET_BLOCK_PX}px`,
-        borderTop: '1px solid',
-        // `card 3`'s edge, as the sheet binds it: a rung darker than the
-        // rail's own `card 2` edge in dark mode, so the rule reads there.
-        ...ink('borderColor', border.layers.card3)(theme),
-      })}
-    >
-      {collapsed ? (
-        <Tooltip title={workspace.name} placement="right">
-          {trigger}
-        </Tooltip>
-      ) : (
-        trigger
-      )}
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={close}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{
-          '& .MuiMenu-paper': {
-            width: FLYOUT_WIDTH_PX,
-            mt: `-${FLYOUT_OFFSET_PX}px`,
-            ml: `${FLYOUT_OFFSET_PX}px`,
-          },
-        }}
-      >
-        <ListSubheader>Workspaces</ListSubheader>
-        {WORKSPACES.map((space) => (
-          <MenuItem
-            key={space.key}
-            selected={space.key === current}
-            onClick={() => {
-              setCurrent(space.key);
-              close();
-            }}
-          >
-            <Avatar size="sm" shape="mid" color={space.color}>
-              {space.initials}
-            </Avatar>
-            <Box component="span" sx={{ flex: 1, minWidth: 0 }}>
-              {space.name}
-            </Box>
-            {space.key === current && (
-              <Box
-                component="span"
-                sx={(theme) => ({
-                  display: 'flex',
-                  ...ink('color', icon.success[4])(theme),
-                })}
-              >
-                <CheckCircleIcon size={NAV_GLYPH_PX} />
-              </Box>
-            )}
-          </MenuItem>
-        ))}
-        <Divider />
-        <MenuItem onClick={close}>
-          <PlusIcon size={NAV_GLYPH_PX} />
-          Create workspace
-        </MenuItem>
-      </Menu>
-    </Box>
-  );
-}
-
-WorkspaceSwitcher.displayName = 'WorkspaceSwitcher';
-
-/**
  * The rail. `collapsed` resolves to a `size` in pixels rather than a name
  * off the scale: a folded rail is the same panel narrowed, so it is the
  * same prop with a different number, and the width animates on its own.
@@ -1019,7 +811,13 @@ export function AppRail({
         </Box>
       )}
 
-      {showWorkspace && <WorkspaceSwitcher collapsed={collapsed} />}
+      {showWorkspace && (
+        <WorkspaceSwitcher
+          workspaces={WORKSPACES}
+          collapsed={collapsed}
+          onCreate={() => undefined}
+        />
+      )}
     </>
   );
 
