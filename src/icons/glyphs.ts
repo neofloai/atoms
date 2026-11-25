@@ -46,19 +46,24 @@
  * rather than a bundled namespace.
  *
  * Adding an icon to a component means adding its name below. That is the
- * cost of this approach and it is the whole cost: the list is 25 entries
- * because the design system draws carets, arrows, a close X and the
- * account and workspace menus' few glyphs, and a component reaching for
- * one more is worth one line here.
+ * cost of this approach and it is the whole cost: the list is 49 entries
+ * because the design system draws carets, arrows, a close X, the account
+ * and workspace menus' few glyphs, and the chat's block and composer
+ * glyphs (`src/chat/`, which follows the same rule), and a component
+ * reaching for one more is worth one line here.
  *
  * `scripts/check-icon-leak.mjs` fails the build if the namespace object
  * ever comes back, because nothing else would catch it.
  */
 
 export {
+  ArchiveIcon,
   ArrowDownIcon,
-  ArrowUpIcon,
   ArrowsDownUpIcon,
+  ArrowsOutSimpleIcon,
+  ArrowUpIcon,
+  ArrowUUpLeftIcon,
+  BrainIcon,
   CalendarBlankIcon,
   CaretDoubleLeftIcon,
   CaretDownIcon,
@@ -69,17 +74,37 @@ export {
   CheckIcon,
   ClockIcon,
   ColumnsIcon,
+  CopyIcon,
   DesktopIcon,
+  DotsThreeIcon,
   DotsThreeVerticalIcon,
+  DownloadSimpleIcon,
   EyeIcon,
   EyeSlashIcon,
+  FileIcon,
+  FilesIcon,
+  FileTextIcon,
   FunnelIcon,
+  ImageBrokenIcon,
+  LightningIcon,
+  ListChecksIcon,
   MagnifyingGlassIcon,
+  MinusIcon,
   MoonIcon,
+  NotePencilIcon,
+  PaperclipIcon,
+  PaperPlaneTiltIcon,
+  PencilSimpleIcon,
   PlusIcon,
+  SidebarSimpleIcon,
   SignOutIcon,
+  StopIcon,
   SunIcon,
+  TableIcon,
+  TrashIcon,
   WarningDiamondIcon,
+  WarningIcon,
+  WrenchIcon,
   XIcon,
 } from '@phosphor-icons/react';
 
