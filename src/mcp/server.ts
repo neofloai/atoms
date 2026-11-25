@@ -41,7 +41,7 @@ Order of operations, and it matters:
 
 8. If the user gives you an Atoms JSON export (a \`.atoms.json\` file from the Atoms Inspector or Atoms Studio), call \`build_from_json\` with it rather than reading it by hand. It returns the code, the components to look up and the gaps.
 
-Use \`search_docs\` when you are not sure which of these to reach for; it also answers brand questions inline.`;
+Use \`search_docs\` when you are not sure which of these to reach for; it also answers brand questions inline. Both it and \`get_component\` take the user's own words — "sidebar" is \`Drawer\`, "topbar" is \`Navbar\`, the avatar's "account dropdown" is \`AccountMenu\`, the sidebar's "workspace switcher" is \`WorkspaceSwitcher\`.`;
 
 /**
  * Atoms MCP server.
@@ -53,10 +53,11 @@ export function createAtomsMcpServer(): McpServer {
   const server = new McpServer(
     {
       name: 'atoms',
-      // Minor: `scaffold_app` accepts `framework: "prototype"`, the lighter
-      // template a prototype now starts from. Every existing call still
-      // validates, so this is not a major.
-      version: '1.4.0',
+      // Minor: `get_component` resolves a name in any case or by its
+      // everyday word ("Sidebar" is Drawer), and `search_docs` matches a
+      // query word by word and ranks the hits. Every existing call still
+      // validates and returns what it did, so this is not a major.
+      version: '1.5.0',
     },
     { instructions: INSTRUCTIONS }
   );

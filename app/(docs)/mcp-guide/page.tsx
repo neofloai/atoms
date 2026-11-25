@@ -41,12 +41,12 @@ const tools: readonly McpTool[] = [
   {
     name: 'list_components',
     purpose:
-      'Lists all components grouped by category, led by the published patterns',
+      'Lists all components grouped by category, led by the published patterns, each with the everyday names it goes by',
   },
   {
     name: 'get_component',
     purpose:
-      "Full spec for a named component: props, types, examples, do's and don'ts, related components, and the patterns it appears in",
+      "Full spec for a named component: props, types, examples, do's and don'ts, related components, and the patterns it appears in. Takes the name in any case, or the everyday word for it — Sidebar returns Drawer, Topbar returns Navbar",
   },
   {
     name: 'get_tokens',
@@ -58,7 +58,8 @@ const tools: readonly McpTool[] = [
   },
   {
     name: 'search_docs',
-    purpose: 'Keyword search across components, patterns, and tokens',
+    purpose:
+      'Search across components, patterns, tokens, brand and the changelog in the user\'s own words. Each word is matched on its own and the hits are ranked, so "navbar sidebar" finds both',
   },
   {
     name: 'get_installation',
