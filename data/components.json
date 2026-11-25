@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T17:12:35.645Z",
+  "generatedAt": "2026-11-25T14:05:09.538Z",
   "components": [
     {
       "name": "Accordion",
@@ -155,6 +155,119 @@
         "Divider",
         "Button",
         "MenuItem"
+      ]
+    },
+    {
+      "name": "AccountMenu",
+      "category": "Navigation",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6122",
+      "tagline": "The account dropdown at the end of the app bar — the signed-in user's avatar, and the panel it opens: the user's name, address and role, your rows, a System / Light / Dark theme switch and Sign out. One element in the `Navbar`'s row; it renders its own trigger and holds its own open state.",
+      "keywords": [
+        "account",
+        "account menu",
+        "account dropdown",
+        "user menu",
+        "user dropdown",
+        "profile",
+        "profile menu",
+        "profile dropdown",
+        "avatar menu",
+        "avatar dropdown",
+        "navbar menu",
+        "navbar dropdown",
+        "top bar menu",
+        "sign out",
+        "log out",
+        "logout",
+        "theme switch",
+        "theme toggle",
+        "dark mode toggle",
+        "settings menu"
+      ],
+      "props": [
+        {
+          "name": "user",
+          "type": "{ name: string; email?: string; role?: string; initials?: string; avatarSrc?: string }",
+          "default": "—",
+          "description": "Required. The signed-in user: the avatar on the trigger, and the panel's header — name, address in caption ink, and the role as a small grey tag. `initials` defaults to the first letters of the first and last words of `name`; `avatarSrc` shows a photo instead."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "default": "—",
+          "description": "The rows between the header and the theme switch: `MenuItem`s with a 16px glyph, and a `Divider` between groups. Choosing a row closes the menu, so its `onClick` only does its own work. Pass the rows themselves, not a Fragment around them."
+        },
+        {
+          "name": "onSignOut",
+          "type": "() => void",
+          "default": "—",
+          "description": "Fired by the Sign out row, last in the panel in the `error` tone. Omit it to leave Sign out out."
+        },
+        {
+          "name": "showThemeSwitch",
+          "type": "boolean",
+          "default": "true",
+          "description": "The System / Light / Dark switch on a row of its own. It is wired to `NeofloThemeProvider`'s colour scheme, so it needs nothing else; pressing it leaves the menu open so the change can be seen."
+        },
+        {
+          "name": "avatarColor",
+          "type": "AvatarColor",
+          "default": "'error'",
+          "description": "Colour role of the avatar, on the trigger and in the header."
+        },
+        {
+          "name": "labels",
+          "type": "Partial<{ trigger, theme, system, light, dark, signOut }>",
+          "default": "—",
+          "description": "Replaces the words the menu draws itself — the trigger's accessible name, the theme row and its three options, and Sign out. Any subset; the rest stay English."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLButtonElement>",
+          "default": "—",
+          "description": "Forwarded to the trigger — the avatar button."
+        }
+      ],
+      "examples": [
+        {
+          "title": "In the app bar",
+          "description": "The trailing element of the `Navbar`'s row, after a flexible gap and Ask Neo. The rows are yours: three groups divided by rules — the account's own pages, then help. The theme switch and Sign out come with the component.",
+          "code": "import { AccountMenu, Box, Divider, IconButton, MenuItem, Navbar, Stack } from \"@neofloai/atoms\";\nimport {\n  BookOpenIcon,\n  BugIcon,\n  ChartBarIcon,\n  CreditCardIcon,\n  GearSixIcon,\n  QuestionIcon,\n  StarFourIcon,\n} from \"@neofloai/atoms/icons\";\n\nconst user = {\n  name: \"John Doe\",\n  email: \"john.doe@neo.com\",\n  role: \"Tenant Owner\",\n};\n\n<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    <AccountMenu user={user} onSignOut={signOut}>\n      <MenuItem onClick={() => navigate(\"/settings\")}>\n        <GearSixIcon size={16} />\n        Settings\n      </MenuItem>\n      <MenuItem onClick={() => navigate(\"/billing\")}>\n        <CreditCardIcon size={16} />\n        Billings\n      </MenuItem>\n      <MenuItem onClick={() => navigate(\"/reporting\")}>\n        <ChartBarIcon size={16} />\n        Reporting\n      </MenuItem>\n      <Divider />\n      <MenuItem onClick={() => navigate(\"/help\")}>\n        <QuestionIcon size={16} />\n        Help\n      </MenuItem>\n      <MenuItem onClick={() => window.open(DOCS_URL)}>\n        <BookOpenIcon size={16} />\n        Documentation\n      </MenuItem>\n      <MenuItem onClick={reportIssue}>\n        <BugIcon size={16} />\n        Report an issue\n      </MenuItem>\n    </AccountMenu>\n  </Stack>\n</Navbar>"
+        },
+        {
+          "title": "Rows that are links",
+          "description": "A row that goes to a page is a `MenuItem` rendered as your router's link, so it opens in a new tab on a middle click and shows its address on hover. The menu still closes when it is chosen.",
+          "code": "import { Link } from \"react-router\";\n\n<AccountMenu user={user} onSignOut={signOut}>\n  <MenuItem component={Link} to=\"/settings\">\n    <GearSixIcon size={16} />\n    Settings\n  </MenuItem>\n</AccountMenu>"
+        },
+        {
+          "title": "Just the user and Sign out",
+          "description": "With no rows the panel is the header, the theme switch and Sign out. Turn the theme switch off for an app pinned to one scheme.",
+          "code": "<AccountMenu\n  user={{ name: \"Priya Raman\", email: \"priya@neo.com\" }}\n  onSignOut={signOut}\n  showThemeSwitch={false}\n/>"
+        },
+        {
+          "title": "In another language",
+          "description": "`labels` replaces the words the menu draws itself. Your rows are already yours to translate.",
+          "code": "<AccountMenu\n  user={user}\n  onSignOut={signOut}\n  labels={{\n    trigger: \"Compte\",\n    theme: \"Thème\",\n    system: \"Système\",\n    light: \"Clair\",\n    dark: \"Sombre\",\n    signOut: \"Se déconnecter\",\n  }}\n/>"
+        }
+      ],
+      "dos": [
+        "Put it last in the `Navbar`'s row, after a `<Box sx={{ flex: 1 }} />`, so it sits at the trailing edge on every screen of the shell",
+        "Give each row a 16px glyph, and divide groups with a `Divider` — the account's own pages, then help",
+        "Pass `onSignOut` rather than adding your own Sign out row, so it comes last and in the `error` tone",
+        "Leave the theme switch on unless the app is pinned to one scheme; it is already wired to the provider"
+      ],
+      "donts": [
+        "Don't put the account menu in the sidebar — the rail's footer is the `WorkspaceSwitcher`",
+        "Don't close the menu from a row's `onClick`; choosing a row already closes it",
+        "Don't wrap the rows in a Fragment; pass them as direct children so the menu can read them",
+        "Don't rebuild the panel from `Menu` for an app shell — that is this component, and a copy stops tracking the design system the day it is pasted"
+      ],
+      "relatedComponents": [
+        "Navbar",
+        "WorkspaceSwitcher",
+        "Menu",
+        "MenuItem",
+        "Avatar"
       ]
     },
     {
@@ -1874,8 +1987,8 @@
         },
         {
           "title": "A permanent nav rail",
-          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 216px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, workspace switcher — with the nav taking the slack so the switcher sits on the bottom edge. The rows are `List variant=\"nav\"`: MUI's navigation-drawer composition, drawn as the sidebar — 28px rows, `b2` ink at rest, the current page on a grey fill. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. For the whole screen, start from the Dashboard pattern.",
-          "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer variant=\"permanent\" size=\"sm\">\n    <Box sx={{ height: 48, display: \"flex\", alignItems: \"center\", px: 2.5 }}>\n      <NeofloLogo variant=\"full\" size={16} />\n    </Box>\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <List variant=\"nav\" component=\"nav\" sx={{ flex: 1, p: 1.5 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ListItemButton\n          key={key}\n          selected={active === key}\n          onClick={() => setActive(key)}\n        >\n          <ListItemIcon>\n            <Icon size={16} />\n          </ListItemIcon>\n          <ListItemText primary={label} />\n        </ListItemButton>\n      ))}\n    </List>\n\n    <WorkspaceSwitcherOfYourOwn />\n  </Drawer>\n\n  <Box sx={{ flex: 1 }}>{children}</Box>\n</Stack>"
+          "description": "The app shell. `permanent` has no open state and never closes, and `size=\"sm\"` is the 216px rail. The width lands on the panel and on the space it occupies, so the content beside it starts where the rail ends instead of underneath it. Three blocks — brand, nav, `WorkspaceSwitcher` — with the nav taking the slack so the switcher sits on the bottom edge. The rows are `List variant=\"nav\"`: MUI's navigation-drawer composition, drawn as the sidebar — 28px rows, `b2` ink at rest, the current page on a grey fill. The rail runs the full height of the app and a `Navbar` starts where the rail ends, which is why the outer box is a row rather than a bar with a row under it. For the whole screen, start from the Dashboard pattern.",
+          "code": "<Stack direction=\"row\" sx={{ minHeight: \"100vh\" }}>\n  <Drawer variant=\"permanent\" size=\"sm\">\n    <Box sx={{ height: 48, display: \"flex\", alignItems: \"center\", px: 2.5 }}>\n      <NeofloLogo variant=\"full\" size={16} />\n    </Box>\n\n    {/* The nav takes the slack, which is what pins the footer down. */}\n    <List variant=\"nav\" component=\"nav\" sx={{ flex: 1, p: 1.5 }}>\n      {NAV.map(({ key, label, Icon }) => (\n        <ListItemButton\n          key={key}\n          selected={active === key}\n          onClick={() => setActive(key)}\n        >\n          <ListItemIcon>\n            <Icon size={16} />\n          </ListItemIcon>\n          <ListItemText primary={label} />\n        </ListItemButton>\n      ))}\n    </List>\n\n    {/* The footer: the current workspace, and the list it opens. */}\n    <WorkspaceSwitcher workspaces={WORKSPACES} value={workspaceId} onChange={setWorkspaceId} />\n  </Drawer>\n\n  <Box sx={{ flex: 1 }}>{children}</Box>\n</Stack>"
         },
         {
           "title": "A nav rail with a second level",
@@ -1933,6 +2046,7 @@
       ],
       "relatedComponents": [
         "Navbar",
+        "WorkspaceSwitcher",
         "Dialog",
         "Card",
         "Menu",
@@ -2848,18 +2962,9 @@
         "popup menu",
         "context menu",
         "overflow menu",
-        "account menu",
-        "user menu",
-        "profile",
-        "profile menu",
-        "profile dropdown",
-        "avatar menu",
-        "avatar dropdown",
-        "sign out",
-        "log out",
-        "logout",
-        "theme switch",
-        "workspace switcher"
+        "kebab menu",
+        "more actions",
+        "action menu"
       ],
       "props": [
         {
@@ -2969,14 +3074,9 @@
           "code": "<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <MenuItem onClick={close}>Share</MenuItem>\n  <MenuItem onClick={close}>Copy link</MenuItem>\n  <Divider />\n  <MenuItem variant=\"secondary\" disabled>\n    Edited 2 days ago\n  </MenuItem>\n</Menu>"
         },
         {
-          "title": "Workspace switcher",
-          "description": "The dropdown at the foot of the sidebar. A `ListSubheader` names the group in the mono section label; each workspace is a row led by a small square `Avatar`, which grows the row to 40px; the current one is `selected` and carries a trailing check. \"Create workspace\" closes the list behind a divider. Opens upwards off its trigger.",
-          "code": "<Menu\n  anchorEl={anchorEl}\n  open={Boolean(anchorEl)}\n  onClose={close}\n  anchorOrigin={{ vertical: \"top\", horizontal: \"left\" }}\n  transformOrigin={{ vertical: \"bottom\", horizontal: \"left\" }}\n  sx={{ '& .MuiMenu-paper': { width: 240 } }}\n>\n  <ListSubheader>Workspaces</ListSubheader>\n  {workspaces.map((space) => (\n    <MenuItem\n      key={space.id}\n      selected={space.id === current}\n      onClick={() => {\n        setCurrent(space.id);\n        close();\n      }}\n    >\n      <Avatar size=\"sm\" shape=\"mid\" color={space.color}>\n        {space.initials}\n      </Avatar>\n      <Box component=\"span\" sx={{ flex: 1 }}>{space.name}</Box>\n      {space.id === current && <CheckCircleIcon size={16} />}\n    </MenuItem>\n  ))}\n  <Divider />\n  <MenuItem onClick={createWorkspace}>\n    <PlusIcon size={16} />\n    Create workspace\n  </MenuItem>\n</Menu>"
-        },
-        {
-          "title": "Account menu",
-          "description": "The profile dropdown off the avatar at the end of the app bar — the standard account menu, and the one place it lives: in the `Navbar`, not in the sidebar. The signed-in user heads the panel — not a menu row, since there is nothing to pick — as a 36px avatar beside the name, the address under it in caption ink, and the role as a small grey tag. Then three groups divided by rules: Settings, Billings and Reporting; Help, Documentation and Report an issue; a System / Light / Dark theme switch on a row of its own. Sign out comes last in the `error` tone. The panel is 240px wide, right-aligned under the avatar 12px below the bar, and opens with `variant=\"menu\"` because the header is not an option. Neither the header nor the theme row is a library component, so both are written out here in full — copy the whole file.",
-          "code": "import * as React from \"react\";\nimport {\n  Avatar,\n  Box,\n  Tag,\n  Divider,\n  IconButton,\n  Menu,\n  MenuItem,\n  Stack,\n  ToggleButton,\n  ToggleButtonGroup,\n  Typography,\n  useColorScheme,\n} from \"@neofloai/atoms\";\nimport {\n  BookOpenIcon,\n  BugIcon,\n  ChartBarIcon,\n  CreditCardIcon,\n  DesktopIcon,\n  GearSixIcon,\n  MoonIcon,\n  QuestionIcon,\n  SignOutIcon,\n  SunIcon,\n} from \"@neofloai/atoms/icons\";\nimport { fontWeights, text } from \"@neofloai/atoms/tokens\";\nimport { neofloTheme } from \"@neofloai/atoms/theme\";\nimport type { ModeToken } from \"@neofloai/atoms/tokens\";\n\ntype Theme = typeof neofloTheme;\n\ninterface User {\n  name: string;\n  email: string;\n  initials: string;\n  role: string;\n}\n\n/** Paint one property from a token, in both schemes. */\nfunction ink(property: string, token: ModeToken) {\n  return (theme: Theme) => ({\n    [property]: token.light,\n    ...theme.applyStyles(\"dark\", { [property]: token.dark }),\n  });\n}\n\n/** The signed-in user, heading the panel. */\nfunction AccountHeader({ user }: { user: User }) {\n  return (\n    <Box sx={{ display: \"flex\", gap: 1.5, px: 1, py: 1.5 }}>\n      <Avatar size=\"md\" color=\"error\">{user.initials}</Avatar>\n      <Stack sx={{ gap: 1, minWidth: 0, alignItems: \"flex-start\" }}>\n        <Stack sx={{ gap: 0.25, minWidth: 0, maxWidth: \"100%\" }}>\n          <Typography\n            variant=\"body1\"\n            noWrap\n            sx={(theme) => ({\n              fontWeight: fontWeights.medium,\n              ...ink(\"color\", text.default.b1)(theme),\n            })}\n          >\n            {user.name}\n          </Typography>\n          <Typography\n            variant=\"body2\"\n            noWrap\n            sx={(theme) => ({\n              fontWeight: fontWeights.medium,\n              ...ink(\"color\", text.default.b3)(theme),\n            })}\n          >\n            {user.email}\n          </Typography>\n        </Stack>\n        <Tag variant=\"secondary\" label={user.role} />\n      </Stack>\n    </Box>\n  );\n}\n\n/** System, light or dark — wired to the real colour scheme. */\nfunction ThemeRow() {\n  const { mode, setMode } = useColorScheme();\n\n  return (\n    <Box\n      sx={(theme) => ({\n        display: \"flex\",\n        alignItems: \"center\",\n        justifyContent: \"space-between\",\n        minHeight: 28,\n        px: 1,\n        typography: \"body1\",\n        fontWeight: fontWeights.medium,\n        ...ink(\"color\", text.default.b1)(theme),\n      })}\n    >\n      Theme\n      <ToggleButtonGroup\n        appearance=\"segmented\"\n        exclusive\n        aria-label=\"Theme\"\n        value={mode ?? \"system\"}\n        onChange={(_, next: \"system\" | \"light\" | \"dark\" | null) => {\n          if (next) setMode(next);\n        }}\n      >\n        <ToggleButton value=\"system\" aria-label=\"System\"><DesktopIcon /></ToggleButton>\n        <ToggleButton value=\"light\" aria-label=\"Light\"><SunIcon /></ToggleButton>\n        <ToggleButton value=\"dark\" aria-label=\"Dark\"><MoonIcon /></ToggleButton>\n      </ToggleButtonGroup>\n    </Box>\n  );\n}\n\nexport function AccountMenu({\n  user,\n  onSignOut,\n}: {\n  user: User;\n  onSignOut: () => void;\n}) {\n  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);\n  const close = () => setAnchorEl(null);\n\n  return (\n    <>\n      {/* The trigger: the last thing in the Navbar's row. */}\n      <IconButton\n        variant=\"secondary\"\n        appearance=\"text\"\n        size=\"sm\"\n        aria-label=\"Account\"\n        aria-haspopup=\"menu\"\n        aria-expanded={Boolean(anchorEl)}\n        onClick={(event) => setAnchorEl(event.currentTarget)}\n      >\n        <Avatar size=\"sm\" color=\"error\">{user.initials}</Avatar>\n      </IconButton>\n\n      <Menu\n        anchorEl={anchorEl}\n        open={Boolean(anchorEl)}\n        onClose={close}\n        anchorOrigin={{ vertical: \"bottom\", horizontal: \"right\" }}\n        transformOrigin={{ vertical: \"top\", horizontal: \"right\" }}\n        variant=\"menu\"\n        sx={{ '& .MuiMenu-paper': { width: 240, mt: 1.5 } }}\n      >\n        <AccountHeader user={user} />\n        <Divider />\n        <MenuItem onClick={close}><GearSixIcon size={16} />Settings</MenuItem>\n        <MenuItem onClick={close}><CreditCardIcon size={16} />Billings</MenuItem>\n        <MenuItem onClick={close}><ChartBarIcon size={16} />Reporting</MenuItem>\n        <Divider />\n        <MenuItem onClick={close}><QuestionIcon size={16} />Help</MenuItem>\n        <MenuItem onClick={close}><BookOpenIcon size={16} />Documentation</MenuItem>\n        <MenuItem onClick={close}><BugIcon size={16} />Report an issue</MenuItem>\n        <Divider />\n        <ThemeRow />\n        <Divider />\n        <MenuItem\n          variant=\"error\"\n          onClick={() => {\n            close();\n            onSignOut();\n          }}\n        >\n          <SignOutIcon size={16} />\n          Sign out\n        </MenuItem>\n      </Menu>\n    </>\n  );\n}"
+          "title": "A labelled section",
+          "description": "A `ListSubheader` names a group in the mono section label, lined up with the row labels under it. A row led by a small `Avatar` grows to 40px. The workspace switcher at the foot of the sidebar is this arrangement shipped whole — use `WorkspaceSwitcher` there, and `AccountMenu` for the avatar dropdown at the end of the app bar, rather than rebuilding either from `Menu`.",
+          "code": "<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={close}>\n  <ListSubheader>Assign to</ListSubheader>\n  {reviewers.map((person) => (\n    <MenuItem\n      key={person.id}\n      onClick={() => {\n        assign(person.id);\n        close();\n      }}\n    >\n      <Avatar size=\"sm\">{person.initials}</Avatar>\n      {person.name}\n    </MenuItem>\n  ))}\n</Menu>"
         },
         {
           "title": "Positioning",
@@ -2998,12 +3098,13 @@
         "Close the menu from each item's `onClick` — a selection does not fire `onClose`, so nothing else will",
         "Capture the anchor with `event.currentTarget` and derive `open` from it, so one piece of state drives both",
         "Mark the current choice with `selected` — the fill and the initial focus both follow from it; a trailing check goes with it, not instead of it",
-        "Head a group with a `ListSubheader` when the rows need a name, such as Workspaces in the switcher",
+        "Head a group with a `ListSubheader` when the rows need a name",
+        "Use `AccountMenu` for the avatar dropdown in the app bar and `WorkspaceSwitcher` for the sidebar footer — both are this panel, already composed",
         "Reach the panel through `sx={{ \"& .MuiMenu-paper\": { … } }}` when it needs a width or a height cap"
       ],
       "donts": [
         "Don't use a Menu for form input — a bound list of values with a label and validation is a `Select`, which is a field rather than a floating panel",
-        "Don't put a text field inside a Menu — the list owns arrow-key focus, so anything typed into belongs in a `Dialog` or a form. The account menu's theme switch is the one control the design puts in a menu, on a row of its own",
+        "Don't put a text field inside a Menu — the list owns arrow-key focus, so anything typed into belongs in a `Dialog` or a form. `AccountMenu`'s theme switch is the one control the design puts in a menu, on a row of its own",
         "Don't nest a Menu inside a Menu; MUI has no submenu, and a second popover anchored inside the first is a trap on both keyboard and touch",
         "Don't reach for `autoFocus={false}` to stop the panel stealing focus — it leaves the menu unoperable by keyboard; `variant=\"menu\"` is almost always what was meant",
         "Don't paint the panel yourself — the surface, border, corners, and shadow all come from the design, and `sx` on the Menu root styles the modal wrapper, not the panel"
@@ -3011,7 +3112,9 @@
       "relatedComponents": [
         "MenuItem",
         "Select",
-        "IconButton"
+        "IconButton",
+        "AccountMenu",
+        "WorkspaceSwitcher"
       ]
     },
     {
@@ -3175,8 +3278,8 @@
         "layout",
         "title bar",
         "breadcrumb bar",
-        "account menu",
-        "profile dropdown"
+        "nav bar",
+        "navigation bar"
       ],
       "props": [
         {
@@ -3237,8 +3340,8 @@
       "examples": [
         {
           "title": "An app bar: toggle, page name, account",
-          "description": "The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is the account menu, and the top bar is where it lives on every screen of the shell. `AccountMenu` renders the avatar button and the dropdown it opens; its full code is the \"Account menu\" example on `Menu` — call `get_component` for `Menu`.",
-          "code": "// AccountMenu: the \"Account menu\" example on Menu, copied whole.\nimport { AccountMenu } from \"./AccountMenu\";\n\n<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    {/* The avatar and the profile dropdown it opens. */}\n    <AccountMenu user={user} onSignOut={signOut} />\n  </Stack>\n</Navbar>"
+          "description": "The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is `AccountMenu`, and the top bar is where it lives on every screen of the shell: it renders the avatar button and the dropdown it opens, and takes the rows as children — call `get_component` for `AccountMenu`.",
+          "code": "import { AccountMenu, Box, IconButton, MenuItem, Navbar, Stack, Typography } from \"@neofloai/atoms\";\nimport { GearSixIcon, SidebarSimpleIcon, StarFourIcon } from \"@neofloai/atoms/icons\";\n\n<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    {/* The avatar and the account dropdown it opens. */}\n    <AccountMenu user={user} onSignOut={signOut}>\n      <MenuItem onClick={openSettings}>\n        <GearSixIcon size={16} />\n        Settings\n      </MenuItem>\n    </AccountMenu>\n  </Stack>\n</Navbar>"
         },
         {
           "title": "The shell: a full-height rail, the bar beside it",
@@ -3271,6 +3374,7 @@
         "Use `size=\"md\"` with a `NavbarTitle` when the bar names a page or a record, and `size=\"sm\"` when it only carries controls",
         "Put the record’s facts in `meta` rather than in the title — a title that reads \"Matching #345 · Nike Sales\" cannot truncate gracefully",
         "Put one `Box sx={{ flex: 1 }}` between the leading group and the trailing one, so the bar has a single split point",
+        "End the `sm` bar with `AccountMenu` — the signed-in user and the account dropdown, on every screen of the shell",
         "Use `appearance=\"text\"` icon buttons in the bar — the bar is already a surface, so contained buttons read as a second layer on it",
         "Pair it with a `permanent` Drawer for the standard shell — the rail runs the full height and the bar starts where the rail ends, so the outer box is a row (rail, then a column) and the two share their surface and edge tokens",
         "Name the row with `slotProps={{ toolbar: { component: \"nav\" } }}` when the bar carries the page’s navigation"
@@ -3286,6 +3390,7 @@
       ],
       "relatedComponents": [
         "Drawer",
+        "AccountMenu",
         "Tabs",
         "IconButton",
         "Avatar",
@@ -5632,6 +5737,118 @@
       ]
     },
     {
+      "name": "WorkspaceSwitcher",
+      "category": "Navigation",
+      "figmaUrl": "https://www.figma.com/design/iDCodnA5uZ14EdttjSMCT1/Product-Design-System?node-id=4564-6288",
+      "tagline": "The workspace switcher at the foot of the sidebar — the current workspace's square avatar and name, and the list it opens upwards to switch workspace or create one. Goes last in a `Drawer`, under a nav that takes the slack; it draws the rule above itself.",
+      "keywords": [
+        "workspace",
+        "workspace switcher",
+        "workspace menu",
+        "workspace picker",
+        "workspace selector",
+        "workspace dropdown",
+        "switch workspace",
+        "create workspace",
+        "organization switcher",
+        "org switcher",
+        "tenant switcher",
+        "team switcher",
+        "account switcher",
+        "sidebar footer",
+        "sidebar menu",
+        "sidebar dropdown",
+        "rail footer",
+        "nav footer"
+      ],
+      "props": [
+        {
+          "name": "workspaces",
+          "type": "{ id: string; name: string; initials?: string; color?: AvatarColor }[]",
+          "default": "—",
+          "description": "Required. Every workspace the user can switch to, in list order. `initials` defaults to the first letters of the first two words, or a one-word name's first two letters; `color` is the square avatar's role and defaults to `primary` — give each workspace its own."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default": "—",
+          "description": "The current workspace's `id`, when you hold the state. Pair it with `onChange`."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string",
+          "default": "the first workspace",
+          "description": "The workspace it starts on when the switcher holds its own state."
+        },
+        {
+          "name": "onChange",
+          "type": "(id: string) => void",
+          "default": "—",
+          "description": "Fired with the chosen workspace's `id`. Not fired when the current one is chosen again."
+        },
+        {
+          "name": "onCreate",
+          "type": "() => void",
+          "default": "—",
+          "description": "Fired by the Create workspace row, which closes the list behind a rule. Omit it to leave the row out."
+        },
+        {
+          "name": "collapsed",
+          "type": "boolean",
+          "default": "false",
+          "description": "The folded rail: the trigger is the square avatar alone on the rail's axis, with the name in a tooltip. Pass the rail's own collapsed state."
+        },
+        {
+          "name": "labels",
+          "type": "Partial<{ heading, create }>",
+          "default": "—",
+          "description": "Replaces the list's `Workspaces` heading and the Create workspace row. Any subset; the rest stay English."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "default": "—",
+          "description": "Forwarded to the footer block."
+        }
+      ],
+      "examples": [
+        {
+          "title": "At the foot of the rail",
+          "description": "The last thing in the `Drawer`. The nav above it takes the slack with `flex: 1`, which pins the switcher to the bottom edge; the switcher draws its own rule and inset. It opens upwards, 8px clear of the trigger, with the current workspace filled and checked.",
+          "code": "import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, WorkspaceSwitcher } from \"@neofloai/atoms\";\n\nconst WORKSPACES = [\n  { id: \"finance\", name: \"Finance\", color: \"primary\" },\n  { id: \"procurement\", name: \"Procurement\", color: \"success\" },\n] as const;\n\nconst [workspaceId, setWorkspaceId] = React.useState(\"finance\");\n\n<Drawer variant=\"permanent\" size=\"sm\">\n  <List variant=\"nav\" component=\"nav\" sx={{ flex: 1, p: 1.5 }}>\n    {NAV.map(({ key, label, Icon }) => (\n      <ListItemButton key={key} selected={active === key} onClick={() => setActive(key)}>\n        <ListItemIcon>\n          <Icon size={16} />\n        </ListItemIcon>\n        <ListItemText primary={label} />\n      </ListItemButton>\n    ))}\n  </List>\n\n  <WorkspaceSwitcher\n    workspaces={WORKSPACES}\n    value={workspaceId}\n    onChange={setWorkspaceId}\n    onCreate={openCreateWorkspace}\n  />\n</Drawer>"
+        },
+        {
+          "title": "Holding its own state",
+          "description": "For a prototype, leave out `value` and the switcher keeps the current workspace itself, starting on the first one or on `defaultValue`. `onChange` still reports each switch.",
+          "code": "<WorkspaceSwitcher\n  workspaces={WORKSPACES}\n  defaultValue=\"procurement\"\n/>"
+        },
+        {
+          "title": "In a folded rail",
+          "description": "Pass the rail's collapsed state through. Folded, the trigger is the square avatar alone, centred on the rail's axis with the nav glyphs above it, and the name moves into a tooltip.",
+          "code": "<Drawer variant=\"permanent\" size={collapsed ? 64 : \"sm\"}>\n  <List variant=\"nav\" component=\"nav\" sx={{ flex: 1 }}>…</List>\n  <WorkspaceSwitcher\n    workspaces={WORKSPACES}\n    value={workspaceId}\n    onChange={setWorkspaceId}\n    collapsed={collapsed}\n  />\n</Drawer>"
+        }
+      ],
+      "dos": [
+        "Put it last in the `Drawer`, after a nav with `flex: 1`, so it sits on the bottom edge",
+        "Give each workspace its own avatar colour, so the trigger says where you are before you read it",
+        "Pass `onCreate` when the user can make a workspace; the row and its rule come with it",
+        "Pass `collapsed` from the rail itself, so the folded trigger lines up with the nav glyphs"
+      ],
+      "donts": [
+        "Don't put the account menu in the rail's footer — it belongs at the end of the `Navbar`, as `AccountMenu`",
+        "Don't draw your own rule or padding around it; the switcher is the footer and carries both",
+        "Don't use it for anything but workspaces — a list of pages belongs in the nav above it",
+        "Don't show it in a floating rail called up over a workflow; the main rail is where the workspace is changed"
+      ],
+      "relatedComponents": [
+        "Drawer",
+        "List",
+        "AccountMenu",
+        "Menu",
+        "Avatar"
+      ]
+    },
+    {
       "name": "Zoom",
       "category": "Motion",
       "tagline": "Scales a child from nothing to full size about its own centre, on a fixed duration — the transition for a small control whose size is already known.",
@@ -5733,6 +5950,7 @@
     "AccordionActions",
     "AccordionDetails",
     "AccordionSummary",
+    "AccountMenu",
     "Alert",
     "Avatar",
     "Badge",
@@ -5809,6 +6027,7 @@
     "ToggleButtonGroup",
     "Tooltip",
     "Typography",
+    "WorkspaceSwitcher",
     "Zoom"
   ]
 }

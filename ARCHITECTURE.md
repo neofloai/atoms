@@ -68,7 +68,7 @@ flowchart LR
 
 **Stack:** Next.js 16 (App Router), React 19, TypeScript 5 in strict mode, MUI 9 with MUI X (DataGrid, date pickers, free tier), Emotion, Phosphor icons, Day.js, and self-hosted DM Sans, DM Mono and Instrument Serif. The library is built with tsup and the MCP server with the official MCP SDK. Node 22 or later.
 
-**Size today (v4.1.0):** 44 documented components (81 runtime exports once sub-parts like `CardHeader` and `MenuItem` are counted), 6 page patterns and 10 MCP tools, across 12 releases since June 2026.
+**Size today (v4.2.0):** 46 documented components (83 runtime exports once sub-parts like `CardHeader` and `MenuItem` are counted), 6 page patterns and 10 MCP tools, across 13 releases since June 2026.
 
 ---
 
@@ -252,7 +252,7 @@ Importing from `@mui/material` in an app *does* work, and that is exactly the da
 The repo is public, so apps install straight from GitHub, pinned to a semver range over the release tags. No registry account or token is needed:
 
 ```bash
-npm install github:neofloai/atoms#semver:^4.1.0
+npm install github:neofloai/atoms#semver:^4.2.0
 ```
 
 ```mermaid
@@ -310,12 +310,12 @@ This is the part of Atoms that makes it **AI-first**. An AI editor (Claude Code,
 | `start_project` | The questions to ask before building; then, with the answers, a build plan |
 | `scaffold_app` | Ordered commands to create a new app on the user's disk, with the brand wired in |
 | `check_version` | Current release, changelog, and a verdict on a project's installed version |
-| `list_components` | Everything, grouped, with the published patterns listed first |
-| `get_component` | Props, examples, do's and don'ts, related components, patterns it appears in |
+| `list_components` | Everything, grouped, with the published patterns listed first and each component's everyday names beside it |
+| `get_component` | Props, examples, do's and don'ts, related components, patterns it appears in. Resolves a name in any case or by its everyday word (`Sidebar` is `Drawer`) |
 | `get_pattern` | A whole screen's reviewed code |
 | `get_tokens` | Token values for a category |
 | `get_installation` | Setup steps for Next.js or React |
-| `search_docs` | Search across components, patterns, guidelines, brand and changelog |
+| `search_docs` | Search across components, patterns, guidelines, brand and changelog, word by word and ranked |
 | `build_from_json` | Turns an Inspector or Studio export into a React file built from Atoms |
 
 **How it runs:** a Next.js route handler on the Node runtime, using the MCP Streamable HTTP transport in **stateless** mode. Every request gets a fresh server, so there is no session state to lose or pin to a machine. In production it requires a bearer token when `MCP_TOKEN` is set. It reads only `data/*.json`, never `src/`.
@@ -526,6 +526,7 @@ Then the release is tagged `v<version>`. Without the tag, a `#semver:` install c
 | 4.0.0 | `Chip` becomes `Tag`; split button, password field, tab counts |
 | 4.0.1 | Sidebar rail is 216px |
 | 4.1.0 | App templates (full and prototype) and project rules; apps ship only the components they import |
+| 4.2.0 | `AccountMenu` and `WorkspaceSwitcher` ship, and every template's shell has both; the MCP understands everyday names |
 
 ---
 
