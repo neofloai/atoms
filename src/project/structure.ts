@@ -85,7 +85,7 @@ const TREE = `src/
 │   ├── App.tsx
 │   ├── providers/        NeofloThemeProvider, QueryClient, Snackbar.
 │   ├── router/           Route table. Every page is lazy-loaded.
-│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows.
+│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows, account.
 │   └── errors/           Route error boundary.
 ├── pages/                One folder per route. Thin: composes features.
 │   └── <route>/<Route>Page.tsx
@@ -329,7 +329,7 @@ export const ADD_PAGE_RECIPE: StructureRecipe = {
     'Add its path to `shared/config/paths.ts`.',
     'Create `pages/<route>/<Route>Page.tsx` exporting `<Route>Page`.',
     'Register it in `app/router/router.tsx` with `lazy`.',
-    'If it belongs in the rail, add a row to `app/layout/navigation.ts`.',
+    'If it belongs in the rail, add a row to `app/layout/navigation.ts`. If it belongs in the account menu (settings, billing), point that row at it in `app/layout/AppLayout.tsx`.',
   ],
 };
 

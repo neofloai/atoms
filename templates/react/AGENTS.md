@@ -15,7 +15,7 @@ src/
 │   ├── App.tsx
 │   ├── providers/        NeofloThemeProvider, QueryClient, Snackbar.
 │   ├── router/           Route table. Every page is lazy-loaded.
-│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows.
+│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows, account.
 │   └── errors/           Route error boundary.
 ├── pages/                One folder per route. Thin: composes features.
 │   └── <route>/<Route>Page.tsx
@@ -143,7 +143,7 @@ Each layer imports only from the layers below it. oxlint fails the build on anyt
 1. Add its path to `shared/config/paths.ts`.
 2. Create `pages/<route>/<Route>Page.tsx` exporting `<Route>Page`.
 3. Register it in `app/router/router.tsx` with `lazy`.
-4. If it belongs in the rail, add a row to `app/layout/navigation.ts`.
+4. If it belongs in the rail, add a row to `app/layout/navigation.ts`. If it belongs in the account menu (settings, billing), point that row at it in `app/layout/AppLayout.tsx`.
 
 ### Add a feature
 
