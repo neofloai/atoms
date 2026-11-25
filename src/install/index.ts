@@ -201,10 +201,11 @@ export const installation: InstallationGuide = {
   shared: SHARED_STEPS,
   frameworks: [NEXTJS_SETUP, REACT_SETUP],
   notes: [
-    'Import only from @neofloai/atoms, @neofloai/atoms/icons, @neofloai/atoms/tokens, and @neofloai/atoms/theme.',
+    'Import only from @neofloai/atoms, @neofloai/atoms/icons, @neofloai/atoms/tokens, and @neofloai/atoms/theme -- and, for the agentic chat, @neofloai/atoms/chat, @neofloai/atoms/chat/core, @neofloai/atoms/chat/charts and @neofloai/atoms/chat/mock.',
     'Do not import from @mui/material directly -- it bypasses the design system.',
     'Never import from @neofloai/atoms/dist/* -- those are build internals, not a public API, and can change without notice.',
-    '@mui/material ships as a dependency of this package, not a peer, so npm may hoist it into your app\'s own node_modules and it will resolve if you import it directly. That does not make it supported -- only the four entry points above are.',
+    '@mui/material ships as a dependency of this package, not a peer, so npm may hoist it into your app\'s own node_modules and it will resolve if you import it directly. That does not make it supported -- only the entry points above are.',
+    'The chat has dependencies of its own, which Atoms declares as optional peers so an app without a chat never installs them. In the app that renders a chat: npm install react-markdown remark-gfm @radix-ui/react-slot -- plus recharts for the chart blocks. The MCP get_chat tool and the docs site\'s Chat section cover the rest.',
     'react and react-dom are peer dependencies: your app provides them (React 18 or 19). MUI and Emotion ship inside the package, so you do not install them.',
     'Keep react and react-dom on the same major version across every project that installs @neofloai/atoms -- mixing versions across projects makes Atoms bugs reproduce inconsistently and harder to triage.',
     'The package ships compiled JavaScript (dist/), so no transpilePackages or bundler transpile config is required.',

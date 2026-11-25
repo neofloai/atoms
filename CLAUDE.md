@@ -13,6 +13,7 @@ Project rules are shared with Cursor and live in `.cursor/rules/` — that folde
 - MUI usage → `.cursor/rules/10-mui-usage.mdc` — `src/components/**`, `src/theme/**`
 - Design tokens → `.cursor/rules/20-tokens.mdc` — `src/tokens/**`, `src/theme/**`, `src/components/**`
 - Component authoring → `.cursor/rules/30-components.mdc` — `src/components/**`
+- Agentic chat → `.cursor/rules/35-chat.mdc` — `src/chat/**`, `app/(docs)/chat/**`, `test/chat/**`
 - Next.js App Router → `.cursor/rules/40-nextjs.mdc` — `app/**`, `next.config.ts`
 - Documentation → `.cursor/rules/50-docs.mdc` — `*.examples.tsx`, `app/(docs)/**`
 - MCP server → `.cursor/rules/60-mcp.mdc` — `src/mcp/**`, `app/mcp/**`, `scripts/generate.ts`

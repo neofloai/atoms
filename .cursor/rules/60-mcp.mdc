@@ -9,7 +9,7 @@ The MCP (Model Context Protocol) server exposes the design system to AI editors.
 
 ## Available tools
 
-The MCP server exposes exactly these ten tools — no more, no less:
+The MCP server exposes exactly these eleven tools — no more, no less:
 
 | Tool | Purpose |
 |------|---------|
@@ -20,7 +20,8 @@ The MCP server exposes exactly these ten tools — no more, no less:
 | `get_component` | Returns full spec for a named component, plus its related components and the patterns it appears in. Resolves the name in any case or by a component's `keywords` |
 | `get_tokens` | Returns design tokens for a category |
 | `get_pattern` | Returns full page layout code |
-| `search_docs` | Searches across components, patterns, guidelines, changelog, word by word, ranked |
+| `get_chat` | Returns one topic of the agentic chat's guide (`src/chat/guide/`, via `data/chat.json`) — the same Markdown the docs render. Withholds app code from a project older than `CHAT_SINCE` |
+| `search_docs` | Searches across components, patterns, the chat guide, guidelines, changelog, word by word, ranked |
 | `get_installation` | Returns framework-specific setup steps (nextjs, react) |
 | `build_from_json` | Turns an Atoms JSON export (`.atoms.json`, from the Atoms Inspector or Atoms Studio) into a React file, with the components to look up, what to wire, and the gaps |
 
@@ -39,6 +40,14 @@ Props, taglines, do/don't lists, token values and related-component pointers go 
 - `get_component` and `get_pattern` take an optional `installedVersion` and withhold their code until it resolves. Optional, not required: a required argument turns every existing call into a validation error rather than a version warning.
 - Four of the seven statuses block, and only one is "too old". The other three are forms of not knowing, which is the common case for a git install.
 - A new code-serving tool must take `installedVersionSchema` and call `gateVersion`. Both are exported from `version-gate.ts` so no tool writes its own copy of the wording.
+
+## `get_chat`
+
+The chat is one feature with fourteen topics, not a component, so it is one tool with a `topic` argument rather than entries in `components.json`. Its text is the guide in `src/chat/guide/` — the docs render the same file — so fix a chat answer there, never in the tool. Rules in `35-chat.mdc`.
+
+- **Two gates, not one.** It calls `gateVersion` like every code-serving tool, then refuses app code to a project older than `CHAT_SINCE` even when the shared gate says `behind`: on those versions `@neofloai/atoms/chat` does not exist, so nothing pasted would import.
+- **Backend topics are never gated.** Their blocks are JSON payloads, SSE frames and shell commands — the wire format, which no Atoms version changes.
+- **The other tools point to it.** `list_components` names the chat beside the patterns, `search_docs` ranks topics by title, keywords and summary (never body — the bodies mention tables and cards on every page), and `get_component` answers a chat export or a `CHAT_ALIASES` word with a pointer instead of "not found". Keep `CHAT_ALIASES` to words for the chat itself: "chart" or "table" asked of `get_component` is a dashboard question.
 
 ## `build_from_json`
 

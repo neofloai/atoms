@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import type {
   BrandManifest,
+  ChatManifest,
   ComponentManifest,
   InstallationManifest,
   PatternManifest,
@@ -35,6 +36,7 @@ export const dataPaths = {
   brand: 'brand.json',
   project: 'project.json',
   release: 'release.json',
+  chat: 'chat.json',
 } as const;
 
 /** Loads the generated component manifest from `data/components.json`. */
@@ -70,4 +72,9 @@ export async function loadProject(): Promise<ProjectManifest> {
 /** Loads the generated release record from `data/release.json`. */
 export async function loadRelease(): Promise<ReleaseManifest> {
   return readJsonFile<ReleaseManifest>(dataPaths.release);
+}
+
+/** Loads the generated chat guide and export list from `data/chat.json`. */
+export async function loadChat(): Promise<ChatManifest> {
+  return readJsonFile<ChatManifest>(dataPaths.chat);
 }

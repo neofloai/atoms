@@ -2,6 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { registerBuildFromJson } from './tools/build-from-json';
 import { registerCheckVersion } from './tools/check-version';
+import { registerGetChat } from './tools/get-chat';
 import { registerGetComponent } from './tools/get-component';
 import { registerGetInstallation } from './tools/get-installation';
 import { registerGetPattern } from './tools/get-pattern';
@@ -29,7 +30,7 @@ Order of operations, and it matters:
 
 2. Never create a project inside your own working directory or a temp path. \`scaffold_app\` puts it in the user's Desktop folder, where they can find and open it again.
 
-3. Atoms code is version-specific, and this server cannot see the project. If Atoms is going into an app that already exists, resolve its installed version FIRST — \`npm ls @neofloai/atoms --depth=0\` in that project, not the dependency line in its package.json — and pass it as \`installedVersion\` to \`check_version\`, \`get_component\` and \`get_pattern\`. Those last two withhold their code examples until they have it. Nothing to resolve for a new project: \`scaffold_app\` installs the current release.
+3. Atoms code is version-specific, and this server cannot see the project. If Atoms is going into an app that already exists, resolve its installed version FIRST — \`npm ls @neofloai/atoms --depth=0\` in that project, not the dependency line in its package.json — and pass it as \`installedVersion\` to \`check_version\`, \`get_component\`, \`get_pattern\` and \`get_chat\`. The last three withhold their code examples until they have it. Nothing to resolve for a new project: \`scaffold_app\` installs the current release.
 
 4. Before composing a screen, call \`get_pattern\`. A pattern is a whole arrangement that has already been reviewed; a screen assembled from individual component docs gets the arrangement wrong in ways no single component doc can warn about. \`list_components\` names the published patterns first for this reason.
 
@@ -37,9 +38,11 @@ Order of operations, and it matters:
 
 6. Before writing any colour, spacing, radius or type value, call \`get_tokens\`. Never hardcode a hex or a pixel value the tokens already carry.
 
-7. Import only from \`@neofloai/atoms\`, \`@neofloai/atoms/icons\`, \`@neofloai/atoms/tokens\` and \`@neofloai/atoms/theme\`. Importing from \`@mui/material\` resolves and silently bypasses the design system.
+7. Import only from \`@neofloai/atoms\`, \`@neofloai/atoms/icons\`, \`@neofloai/atoms/tokens\` and \`@neofloai/atoms/theme\` — and, for the chat, \`@neofloai/atoms/chat\`, \`/chat/core\`, \`/chat/charts\` and \`/chat/mock\`. Importing from \`@mui/material\` resolves and silently bypasses the design system.
 
-8. If the user gives you an Atoms JSON export (a \`.atoms.json\` file from the Atoms Inspector or Atoms Studio), call \`build_from_json\` with it rather than reading it by hand. It returns the code, the components to look up and the gaps.
+8. If the user wants a chat, an AI assistant, a copilot or an "Ask Neo" panel, call \`get_chat\`. Atoms ships one whole — \`<AgenticChat>\` — and a chat composed from \`Card\` and \`TextField\` is missing streaming, history, approvals and the backend contract it has to speak.
+
+9. If the user gives you an Atoms JSON export (a \`.atoms.json\` file from the Atoms Inspector or Atoms Studio), call \`build_from_json\` with it rather than reading it by hand. It returns the code, the components to look up and the gaps.
 
 Use \`search_docs\` when you are not sure which of these to reach for; it also answers brand questions inline. Both it and \`get_component\` take the user's own words — "sidebar" is \`Drawer\`, "topbar" is \`Navbar\`, the avatar's "account dropdown" is \`AccountMenu\`, the sidebar's "workspace switcher" is \`WorkspaceSwitcher\`.`;
 
@@ -53,11 +56,10 @@ export function createAtomsMcpServer(): McpServer {
   const server = new McpServer(
     {
       name: 'atoms',
-      // Minor: `get_component` resolves a name in any case or by its
-      // everyday word ("Sidebar" is Drawer), and `search_docs` matches a
-      // query word by word and ranks the hits. Every existing call still
+      // Minor: `get_chat` is new, and `search_docs`, `list_components`
+      // and `get_component` point to it. Every existing call still
       // validates and returns what it did, so this is not a major.
-      version: '1.5.0',
+      version: '1.6.0',
     },
     { instructions: INSTRUCTIONS }
   );
@@ -69,6 +71,7 @@ export function createAtomsMcpServer(): McpServer {
   registerGetComponent(server);
   registerGetTokens(server);
   registerGetPattern(server);
+  registerGetChat(server);
   registerSearchDocs(server);
   registerGetInstallation(server);
   registerBuildFromJson(server);

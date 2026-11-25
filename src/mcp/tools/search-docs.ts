@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import {
   loadBrand,
+  loadChat,
   loadComponents,
   loadPatterns,
   loadProject,
@@ -24,7 +25,8 @@ interface SearchHit {
     | 'token category'
     | 'brand'
     | 'guide'
-    | 'release';
+    | 'release'
+    | 'chat';
   name: string;
   summary: string;
   /**
@@ -56,7 +58,7 @@ export function registerSearchDocs(server: McpServer): void {
     {
       title: 'Search docs',
       description:
-        'Searches across @neofloai/atoms components, patterns, token categories, Neoflo brand guidelines (logo, brand colours, fonts, theme), the release changelog, and the project intake guide. Takes the words a user would use — "sidebar", "account dropdown", "navbar sidebar", "workspace switcher" — and matches each word on its own, so a query naming two things finds both; hits are ranked best first. Returns a markdown list; brand, guide and release hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need, or what Atoms calls the thing the user named.',
+        'Searches across @neofloai/atoms components, patterns, token categories, the agentic chat guide (`@neofloai/atoms/chat`), Neoflo brand guidelines (logo, brand colours, fonts, theme), the release changelog, and the project intake guide. Takes the words a user would use — "sidebar", "account dropdown", "navbar sidebar", "workspace switcher" — and matches each word on its own, so a query naming two things finds both; hits are ranked best first. Returns a markdown list; brand, guide and release hits include the full guidance inline, others name the tool to call next. Use this when you are not sure which component, pattern, or brand answer you need, or what Atoms calls the thing the user named.',
       inputSchema: {
         query: z
           .string()
@@ -67,7 +69,7 @@ export function registerSearchDocs(server: McpServer): void {
       },
     },
     async ({ query }) => {
-      const [components, patterns, tokens, brand, project, release] =
+      const [components, patterns, tokens, brand, project, release, chat] =
         await Promise.all([
           loadComponents(),
           loadPatterns(),
@@ -75,6 +77,7 @@ export function registerSearchDocs(server: McpServer): void {
           loadBrand(),
           loadProject(),
           loadRelease(),
+          loadChat(),
         ]);
 
       const hits: SearchHit[] = [];
@@ -193,6 +196,28 @@ export function registerSearchDocs(server: McpServer): void {
         }
       }
 
+      // Each chat topic is ranked by its title, its keywords and its
+      // summary — never its body. The bodies name tables, cards, menus and
+      // errors on every page, and a search for `table` is a component
+      // question first. The overview also answers to every word for the
+      // chat itself, so "copilot" or "chat" lands on the page to start from.
+      for (const topic of chat.topics) {
+        const isOverview = topic.slug === chat.topics[0]?.slug;
+        const score = scoreMatch(query, {
+          name: topic.title,
+          keywords: [topic.slug, ...topic.keywords, ...(isOverview ? chat.aliases : [])],
+          summary: topic.summary,
+        });
+        if (score > 0) {
+          ranked.push({
+            kind: 'chat',
+            name: `Chat: ${topic.title}`,
+            summary: `${topic.summary} Fetch with \`get_chat\` topic \`${topic.slug}\`.`,
+            score,
+          });
+        }
+      }
+
       for (const category of Object.keys(tokens.tokens)) {
         // Every category answers to the word for all of them, so "tokens"
         // lists the categories rather than whichever components happen to
@@ -246,7 +271,7 @@ export function registerSearchDocs(server: McpServer): void {
         content: [
           {
             type: 'text',
-            text: `# Search results for "${query}"\n\n${lines.join('\n\n')}\n\nNext step: brand, guide and release hits are answered inline; for components/patterns/tokens call get_component, get_pattern, or get_tokens.`,
+            text: `# Search results for "${query}"\n\n${lines.join('\n\n')}\n\nNext step: brand, guide and release hits are answered inline; for components/patterns/tokens call get_component, get_pattern, or get_tokens; for chat hits call get_chat.`,
           },
         ],
       };

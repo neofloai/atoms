@@ -107,7 +107,8 @@ const PROJECT_RULES: readonly string[] = [
   'Do not scaffold, install, or write a component until every required answer is in hand. Ask the questions in one pass rather than one at a time, and ask the follow-ups for anything that came back vague.',
   'Hold state in React state. Do not add `localStorage`, `sessionStorage`, cookies or a database to make something survive a reload unless the user asks for it — a prototype that remembers the last person who used it cannot be reset before the next demo.',
   'Call `get_pattern` before composing a screen, `get_component` before using a component, and `get_tokens` before writing any colour, spacing or type value. Never hardcode a hex or a pixel value that a token already carries.',
-  'Import only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Importing from `@mui/material` resolves and bypasses the design system.',
+  'Import only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme` — and, for a chat, `@neofloai/atoms/chat` and its `/core`, `/charts` and `/mock` subpaths. Importing from `@mui/material` resolves and bypasses the design system.',
+  'If the brief includes a chat, an AI assistant or a copilot, call `get_chat` and use `<AgenticChat>`. Do not compose a chat from `Card`, `TextField` and `Typography`.',
   'When it runs, say how to see it — the folder and the command for something new, the route for a screen inside an app that already runs. Then say which interactions are real and which are only drawn.',
 ];
 
