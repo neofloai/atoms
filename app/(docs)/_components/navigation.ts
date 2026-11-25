@@ -64,6 +64,8 @@ export const navigation: readonly NavSection[] = [
       { label: 'Dialog', href: '/components/dialog' },
       { label: 'Drawer', href: '/components/drawer' },
       { label: 'Navbar', href: '/components/navbar' },
+      { label: 'AccountMenu', href: '/components/account-menu' },
+      { label: 'WorkspaceSwitcher', href: '/components/workspace-switcher' },
       { label: 'Button', href: '/components/button' },
       { label: 'IconButton', href: '/components/icon-button' },
       { label: 'Tag', href: '/components/tag' },

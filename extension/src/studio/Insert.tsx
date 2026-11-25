@@ -34,6 +34,8 @@ const STARTERS: Record<string, { props?: Record<string, unknown>; text?: string 
   Tab: { props: { label: 'Tab', value: 'tab' } },
   ToggleButton: { props: { value: 'one' }, text: 'Toggle' },
   MenuItem: { text: 'Menu item' },
+  AccountMenu: { props: { user: { name: 'John Doe', email: 'john.doe@neo.com', role: 'Tenant Owner' } } },
+  WorkspaceSwitcher: { props: { workspaces: [{ id: 'finance', name: 'Finance', color: 'primary' }, { id: 'procurement', name: 'Procurement', color: 'success' }] } },
   DataGrid: { props: { rows: [{ id: 1, name: 'Row one' }, { id: 2, name: 'Row two' }], columns: [{ field: 'name', headerName: 'Name', flex: 1 }] } },
 };
 

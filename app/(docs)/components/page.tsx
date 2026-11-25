@@ -24,6 +24,8 @@ import { data as grid } from '@/src/components/Grid/Grid.examples';
 import { data as grow } from '@/src/components/Grow/Grow.examples';
 import { data as iconButton } from '@/src/components/IconButton/IconButton.examples';
 import { data as menu } from '@/src/components/Menu/Menu.examples';
+import { data as accountMenu } from '@/src/components/AccountMenu/AccountMenu.examples';
+import { data as workspaceSwitcher } from '@/src/components/WorkspaceSwitcher/WorkspaceSwitcher.examples';
 import { data as radio } from '@/src/components/Radio/Radio.examples';
 import { data as select } from '@/src/components/Select/Select.examples';
 import { data as skeleton } from '@/src/components/Skeleton/Skeleton.examples';
@@ -70,6 +72,8 @@ const built: readonly (readonly [ComponentExamplesData, string])[] = [
   [alert, '/components/alert'],
   [skeleton, '/components/skeleton'],
   [menu, '/components/menu'],
+  [accountMenu, '/components/account-menu'],
+  [workspaceSwitcher, '/components/workspace-switcher'],
   // The five motion primitives share one page, mirroring MUI's own
   // single Transitions page — five near-identical pages would say the
   // same thing five times. Each still gets its own card and its own

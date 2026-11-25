@@ -12,11 +12,13 @@ export const data: PatternExamplesData = {
   name: 'Dashboard',
   slug: 'dashboard',
   description:
-    'A full application screen: a nav rail down the side — sections, one level of nesting, a workspace switcher — that the toggle hides and hover peeks at, an app bar above the page, and a searchable, filterable table filling the rest.',
+    'A full application screen: a nav rail down the side — sections, one level of nesting, the workspace switcher at its foot — that the toggle hides and hover peeks at, an app bar above the page ending in the account menu, and a searchable, filterable table filling the rest. The app shell, sidebar and top bar every screen starts from.',
   code: dashboardCode,
   components: [
     'Drawer',
     'Navbar',
+    'AccountMenu',
+    'WorkspaceSwitcher',
     'IconButton',
     'Tooltip',
     'Collapse',
@@ -27,7 +29,6 @@ export const data: PatternExamplesData = {
     'Menu',
     'MenuItem',
     'ListSubheader',
-    'Avatar',
     'TextField',
     'Button',
     'Tag',
@@ -37,6 +38,7 @@ export const data: PatternExamplesData = {
   ],
   dos: [
     'Lay the screen out as a row — rail, then a column — so the rail owns the full height and the bar starts where it ends',
+    'End the app bar with `AccountMenu` and the rail with `WorkspaceSwitcher` — the user at one end of the shell and the workspace at the other, each one element',
     'Put the sidebar toggle at the leading edge of the bar, and let it slide the rail away — a persistent drawer, kept mounted, so the bar and the page widen into its space as it goes',
     'Drive the toggle with `useSidebarToggle`: spread `toggleProps` on the toggle, `dockProps` on the docked rail with `resizeHandleProps` and `resizeTooltipProps` on its edge, and `peekProps` on a second Drawer holding the same navigation — hover peeks, with no backdrop or focus trap, and `closePeek` closes it when a page is picked',
     'Build the rail\'s rows as `List variant="nav"` — `ListItemButton`, `ListItemIcon`, `ListItemText`, a nested `List` in a `Collapse` for the second level',

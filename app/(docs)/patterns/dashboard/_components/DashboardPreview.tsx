@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { AccountMenu } from '@/src/components/AccountMenu';
 import { Button } from '@/src/components/Button';
 import { Tag } from '@/src/components/Tag';
 import { DataGrid } from '@/src/components/DataGrid';
@@ -12,12 +13,19 @@ import { Divider } from '@/src/components/Divider';
 import { useSidebarToggle } from '@/src/components/Drawer';
 import { Filter, countActiveFilters } from '@/src/components/Filter';
 import { IconButton } from '@/src/components/IconButton';
+import { MenuItem } from '@/src/components/MenuItem';
 import { Navbar } from '@/src/components/Navbar';
 import { TextField } from '@/src/components/TextField';
 import { atomsRegion } from '@/src/components/_shared/devMarks';
 import {
+  BookOpenIcon,
+  BugIcon,
+  ChartBarIcon,
+  CreditCardIcon,
   FadersHorizontalIcon,
+  GearSixIcon,
   MagnifyingGlassIcon,
+  QuestionIcon,
   SidebarSimpleIcon,
 } from '@/src/icons';
 
@@ -36,6 +44,13 @@ import { groups } from '../../../components/filter/_components/sampleData';
 import type { FilterValue } from '@/src/components/Filter';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { QueryRecord } from '../../../components/filter/_components/queryLog';
+
+/** The signed-in user the account menu shows. */
+const USER = {
+  name: 'John Doe',
+  email: 'john.doe@neo.com',
+  role: 'Tenant Owner',
+};
 
 /** Tall enough for every block of the rail and a page of rows. */
 const FRAME_HEIGHT_PX = 720;
@@ -155,6 +170,34 @@ export function DashboardPreview(): React.JSX.Element {
           >
             <SidebarSimpleIcon />
           </IconButton>
+          <Box sx={{ flex: 1 }} />
+          <AccountMenu user={USER} onSignOut={() => undefined}>
+            <MenuItem>
+              <GearSixIcon size={16} />
+              Settings
+            </MenuItem>
+            <MenuItem>
+              <CreditCardIcon size={16} />
+              Billings
+            </MenuItem>
+            <MenuItem>
+              <ChartBarIcon size={16} />
+              Reporting
+            </MenuItem>
+            <Divider />
+            <MenuItem>
+              <QuestionIcon size={16} />
+              Help
+            </MenuItem>
+            <MenuItem>
+              <BookOpenIcon size={16} />
+              Documentation
+            </MenuItem>
+            <MenuItem>
+              <BugIcon size={16} />
+              Report an issue
+            </MenuItem>
+          </AccountMenu>
         </Navbar>
 
         <Stack sx={{ flex: 1, minHeight: 0 }}>

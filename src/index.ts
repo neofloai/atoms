@@ -620,6 +620,34 @@ export type {
 } from './components/Navbar';
 
 /**
+ * The two dropdowns the shell carries, one at each end of it.
+ *
+ * `AccountMenu` is the signed-in user's avatar at the trailing edge of the
+ * `Navbar` and the panel it opens: the user, the rows you pass, a System /
+ * Light / Dark switch, and Sign out. `WorkspaceSwitcher` is the footer of
+ * the `Drawer`'s rail: the current workspace, and the list it opens
+ * upwards to switch or create one.
+ *
+ * Both render their own trigger and hold their own open state, so each is
+ * one element where it goes. They are compositions of `Menu`, `MenuItem`,
+ * `Avatar` and `Divider` rather than new surfaces, and ship because every
+ * app's shell needs them drawn the same way.
+ */
+export { AccountMenu } from './components/AccountMenu';
+export type {
+  AccountMenuLabels,
+  AccountMenuProps,
+  AccountMenuUser,
+} from './components/AccountMenu';
+
+export { WorkspaceSwitcher } from './components/WorkspaceSwitcher';
+export type {
+  WorkspaceOption,
+  WorkspaceSwitcherLabels,
+  WorkspaceSwitcherProps,
+} from './components/WorkspaceSwitcher';
+
+/**
  * The table family — seven pieces that only make sense together, so they
  * ship together the way the dialog's five do.
  *

@@ -6,11 +6,12 @@
  * layout code", so this is the deliverable rather than an excerpt of one.
  *
  * It also carries the app's rail in full — sections, a second level, the
- * workspace switcher, the folded strip and the floating rail — because
- * every other pattern imports that rail from `./AppRail` rather than
- * redrawing it, and this is where it is written out. The rows are
- * `List variant="nav"` and the hide, peek and resize behaviour is
- * `useSidebarToggle`, both from the library. A snippet that referenced a rail the reader does not have would
+ * folded strip and the floating rail — because every other pattern
+ * imports that rail from `./AppRail` rather than redrawing it, and this is
+ * where it is written out. The rows are `List variant="nav"`, the hide,
+ * peek and resize behaviour is `useSidebarToggle`, the rail's footer is
+ * `WorkspaceSwitcher` and the bar ends in `AccountMenu`, all from the
+ * library. A snippet that referenced a rail the reader does not have would
  * hand back half a screen.
  *
  * What is left to the reader is the data — the rows, the columns and the
@@ -21,7 +22,7 @@ export const dashboardCode = `'use client';
 
 import * as React from 'react';
 import {
-  Avatar,
+  AccountMenu,
   Box,
   Button,
   Tag,
@@ -47,50 +48,41 @@ import {
   Typography,
   atomsRegion,
   countActiveFilters,
+  WorkspaceSwitcher,
   useSidebarToggle,
 } from '@neofloai/atoms';
 import {
+  BookOpenIcon,
   BriefcaseIcon,
+  BugIcon,
   CaretDownIcon,
-  CaretUpDownIcon,
+  ChartBarIcon,
   ChartLineIcon,
   ChatsIcon,
-  CheckCircleIcon,
   ClockCounterClockwiseIcon,
+  CreditCardIcon,
   CurrencyCircleDollarIcon,
   DatabaseIcon,
   FadersHorizontalIcon,
   FileTextIcon,
   FilesIcon,
   GearIcon,
+  GearSixIcon,
   HouseIcon,
   MagnifyingGlassIcon,
-  PlusIcon,
   QuestionIcon,
   ScrollIcon,
   SidebarSimpleIcon,
 } from '@neofloai/atoms/icons';
-import {
-  border,
-  elevation,
-  fontFamilies,
-  fontWeights,
-  icon,
-  radius,
-  surface,
-  text,
-  typography,
-} from '@neofloai/atoms/tokens';
-import { neofloTheme } from '@neofloai/atoms/theme';
+import { elevation, radius } from '@neofloai/atoms/tokens';
 
 import type {
-  AvatarColor,
   DrawerProps,
   FilterValue,
   SidebarResizeHandleProps,
   TooltipProps,
+  WorkspaceOption,
 } from '@neofloai/atoms';
-import type { ModeToken } from '@neofloai/atoms/tokens';
 import { QUERY_COLUMNS, QUERY_ROWS, filterQueries } from './queries';
 import { FILTER_GROUPS } from './facets';
 
@@ -102,11 +94,6 @@ import { FILTER_GROUPS } from './facets';
  * WORKFLOW_SECONDARY_NAV: the other patterns import those from there *
  * rather than redrawing the rail.                                    *
  * ================================================================== */
-
-type Theme = typeof neofloTheme;
-type Mode = 'light' | 'dark';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Styles = Record<string, any>;
 
 /** Rail width folded to icons — a workflow screen's strip. */
 const RAIL_COLLAPSED_PX = 64;
@@ -120,24 +107,16 @@ const BRAND_INSET_PX = 20;
 /**
  * Nav row geometry. The row itself — 28px, 8px in, the glyph 12px from
  * the label — is \`ListItemButton\`'s in a \`nav\` list; these are what the
- * rail still needs: the row's height to fold it to a square, the glyph,
- * and the switcher's inset and gap, which match the rows.
+ * rail still needs: the row's height to fold it to a square, and the glyph.
  */
 const NAV_ROW_PX = 28;
-const NAV_ROW_INSET_PX = 8;
 const NAV_GLYPH_PX = 16;
-const NAV_GLYPH_GAP_PX = 12;
 const NAV_CARET_PX = 14;
 
 /** Between sections. */
 const NAV_SECTION_GAP_PX = 16;
 
-/** The workspace switcher: a 40px row inside a 4px / 8px inset. */
-const SWITCHER_ROW_PX = 40;
-const SWITCHER_INSET_INLINE_PX = 4;
-const SWITCHER_INSET_BLOCK_PX = 8;
-
-/** Both flyouts — the workspace menu and a folded parent's level. */
+/** A folded parent's flyout, and its clearance from the rail. */
 const FLYOUT_WIDTH_PX = 240;
 const FLYOUT_OFFSET_PX = 8;
 
@@ -161,44 +140,6 @@ const LOGO_MARK_PX = 16;
 
 /** The floating rail's inset from the region it floats over. */
 const FLOAT_INSET_PX = 8;
-
-/** One set of rules per scheme, landed in a single \`applyStyles\` block. */
-function bothSchemes(theme: Theme, scheme: (mode: Mode) => Styles): Styles {
-  return {
-    ...scheme('light'),
-    ...(theme.applyStyles('dark', scheme('dark')) as Styles),
-  };
-}
-
-/** Paint one property from a token, in both schemes. */
-function ink(property: string, token: ModeToken) {
-  return (theme: Theme): Styles =>
-    bothSchemes(theme, (mode) => ({ [property]: token[mode] }));
-}
-
-/** \`Sans/B1\`, the type every row in the rail is set in. */
-const B1_TYPE = {
-  fontFamily: fontFamilies.product.sans,
-  fontSize: typography.body.b1.size,
-  lineHeight: \`\${typography.body.b1.leading}px\`,
-  letterSpacing: \`\${typography.body.b1.letterSpacing}em\`,
-};
-
-/**
- * A native button with the browser's own styling taken off — what the
- * workspace switcher's trigger is built on. The nav rows are
- * \`ListItemButton\`s in a \`nav\` list.
- */
-const BUTTON_RESET: Styles = {
-  appearance: 'none',
-  margin: 0,
-  border: 0,
-  background: 'none',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  outline: 'none',
-};
 
 /** A caret that points down open and right shut. */
 function Caret({ open, size }: { open: boolean; size: number }) {
@@ -302,16 +243,10 @@ const WORKFLOW_SECONDARY_NAV: readonly RailItem[] = [
   { key: 'help', label: 'Help', Icon: QuestionIcon },
 ];
 
-interface Workspace {
-  key: string;
-  name: string;
-  initials: string;
-  color: AvatarColor;
-}
-
-const WORKSPACES: readonly Workspace[] = [
-  { key: 'finance', name: 'Finance', initials: 'FI', color: 'primary' },
-  { key: 'procurement', name: 'Procurement', initials: 'PR', color: 'success' },
+/** The workspaces the rail's footer switches between. Yours come from the session. */
+const WORKSPACES: readonly WorkspaceOption[] = [
+  { id: 'finance', name: 'Finance', color: 'primary' },
+  { id: 'procurement', name: 'Procurement', color: 'success' },
 ];
 
 /**
@@ -634,152 +569,6 @@ function NavSection({
 }
 
 
-/**
- * The workspace switcher at the foot of the rail, and the menu it opens
- * upwards: a Workspaces label, a row per workspace with the current one
- * filled and checked, and Create workspace behind a rule.
- */
-function WorkspaceSwitcher({ collapsed }: { collapsed: boolean }) {
-  const [current, setCurrent] = React.useState(WORKSPACES[0].key);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const workspace =
-    WORKSPACES.find((space) => space.key === current) ?? WORKSPACES[0];
-  const close = () => setAnchorEl(null);
-
-  const trigger = (
-    <Box
-      component="button"
-      type="button"
-      onClick={(event: React.MouseEvent<HTMLElement>) =>
-        setAnchorEl(event.currentTarget)
-      }
-      aria-haspopup="menu"
-      aria-expanded={Boolean(anchorEl)}
-      aria-label={collapsed ? workspace.name : undefined}
-      sx={(theme) => ({
-        ...BUTTON_RESET,
-        ...B1_TYPE,
-        fontWeight: fontWeights.medium,
-        width: collapsed ? SWITCHER_ROW_PX : '100%',
-        height: SWITCHER_ROW_PX,
-        p: collapsed ? 0 : \`\${NAV_ROW_INSET_PX}px\`,
-        gap: \`\${NAV_GLYPH_GAP_PX}px\`,
-        justifyContent: collapsed ? 'center' : 'flex-start',
-        borderRadius: \`\${radius.xs}px\`,
-        whiteSpace: 'nowrap',
-        '& .MuiAvatar-root, & svg': { flexShrink: 0 },
-        ...bothSchemes(theme, (mode) => ({
-          color: text.default.b1[mode],
-          '&:hover, &:focus-visible, &[aria-expanded="true"]': {
-            backgroundColor: surface.layers.card3[mode],
-          },
-        })),
-      })}
-    >
-      <Avatar size="sm" shape="mid" color={workspace.color}>
-        {workspace.initials}
-      </Avatar>
-      {!collapsed && (
-        <>
-          <Box
-            component="span"
-            sx={{
-              flex: 1,
-              minWidth: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              textAlign: 'left',
-            }}
-          >
-            {workspace.name}
-          </Box>
-          <Box
-            component="span"
-            sx={(theme) => ({
-              display: 'flex',
-              ...ink('color', icon.default.b3)(theme),
-            })}
-          >
-            <CaretUpDownIcon size={NAV_GLYPH_PX} />
-          </Box>
-        </>
-      )}
-    </Box>
-  );
-
-  return (
-    <Box
-      sx={(theme) => ({
-        flexShrink: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        px: collapsed ? 0 : \`\${SWITCHER_INSET_INLINE_PX}px\`,
-        py: \`\${SWITCHER_INSET_BLOCK_PX}px\`,
-        borderTop: '1px solid',
-        ...ink('borderColor', border.layers.card3)(theme),
-      })}
-    >
-      {collapsed ? (
-        <Tooltip title={workspace.name} placement="right">
-          {trigger}
-        </Tooltip>
-      ) : (
-        trigger
-      )}
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={close}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{
-          '& .MuiMenu-paper': {
-            width: FLYOUT_WIDTH_PX,
-            mt: \`-\${FLYOUT_OFFSET_PX}px\`,
-            ml: \`\${FLYOUT_OFFSET_PX}px\`,
-          },
-        }}
-      >
-        <ListSubheader>Workspaces</ListSubheader>
-        {WORKSPACES.map((space) => (
-          <MenuItem
-            key={space.key}
-            selected={space.key === current}
-            onClick={() => {
-              setCurrent(space.key);
-              close();
-            }}
-          >
-            <Avatar size="sm" shape="mid" color={space.color}>
-              {space.initials}
-            </Avatar>
-            <Box component="span" sx={{ flex: 1, minWidth: 0 }}>
-              {space.name}
-            </Box>
-            {space.key === current && (
-              <Box
-                component="span"
-                sx={(theme) => ({
-                  display: 'flex',
-                  ...ink('color', icon.success[4])(theme),
-                })}
-              >
-                <CheckCircleIcon size={NAV_GLYPH_PX} />
-              </Box>
-            )}
-          </MenuItem>
-        ))}
-        <Divider />
-        <MenuItem onClick={close}>
-          <PlusIcon size={NAV_GLYPH_PX} />
-          Create workspace
-        </MenuItem>
-      </Menu>
-    </Box>
-  );
-}
-
 interface AppRailProps {
   /** Folded to the 64px icon strip — a workflow screen's rail. */
   collapsed?: boolean;
@@ -919,7 +708,15 @@ function AppRail({
         </Box>
       )}
 
-      {showWorkspace && <WorkspaceSwitcher collapsed={collapsed} />}
+      {/* The footer: the current workspace, and the list it opens upwards.
+          Hold the workspace in your app's state and pass value/onChange. */}
+      {showWorkspace && (
+        <WorkspaceSwitcher
+          workspaces={WORKSPACES}
+          collapsed={collapsed}
+          onCreate={() => {}}
+        />
+      )}
     </>
   );
 
@@ -978,6 +775,13 @@ function AppRail({
  * The page                                                           *
  * ================================================================== */
 
+/** The signed-in user. Yours comes from the session. */
+const USER = {
+  name: 'John Doe',
+  email: 'john.doe@neo.com',
+  role: 'Tenant Owner',
+};
+
 export default function QueryLogPage() {
   const sidebar = useSidebarToggle();
   const [active, setActive] = React.useState('home');
@@ -1015,7 +819,8 @@ export default function QueryLogPage() {
       />
 
       <Stack sx={{ flex: 1, minWidth: 0 }}>
-        {/* The toggle leads the bar. Per-page actions go after it. */}
+        {/* The toggle leads the bar and the account menu ends it. Per-page
+            actions go between them, before the spacer. */}
         <Navbar {...atomsRegion('dashboard', 'navbar')}>
           <IconButton
             variant="secondary"
@@ -1025,6 +830,36 @@ export default function QueryLogPage() {
           >
             <SidebarSimpleIcon />
           </IconButton>
+          <Box sx={{ flex: 1 }} />
+          {/* The signed-in user, from your session. The theme switch and
+              Sign out come with the menu; wire each row to its page. */}
+          <AccountMenu user={USER} onSignOut={() => {}}>
+            <MenuItem>
+              <GearSixIcon size={16} />
+              Settings
+            </MenuItem>
+            <MenuItem>
+              <CreditCardIcon size={16} />
+              Billings
+            </MenuItem>
+            <MenuItem>
+              <ChartBarIcon size={16} />
+              Reporting
+            </MenuItem>
+            <Divider />
+            <MenuItem>
+              <QuestionIcon size={16} />
+              Help
+            </MenuItem>
+            <MenuItem>
+              <BookOpenIcon size={16} />
+              Documentation
+            </MenuItem>
+            <MenuItem>
+              <BugIcon size={16} />
+              Report an issue
+            </MenuItem>
+          </AccountMenu>
         </Navbar>
 
         {/* Bands: title, toolbar, grid. The first two are as tall as what
