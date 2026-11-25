@@ -1,0 +1,23 @@
+Schema v1 left nine points undefined. Revision 1.2 of the standard (the config endpoint, the error envelope, `selected_model`, `client_message_id` and the connection rules) settles most of them. This page tracks what's settled and what's still open. The client already handles every open point.
+
+## Settled in 1.2
+
+| # | Gap | How 1.2 settles it |
+| --- | --- | --- |
+| 1 | **Block vocabulary.** No `type`/`category` values or payloads. | The standard types in [block contracts](/chat/block-contracts), `tool_use` + `tool_result` pairing, and `<product>.<name>` blocks with `fallback_text`. |
+| 4 | **Archiving** wasn't in the PATCH body. | `archived` is a PATCH field, behind the `archive` capability. |
+| 5 | **Selected model** wasn't returned, and there was no per-turn model. | `selected_model` on endpoints 1–4, the catalog in the config's `models`, and `model` per message with `per_turn_model`. |
+| 6 | **Scope catalog.** Nothing listed workflows; `Source` had no label. | The config's `workflows` and labeled `sources`. |
+| 8 | **Error bodies** were unspecified. | One envelope, `{ error: { type, message, retry_after, request_id, details } }`, and one code list for HTTP and the stream. |
+
+## Still open
+
+| # | Gap | What the client does today | Proposal |
+| --- | --- | --- | --- |
+| 2 | **HITL state in history.** Endpoint 3 doesn't say how checkpoints and decisions come back. | Reads `checkpoint` on the block and `type: "hitl"` user messages (see [backend contract §6](/chat/backend-contract#6-history-and-hitl)). Keeps decisions made in the session if a reload lacks them. | Settle it when the first product turns `hitl` on. |
+| 3 | **Resume message id.** Does a resume continue the paused `message_id` or start a new one? | Handles both. The same id continues the message; a new id adds one. | Continue the same `message_id`, so one answer stays one message. |
+| 7 | **Uploads.** Endpoint 6 takes `attachments[]`, but no endpoint produces them. | The host app provides `attachments.upload(file)`. | Keep uploads with each product's file service, or add a shared presigned-upload endpoint. |
+| 9 | **Reconnect.** A dropped stream can't be resumed. | Marks the answer interrupted, offers Try again, and refetches on the next open. A retry that the server already received gets 409 `duplicate_message`, and the client reloads the conversation. | Optional endpoint 9, `GET /v1/runs/{run_id}/events`, behind `stream_resume`. |
+| 10 | **`stream: false` replies** are still unspecified. | Always streams. Converts a JSON reply if one arrives. | Drop `stream: false` from the standard, or specify it. |
+| 11 | **Stop and running tools.** It isn't confirmed whether closing the stream also stops a tool mid-call. | Shows the reply as stopped and any unanswered tool as "Interrupted". | Backends cancel in-flight tool calls when the run stops. |
+| 12 | **Version naming.** The standard is called "SDK schema v1" in one place and "1.2" in another. | Reads `protocol_version` from the config and doesn't gate on it. | Agree on one name and value, then have the client warn on an unknown major version. |

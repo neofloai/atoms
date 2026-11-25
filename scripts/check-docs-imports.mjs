@@ -2,10 +2,11 @@
  * Fails if any consumer-facing code snippet tells the reader to import
  * from `@mui/material`.
  *
- * These two trees are the ones whose contents get copied verbatim into
- * real screens: `*.examples.tsx` is served to agents through the MCP
- * `get_component` tool and rendered on the docs site, and `src/patterns/`
- * holds whole reference pages that a project is started from. A snippet
+ * These trees are the ones whose contents get copied verbatim into real
+ * screens: `*.examples.tsx` is served to agents through the MCP
+ * `get_component` tool and rendered on the docs site, `src/patterns/`
+ * holds whole reference pages that a project is started from, and the
+ * chat guide in `src/chat/guide/` is served by `get_chat` and the docs. A snippet
  * in either one is an instruction, not a description.
  *
  * This check exists because that guidance drifted once and nobody
@@ -27,7 +28,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 /** Trees whose snippets a consumer copies. */
-const ROOTS = ['src/components', 'src/patterns'];
+const ROOTS = ['src/components', 'src/patterns', 'src/chat/guide'];
 
 /**
  * `src/components` holds real component source that imports MUI
@@ -36,6 +37,9 @@ const ROOTS = ['src/components', 'src/patterns'];
  */
 function isScanned(filePath) {
   if (filePath.startsWith('src/patterns')) return /\.(ts|tsx)$/.test(filePath);
+  // The chat guide's Markdown is served whole by `get_chat` and rendered on
+  // the docs, so every fenced snippet in it is an instruction.
+  if (filePath.startsWith('src/chat/guide')) return filePath.endsWith('.md');
   return filePath.endsWith('.examples.tsx');
 }
 
@@ -80,5 +84,5 @@ if (offences.length > 0) {
 }
 
 console.log(
-  'check:imports — no @mui imports in examples data or pattern snippets'
+  'check:imports — no @mui imports in examples data, pattern snippets or the chat guide'
 );

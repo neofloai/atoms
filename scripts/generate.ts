@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 import { branding } from '../src/brand/branding';
+import { CHAT_ALIASES, CHAT_TOPICS } from '../src/chat/guide';
 import { installation } from '../src/install';
 import { patterns as patternData } from '../src/patterns';
 import {
@@ -36,8 +37,9 @@ import type {
 /**
  * Generates the JSON payloads consumed by the MCP server and docs site.
  *
- * Reads from `src/components/`, `src/tokens/`, and `src/patterns/`, then
- * writes the canonical shape to `data/*.json`. Never edit those files
+ * Reads from `src/components/`, `src/tokens/`, `src/patterns/` and the
+ * chat guide in `src/chat/guide/`, then writes the canonical shape to
+ * `data/*.json`. Never edit those files
  * by hand — re-run `npm run generate` instead.
  *
  * Components are collected from `src/components/<Name>/<Name>.examples.tsx`
@@ -71,6 +73,84 @@ interface TokenManifest {
 interface PatternManifest {
   generatedAt: string;
   patterns: PatternExamplesData[];
+}
+
+const CHAT_DIR = path.join(ROOT, 'src', 'chat');
+
+/** The chat's public subpaths, and the module each one is. */
+const CHAT_ENTRIES = [
+  { entry: '@neofloai/atoms/chat', file: 'index.ts' },
+  { entry: '@neofloai/atoms/chat/core', file: 'core.ts' },
+  { entry: '@neofloai/atoms/chat/charts', file: 'charts.ts' },
+  { entry: '@neofloai/atoms/chat/mock', file: 'mock.ts' },
+] as const;
+
+/**
+ * The chat guide: each topic's metadata from `src/chat/guide/index.ts`
+ * with its Markdown body read from the file beside it. A topic listed
+ * without a file fails the build — the docs page and `get_chat` would
+ * both be empty for it, and neither would say so.
+ */
+async function collectChatTopics() {
+  return Promise.all(
+    CHAT_TOPICS.map(async (topic) => {
+      const file = path.join(CHAT_DIR, 'guide', `${topic.slug}.md`);
+      const body = await fs.readFile(file, 'utf8').catch(() => {
+        throw new Error(`src/chat/guide/index.ts lists "${topic.slug}", but ${path.relative(ROOT, file)} does not exist`);
+      });
+      return { ...topic, body: body.trim() };
+    })
+  );
+}
+
+/**
+ * Every name the chat exports, with the subpath it comes from — read off
+ * the entry files and the `export *` chains behind them, so it is the
+ * list a consumer can import. `get_component` uses it to send an agent
+ * that asked for `AgenticChat` or `ComposerPicker` to `get_chat` instead
+ * of answering "not found".
+ *
+ * The first entry to export a name owns it: `@neofloai/atoms/chat`
+ * re-exports the core types too, and that is the path to quote.
+ */
+async function collectChatExports(): Promise<{ name: string; entry: string }[]> {
+  const owner = new Map<string, string>();
+
+  async function namesIn(file: string, seen: Set<string>): Promise<string[]> {
+    if (seen.has(file)) return [];
+    seen.add(file);
+    const source = await fs.readFile(file, 'utf8');
+    const names: string[] = [];
+    for (const match of source.matchAll(/export\s+(?:type\s+)?\{([^}]*)\}/g)) {
+      for (const part of match[1].split(',')) {
+        const name = part.replace(/\/\/.*$/gm, '').trim().replace(/^type\s+/, '').split(/\s+as\s+/).pop()?.trim();
+        if (name && /^[A-Za-z_$][\w$]*$/.test(name)) names.push(name);
+      }
+    }
+    for (const match of source.matchAll(/export\s+(?:declare\s+)?(?:async\s+)?(?:function\*?|const|let|class|interface|type|enum)\s+([A-Za-z_$][\w$]*)/g)) {
+      names.push(match[1]);
+    }
+    for (const match of source.matchAll(/export\s+\*\s+from\s+'([^']+)'/g)) {
+      const base = path.resolve(path.dirname(file), match[1]);
+      const target = [`${base}.ts`, `${base}.tsx`, path.join(base, 'index.ts')];
+      for (const candidate of target) {
+        if (await fs.access(candidate).then(() => true, () => false)) {
+          names.push(...(await namesIn(candidate, seen)));
+          break;
+        }
+      }
+    }
+    return names;
+  }
+
+  for (const { entry, file } of CHAT_ENTRIES) {
+    for (const name of await namesIn(path.join(CHAT_DIR, file), new Set())) {
+      if (!owner.has(name)) owner.set(name, entry);
+    }
+  }
+  return [...owner.entries()]
+    .map(([name, entry]) => ({ name, entry }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 async function collectComponents(): Promise<ComponentExamplesData[]> {
@@ -226,11 +306,18 @@ async function main(): Promise<void> {
   const patterns: Omit<PatternManifest, 'generatedAt'> = {
     patterns: [...patternData].sort((a, b) => a.slug.localeCompare(b.slug)),
   };
+  const chat = {
+    entries: CHAT_ENTRIES.map(({ entry }) => entry),
+    aliases: CHAT_ALIASES,
+    topics: await collectChatTopics(),
+    exports: await collectChatExports(),
+  };
 
   await Promise.all([
     writeManifest('components.json', components),
     writeManifest('tokens.json', tokens),
     writeManifest('patterns.json', patterns),
+    writeManifest('chat.json', chat),
     writeManifest('installation.json', { ...installation }),
     writeManifest('brand.json', { brand: branding }),
     writeManifest('project.json', { ...projectGuide }),
