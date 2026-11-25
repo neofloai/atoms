@@ -88,6 +88,61 @@ for (const pkg of HEAVY) {
   }
 }
 
+// ── The chat ───────────────────────────────────────────────────────────
+//
+// The chat's dependencies are optional peers, installed only by an app
+// that renders a chat. That promise holds only while nothing outside the
+// chat's own subpaths reaches them, and while each subpath reaches only
+// its own: an app on `/chat` without charts never resolves Recharts, and
+// server code on `/chat/core` or `/chat/mock` never resolves React.
+
+/** Every package an import or re-export in `code` names. */
+function importedPackages(code) {
+  const found = new Set();
+  for (const [, source] of code.matchAll(/(?:import|export)\s*(?:[^'"]*?\s*from\s*)?"([^"]+)"/g)) {
+    if (!source.startsWith('.')) found.add(source);
+  }
+  return found;
+}
+
+const CHAT_PEERS = ['react-markdown', 'remark-gfm', '@radix-ui/react-slot', 'recharts'];
+
+function reaches(packages, name) {
+  return [...packages].some((source) => source === name || source.startsWith(`${name}/`));
+}
+
+const rootEverything = importedPackages(all);
+for (const peer of CHAT_PEERS) {
+  if (reaches(rootEverything, peer)) {
+    failures.push(`the root entry reaches ${peer}, a chat-only optional peer`);
+  }
+}
+
+const chatOnly = importedPackages(
+  await bundle("import { AgenticChat } from './dist/chat.mjs'; console.log(AgenticChat);")
+);
+if (reaches(chatOnly, 'recharts')) {
+  failures.push('importing AgenticChat pulls in recharts — charts belong to /chat/charts');
+}
+// The control: the chat must reach its Markdown renderer, or the check
+// above is reading an empty bundle.
+if (!reaches(chatOnly, 'react-markdown')) {
+  failures.push('importing AgenticChat reaches no react-markdown — the chat check has lost its control');
+}
+
+const charts = importedPackages(await bundle("export * from './dist/chat/charts.mjs';"));
+if (!reaches(charts, 'recharts')) {
+  failures.push('/chat/charts reaches no recharts — the charts check has lost its control');
+}
+
+for (const entry of ['chat/core', 'chat/mock']) {
+  const reached = importedPackages(await bundle(`export * from './dist/${entry}.mjs';`));
+  const framework = [...reached].filter((source) => !source.startsWith('node:'));
+  if (framework.length > 0) {
+    failures.push(`/${entry} must be framework-free, but imports ${framework.join(', ')}`);
+  }
+}
+
 if (failures.length) {
   for (const failure of failures) console.error(`check:treeshake — ${failure}`);
   process.exit(1);

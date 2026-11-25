@@ -35,8 +35,8 @@ One repository produces everything. The source in `src/` is written once and rea
 
 | Output | What it is | Who uses it | Lives in |
 | --- | --- | --- | --- |
-| **npm package** `@neofloai/atoms` | React components, tokens, theme, icons | Product apps | `src/` → `dist/` |
-| **Docs site** [atoms.neoflo.ai](https://atoms.neoflo.ai) | Live component docs, tokens, patterns, changelog | Designers and engineers | `app/(docs)/` |
+| **npm package** `@neofloai/atoms` | React components, tokens, theme, icons, and the agentic chat | Product apps | `src/` → `dist/` |
+| **Docs site** [atoms.neoflo.ai](https://atoms.neoflo.ai) | Live component docs, tokens, patterns, the chat guide, changelog | Designers and engineers | `app/(docs)/` |
 | **MCP endpoint** [atoms.neoflo.ai/mcp](https://atoms.neoflo.ai/mcp) | The design system served as tools an AI editor can call | Claude Code, Cursor | `src/mcp/`, `app/mcp/` |
 | **App templates** | The starting points for new Atoms apps: a full one for projects, a lighter one for prototypes | `scaffold_app` | `templates/react/`, `templates/prototype/` |
 | **Atoms Inspector + Studio** | Chrome extension that inspects a running page and edits captured screens | Designers, reviewers | `extension/` |
@@ -44,7 +44,7 @@ One repository produces everything. The source in `src/` is written once and rea
 ```mermaid
 flowchart LR
   subgraph repo["atoms repo"]
-    src["src/<br/>components, tokens, theme,<br/>patterns, MCP, intake, release"]
+    src["src/<br/>components, tokens, theme,<br/>patterns, chat, MCP, intake, release"]
     gen["scripts/generate.ts"]
     json["data/*.json"]
     tpl["templates/<br/>react + prototype"]
@@ -68,7 +68,7 @@ flowchart LR
 
 **Stack:** Next.js 16 (App Router), React 19, TypeScript 5 in strict mode, MUI 9 with MUI X (DataGrid, date pickers, free tier), Emotion, Phosphor icons, Day.js, and self-hosted DM Sans, DM Mono and Instrument Serif. The library is built with tsup and the MCP server with the official MCP SDK. Node 22 or later.
 
-**Size today (v4.2.0):** 46 documented components (83 runtime exports once sub-parts like `CardHeader` and `MenuItem` are counted), 6 page patterns and 10 MCP tools, across 13 releases since June 2026.
+**Size today (v4.3.0):** 46 documented components (83 runtime exports once sub-parts like `CardHeader` and `MenuItem` are counted), 6 page patterns, the agentic chat with a 14-topic guide, and 11 MCP tools, across 14 releases since June 2026.
 
 ---
 
@@ -234,9 +234,9 @@ Some details:
 
 ## 6. The npm package
 
-### Four doors in, and only four
+### Eight doors in: four for the design system, four for the chat
 
-Apps import from exactly four paths:
+Apps import from exactly these paths:
 
 | Import | What it gives |
 | --- | --- |
@@ -244,15 +244,21 @@ Apps import from exactly four paths:
 | `@neofloai/atoms/icons` | The full Phosphor icon set, tree-shakeable |
 | `@neofloai/atoms/tokens` | Raw and semantic tokens |
 | `@neofloai/atoms/theme` | The constructed MUI theme object |
+| `@neofloai/atoms/chat` | `<AgenticChat>`, its parts and built-in blocks, the kit for custom cards, and the headless engine under them |
+| `@neofloai/atoms/chat/core` | The chat engine and the chat standard's types, with no React, so server code can import it |
+| `@neofloai/atoms/chat/charts` | The chart blocks, on Recharts |
+| `@neofloai/atoms/chat/mock` | An in-memory backend on the chat standard, with no React |
 
-Importing from `@mui/material` in an app *does* work, and that is exactly the danger: it bypasses the design system without any visible sign. The docs, the MCP server's instructions and a CI check on every code snippet we publish all steer people to these four paths.
+Importing from `@mui/material` in an app *does* work, and that is exactly the danger: it bypasses the design system without any visible sign. The docs, the MCP server's instructions and a CI check on every code snippet we publish all steer people to these paths.
+
+The root barrel never imports the chat. The chat's own dependencies (`react-markdown`, `remark-gfm`, `@radix-ui/react-slot`, and `recharts` for charts) are **optional peer dependencies**: an app installs them only when it renders a chat, and an app that never imports `/chat` never resolves them. `check:treeshake` proves it on every build ([how the chat is put together](#the-chat-one-feature-four-subpaths)).
 
 ### Installed from GitHub, not a registry
 
 The repo is public, so apps install straight from GitHub, pinned to a semver range over the release tags. No registry account or token is needed:
 
 ```bash
-npm install github:neofloai/atoms#semver:^4.2.0
+npm install github:neofloai/atoms#semver:^4.3.0
 ```
 
 ```mermaid
@@ -271,22 +277,32 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-  entries["src/ entries<br/>4 public + one per component"] --> tsup["tsup / esbuild"]
+  entries["src/ entries<br/>8 public + one per component"] --> tsup["tsup / esbuild"]
   tsup --> esm["ESM<br/>split per component"]
-  tsup --> cjs["CommonJS<br/>one file per entry"]
+  tsup --> cjs["CommonJS<br/>one file per entry;<br/>the chat's four split"]
   tsup --> dts["Type declarations<br/>public entries only"]
   esm --> checks{"check:icons<br/>check:dev-marks<br/>check:treeshake"}
   cjs --> checks
   checks -->|all pass| dist["dist/"]
 ```
 
-React, MUI, Emotion, Phosphor and the fonts are all `external`. The app's bundler provides them, so there is only ever one copy of each.
+React, MUI, Emotion, Phosphor, the fonts and the chat's optional peers are all `external`. The app's bundler provides them, so there is only ever one copy of each.
 
 Three of the build's decisions were each learned from a real problem:
 
 - **Per-component splitting (v4.1.0).** The library used to be one module. A bundler can't remove unused code past a top-level `styled()` call, so every app shipped every component, including DataGrid, the date pickers and Day.js. Now each component is its own chunk and an unused component is an unused file. The full React template's first load fell from **1.57 MB to 458 KB**. `check:treeshake` bundles an app that imports only `Button` and fails if any grid or picker code appears.
-- **The icon leak (v1.0.1).** Re-exporting all icons with `export *` from an external package makes esbuild build a runtime object containing every icon. No bundler can prune that object, so an app that imported one button shipped **all 1,512 icons, about 5 MB**. Nobody could see it in review, because the published package itself stays small. The fix is `src/icons/glyphs.ts`, which names each of the 18 icons the components use. `check:icons` fails the build if the leak comes back.
+- **The icon leak (v1.0.1).** Re-exporting all icons with `export *` from an external package makes esbuild build a runtime object containing every icon. No bundler can prune that object, so an app that imported one button shipped **all 1,512 icons, about 5 MB**. Nobody could see it in review, because the published package itself stays small. The fix is `src/icons/glyphs.ts`, which names each icon the library's own code uses (49 today, the chat's included). `check:icons` fails the build if the leak comes back.
 - **Development marks stay out of production.** The inspector's CSS marks are gated on `process.env.NODE_ENV === 'development'`, written inline every time, because bundlers only fold that exact expression. `check:dev-marks` bundles the package as production and as development, and fails if the marks survive the first or are missing from the second.
+
+### The chat: one feature, four subpaths
+
+The agentic chat was a separate package, `@neofloai/agentic-chat`, that followed every Atoms major a release behind. Since v4.3.0 it lives in `src/chat/` and ships from the package itself. Three decisions shape it:
+
+- **Layers, enforced by lint.** `core/` is the framework-free engine (the chat standard's types, the REST/SSE adapter, the stores, persistence, the runtime). `react/`, `registry/` and `blocks/` are the headless layer: provider, hooks, primitives, block registry and parsers, with no styling. `ui/` is the styled chat, built from Atoms components imported by path like any component's siblings. `charts/` is the only code that reaches Recharts. `mock/` is an in-memory backend with no React. `eslint.config.mjs` fails a file that imports across those lines, so `/chat/core` and `/chat/mock` stay importable from server code, and an app on `/chat` without charts never resolves Recharts.
+- **The CommonJS build of the chat is split.** Unlike the core entries, the chat's four share live state: React contexts, the error classes the runtime checks with `instanceof`, and the block registry. One copy per file would hand `/chat/charts` a context `/chat` never provides, so the chat's CommonJS entries share chunks.
+- **One guide, two readers.** The guide is Markdown in `src/chat/guide/`, one file per topic, listed in `index.ts`. The generator copies it into `data/chat.json`. The docs render every topic under `/chat/<slug>`, and the MCP `get_chat` tool serves the same text, so a chat integration written from the MCP and one written from the docs say the same thing.
+
+The backend conformance check did not move. It stays a standalone CLI in `agentic-chat-ui`, so a backend team can check its server without installing the design system. The chat's unit tests (the SSE reader, the stream reducer, the runtime, persistence) live in `test/chat/` and run with `npm test`.
 
 ---
 
@@ -297,7 +313,8 @@ The docs site is a Next.js App Router application under `app/(docs)/`. Most page
 - **Previews are the real components**, imported from `src/`, so a docs page cannot show something the package doesn't do.
 - **Text comes from `data/*.json`**: taglines, props, examples, do's and don'ts. The MCP server serves the same object, so a person and an AI agent read the same guidance.
 - **Search is built after each build.** Pagefind indexes the prerendered HTML, so a new page is searchable as soon as it exists, with nothing to register.
-- Pages for components, tokens, icons, patterns, installation, "start a project", the MCP guide, branding, the changelog and help.
+- Pages for components, tokens, icons, patterns, the chat, installation, "start a project", the MCP guide, branding, the changelog and help.
+- **The chat section renders Markdown.** Each `/chat/<slug>` page is a topic of the chat guide from `data/chat.json`, with the chat itself running on the mock backend on `/chat` and its parts live on the topics that describe them.
 
 ---
 
@@ -315,7 +332,8 @@ This is the part of Atoms that makes it **AI-first**. An AI editor (Claude Code,
 | `get_pattern` | A whole screen's reviewed code |
 | `get_tokens` | Token values for a category |
 | `get_installation` | Setup steps for Next.js or React |
-| `search_docs` | Search across components, patterns, guidelines, brand and changelog, word by word and ranked |
+| `get_chat` | The agentic chat's guide, one topic per call, from the same Markdown as the docs; code withheld from a project whose Atoms predates the chat |
+| `search_docs` | Search across components, patterns, the chat guide, guidelines, brand and changelog, word by word and ranked |
 | `build_from_json` | Turns an Inspector or Studio export into a React file built from Atoms |
 
 **How it runs:** a Next.js route handler on the Node runtime, using the MCP Streamable HTTP transport in **stateless** mode. Every request gets a fresh server, so there is no session state to lose or pin to a machine. In production it requires a bearer token when `MCP_TOKEN` is set. It reads only `data/*.json`, never `src/`.
@@ -534,7 +552,7 @@ Then the release is tagged `v<version>`. Without the tag, a `#semver:` install c
 
 ```mermaid
 flowchart LR
-  pr["Pull request"] --> verify["CI: verify<br/>data freshness, snippet imports,<br/>lint, typecheck, build:lib, next build"]
+  pr["Pull request"] --> verify["CI: verify<br/>data freshness, snippet imports,<br/>lint, typecheck, tests, build:lib, next build"]
   verify --> docker["CI: docker<br/>image builds (not pushed)"]
   docker --> merge["Merge to main"]
   merge --> cb["AWS CodeBuild<br/>buildspec.yml"]
@@ -550,7 +568,8 @@ Each automated check exists because of a specific failure that a person reviewin
 | Data freshness (CI) | `data/*.json` differs from a fresh generate | Docs and MCP must match the code |
 | `check:imports` (CI) | A published snippet imports `@mui/material` | It happened: examples told readers to import from MUI while the install guide said not to, and a prototype did exactly that |
 | `check:icons` | The icon namespace object reappears | The ~5 MB leak only shows up in a consumer's bundle |
-| `check:treeshake` | Grid, picker or Day.js code survives in a Button-only app | Keeps the per-component split working |
+| `check:treeshake` | Grid, picker or Day.js code survives in a Button-only app; the root reaches a chat dependency; `/chat` reaches Recharts; `/chat/core` or `/chat/mock` imports anything | Keeps the per-component split working, and the chat's dependencies optional in fact as well as in `package.json` |
+| Tests (CI) | A chat unit test fails | The chat's engine is logic no docs page exercises |
 | `check:dev-marks` | Inspector marks reach production, or vanish from development | Production stays clean; the Inspector keeps working |
 | Version agreement (generate) | The three version sources disagree | Every tool downstream would state a version confidently, and one would be wrong |
 
@@ -594,12 +613,14 @@ Atoms is built largely with AI coding assistants, so the rules those assistants 
 | `src/theme/` | The MUI theme built from tokens, `NeofloThemeProvider`, `useColorScheme` |
 | `src/icons/` | The icon subpath, and `glyphs.ts` (the icons the library uses itself) |
 | `src/patterns/` | Whole-screen patterns, served as code |
-| `src/mcp/` | MCP server, its ten tools, the version gate, `screen-code.ts` (`build_from_json`) |
+| `src/chat/` | The agentic chat: engine, headless layer, styled UI, chart blocks, mock backend, and its guide (`guide/`) |
+| `src/mcp/` | MCP server, its eleven tools, the version gate, `screen-code.ts` (`build_from_json`) |
 | `src/project/` | The intake questions, scaffold targets, and both templates' structure and rules (`structure.ts`, `prototypeStructure.ts`) |
 | `src/release/` | Version, changelog and version checks |
 | `src/install/`, `src/brand/` | Installation guides, logo and brand assets |
 | `src/index.ts` | The public barrel; if it isn't exported here, it doesn't exist |
 | `app/(docs)/` | The docs site |
+| `test/chat/` | The chat's unit tests (`npm test`) |
 | `app/mcp/route.ts` | The MCP HTTP endpoint |
 | `scripts/` | The generator, token sync, search index, and the build checks |
 | `data/` | Generated JSON; never edited by hand |

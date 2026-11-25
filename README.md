@@ -10,8 +10,8 @@ A Next.js-based design system that wraps Material UI v9 with Neoflo's brand, exp
 
 Atoms is **three things in one repo**:
 
-1. **A React component library** — engineers install `@neofloai/atoms` in their projects
-2. **A documentation website** — [atoms.neoflo.ai](https://atoms.neoflo.ai) — designers and engineers browse components, tokens, and patterns
+1. **A React component library** — engineers install `@neofloai/atoms` in their projects. It includes the agentic chat, `<AgenticChat>`, from `@neofloai/atoms/chat`
+2. **A documentation website** — [atoms.neoflo.ai](https://atoms.neoflo.ai) — designers and engineers browse components, tokens, patterns and the chat guide
 3. **An MCP endpoint** — [atoms.neoflo.ai/mcp](https://atoms.neoflo.ai/mcp) — AI editors query the design system before generating code
 
 ### Quick links
@@ -91,6 +91,14 @@ atoms/
 │   │
 │   ├── patterns/                 # Whole-screen recipes (dashboard/)
 │   │
+│   ├── chat/                     # The agentic chat (@neofloai/atoms/chat)
+│   │   ├── core/                 # Engine: standard types, REST/SSE adapter, stores, runtime (no React)
+│   │   ├── react/ registry/ blocks/  # Headless layer: provider, hooks, primitives, parsers
+│   │   ├── ui/                   # The styled chat, built from Atoms components
+│   │   ├── charts/               # Chart blocks (Recharts)
+│   │   ├── mock/                 # In-memory backend (no React)
+│   │   └── guide/                # The guide: one Markdown file per topic → docs + get_chat
+│   │
 │   ├── mcp/                      # MCP server logic
 │   │   ├── server.ts             # MCP server instance
 │   │   ├── tools/                # One file per tool
@@ -100,6 +108,7 @@ atoms/
 │   │   │   ├── get-component.ts
 │   │   │   ├── get-tokens.ts
 │   │   │   ├── get-pattern.ts
+│   │   │   ├── get-chat.ts
 │   │   │   ├── search-docs.ts
 │   │   │   └── get-installation.ts
 │   │   ├── data-loader.ts        # Loads JSON from data/ directory
@@ -292,6 +301,7 @@ An editor connected to the MCP endpoint is handed the order of operations at con
    The first question asks what you want to create, and it is the fork the rest hangs off: a **prototype** (always React + Vite from the lighter prototype template, sample data held in React state, no backend and no stored state), the frontend of a **new project** (asked React or Next, React recommended), or Atoms going into a **project that already exists** (an install, nothing created). Nobody is asked who they are — the same three answers cover a designer, a manager and an engineer.
 2. **`scaffold_app` to create it**, in the user's Desktop folder — never the agent's working directory, which is a sandbox. Atoms, the theme, the favicon and the mark are all wired by the returned commands.
 3. **`get_pattern`** before composing a screen, **`get_component`** before using one (including its Related section), **`get_tokens`** before writing any colour or spacing value.
+4. **`get_chat`** when the user wants a chat, an assistant or a copilot — Atoms ships one whole, `<AgenticChat>`, and the guide covers it from install to the backend contract.
 
 The questions, and why each one is asked: [atoms.neoflo.ai/start-a-project](https://atoms.neoflo.ai/start-a-project).
 
@@ -306,6 +316,7 @@ The questions, and why each one is asked: [atoms.neoflo.ai/start-a-project](http
 | `npm run start`    | Start production server                            |
 | `npm run lint`     | Run ESLint                                         |
 | `npm run generate` | Generate `data/*.json` from `src/`                  |
+| `npm test`         | Run the chat's unit tests (Vitest)                 |
 
 ---
 

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
-import { loadComponents, loadPatterns } from '../data-loader';
-import { resolveComponent } from '../lookup';
+import { loadChat, loadComponents, loadPatterns } from '../data-loader';
+import { compact, resolveComponent } from '../lookup';
 import { gateVersion, installedVersionSchema } from '../version-gate';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ComponentData, PatternData } from '../types';
+import type { ChatManifest, ComponentData, PatternData } from '../types';
 import type { VersionGate } from '../version-gate';
 
 /**
@@ -128,6 +128,38 @@ function formatComponentResponse(
 }
 
 /**
+ * Whether a name that is not a component belongs to the chat — one of its
+ * exports (`AgenticChat`, `ComposerPicker`, `useHitl`) or a word for the
+ * chat itself ("chat", "copilot"). Answered here rather than with "not
+ * found" because the next move after "not found" is to build the thing
+ * from `Card` and `TextField`, and the chat is the one feature where that
+ * is most expensive.
+ */
+function chatPointer(name: string, chat: ChatManifest): string | undefined {
+  const wanted = compact(name);
+  const exported = chat.exports.find((entry) => compact(entry.name) === wanted);
+  if (exported) {
+    // The topic that talks about it most is the one to read.
+    const mentions = (topic: ChatManifest['topics'][number]) =>
+      topic.body.split(`\`${exported.name}`).length - 1;
+    const topic = [...chat.topics].sort((a, b) => mentions(b) - mentions(a))[0];
+    return [
+      `**${exported.name}** is part of the Atoms chat, not a component: import it from \`${exported.entry}\`.`,
+      '',
+      `The chat has its own guide. Call \`get_chat\` with \`topic: "${topic.slug}"\` (${topic.title}) for how ${exported.name} is used, or with no topic for the overview — install, the quick start and the entry points.`,
+    ].join('\n');
+  }
+  if (chat.aliases.some((alias) => compact(alias) === wanted)) {
+    return [
+      `"${name}" is the Atoms chat — \`<AgenticChat>\` from \`${chat.entries[0]}\` — rather than a component.`,
+      '',
+      'Call `get_chat` for it: with no topic for the overview, or with the topic that matches what you are building. Do not compose a chat from `Card`, `TextField` and `Typography`.',
+    ].join('\n');
+  }
+  return undefined;
+}
+
+/**
  * Registers the `get_component` tool: returns the full spec for a named
  * component.
  */
@@ -157,6 +189,10 @@ export function registerGetComponent(server: McpServer): void {
       const component = resolution.component;
 
       if (!component) {
+        const pointer = chatPointer(name, await loadChat());
+        if (pointer) {
+          return { content: [{ type: 'text', text: pointer }] };
+        }
         const available =
           manifest.components.map((c) => c.name).join(', ') ||
           'none published yet';

@@ -225,7 +225,7 @@ const DATA_RULES: readonly StructureRule[] = [
 /** Building UI from Atoms. The same in every Atoms template. */
 export const UI_RULES: readonly StructureRule[] = [
   {
-    rule: 'Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).',
+    rule: 'Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme` — and a chat from `@neofloai/atoms/chat` and its `/core`, `/charts` and `/mock` subpaths. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).',
     why: 'MUI resolves because Atoms ships it, and importing it silently bypasses the design system. A second styling system means two ways to draw every control.',
     enforcedBy: 'oxlint',
   },

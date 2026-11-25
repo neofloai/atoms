@@ -5,6 +5,7 @@
  */
 
 import type { BrandGuide } from '@/src/brand/branding';
+import type { ChatTopicMeta } from '@/src/chat/guide';
 import type { InstallationGuide } from '@/src/install';
 import type { ProjectGuide } from '@/src/project/types';
 import type { ReleaseGuide } from '@/src/release/types';
@@ -59,6 +60,28 @@ export interface PatternData {
   components: string[];
   dos: string[];
   donts: string[];
+}
+
+/** One topic of the chat guide: its metadata and its Markdown body. */
+export interface ChatTopicData extends ChatTopicMeta {
+  body: string;
+}
+
+/** A name the chat exports, and the subpath to import it from. */
+export interface ChatExport {
+  name: string;
+  entry: string;
+}
+
+export interface ChatManifest {
+  generatedAt: string;
+  /** The chat's public subpaths, `@neofloai/atoms/chat` first. */
+  entries: string[];
+  /** Words for the chat itself, which `get_component` redirects to `get_chat`. */
+  aliases: string[];
+  /** In reading order — the docs sidebar's and `get_chat`'s. */
+  topics: ChatTopicData[];
+  exports: ChatExport[];
 }
 
 export interface ComponentManifest {

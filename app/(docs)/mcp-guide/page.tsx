@@ -57,9 +57,14 @@ const tools: readonly McpTool[] = [
     purpose: 'Full page layout code for a named pattern',
   },
   {
+    name: 'get_chat',
+    purpose:
+      'The guide to the agentic chat (@neofloai/atoms/chat), one topic per call — install and quick start, configuration, blocks, custom cards, human-in-the-loop, headless, the mock backend, and the backend contract. Code is withheld until the installed version has the chat',
+  },
+  {
     name: 'search_docs',
     purpose:
-      'Search across components, patterns, tokens, brand and the changelog in the user\'s own words. Each word is matched on its own and the hits are ranked, so "navbar sidebar" finds both',
+      'Search across components, patterns, the chat guide, tokens, brand and the changelog in the user\'s own words. Each word is matched on its own and the hits are ranked, so "navbar sidebar" finds both',
   },
   {
     name: 'get_installation',

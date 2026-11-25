@@ -51,6 +51,12 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # The chat's engine — the SSE reader, the stream reducer, the runtime,
+      # persistence — is logic no docs page exercises, so it carries its own
+      # unit tests. See vitest.config.ts.
+      - name: Test
+        run: npm test
+
       # Build the consumable npm package (tsup -> dist/). This is what
       # downstream projects install straight from this repo, so a broken build
       # must fail the PR.

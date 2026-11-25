@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T14:08:57.536Z",
+  "generatedAt": "2026-11-25T16:59:41.760Z",
   "questions": [
     {
       "id": "purpose",
@@ -119,10 +119,10 @@
       "id": "prototype",
       "label": "React + Vite prototype (Atoms prototype template)",
       "chooseWhen": "it is a prototype: no server, sample data held in React state, and nothing that needs a network",
-      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.2.0 {{name}}",
+      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.3.0 {{name}}",
       "structure": {
         "templatePath": "templates/prototype",
-        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.2.0 {{name}}",
+        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/prototype#v4.3.0 {{name}}",
         "intro": "This is a Neoflo Atoms prototype: Vite, TypeScript, React Router and oxlint, with UI from `@neofloai/atoms`. It has no backend and needs no network: sample data lives in each feature's `mocks/` and is held in React state, so a change made on one screen shows on every other and a reload resets it.",
         "tree": "src/\n├── main.tsx              Mounts <App />. Nothing else goes here.\n├── app/                  Composition root: wiring, never features.\n│   ├── App.tsx\n│   ├── providers/        NeofloThemeProvider, Snackbar, each feature's state.\n│   ├── router/           Route table. Every page is lazy-loaded.\n│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows, account.\n│   └── errors/           Route error boundary.\n├── pages/                One folder per route. Thin: composes features.\n│   └── <route>/<Route>Page.tsx\n├── features/             One folder per business capability.\n│   └── <feature>/        See the slice shape below.\n└── shared/               Domain-free building blocks.\n    ├── config/           paths.ts (every route).\n    ├── lib/              Pure helpers: formatting, dates, maths.\n    ├── ui/               Compositions of Atoms used by 2+ pages.\n    └── hooks/            Domain-free hooks (useDebounce, …).",
         "featureTree": "features/<feature>/\n├── index.ts              The public API. The only file outside code imports.\n├── model/                Types and pure functions, including every change\n│                         to the data. No React.\n├── mocks/                Sample data in the real API's shape. Read only by state/.\n├── state/                <Feature>Provider.tsx (React state seeded from the\n│                         mocks), use<Feature>.ts (the hook), and the context\n│                         they share.\n└── components/           The feature's UI, built from Atoms components.",
@@ -252,7 +252,7 @@
             "title": "UI and Atoms",
             "rules": [
               {
-                "rule": "Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).",
+                "rule": "Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme` — and a chat from `@neofloai/atoms/chat` and its `/core`, `/charts` and `/mock` subpaths. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).",
                 "why": "MUI resolves because Atoms ships it, and importing it silently bypasses the design system. A second styling system means two ways to draw every control.",
                 "enforcedBy": "oxlint"
               },
@@ -413,10 +413,10 @@
       "id": "react",
       "label": "React + Vite + TypeScript (Atoms template)",
       "chooseWhen": "it is a new project whose frontend does not need a server of its own",
-      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.2.0 {{name}}",
+      "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.3.0 {{name}}",
       "structure": {
         "templatePath": "templates/react",
-        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.2.0 {{name}}",
+        "createCommand": "npx giget@3 gh:neofloai/atoms/templates/react#v4.3.0 {{name}}",
         "intro": "This is a Neoflo Atoms React app: Vite, TypeScript, React Router, TanStack Query, oxlint and oxfmt, with UI from `@neofloai/atoms`.",
         "tree": "src/\n├── main.tsx              Mounts <App />. Nothing else goes here.\n├── app/                  Composition root: wiring, never features.\n│   ├── App.tsx\n│   ├── providers/        NeofloThemeProvider, QueryClient, Snackbar.\n│   ├── router/           Route table. Every page is lazy-loaded.\n│   ├── layout/           The shell: rail, bar, <Outlet />, nav rows, account.\n│   └── errors/           Route error boundary.\n├── pages/                One folder per route. Thin: composes features.\n│   └── <route>/<Route>Page.tsx\n├── features/             One folder per business capability.\n│   └── <feature>/        See the slice shape below.\n├── shared/               Domain-free building blocks.\n│   ├── api/              httpClient, mockResponse.\n│   ├── config/           env.ts (every env var), paths.ts (every route).\n│   ├── lib/              Pure helpers: formatting, dates, maths.\n│   ├── ui/               Compositions of Atoms used by 2+ pages.\n│   └── hooks/            Domain-free hooks (useDebounce, …).\n└── test/                 Test setup and renderWithProviders.",
         "featureTree": "features/<feature>/\n├── index.ts              The public API. The only file outside code imports.\n├── model/                Types and pure functions. No React, no fetching.\n├── api/                  <feature>Api.ts (transport) and <feature>Queries.ts\n│                         (query keys + TanStack Query hooks).\n├── mocks/                Sample data in the API's exact shape. Read only by api/.\n├── components/           The feature's UI, built from Atoms components.\n└── hooks/                Feature hooks that are not queries (optional).",
@@ -551,7 +551,7 @@
             "title": "UI and Atoms",
             "rules": [
               {
-                "rule": "Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).",
+                "rule": "Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme` — and a chat from `@neofloai/atoms/chat` and its `/core`, `/charts` and `/mock` subpaths. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).",
                 "why": "MUI resolves because Atoms ships it, and importing it silently bypasses the design system. A second styling system means two ways to draw every control.",
                 "enforcedBy": "oxlint"
               },
@@ -796,7 +796,8 @@
     "Do not scaffold, install, or write a component until every required answer is in hand. Ask the questions in one pass rather than one at a time, and ask the follow-ups for anything that came back vague.",
     "Hold state in React state. Do not add `localStorage`, `sessionStorage`, cookies or a database to make something survive a reload unless the user asks for it — a prototype that remembers the last person who used it cannot be reset before the next demo.",
     "Call `get_pattern` before composing a screen, `get_component` before using a component, and `get_tokens` before writing any colour, spacing or type value. Never hardcode a hex or a pixel value that a token already carries.",
-    "Import only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Importing from `@mui/material` resolves and bypasses the design system.",
+    "Import only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme` — and, for a chat, `@neofloai/atoms/chat` and its `/core`, `/charts` and `/mock` subpaths. Importing from `@mui/material` resolves and bypasses the design system.",
+    "If the brief includes a chat, an AI assistant or a copilot, call `get_chat` and use `<AgenticChat>`. Do not compose a chat from `Card`, `TextField` and `Typography`.",
     "When it runs, say how to see it — the folder and the command for something new, the route for a screen inside an app that already runs. Then say which interactions are real and which are only drawn."
   ],
   "creationRules": [

@@ -101,7 +101,7 @@ Each layer imports only from the layers below it. oxlint fails the build on anyt
 
 ### UI and Atoms
 
-1. **Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme`. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).**
+1. **Build UI only from `@neofloai/atoms`, `@neofloai/atoms/icons`, `@neofloai/atoms/tokens` and `@neofloai/atoms/theme` — and a chat from `@neofloai/atoms/chat` and its `/core`, `/charts` and `/mock` subpaths. Never import `@mui/*`, `@emotion/*` or `@neofloai/atoms/dist/*`, and do not add another UI kit or CSS framework (Tailwind, styled-components, CSS modules for components).**
    MUI resolves because Atoms ships it, and importing it silently bypasses the design system. A second styling system means two ways to draw every control. *Checked by oxlint.*
 2. **Before composing a screen call the Atoms MCP `get_pattern`; before using a component call `get_component`; before writing any colour, spacing, radius or type value call `get_tokens`. Never hardcode a hex or pixel value a token carries.**
    A pattern carries an arrangement that has already been reviewed, and a component's Related section says when a different one is right. Hardcoded values stop following the theme, including dark mode.

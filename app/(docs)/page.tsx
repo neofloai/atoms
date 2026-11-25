@@ -38,6 +38,13 @@ const cards: readonly LandingCard[] = [
     href: '/patterns',
     status: 'ready',
   },
+  {
+    title: 'Chat',
+    description:
+      'A complete agentic chat on Atoms — streaming answers, history, approvals, tool activity, tables, charts and your own cards. Try it live.',
+    href: '/chat',
+    status: 'ready',
+  },
 ];
 
 export default function HomePage() {
@@ -91,7 +98,7 @@ export default function HomePage() {
           <Box
             sx={{
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
               gap: 3,
             }}
           >

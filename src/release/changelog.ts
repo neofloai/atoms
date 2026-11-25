@@ -19,6 +19,47 @@ import type { Release } from './types';
  */
 export const RELEASES: readonly Release[] = [
   {
+    version: '4.3.0',
+    tag: 'v4.3.0',
+    date: '2026-11-25',
+    headline:
+      'The agentic chat moves into Atoms. `<AgenticChat>` — streaming answers, history, approval cards, tool activity, tables, charts and your own cards, against any backend on the Neoflo chat standard — now installs with the design system it is built from, from `@neofloai/atoms/chat`. The docs have a Chat section and the MCP server a `get_chat` tool.',
+    summary:
+      'A minor release; nothing is removed or renamed, and an app without a chat changes in no way at all. The chat was `@neofloai/agentic-chat`, a separate package that followed every Atoms major a release behind. It now lives in `src/chat/` and ships from four subpaths: `@neofloai/atoms/chat` (the UI, the kit for custom cards, and the headless engine under them), `/chat/core` and `/chat/mock` (no React, so server code can import them) and `/chat/charts`. Its own dependencies — `react-markdown`, `remark-gfm` and `@radix-ui/react-slot`, plus `recharts` for charts — are optional peers: install them in the app that renders a chat, and an app that never imports these paths never resolves them. The root entry reaches none of them, which the build now proves. The backend conformance check stays a standalone CLI in `agentic-chat-ui`, so a backend team does not install the design system to run it.',
+    changes: [
+      {
+        kind: 'added',
+        summary:
+          '`@neofloai/atoms/chat`: `<AgenticChat>` and every part it is composed of (`ChatThread`, `ChatComposer`, `ComposerPicker`, `ChatHistory`, `ChatHeader`, `WelcomeScreen` and the rest), the built-in blocks, the kit for custom cards (`BlockShell`, `KeyValueList`, `Shimmer`, `defineBlock`), and the headless engine — `createRestAdapter`, `createChatRuntime`, `ChatProvider`, the hooks and the primitives. Needs `react-markdown`, `remark-gfm` and `@radix-ui/react-slot` in the app.',
+        scope: ['@neofloai/atoms/chat', 'AgenticChat', 'ComposerPicker', 'defineBlock', 'createRestAdapter'],
+      },
+      {
+        kind: 'added',
+        summary:
+          '`@neofloai/atoms/chat/core` (the engine and the chat standard\'s types, framework-free), `@neofloai/atoms/chat/charts` (`chartBlock` on Recharts, coloured from the Atoms ramps) and `@neofloai/atoms/chat/mock` (an in-memory backend on the standard, for building before the API exists, tests and demos).',
+        scope: ['@neofloai/atoms/chat/core', '@neofloai/atoms/chat/charts', '@neofloai/atoms/chat/mock'],
+      },
+      {
+        kind: 'changed',
+        summary:
+          'Coming from `@neofloai/agentic-chat`: replace `@neofloai/agentic-chat` and `/headless` with `@neofloai/atoms/chat`, and `/core`, `/charts` and `/mock` with `@neofloai/atoms/chat/core`, `/chat/charts` and `/chat/mock`. The API is the same. Install `react-markdown remark-gfm @radix-ui/react-slot` (and `recharts` if you use charts) and remove the old package.',
+        scope: ['@neofloai/atoms/chat'],
+      },
+      {
+        kind: 'added',
+        summary:
+          'A Chat section in the docs: the chat running live on the mock backend, every block and shell part in every state, and a page per topic — configuration, blocks, custom blocks, customizing, history and persistence, human-in-the-loop, headless, the mock backend, troubleshooting, and for backend teams the backend contract, the block contracts, the conformance check and the open points in the standard.',
+        scope: ['docs'],
+      },
+      {
+        kind: 'added',
+        summary:
+          '`get_chat` on the MCP server serves that guide one topic at a time, from the same text as the docs, and withholds its code from a project on an Atoms without the chat. `search_docs` finds chat topics by their own words, `list_components` names the chat beside the patterns, and `get_component` answers `AgenticChat`, `ComposerPicker` or "copilot" with a pointer to `get_chat` instead of "not found".',
+        scope: ['get_chat', 'search_docs', 'list_components', 'get_component'],
+      },
+    ],
+  },
+  {
     version: '4.2.0',
     tag: 'v4.2.0',
     date: '2026-11-25',

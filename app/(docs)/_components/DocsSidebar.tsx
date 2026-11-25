@@ -125,13 +125,27 @@ export function DocsSidebar({ onItemClick }: DocsSidebarProps) {
   const pathname = usePathname();
   const [activeUrl, predict] = useActiveUrl();
 
+  // One item is active, never two. An exact match wins; failing that, the
+  // item whose path is the longest prefix of the page's — so a route the
+  // sidebar does not list still lights up its parent. Without the "longest"
+  // a section index would light up beside every page under it: `/chat` is
+  // Overview, and `/chat/blocks` starts with `/chat/`.
+  const activeHref = React.useMemo(() => {
+    const items = navigation.flatMap((section) => section.items).filter((item) => !item.disabled);
+    const exact = items.find((item) => item.href === activeUrl);
+    if (exact) return exact.href;
+    // The page itself counts too, for an anchor the sidebar does not list
+    // (`/chat/hitl#…` is still Human-in-the-loop).
+    const parents = items.filter(
+      (item) =>
+        !item.href.includes('#') &&
+        (pathname === item.href || pathname.startsWith(`${item.href}/`))
+    );
+    return parents.sort((a, b) => b.href.length - a.href.length)[0]?.href;
+  }, [activeUrl, pathname]);
+
   function isActive(item: NavItem): boolean {
-    if (item.disabled) return false;
-    if (item.href === activeUrl) return true;
-    if (!item.href.includes('#') && pathname.startsWith(`${item.href}/`)) {
-      return true;
-    }
-    return false;
+    return !item.disabled && item.href === activeHref;
   }
 
   function handleNavigate(item: NavItem): void {

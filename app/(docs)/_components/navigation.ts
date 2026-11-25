@@ -10,6 +10,8 @@
  * dead links.
  */
 
+import { CHAT_TOPICS } from '@/src/chat/guide';
+
 export interface NavItem {
   readonly label: string;
   readonly href: string;
@@ -105,6 +107,16 @@ export const navigation: readonly NavSection[] = [
       { label: 'Settings', href: '/patterns/settings', disabled: true },
       { label: 'Auth', href: '/patterns/auth', disabled: true },
     ],
+  },
+  {
+    // Read off the chat guide's own topic list, so a topic added to
+    // `src/chat/guide/` gets its sidebar entry with its page. The overview
+    // is the section's index, `/chat`.
+    title: 'Chat',
+    items: CHAT_TOPICS.map((topic, index) => ({
+      label: topic.title,
+      href: index === 0 ? '/chat' : `/chat/${topic.slug}`,
+    })),
   },
 ];
 

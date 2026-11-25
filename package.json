@@ -1,6 +1,6 @@
 {
   "name": "@neofloai/atoms",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "sideEffects": [
     "**/*.css",
     "**/fonts.ts"
@@ -25,6 +25,26 @@
       "types": "./dist/theme.d.ts",
       "import": "./dist/theme.mjs",
       "require": "./dist/theme.js"
+    },
+    "./chat": {
+      "types": "./dist/chat.d.ts",
+      "import": "./dist/chat.mjs",
+      "require": "./dist/chat.js"
+    },
+    "./chat/core": {
+      "types": "./dist/chat/core.d.ts",
+      "import": "./dist/chat/core.mjs",
+      "require": "./dist/chat/core.js"
+    },
+    "./chat/charts": {
+      "types": "./dist/chat/charts.d.ts",
+      "import": "./dist/chat/charts.mjs",
+      "require": "./dist/chat/charts.js"
+    },
+    "./chat/mock": {
+      "types": "./dist/chat/mock.d.ts",
+      "import": "./dist/chat/mock.mjs",
+      "require": "./dist/chat/mock.js"
     }
   },
   "main": "./dist/index.js",
@@ -49,6 +69,7 @@
     "check:imports": "node scripts/check-docs-imports.mjs",
     "generate": "tsx scripts/generate.ts",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "build:extension": "node extension/build.mjs",
     "dev:extension": "node extension/build.mjs --watch",
     "pack:extension": "node extension/build.mjs --pack",
@@ -71,13 +92,34 @@
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "@radix-ui/react-slot": "^1.2.3",
+    "react-markdown": "^10.1.0",
+    "recharts": "^2.12.0 || ^3.0.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "peerDependenciesMeta": {
+    "@radix-ui/react-slot": {
+      "optional": true
+    },
+    "react-markdown": {
+      "optional": true
+    },
+    "recharts": {
+      "optional": true
+    },
+    "remark-gfm": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@emotion/cache": "^11.14.0",
     "@modelcontextprotocol/sdk": "^1.0.4",
     "@mui/icons-material": "^9.2.0",
     "@mui/material-nextjs": "^9.1.1",
+    "@radix-ui/react-slot": "^1.5.0",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
     "@types/chrome": "^0.3.0",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -85,12 +127,17 @@
     "esbuild": "^0.28.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "jsdom": "^27.4.0",
     "next": "16.2.6",
     "pagefind": "^1.5.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
+    "recharts": "^3.11.1",
+    "remark-gfm": "^4.0.1",
     "tsup": "^8.5.1",
     "tsx": "^4.19.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.12"
   }
 }

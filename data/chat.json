@@ -1,0 +1,1744 @@
+{
+  "generatedAt": "2026-11-25T17:05:37.261Z",
+  "entries": [
+    "@neofloai/atoms/chat",
+    "@neofloai/atoms/chat/core",
+    "@neofloai/atoms/chat/charts",
+    "@neofloai/atoms/chat/mock"
+  ],
+  "aliases": [
+    "chat",
+    "agentic chat",
+    "chat ui",
+    "chat panel",
+    "chat window",
+    "chatbot",
+    "assistant",
+    "ai assistant",
+    "copilot",
+    "ask neo"
+  ],
+  "topics": [
+    {
+      "slug": "overview",
+      "title": "Overview",
+      "summary": "A complete agentic chat on Atoms: streaming answers, history, human-in-the-loop decisions, tool activity, tables, charts and your own cards, against any backend on the Neoflo chat standard.",
+      "keywords": [
+        "chat",
+        "agentic chat",
+        "assistant",
+        "ai assistant",
+        "copilot",
+        "chatbot",
+        "ask neo",
+        "conversation",
+        "AgenticChat",
+        "install",
+        "quick start",
+        "server rendering",
+        "use client"
+      ],
+      "audience": "app",
+      "body": "`@neofloai/atoms/chat` is a React chat UI for agentic assistants. Point it at any backend that implements the **Neoflo chat standard** (schema v1, revision 1.2). You get streaming answers, chat history, human-in-the-loop decisions, tool activity, tables, charts and custom cards without building any of it yourself.\n\nIt's part of Atoms and built from Atoms components and tokens, so it looks like the rest of your Neoflo product in light and dark.\n\n## What you get\n\n- **A complete chat in one component.** `<AgenticChat>` renders the history panel, the thread and the composer.\n- **Streaming that holds up in production.** It handles SSE over `fetch`, snapshot-based deltas, cancel, retry, idle timeouts and dropped connections.\n- **Human-in-the-loop.** Approval and choice cards pause the turn, lock the composer, and resume with your decision.\n- **12 built-in blocks.** Text, thinking, tool call, table, sources, approval, choice, error, artifact, image, plan and charts.\n- **Your own cards.** `defineBlock` registers a card, and `actions.emit` routes clicks into your app.\n- **Chat history.** Search, date groups, rename, archive and delete, all with optimistic updates.\n- **Configurable local persistence.** Choose session, local, memory, off, or your own storage, partitioned per user.\n- **Three levels of control.** Use the styled UI, swap parts through slots, or go fully headless with hooks and primitives.\n- **One standard for every product.** Each backend describes itself through `GET /v1/chat/config`, so the same UI hides what a product doesn't support. A [conformance check](/chat/conformance) tells a backend team what's left to fix.\n\n## Install\n\nThe chat ships inside Atoms, which installs straight from GitHub. It has no registry, needs no token, and follows semver through release tags:\n\n```bash\nnpm install github:neofloai/atoms#semver:^4.3.0\n\n# The chat's own dependencies — install them in the app that renders a chat\nnpm install react-markdown remark-gfm @radix-ui/react-slot\n\n# Only if you use the chart blocks\nnpm install recharts\n```\n\nThese are optional peer dependencies of Atoms, so an app without a chat never installs them, and an app without charts never installs Recharts.\n\nRequirements:\n\n- React 18.2 or 19.\n- A `git` binary on machines that install it. `node:*-alpine` and `-slim` images don't ship one (`apk add --no-cache git`).\n- Atoms builds itself on install, so don't run `npm ci --ignore-scripts`.\n\n## Entry points\n\n| Import | What it contains | Needs |\n| --- | --- | --- |\n| `@neofloai/atoms/chat` | `<AgenticChat>`, every UI part and block, the kit, and the headless engine: runtime, adapters, hooks, primitives, block registry and parsers | `react-markdown`, `remark-gfm`, `@radix-ui/react-slot` |\n| `@neofloai/atoms/chat/core` | The framework-free engine and the standard's types — no React, so server code can import it | nothing |\n| `@neofloai/atoms/chat/charts` | `chartBlock` (bar, line, area, donut) and the chart kit | `recharts` |\n| `@neofloai/atoms/chat/mock` | An in-memory backend on the standard, with demo scenarios — no React | nothing |\n\n## Quick start\n\nMount `NeofloThemeProvider` once, give the chat a sized container, and hand it an adapter:\n\n```tsx\nimport { NeofloThemeProvider } from '@neofloai/atoms';\nimport { AgenticChat, createRestAdapter } from '@neofloai/atoms/chat';\nimport { chartBlock } from '@neofloai/atoms/chat/charts';\n\n// getAccessToken stands for your app's own token getter.\nconst adapter = createRestAdapter({\n  baseUrl: 'https://api.example.com',\n  headers: async () => ({ Authorization: `Bearer ${await getAccessToken()}` }),\n});\n\nexport function App() {\n  return (\n    <NeofloThemeProvider>\n      <div style={{ height: '100vh' }}>\n        <AgenticChat adapter={adapter} blocks={[chartBlock]} />\n      </div>\n    </NeofloThemeProvider>\n  );\n}\n```\n\nThat's the whole integration. The chat creates a conversation, shows the server's greeting and suggested prompts, streams answers, and keeps history.\n\n## How it talks to your backend\n\n`createRestAdapter` implements the endpoints of the chat standard:\n\n| # | Call | Used for |\n| --- | --- | --- |\n| 0 | `GET /v1/chat/config` | What the backend supports: features, models, sources, limits. |\n| 1 | `POST /v1/conversation` | New chat. The response supplies the greeting and suggested prompts. |\n| 2 | `GET /v1/conversations` | The history panel |\n| 3 | `GET /v1/conversations/{id}` | Opening a chat and its messages |\n| 4 | `PATCH /v1/conversations/{id}` | Rename, archive, model, default sources |\n| 5 | `DELETE /v1/conversations/{id}` | Delete |\n| 6 | `POST /v1/conversations/{id}/messages` | Sending a turn, or resuming a HITL checkpoint. Streamed as SSE. |\n| 7 | `POST /v1/conversations/{id}/messages/cancel` | The Stop button |\n\nIt reads all nine stream events (`message_start` through `error`), treats `snapshot` as a full overwrite, and ignores event types it doesn't know. A newer backend therefore never breaks an older UI. Identity comes only from your `headers` or the session cookie. The chat never puts user or tenant data in a payload, and never keeps a credential it was handed.\n\n- **The config decides what shows.** The attach button, the scope picker, Archive and approval cards appear only when the backend's `capabilities` allow them. Model and source labels, the workflow catalog and the message length limit come from the config too. A backend without the endpoint (404) gets the defaults, or whatever you pass as `capabilities`.\n- **Every message has a `client_message_id`.** A retry of a message the server never confirmed reuses it, so a flaky network or a double click never starts two replies. If the server already has it (409 `duplicate_message`), the chat reloads the conversation instead of showing an error.\n- **Errors are read by code first.** `session_busy`, `rate_limited` (with a countdown), `connection_expired` (with Reconnect) and the rest each get the right action; a code the chat doesn't know falls back to its HTTP status. Each error keeps the server's `request_id` for bug reports.\n- **Stop matches the backend.** With `cancel: \"disconnect\"` it closes the stream at once; with `\"server\"` it calls endpoint 7 first.\n\n## Server rendering\n\nThe chat is plain React and works in any React app. If yours renders on the server:\n\n- Nothing touches `window` or storage at import time or during server render. Persistence hydrates on the client.\n- `@neofloai/atoms/chat/core` and `@neofloai/atoms/chat/mock` contain no React, so server code (a route handler, a server action) can import them.\n- Create the adapter and render `<AgenticChat>` from a client component — in the Next.js App Router, a file that starts with `'use client'`. An adapter holds functions, and functions can't be passed as props from a server component.\n\n## Where to go next\n\n- [Configuration](/chat/configuration): every option of `<AgenticChat>` and the REST adapter, driving the chat from your app, and adapting a backend that doesn't follow the standard.\n- [Blocks](/chat/blocks): the built-in blocks an answer is made of.\n- [Custom blocks](/chat/custom-blocks): your own cards with `defineBlock`.\n- [Customizing the UI](/chat/customizing): slots, your own layout, composer controls and copy.\n- [History and persistence](/chat/persistence): the history panel and what the chat remembers on the device.\n- [Human-in-the-loop](/chat/hitl): approval and choice cards, and decision cards of your own.\n- [Headless](/chat/headless): the provider, primitives, hooks and parsers with no styling.\n- [Mock backend](/chat/mock): an in-memory backend for building UI, tests and demos.\n- [Troubleshooting](/chat/troubleshooting): symptoms and their fixes.\n- [Backend contract](/chat/backend-contract): the reference for backend teams — auth and credentials, the config, error codes, ordering rules and retries.\n- [Block contracts](/chat/block-contracts): the payload of every block type.\n- [Checking a backend](/chat/conformance): the conformance check, for CI.\n- [Schema gaps](/chat/schema-gaps): what the standard still leaves open."
+    },
+    {
+      "slug": "configuration",
+      "title": "Configuration",
+      "summary": "Every option of `<AgenticChat>` and the REST adapter, driving the chat from anywhere in your app, and adapting a backend that does not follow the standard.",
+      "keywords": [
+        "options",
+        "props",
+        "adapter",
+        "createRestAdapter",
+        "auth",
+        "headers",
+        "token",
+        "runtime",
+        "createChatRuntime",
+        "ChatAdapter",
+        "legacy backend",
+        "workflow context",
+        "attachments",
+        "upload"
+      ],
+      "audience": "app",
+      "body": "Every option works the same on `<AgenticChat>`, `<ChatProvider>` and `createChatRuntime`. A chat with most of them set:\n\n```tsx\nimport { AgenticChat, createRestAdapter, type Attachment } from '@neofloai/atoms/chat';\n\n// getAccessToken, refreshSession, openWorkspacePicker, connectSource and uploadToStorage stand\n// for your app's own functions; currentUser, invoiceOnScreen and router for its own state.\n\nconst adapter = createRestAdapter({\n  baseUrl: 'https://api.example.com',\n  headers: async () => ({ Authorization: `Bearer ${await getAccessToken()}` }),\n  // A 401 calls this once with its error code; return true once the user can continue, to\n  // retry the request. `unauthenticated` means sign in again; a product code can mean more.\n  onUnauthorized: ({ code }) => (code === 'askneo.workspace_required' ? openWorkspacePicker() : refreshSession()),\n});\n\nexport function Chat({ conversationId }: { conversationId?: string }) {\n  return (\n    <AgenticChat\n      adapter={adapter}\n      // The composer's \"All workflows\" picker. Groups are workspaces, items are workflows.\n      scope={{\n        groups: [\n          {\n            id: 'ws_finance',\n            label: 'Finance',\n            items: [\n              { id: 'ip', label: 'Invoice Processing' },\n              { id: 'col', label: 'Collections' },\n            ],\n          },\n        ],\n      }}\n      // Context from the page the chat is embedded in, merged into every turn.\n      workflowContext={() =>\n        invoiceOnScreen\n          ? [{ workflow_name: 'ip', workspace_id: ['ws_finance'], context: { invoice_id: invoiceOnScreen.id } }]\n          : undefined\n      }\n      // The standard has no upload endpoint, so your app uploads and returns the Attachment.\n      attachments={{\n        accept: '.pdf,.xlsx,.csv,image/*',\n        maxSize: 20 * 1024 * 1024,\n        upload: async (file, { signal, onProgress }): Promise<Attachment> => ({\n          url: await uploadToStorage(file, onProgress, signal),\n          filename: file.name,\n          content_type: file.type,\n          size: file.size,\n          meta: {},\n        }),\n      }}\n      persistence={{ storage: 'local', scope: currentUser.idHash, persist: { history: true } }}\n      // Keep the open chat in the URL.\n      conversationId={conversationId}\n      onConversationChange={(id) => router.push(id ? `/chat/${id}` : '/chat')}\n      // Cards call actions.emit(...); route those into your app.\n      onAction={(action) => {\n        if (action.name === 'open_invoice') router.push(`/invoices/${(action.payload as { id: string }).id}`);\n      }}\n      // A connected system (an ERP, invoice processing…) needs reconnecting: hand your backend\n      // the credential, return true, and the chat retries the message once.\n      onConnectionRequired={({ sourceId }) => (sourceId ? connectSource(sourceId) : false)}\n      onError={(error) => console.warn(error.type, error.message, error.requestId)}\n      labels={{ composerPlaceholder: 'Ask Neo anything' }}\n    />\n  );\n}\n```\n\n## Options\n\n| Option | Default | What it does |\n| --- | --- | --- |\n| `adapter` | required | The backend connection. Use `createRestAdapter` or your own. |\n| `runtime` | | Pass a runtime you created yourself instead of `adapter`. See [Driving the chat from your app](/chat/configuration#driving-the-chat-from-your-app). |\n| `blocks` | built-ins | Extra or replacement block definitions. Later entries win. |\n| `scope` | none | Groups and items for the workflow picker. By default the selection becomes `workflow_context`. Change that with `scope.toRequest`. |\n| `workflowContext` | none | Page context added to every turn. It merges with the scope by `workflow_name`. |\n| `attachments` | off | `{ upload, accept, maxSize, maxFiles }`. This turns on the paperclip button, drag-and-drop and paste. |\n| `persistence` | session storage | See [local persistence](/chat/persistence#local-persistence). |\n| `conversationCreation` | `'eager'` | `'eager'` creates the chat when it opens, which is what fetches the greeting. `'lazy'` waits for the first message. |\n| `hitl.composerWhilePaused` | `'disabled'` | Whether people can type while a card waits for a decision. |\n| `conversationId` / `onConversationChange` | | A controlled active chat, for deep links. `null` means a new chat. |\n| `onAction` | | Receives `actions.emit(name, payload)` from cards. |\n| `capabilities` | from the config | Feature switches (`hitl`, `attachments`, `workflowContext`, `archive`, `cancel`, `perTurnModel`, `perTurnSources`). They decide what shows until the backend serves its config, then can only turn more off. |\n| `onConnectionRequired` | | Called with `{ sourceId, code }` when a send fails with `connection_required` or `connection_expired`. Reconnect (for example `PUT /v1/connections/{sourceId}`), return `true`, and the message is retried once. |\n| `onEvent` / `onError` / `onWarning` | | Telemetry hooks for every stream event, error and recoverable warning. |\n| `labels` | English | Override any UI string, for copy changes or translation. |\n| `streamIdleTimeoutMs` | `60000` | How long a silent stream waits before it counts as dropped and becomes retryable. |\n| `refreshOnFocus` | `true` | Refresh history when the window regains focus. |\n\n## REST adapter options\n\n`createRestAdapter` takes these options:\n\n| Option | What it does |\n| --- | --- |\n| `baseUrl` | The API origin. The `/v1/...` paths are appended to it. |\n| `headers` | An object or an (async) function, called on every request so tokens stay fresh. |\n| `onUnauthorized` | Called once on a 401 with `{ code, message, requestId }`. `unauthenticated` means sign in again; a product code (`askneo.gate_required`, `askneo.workspace_required`) says where else to send the user. Return `true` to retry that request. |\n| `retry` | `{ retries, baseDelayMs, maxDelayMs }` for idempotent calls on 5xx, 429 and network errors. Message POSTs are never retried automatically. |\n| `paths` | Override individual endpoint paths. |\n| `credentials` | `'include'` sends the session cookie when the API is on another origin. |\n| `fetch`, `timeoutMs` | Transport details. |\n\n## Driving the chat from your app\n\nCreate the runtime outside React to reach it from anywhere:\n\n```tsx\nimport { Button } from '@neofloai/atoms';\nimport { AgenticChat, createChatRuntime, createRestAdapter } from '@neofloai/atoms/chat';\n\n// Create the runtime outside React to reach it from anywhere in the app.\nexport const chat = createChatRuntime({\n  adapter: createRestAdapter({ baseUrl: 'https://api.example.com' }),\n  persistence: { storage: 'session' },\n});\n\nexport function AskAboutInvoice({ invoiceId }: { invoiceId: string }) {\n  return (\n    <Button\n      onClick={async () => {\n        await chat.newConversation();\n        await chat.send(`Why is invoice ${invoiceId} on hold?`, {\n          workflowContext: [{ workflow_name: 'ip', workspace_id: [], context: { invoice_id: invoiceId } }],\n        });\n      }}\n    >\n      Ask Neo about this invoice\n    </Button>\n  );\n}\n\nexport function ChatPanel() {\n  return <AgenticChat runtime={chat} />;\n}\n\n// On logout: stop streams and wipe everything the chat stored on this device.\nexport async function onLogout() {\n  await chat.persistence.clear();\n  chat.dispose();\n}\n```\n\nThe runtime also exposes `cancel`, `retry`, `reconnect`, `resume`, `selectConversation`, `renameConversation`, `deleteConversation`, `setModel`, `setDefaultSources`, `loadConfig`, the `chatConfig` store and `on('event' | 'error' | 'warning' | 'activeChange', listener)`. Several runtimes can share a page.\n\n## A backend that doesn't follow the schema\n\n`ChatAdapter` is the only seam. Keep the REST calls that match and translate the ones that don't:\n\n```ts\nimport { createRestAdapter, type ChatAdapter, type StreamEvent } from '@neofloai/atoms/chat/core';\n\n// legacyAsk(conversationId, question, signal) stands for your call to the old API.\n// It resolves to { id, answer }.\n\nconst base = createRestAdapter({ baseUrl: 'https://legacy.example.com' });\n\n// Keep the standard's calls that work and translate the ones that don't. The UI only ever sees\n// the standard's events, so every block and hook keeps working.\nexport const legacyAdapter: ChatAdapter = {\n  ...base,\n  async *sendMessage(conversationId, body, { signal }): AsyncGenerator<StreamEvent> {\n    if (body.message.type !== 'default') throw new Error('This backend has no HITL support.');\n    const reply = await legacyAsk(conversationId, body.message.content.default, signal);\n    yield { type: 'message_start', message_id: reply.id, conversation_id: conversationId, run_id: reply.id };\n    const block = { id: `${reply.id}:0`, type: 'text', category: 'content', text: reply.answer };\n    yield { type: 'content_block_start', index: 0, block };\n    yield { type: 'content_block_stop', index: 0, block };\n    yield { type: 'message_stop', message_id: reply.id, stop_reason: 'end_turn' };\n  },\n};\n```"
+    },
+    {
+      "slug": "blocks",
+      "title": "Blocks",
+      "summary": "The built-in blocks an answer is made of — text, thinking, tool calls, tables, sources, approvals, choices, errors, files, images, plans and charts — and how a block finds its renderer.",
+      "keywords": [
+        "block",
+        "text",
+        "markdown",
+        "thinking",
+        "reasoning",
+        "tool call",
+        "table",
+        "sources",
+        "citations",
+        "approval",
+        "choice",
+        "artifact",
+        "image",
+        "plan",
+        "chart",
+        "charts",
+        "recharts"
+      ],
+      "audience": "app",
+      "body": "A block is one piece of an answer. The renderer is picked by the block's `type`, falling back to its `category`. A product's own `<product>.<name>` type never falls back by category: without a registered renderer it shows its `fallback_text`.\n\n## Built-in blocks\n\n| `type` (aliases) | Renders | Payload |\n| --- | --- | --- |\n| `text` (`markdown`) | Markdown on the Atoms type scale. Raw HTML is never rendered. | [text](/chat/block-contracts#text) |\n| `thinking` (`reasoning`) | \"Thought for N seconds\". Open while streaming, folds when done. | [thinking](/chat/block-contracts#thinking) |\n| `tool_use` + `tool_result` | One card per tool call: name and duration, folded; open it for inputs and results. \"Interrupted\" when the result never came. | [tool_use](/chat/block-contracts#tool-use-and-tool-result) |\n| `tool_call` (`tool`) | The older single-block form of the same card | [tool_call](/chat/block-contracts#tool-call) |\n| `table` | A titled, sortable result set with a row count | [table](/chat/block-contracts#table) |\n| `sources` (`citations`) | What the answer read. Items can link out or be selectable. | [sources](/chat/block-contracts#sources) |\n| `approval` | Approve or reject a proposed action (HITL) | [approval](/chat/block-contracts#approval) |\n| `choice` | Single or multi-select question (HITL) | [choice](/chat/block-contracts#choice) |\n| `error` | Failure with a Try again button that respects `retry_after` | [error](/chat/block-contracts#error) |\n| `artifact` (`document`) | A generated file with a preview, full view and download | [artifact](/chat/block-contracts#artifact) |\n| `image` | An image with a caption that opens larger | [image](/chat/block-contracts#image) |\n| `plan` (`steps`) | The agent's steps as a live stepper | [plan](/chat/block-contracts#plan) |\n| `chart` | Bar, line, area and donut in Atoms colors (`@neofloai/atoms/chat/charts`) | [chart](/chat/block-contracts#chart) |\n\nCharts need `recharts` installed and come from `@neofloai/atoms/chat/charts`: pass its `chartBlock` in `blocks`, as the [quick start](/chat/overview#quick-start) does.\n\nTo render a block type of your own, or to replace one of these, see [custom blocks](/chat/custom-blocks)."
+    },
+    {
+      "slug": "custom-blocks",
+      "title": "Custom blocks",
+      "summary": "Register your own card with `defineBlock`, build it from the kit so it looks native, stream into it, and route its clicks into your app.",
+      "keywords": [
+        "defineBlock",
+        "custom card",
+        "card",
+        "BlockShell",
+        "KeyValueList",
+        "kit",
+        "onAction",
+        "actions.emit",
+        "applyDelta"
+      ],
+      "audience": "app",
+      "body": "A block definition tells the chat how to render one kind of content block. Built-in blocks use the same API, so anything they do, yours can do.\n\n## Example\n\n```tsx\nimport { Button } from '@neofloai/atoms';\nimport { ReceiptIcon } from '@neofloai/atoms/icons';\nimport { AgenticChat, BlockShell, KeyValueList, defineBlock, type ChatAdapter } from '@neofloai/atoms/chat';\n\ninterface InvoiceCardData {\n  id: string;\n  vendor: string;\n  total: string;\n  status: string;\n}\n\n// Matches blocks whose `type` is \"invoice_card\". `parse` validates the payload; if it throws,\n// the block falls back to the unknown-block renderer instead of crashing the thread.\nexport const invoiceCard = defineBlock<InvoiceCardData>({\n  type: 'invoice_card',\n  parse: (block) => ({\n    id: String(block.invoice_id),\n    vendor: String(block.vendor),\n    total: String(block.total),\n    status: String(block.status ?? 'open'),\n  }),\n  render: ({ data, actions }) => (\n    <BlockShell\n      icon={<ReceiptIcon />}\n      title={`Invoice ${data.id}`}\n      meta={data.status}\n      footer={\n        <Button size=\"sm\" onClick={() => actions.emit('open_invoice', { id: data.id })}>\n          Open invoice\n        </Button>\n      }\n    >\n      <KeyValueList\n        items={[\n          { key: 'vendor', value: data.vendor },\n          { key: 'total', value: data.total },\n        ]}\n      />\n    </BlockShell>\n  ),\n  toText: (data) => `Invoice ${data.id}: ${data.vendor}, ${data.total}`,\n});\n\nexport function Chat({ adapter, openInvoice }: { adapter: ChatAdapter; openInvoice: (id: string) => void }) {\n  // Define blocks at module scope, not inside render.\n  return (\n    <AgenticChat\n      adapter={adapter}\n      blocks={[invoiceCard]}\n      onAction={(action) => {\n        if (action.name === 'open_invoice') openInvoice((action.payload as { id: string }).id);\n      }}\n    />\n  );\n}\n```\n\n- **Matching.** Use `type` (one or several), `category`, or `match(block)` for anything else. Later registrations override built-ins, so `{ ...approvalBlock, type: 'approval_card' }` maps a backend's own name onto a built-in card.\n- **Safety.** If `parse` throws, the block falls back to the unknown-block renderer. A renderer that throws is caught by its own error boundary, so the rest of the answer still shows.\n- **Streaming.** `applyDelta(block, delta, snapshot)` takes over how deltas apply to your block type.\n- **`actions`.** `send(text)` starts a follow-up turn, `resume(decision)` answers a checkpoint, `emit(name, payload)` reaches your `onAction`, and `retry()` retries the last failed turn.\n- **The kit.** `BlockShell`, `KeyValueList`, `Shimmer`, `ChartCard` and `useChartPalette` are the same pieces the built-in blocks use, so custom cards look native. The last two come from `@neofloai/atoms/chat/charts`.\n\n## Anatomy\n\n```ts\ndefineBlock<TData>({\n  type: 'invoice_card', // string or string[]; matched against block.type\n  category: 'ui', // fallback when no definition claims the type\n  match: (block) => boolean, // full control; checked before type and category\n  parse: (block, chatBlock) => TData, // validate and normalize; throw to fall back\n  applyDelta: (block, delta, snapshot) => block | undefined, // custom streaming\n  render: Component, // receives BlockRenderProps<TData>\n  toText: (data, chatBlock) => string, // used by Copy\n  group: 'activity', // render consecutive blocks of this group together\n});\n```\n\n`render` receives:\n\n| Prop | What it is |\n| --- | --- |\n| `data` | The output of `parse`, or the raw block without a parser |\n| `block` | The runtime block: `id`, `type`, `status` (`streaming`, `complete`, `interrupted`), `checkpoint`, timings |\n| `message` | The message it belongs to |\n| `status`, `checkpoint` | Shortcuts for `block.status` and `block.checkpoint` |\n| `isLast` | It's the last block of a message that's still streaming |\n| `actions` | `send(text)`, `resume(decision)`, `emit(name, payload)`, `retry()` |\n\n## Resolution\n\n1. `match()` functions, newest registration first\n2. An exact `type`\n3. A `category`\n4. The fallback (`unknownBlock`: JSON in development, nothing in production)\n\nBecause later registrations win, you can replace a built-in:\n\n```tsx\nimport { AgenticChat, defineBlock, tableBlock } from '@neofloai/atoms/chat';\n\nconst myTable = defineBlock({ ...tableBlock, render: MyTable });\n<AgenticChat adapter={adapter} blocks={[myTable]} />;\n```\n\nOr map a backend's own type name onto a built-in:\n\n```ts\nimport { approvalBlock } from '@neofloai/atoms/chat';\n\nconst approvals = { ...approvalBlock, type: ['approval', 'approval_card'] };\n```\n\n## Looking native\n\nBuild cards from the kit so they match the built-in blocks:\n\n- `BlockShell`: the card itself. It takes `icon`, `title`, `meta`, `actions`, `footer`, `collapsible` (with `defaultOpen={false}` to start folded, as the tool card does, or `open` and `onOpenChange` to control it), `tone` (`primary`, `warning`, `danger` for attention), and `flushBody` for edge-to-edge content.\n- `KeyValueList`: muted keys against values.\n- `Shimmer`: text still arriving.\n- `ChartCard`, `ChartLegend`, `useChartPalette` from `@neofloai/atoms/chat/charts`.\n- `Markdown`, `DataTable`, `ErrorNotice`.\n\nUse Atoms components and tokens for everything else. `mode(theme, { color: text.default.b2 })` resolves an Atoms `{ light, dark }` token inside `sx`; `mode` comes from `@neofloai/atoms/chat` and `text` from `@neofloai/atoms/tokens`.\n\n## Talking to the host app\n\n`actions.emit(name, payload)` calls the `onAction` prop with `{ name, payload, block, message, conversationId }`. Use it for navigation, opening records, downloads, analytics: anything the card shouldn't own.\n\n## Streaming your block\n\nBy default, a `snapshot` string replaces the block's `text`, a `snapshot` object is merged into the block, and `delta.text` is appended. Provide `applyDelta` when your block streams differently, for example a plan whose snapshot is a step array:\n\n```ts\napplyDelta: (block, _delta, snapshot) => (Array.isArray(snapshot) ? { ...block, steps: snapshot } : undefined),\n```\n\nReturn `undefined` to fall back to the default.\n\n## HITL cards\n\nInside `render`, `useHitl()` returns `canSubmit`, `isPending`, `isSubmitting`, `isResolved`, `decision`, `error`, `requires` and `submit(decision)`. `canSubmit` is true only when the card is the thread's live question and nothing is streaming. It also guards double submits. [Human-in-the-loop](/chat/hitl) has a full example.\n\nTo test a card against the mock backend, see [mock backend tests](/chat/mock#tests)."
+    },
+    {
+      "slug": "customizing",
+      "title": "Customizing the UI",
+      "summary": "Replace parts of `<AgenticChat>` through slots, lay it out yourself, add controls to the composer with `ComposerPicker`, and change any string.",
+      "keywords": [
+        "slots",
+        "components",
+        "Welcome",
+        "welcome screen",
+        "composer",
+        "ComposerPicker",
+        "model picker",
+        "tools picker",
+        "labels",
+        "copy",
+        "translation",
+        "layout",
+        "theming"
+      ],
+      "audience": "app",
+      "body": "**Slots** replace any part of `<AgenticChat>`: `Welcome`, `UserTurn`, `AssistantTurn`, `Header`, `History` and `Composer`.\n\n```tsx\nimport { Button, Stack, Typography } from '@neofloai/atoms';\nimport { AgenticChat, useChatActions, useThreadMeta, type ChatAdapter } from '@neofloai/atoms/chat';\n\nfunction Welcome() {\n  const meta = useThreadMeta();\n  const { send } = useChatActions();\n  return (\n    <Stack spacing={2} sx={{ alignItems: 'center', py: 8 }}>\n      <Typography variant=\"h4\" component=\"h2\">\n        {meta.greeting ?? 'Good morning'}\n      </Typography>\n      <Stack direction=\"row\" spacing={1}>\n        {meta.suggestedPrompts.map((p) => (\n          <Button key={p.label} size=\"sm\" variant=\"secondary\" appearance=\"outline\" onClick={() => void send(p.prompt)}>\n            {p.label}\n          </Button>\n        ))}\n        <Button size=\"sm\" onClick={() => void send('What changed since yesterday?')}>\n          Daily digest\n        </Button>\n      </Stack>\n    </Stack>\n  );\n}\n\nexport function Chat({ adapter }: { adapter: ChatAdapter }) {\n  return <AgenticChat adapter={adapter} components={{ Welcome }} history={false} />;\n}\n```\n\n- **Layout props.** `history`, `header`, `title`, `headerActions`, `maxWidth`, `composerProps` and `compactBelow`. Below 720px of container width, history becomes an overlay.\n- **Compose it yourself.** `ChatThread`, `ChatComposer`, `ChatHistory`, `ChatHeader`, `WelcomeScreen`, `ChatSuggestions` and `RunStatus` all work inside a `ChatProvider`, in any layout you like.\n\n## Composer controls\n\nThe composer's bottom row has two optional slots, plus the place of the built-in workflow picker. Pass them to `ChatComposer`, or through `composerProps` on `<AgenticChat>`:\n\n| Prop | Where it goes | Use it for |\n| --- | --- | --- |\n| `leadingActions` | Left, after the attach button and the workflow picker | A tools or data-source picker, a mode switch |\n| `extraActions` | Right, before Send | A model picker, a mic |\n| `scopePicker` | Left, after the attach button | Omit it for the built-in workflow picker (it hides itself when there's no workflow catalog), pass your own node to replace it, or `false` to hide it |\n\n`ComposerPicker` is the pill-and-menu control the workflow picker is built from. It's controlled and knows nothing about what its items mean, so it works for tools, models, data sources or anything else:\n\n```tsx\nimport { MenuItem } from '@neofloai/atoms';\nimport { AgenticChat, ComposerPicker, type ChatAdapter } from '@neofloai/atoms/chat';\nimport { useState } from 'react';\n\nexport function Chat({ adapter, openToolSettings }: { adapter: ChatAdapter; openToolSettings: () => void }) {\n  const [tools, setTools] = useState(['web', 'docs']);\n  const [model, setModel] = useState(['balanced']);\n  return (\n    <AgenticChat\n      adapter={adapter}\n      composerProps={{\n        leadingActions: (\n          <ComposerPicker\n            name=\"Tools\"\n            groups={[\n              {\n                id: 'tools',\n                label: 'Tools',\n                selectAll: true, // the heading selects or clears the group (\"Select all\" / \"Deselect all\")\n                items: [\n                  { id: 'web', label: 'Web search' },\n                  { id: 'docs', label: 'Documents', description: 'Files uploaded to this workspace' },\n                ],\n              },\n            ]}\n            value={tools}\n            onChange={setTools}\n            footer={(close) => (\n              <MenuItem\n                onClick={() => {\n                  close();\n                  openToolSettings();\n                }}\n              >\n                Tool settings…\n              </MenuItem>\n            )}\n          />\n        ),\n        extraActions: (\n          <ComposerPicker\n            name=\"Model\"\n            multiple={false}\n            items={[\n              { id: 'fast', label: 'Fast' },\n              { id: 'balanced', label: 'Balanced' },\n            ]}\n            value={model}\n            onChange={setModel}\n          />\n        ),\n      }}\n    />\n  );\n}\n```\n\n| `ComposerPicker` prop | What it does |\n| --- | --- |\n| `name` | What is picked (\"Tools\"). Labels the trigger and sets the default summary: \"All tools\", \"Tools (2)\", \"No tools\". |\n| `groups` / `items` | The choices, in groups with an optional `label` heading, or one plain list. Item ids must be unique across the picker. |\n| `value` / `onChange` | The selected item ids. |\n| `multiple` | `true` (default): checkboxes, and the menu stays open. `false`: one choice, which closes the menu and shows on the trigger. |\n| `group.selectAll` | The group's heading also selects or clears its items, and says which on its right. |\n| `item.description`, `icon`, `disabled` | A second line, a 16px glyph, or an item that can't be changed (select-all leaves it as it is). |\n| `triggerLabel` | Your own trigger text instead of the summary. |\n| `footer` | Under a rule at the bottom of the menu, for example a `MenuItem` that opens your own dialog. A function receives `close`. |\n| `disabled`, `loading`, `menuMinWidth` | Self-explanatory. `loading` disables the trigger. |\n\nThe picker only holds the selection; deciding what it changes is up to you. To make it drive the chat, call the chat's actions in `onChange`, for example `setModel(id)` or `setDefaultSources(...)` from `useChatActions()` with the backend's `config.models` and `config.sources` from `useChatConfig()`. The summary strings come from `labels.pickerSummary`, `labels.pickerSelectAll` and `labels.pickerDeselectAll`. The picker also works outside a `ChatProvider`, with the default strings.\n\n## Theming and copy\n\n- **Theming.** Everything reads Atoms tokens, so it follows `NeofloThemeProvider`, including light and dark. Don't restyle the internals with CSS overrides. If Atoms lacks something, request it in Atoms.\n- **Copy.** `labels` overrides any string. See `defaultLabels` for the full list."
+    },
+    {
+      "slug": "persistence",
+      "title": "History and persistence",
+      "summary": "The history panel, and what the chat remembers on the device: where it is stored, what is kept, and clearing it on logout.",
+      "keywords": [
+        "history",
+        "conversations",
+        "chat history",
+        "useConversations",
+        "persistence",
+        "localStorage",
+        "sessionStorage",
+        "StorageAdapter",
+        "logout",
+        "drafts"
+      ],
+      "audience": "app",
+      "body": "The history panel lists the conversations the server keeps. Local persistence remembers state on the device, and you choose where and how much.\n\n## Chat history\n\nThe history panel lists conversations from endpoint 2 (`GET /v1/conversations`), newest first. It groups them into Today, Yesterday, Previous 7 days, Previous 30 days and Older, and searches titles as you type. Rename, archive and delete are optimistic, and they roll back if the server refuses.\n\n- A new chat joins the list when its first message is sent. Empty chats never clutter history.\n- A reply keeps streaming if you switch chats mid-answer. The list marks that conversation \"Replying…\".\n- `message_stop.title` updates the title everywhere as soon as the server names the chat.\n- Build your own panel with `useConversations()`, which returns items, groups, the active id, search, create, select, rename, remove, archive and refresh.\n\n## Local persistence\n\nThe chat can remember state on the device, so a reload lands people back where they were: same chat, same half-typed question. You choose where it's stored and what's kept.\n\n```ts\npersistence: {\n  storage: 'session',          // 'session' (default) | 'local' | 'memory' | 'none' | StorageAdapter\n  namespace: 'neoflo-chat',    // key prefix\n  scope: user.idHash,          // partitions keys per user\n  persist: {\n    activeConversation: true,  // reopen the same chat after a reload\n    drafts: true,              // unsent text + uploaded attachments, per chat\n    preferences: true,         // history panel, model, scope selection, anything set with usePreference\n    history: false,            // conversation list + recent message histories, for instant loads\n  },\n  maxCachedConversations: 20,  // LRU cap for cached histories\n  ttl: undefined,              // ms; older entries are dropped on read\n  debounceMs: 400,\n}\n```\n\n`history` is off by default because chat content can be sensitive. Turn it on together with `scope`.\n\nPass `persistence={false}` to turn it off entirely.\n\n## Choosing a storage\n\n| Storage | Survives | Use it when |\n| --- | --- | --- |\n| `session` | Reloads in the same tab | The default. Nothing lingers after the tab closes. |\n| `local` | Browser restarts, and it syncs across tabs | People expect the chat to still be there tomorrow. Set `scope`. |\n| `memory` | Nothing | Tests and demos. |\n| `none` | Nothing | You manage state elsewhere. |\n| A `StorageAdapter` | Whatever it does | IndexedDB, localforage, encryption at rest, a native bridge. |\n\nA custom `StorageAdapter`:\n\n```ts\nimport { createChatRuntime, createRestAdapter, type StorageAdapter } from '@neofloai/atoms/chat/core';\n\n// kv stands for your own async key-value store (IndexedDB, an encrypted store…).\n\nconst encryptedStore: StorageAdapter = {\n  getItem: async (key) => (await kv.get(key)) ?? null,\n  setItem: (key, value) => kv.set(key, value),\n  removeItem: (key) => kv.del(key),\n  keys: () => kv.keys(), // optional; lets clear() find every key\n};\n\nexport const runtime = createChatRuntime({\n  adapter: createRestAdapter({ baseUrl: 'https://api.example.com' }),\n  persistence: {\n    storage: encryptedStore,\n    scope: 'user-7f3a', // a hash of the signed-in user, so accounts never share state\n    persist: { drafts: true, activeConversation: true, preferences: true, history: true },\n    maxCachedConversations: 50,\n    ttl: 7 * 24 * 60 * 60 * 1000, // forget cached chats after a week\n  },\n});\n```\n\nAsync adapters are fine. The chat hydrates as soon as reads resolve; sync storages hydrate before the first paint.\n\n## Guarantees\n\n- **Scoped.** Keys are `namespace:scope:name`. Two users on one device never read each other's drafts or history.\n- **Versioned.** Every entry is an envelope `{ v, savedAt, data }`. Entries from a newer library version are left alone. Corrupt or foreign entries are deleted instead of crashing the chat.\n- **Safe on failure.** A full quota, private mode or a blocked storage falls back to memory for the session and reports once through `onWarning` (`storage_error`).\n- **Consistent.** Only finished messages are cached. A message that was mid-stream at reload is shown as interrupted, and the conversation is refetched.\n- **Server wins.** Cached history renders instantly and is replaced by the server's copy when it arrives. Decisions made in the session are kept if the server's copy doesn't carry them yet ([schema gap #2](/chat/schema-gaps)).\n- **SSR-safe.** Nothing touches storage during server render or at import time.\n\n## Logout\n\nCall `runtime.persistence.clear()` on logout:\n\n```ts\nawait runtime.persistence.clear(); // removes every key this chat wrote for the current scope\nruntime.dispose();\n```\n\nWhen you render `<AgenticChat adapter={…}>` without your own runtime, read it with `useChatRuntime()` inside the tree, or create the runtime yourself with `createChatRuntime` and pass `runtime={…}` (see [driving the chat from your app](/chat/configuration#driving-the-chat-from-your-app))."
+    },
+    {
+      "slug": "hitl",
+      "title": "Human-in-the-loop",
+      "summary": "Approval and choice cards that pause a turn until someone decides, and how to write a decision card of your own.",
+      "keywords": [
+        "hitl",
+        "human in the loop",
+        "approval",
+        "approval card",
+        "checkpoint",
+        "useHitl",
+        "decision",
+        "pause",
+        "resume"
+      ],
+      "audience": "app",
+      "body": "When the backend emits a `checkpoint`, the card that asked the question becomes live. The turn stops with `stop_reason: \"paused\"`, the composer shows \"Respond to the card above to continue\", and the answer goes back through endpoint 6 (`POST /v1/conversations/{id}/messages`):\n\n```json\n{\n  \"stream\": true,\n  \"message\": { \"role\": \"user\", \"type\": \"hitl\", \"content\": { \"checkpoint_id\": \"z93hdnf02c\", \"decision\": \"approve\" } }\n}\n```\n\nThe rest of the turn streams into the same message. A double click can't send two decisions. If the resume request fails, the card shows the error and lets the user try again.\n\nThe built-in decision cards are `approval` and `choice`; their payloads are in [block contracts](/chat/block-contracts#approval). They need `hitl` in the backend's [config](/chat/backend-contract#3-the-config-endpoint-0): without it, the chat ignores `checkpoint` events and never shows approval or choice cards. The `hitl.composerWhilePaused` option (default `'disabled'`) decides whether people can type while a card waits for a decision.\n\n## Your own decision card\n\nWrite your own decision card with `useHitl()`:\n\n```tsx\nimport { Button, TextField } from '@neofloai/atoms';\nimport { PencilSimpleIcon } from '@neofloai/atoms/icons';\nimport { BlockShell, defineBlock, useHitl } from '@neofloai/atoms/chat';\nimport { useState } from 'react';\n\ninterface AmountData {\n  title: string;\n  suggested: number;\n}\n\nfunction AmountCard({ data }: { data: AmountData }) {\n  const hitl = useHitl();\n  const [amount, setAmount] = useState(String(data.suggested));\n  return (\n    <BlockShell\n      icon={<PencilSimpleIcon />}\n      title={data.title}\n      tone={hitl.isPending ? 'primary' : 'default'}\n      footer={\n        hitl.isResolved ? null : (\n          <Button\n            size=\"sm\"\n            loading={hitl.isSubmitting}\n            disabled={!hitl.canSubmit}\n            // Sent as { stream, message: { type: 'hitl', content: { checkpoint_id, decision } } }\n            onClick={() => void hitl.submit({ amount: Number(amount) })}\n          >\n            Confirm\n          </Button>\n        )\n      }\n    >\n      <TextField label=\"Amount\" value={amount} disabled={!hitl.canSubmit} onChange={(e) => setAmount(e.target.value)} />\n    </BlockShell>\n  );\n}\n\nexport const amountCard = defineBlock<AmountData>({\n  type: 'amount_confirmation',\n  parse: (b) => ({ title: String(b.title ?? 'Confirm the amount'), suggested: Number(b.suggested ?? 0) }),\n  render: ({ data }) => <AmountCard data={data} />,\n});\n```\n\nRegister it in `blocks` like any [custom block](/chat/custom-blocks).\n\nInside `render`, `useHitl()` returns `canSubmit`, `isPending`, `isSubmitting`, `isResolved`, `decision`, `error`, `requires` and `submit(decision)`. `canSubmit` is true only when the card is the thread's live question and nothing is streaming. It also guards double submits.\n\n## After a reload\n\nOn reload, the history endpoint has to let the chat rebuild each card, including one whose checkpoint is still waiting for a decision. [Backend contract §6](/chat/backend-contract#6-history-and-hitl) lists what the chat reads to restore it."
+    },
+    {
+      "slug": "headless",
+      "title": "Headless",
+      "summary": "The engine and its React bindings with no styling — provider, primitives, hooks and parsers — for a layout the styled components cannot express.",
+      "keywords": [
+        "headless",
+        "primitives",
+        "hooks",
+        "ChatProvider",
+        "Thread",
+        "Composer",
+        "Message",
+        "useThread",
+        "useComposer",
+        "useMessages",
+        "custom chat"
+      ],
+      "audience": "app",
+      "body": "The hooks, primitives and parsers come from the same `@neofloai/atoms/chat` entry as `<AgenticChat>`. They carry no styling, and when you don't import the styled UI, it tree-shakes away. Use them when a product has its own design system, or when you need a layout the styled components can't express.\n\n`@neofloai/atoms/chat/core` goes one step further and has no React at all.\n\n## Example\n\n```tsx\nimport {\n  Block,\n  ChatProvider,\n  Composer,\n  Message,\n  Thread,\n  defineBlock,\n  parseText,\n  useMessage,\n  type ChatAdapter,\n} from '@neofloai/atoms/chat';\n\n// Headless blocks bring their own renderer; the parsers are shared with the styled UI.\nconst text = defineBlock({ type: 'text', category: 'content', parse: parseText, render: ({ data }) => <p>{data.text}</p> });\n\nfunction AnyMessage() {\n  const { message } = useMessage();\n  return (\n    <Message.Root className={`msg msg-${message.role}`}>\n      {/* A tool_result paired with its tool_use renders inside that card (Message.Blocks does this for you). */}\n      {message.blocks\n        .filter((b) => !b.pairedWith)\n        .map((b) => (\n          <Block key={b.id} block={b} message={message} />\n        ))}\n    </Message.Root>\n  );\n}\n\nexport function MyChat({ adapter }: { adapter: ChatAdapter }) {\n  return (\n    <ChatProvider adapter={adapter} blocks={[text]}>\n      <Thread.Root className=\"thread\">\n        <Thread.Viewport className=\"viewport\">\n          <Thread.Empty>\n            <p>Ask me anything.</p>\n          </Thread.Empty>\n          <Thread.Messages components={{ UserMessage: AnyMessage, AssistantMessage: AnyMessage }} />\n          <Thread.Status>{(label) => <span className=\"status\">{label}</span>}</Thread.Status>\n        </Thread.Viewport>\n        <Thread.ScrollToBottom className=\"jump\">↓</Thread.ScrollToBottom>\n      </Thread.Root>\n      <Composer.Root className=\"composer\">\n        <Composer.Input placeholder=\"Type a message\" />\n        <Composer.Cancel>Stop</Composer.Cancel>\n        <Composer.Send>Send</Composer.Send>\n      </Composer.Root>\n    </ChatProvider>\n  );\n}\n```\n\n## Provider\n\n```tsx\nimport { ChatProvider } from '@neofloai/atoms/chat';\n\n<ChatProvider adapter={adapter} blocks={[...myBlocks]} onAction={handle} labels={{ composerPlaceholder: 'Ask' }}>\n  …\n</ChatProvider>\n```\n\n`ChatProvider` takes every runtime option (see [Configuration](/chat/configuration#options)), or a `runtime` you created with `createChatRuntime`. `ThreadProvider conversationId=\"…\"` pins everything below it to one conversation instead of the active one, which is how you show two chats side by side.\n\n## Primitives\n\nEvery part renders a plain element, accepts normal HTML props, supports `asChild` to render your own element instead, and exposes `data-*` attributes (`data-role`, `data-status`, `data-busy`, `data-at-bottom`…) for styling.\n\n| Primitive | Parts |\n| --- | --- |\n| `Thread` | `Root`, `Viewport` (stick-to-bottom scrolling), `Messages`, `Empty`, `If`, `Status`, `ScrollToBottom` |\n| `Message` | `Root`, `Blocks` (renders through the registry, with optional grouping), `If` |\n| `Block` | Renders one block through the registry inside its own error boundary |\n| `Composer` | `Root` (the form), `Input` (auto-growing, Enter sends, IME-safe, paste files), `Send`, `Cancel`, `AttachmentInput`, `Attachments` |\n| `Suggestions` | `Root`, `Item` (sends the prompt text) |\n| `ConversationList` | `Root`, `Item`, `New` |\n| `Hitl` | `Root`, `Option`, `Submit`, for building choice cards |\n\n## Hooks\n\n| Hook | Returns |\n| --- | --- |\n| `useThread(selector)` | Any slice of the thread state, re-rendering only when it changes |\n| `useMessages()`, `useRun()`, `useThreadMeta()`, `useIsBusy()` | Common slices |\n| `useComposer()` | Draft text, attachments, `canSend`, `busy`, `blockedByDecision`, `send`, `cancel`, `addFiles` |\n| `useConversations()` | History: items, groups, search, create, select, rename, remove, archive |\n| `useScope()` | The workflow picker: groups, selection, summary, `toggle`, `setGroup` |\n| `useHitl()` | The current block's checkpoint state and `submit` |\n| `useChatActions()` | `send`, `resume`, `cancel`, `retry`, conversation actions, `emit` |\n| `useChatConfig()`, `useCapabilities()` | The backend's config (`models`, `sources` and the rest), and the capabilities the UI may use |\n| `usePreference(key, fallback)` | A persisted UI preference |\n| `useChatEvent(type, listener)` | Runtime events: `event`, `error`, `warning`, `activeChange` |\n| `useChatRuntime()` | The runtime itself |\n\n## Parsers\n\nEvery built-in block's parser is exported (`parseTable`, `parseToolCall`, `parseApproval`, …) along with `BLOCK_TYPES`, so a headless renderer can reuse the exact payload handling of the styled UI:\n\n```tsx\nimport { BLOCK_TYPES, defineBlock, parseTable } from '@neofloai/atoms/chat';\n\nconst table = defineBlock({ type: BLOCK_TYPES.table, parse: parseTable, render: MyTable });\n```"
+    },
+    {
+      "slug": "mock",
+      "title": "Mock backend",
+      "summary": "An in-memory backend on the standard, for building UI before the API exists, for tests and for demos.",
+      "keywords": [
+        "mock",
+        "createMockAdapter",
+        "scenarios",
+        "fake backend",
+        "demo",
+        "testing",
+        "tests",
+        "vitest"
+      ],
+      "audience": "app",
+      "body": "`@neofloai/atoms/chat/mock` runs a backend on the standard in memory: the config endpoint, `selected_model`, `client_message_id` with duplicate detection, error envelopes and paired tool calls. Use it to build UI before the API exists, in tests, and in demos. The chat running on the [overview](/chat) uses it.\n\n## Scenarios\n\n```ts\nimport { createMockAdapter } from '@neofloai/atoms/chat/mock';\n\nconst adapter = createMockAdapter({\n  latency: 200,\n  scenarios: [\n    {\n      name: 'invoice',\n      match: (prompt) => prompt.includes('invoice'),\n      run: async (w) => {\n        await w.status('Looking it up');\n        await w.block({ type: 'invoice_card', category: 'ui', invoice_id: 'INV-1042', vendor: 'Acme', total: '$1,200' });\n        await w.text('Here it is.');\n      },\n    },\n  ],\n});\n```\n\nThe writer has `status`, `text`, `thinking`, `tool` (a `tool_use` and its `tool_result`), `block` (with streamed `snapshots`), `pause` (a HITL checkpoint with an `onResume` continuation), `error` and `wait`. Cancel and abort work the same as on a real backend.\n\n## Config and connections\n\nPass `config` to change what the mock's config reports (`null` behaves like a backend without one). Its invoice-processing connection starts expired, so a prompt that mentions \"invoice processing\" fails with `connection_expired` until something calls `adapter.connect('invoice_processing')`, which is how the demo shows Reconnect.\n\n## Tests\n\nRegister your block with the mock backend and assert on what renders:\n\n```tsx\nimport { NeofloThemeProvider } from '@neofloai/atoms';\nimport { AgenticChat } from '@neofloai/atoms/chat';\nimport { createMockAdapter } from '@neofloai/atoms/chat/mock';\nimport { render } from '@testing-library/react';\nimport { invoiceCard } from './invoiceCard'; // the card from Custom blocks\n\nconst adapter = createMockAdapter({\n  latency: 0,\n  speed: 0,\n  includeDefaultScenarios: false,\n  scenarios: [\n    {\n      name: 'card',\n      match: () => true,\n      run: (w) => w.block({ type: 'invoice_card', category: 'ui', invoice_id: '1' }).then(() => undefined),\n    },\n  ],\n});\nrender(\n  <NeofloThemeProvider>\n    <AgenticChat adapter={adapter} blocks={[invoiceCard]} persistence={false} />\n  </NeofloThemeProvider>,\n);\n```"
+    },
+    {
+      "slug": "troubleshooting",
+      "title": "Troubleshooting",
+      "summary": "Symptoms and their fixes: a chat with no height, the wrong theme, unsupported content, cards that do nothing, a 401 loop, missing controls.",
+      "keywords": [
+        "troubleshooting",
+        "not working",
+        "error",
+        "problem",
+        "fix",
+        "unsupported content",
+        "interrupted",
+        "401"
+      ],
+      "audience": "app",
+      "body": "Find the symptom in the left column; the fix is beside it.\n\n| Symptom | Fix |\n| --- | --- |\n| `Cannot find module ./dist/index.mjs` from Atoms | Your install skipped scripts. Remove `--ignore-scripts`. |\n| `git: not found` in CI or Docker | Install git in the image: `apk add --no-cache git`. |\n| The chat has no height, or never scrolls | Give its container a height (`height: 100vh`, or a flex child with `min-height: 0`). |\n| Wrong fonts or colors, plus a console warning about `NeofloThemeProvider` | Mount `NeofloThemeProvider` once at the root. |\n| An \"Unsupported content: …\" box | The backend sent a block type nothing renders. Register a `defineBlock` for it ([custom blocks](/chat/custom-blocks)). The box only shows in development. |\n| Cards do nothing when clicked | Handle `onAction`. Cards emit, and your app decides. |\n| A 401 loop | Return `false` from `onUnauthorized` when the refresh fails. The error then surfaces instead of retrying. |\n| No attach button, scope picker, Archive or approval cards | The backend's config turns them off. Check `useCapabilities()`, or the config endpoint's `capabilities`. |\n| A connection error with no Reconnect button | Pass `onConnectionRequired`. Without it the chat can only show the message. |\n| A tool card says \"Interrupted\" | The reply ended without that tool's `tool_result`. Every `tool_use` needs exactly one, including on error. |"
+    },
+    {
+      "slug": "backend-contract",
+      "title": "Backend contract",
+      "summary": "For backend teams: the endpoints, the auth and identity rules, the config, the event stream, errors, cancel and retries the chat expects.",
+      "keywords": [
+        "backend",
+        "api",
+        "endpoints",
+        "rest",
+        "sse",
+        "stream",
+        "events",
+        "error codes",
+        "error envelope",
+        "config",
+        "capabilities",
+        "cancel",
+        "chat standard",
+        "schema",
+        "protocol"
+      ],
+      "audience": "backend",
+      "body": "This page is for teams building a backend that the Atoms chat (`@neofloai/atoms/chat`) talks to. It restates the Neoflo chat standard (schema v1, revision 1.2) from the client's side: what the chat sends, what it expects back, and how it behaves when something goes wrong. Ask Neo is the first product on it; any other product implements the same endpoints and adds its own values through the config and `ext`.\n\nBlock payloads (what goes inside `content_block_*`) live in [block contracts](/chat/block-contracts). What the standard still leaves open is in [schema gaps](/chat/schema-gaps). To check a backend against this page, run the [conformance check](/chat/conformance).\n\n## 1. Rules for every endpoint\n\n### Auth, identity and credentials\n\n- **Login** is a Bearer header or a session cookie, chosen per product. The client sends whatever `headers` the host app configures, or the cookie with `credentials: 'include'`.\n- **Who the user is** (user, workspace, tenant) comes only from the session. No request or response body carries `user_id`, `workspace_id`, `tenant_id` or `object`.\n- **Credentials for other systems** (an ERP, Zoho, Freshdesk, invoice processing) live only on the server, as a workspace connection. They never appear in chat requests or responses.\n- **The browser only sees a connection's status:** a source's `meta.connection` is `{ \"status\": \"connected\" | \"expired\" | \"missing\", \"expires_at\": \"…\" | null }` and nothing else.\n- A missing or expired connection returns 422 `connection_required` or `connection_expired` with `details.source`, before the stream opens. If it expires mid-reply, send a stream `error` with the same code.\n- Cookies are `HttpOnly; Secure; SameSite=Lax` (or `None` when cross-site). POST, PATCH and DELETE check `Origin` or a CSRF token. CORS allows credentials only for listed origins, never `*`.\n\n### Errors\n\nEvery non-2xx response uses one envelope, and HTTP errors and stream `error` events share one list of codes:\n\n```json\n{\n  \"error\": {\n    \"type\": \"connection_expired\",\n    \"message\": \"Reconnect invoice processing to continue.\",\n    \"retry_after\": null,\n    \"request_id\": \"req_01HZX4\",\n    \"details\": { \"source\": \"invoice_processing\" }\n  }\n}\n```\n\n`message` is shown to the user. `request_id` is also sent as the `X-Request-Id` header. A product adds its own codes as `<product>.<code>`. The client reads the code first and falls back to the HTTP status only for codes it doesn't know:\n\n| Code | HTTP | What the client does |\n| --- | --- | --- |\n| `invalid_request` | 422 | Shows the message. |\n| `unsupported_feature` | 422 | Shows the message. Turn the feature off in the config so the UI hides it. |\n| `connection_required`, `connection_expired` | 422 | Calls the host's `onConnectionRequired(sourceId)`, then retries once; else shows Reconnect. |\n| `unauthenticated` | 401 | Calls the host's `onUnauthorized({ code })` once and retries the request if it returns true. |\n| `access_denied` | 403 | Shows the message. No retry. |\n| `not_found` | 404 | Removes the chat from history. A 404 on DELETE counts as deleted. |\n| `session_busy` | 409 | Shows \"a reply is already in progress\" with Try again. |\n| `duplicate_message` | 409 | Reloads the conversation to show the reply the first attempt started. No error is shown. |\n| `rate_limited` | 429 | Counts down `retry_after` (or `Retry-After`) before Try again. |\n| `upstream_unavailable` | 502, 503 | Offers Try again. |\n| `internal` | 500 | Offers Try again. |\n| `<product>.<code>` | any | Behaves as its HTTP status. A 401 product code (`askneo.gate_required`) goes to `onUnauthorized`. |\n\n### General\n\n- Paths are `/v1/...` relative to the product's base URL. The client's `paths` option remaps them.\n- Ids are opaque strings. Times are ISO-8601 UTC.\n- Both sides ignore fields, events and block types they don't know, so either can add things without breaking the other.\n- Product-only fields go in `ext.<product id>`, never next to the shared fields.\n- Timeouts: REST calls time out after 30 s. A stream has no total limit but counts as dropped after 60 s without any event, so send `: ping` after 15 s of silence.\n- Retries: the client retries GET, PATCH, DELETE and cancel up to 2 times on network errors, 5xx and 429. It never retries POST `/conversation` or POST `/messages` automatically.\n\n## 2. Endpoints\n\n| # | Request | The client expects |\n| --- | --- | --- |\n| 0 | `GET /v1/chat/config` | What this backend supports (section 3). Called once per session. A 404 means \"no config\": the host's switches apply. |\n| 1 | `POST /v1/conversation`, optional body `{ title, model, sources }` | 201 with the conversation object plus `greeting` and `suggested_prompts` (`{ label, prompt }[]`, the chip shows `label` and sends `prompt`). |\n| 2 | `GET /v1/conversations` | `{ \"conversations\": [...], \"next_cursor\": null }`. Items carry `conversation_id`, `title`, `selected_model`, `archived`, `message_count`, timestamps. No `sources`. |\n| 3 | `GET /v1/conversations/{id}` | The conversation object plus `messages[]`, oldest first. A 404 removes the chat from history. |\n| 4 | `PATCH /v1/conversations/{id}` with `title`, `model`, `sources`, `archived` | The conversation object. The client keeps the `sources` from this response, not the ones it sent. `archived` only with the `archive` capability. |\n| 5 | `DELETE /v1/conversations/{id}` | 204. A 404 also counts as success. |\n| 6 | `POST /v1/conversations/{id}/messages` | An SSE stream (section 4). |\n| 7 | `POST /v1/conversations/{id}/messages/cancel` with `{ \"message_id\" }` | `{ \"status\": true \\| false }` (section 5). |\n\nThe conversation object (endpoints 1, 3, 4):\n\n```json\n{\n  \"conversation_id\": \"6650f1c2a9b8d3e4f5a6b7c8\",\n  \"title\": \"New chat\",\n  \"subtitle\": \"Ask Neo\",\n  \"archived\": false,\n  \"selected_model\": \"claude-haiku-4-5\",\n  \"sources\": [\n    { \"id\": \"search_v2\", \"enabled\": true, \"meta\": { \"search_v2_chunk_size\": 10 } },\n    {\n      \"id\": \"invoice_processing\",\n      \"enabled\": false,\n      \"meta\": { \"connection\": { \"status\": \"connected\", \"expires_at\": \"2026-10-09T09:00:00Z\" } }\n    }\n  ],\n  \"message_count\": 0,\n  \"created_at\": \"2026-10-06T09:12:00Z\",\n  \"updated_at\": \"2026-10-06T09:12:00Z\",\n  \"ext\": { \"askneo\": {} }\n}\n```\n\nMessages (endpoint 3) carry `message_id`, `role`, `content` (a block array), `stop_reason`, `created_at`, and on assistant messages `run_id`, `model` and optional `usage`. User messages carry the `client_message_id` they were sent with, and the `sources`, `attachments` and `workflow_context` the turn used. `ext` is passed to the host app untouched.\n\n## 3. The config (endpoint 0)\n\n```json\n{\n  \"protocol_version\": \"1.2\",\n  \"product\": { \"id\": \"askneo\", \"name\": \"Ask Neo\" },\n  \"capabilities\": {\n    \"hitl\": false,\n    \"attachments\": false,\n    \"workflow_context\": false,\n    \"archive\": false,\n    \"cancel\": \"disconnect\",\n    \"per_turn_model\": true,\n    \"per_turn_sources\": true,\n    \"conversation_pagination\": false,\n    \"message_pagination\": false,\n    \"stream_resume\": false\n  },\n  \"models\": [{ \"id\": \"claude-haiku-4-5\", \"label\": \"Haiku 4.5\", \"default\": true }],\n  \"sources\": [{ \"id\": \"search_v2\", \"label\": \"Knowledge base\", \"default_enabled\": true, \"meta\": {} }],\n  \"workflows\": [],\n  \"limits\": { \"max_message_chars\": 100000, \"max_attachments\": 0, \"max_attachment_bytes\": 0, \"attachment_types\": [] }\n}\n```\n\nA flag missing from a returned config means \"not supported\". What the client does with it:\n\n| Field | The client |\n| --- | --- |\n| `hitl: false` | Ignores `checkpoint` events and never shows approval or choice cards. |\n| `attachments: false` | Hides the attach button and never sends `attachments`. |\n| `workflow_context: false` | Hides the scope picker and never sends `workflow_context`. |\n| `archive: false` | Hides Archive and the archived filter. |\n| `cancel` | `\"disconnect\"`: Stop closes the stream at once. `\"server\"`: Stop calls endpoint 7 first (section 5). |\n| `per_turn_model` | Sends the conversation's model as `model` with each message. |\n| `per_turn_sources: false` | Sets sources per conversation only (endpoint 4), never per message. |\n| `sources` | Labels sources in the UI. The client only sends source ids listed here. |\n| `workflows` | Fills the scope picker (one group per workspace) when the host app doesn't pass its own catalog. |\n| `limits` | Blocks a message over `max_message_chars`, and applies the attachment limits on top of the host's. |\n| `sources[].meta.connection` | A hint only. Connection status comes from the conversation responses and from `connection_*` errors. |\n\nThe host app can turn more off with the `capabilities` option, but can't turn on what the config says is unsupported.\n\n## 4. Sending a message (endpoint 6)\n\n```json\n{\n  \"stream\": true,\n  \"client_message_id\": \"cm_7f3a91\",\n  \"message\": { \"role\": \"user\", \"type\": \"default\", \"content\": { \"default\": \"What were Acme's top open invoices last quarter?\" } },\n  \"model\": \"claude-sonnet-5\",\n  \"sources\": [{ \"id\": \"search_v2\", \"enabled\": true, \"meta\": { \"search_v2_chunk_size\": 5 } }]\n}\n```\n\n- `client_message_id` is created by the client. A repeat with the same id returns 409 `duplicate_message`. The client reuses the id when it retries a message the server never confirmed (no `message_start` arrived), and sends a new one when it did.\n- `model` is sent only with `per_turn_model`. `sources` (settings only, never credentials), `workflow_context`, `attachments` and `ext` are sent only when they have content and the config allows them.\n- Inputs the config turns off return 422 `unsupported_feature` before the stream opens. They're never silently ignored.\n- Return 409 `session_busy` before the stream opens when a reply is already running in the conversation.\n\nA HITL resume (only with `hitl`) uses exactly the schema shape:\n\n```json\n{\n  \"stream\": true,\n  \"message\": { \"role\": \"user\", \"type\": \"hitl\", \"content\": { \"checkpoint_id\": \"z93hdnf02c\", \"decision\": \"approve\" } }\n}\n```\n\nThe response is `text/event-stream`, with `Cache-Control: no-cache` and `X-Accel-Buffering: no`:\n\n```\nmessage_start → (status | content_block_start → content_block_delta* → content_block_stop | checkpoint)* → message_delta? → message_stop\n```\n\n| Event | What the client does |\n| --- | --- |\n| `message_start` | Opens the assistant message, keyed by `message_id`, and keeps the id for cancel. `user_message_id` and the echoed `client_message_id` swap the optimistic user message for the saved one. |\n| `status` | Shows `label` in the run-status tag until the next `status` or the end of the turn. |\n| `content_block_start` | Adds the block, keyed by `block.id`, so **`id` must be unique within a message**. `index` only has to be unique within one stream. |\n| `content_block_delta` | `snapshot` replaces the block's streaming field (or the whole payload when it's an object). Without it, `delta.text` is appended. Send snapshots: they make a dropped delta harmless. |\n| `content_block_stop` | Replaces the block with the final `block`, the source of truth. |\n| `checkpoint` | With `hitl`: attaches `{ checkpoint_id, requires }` to the block at `block_index` and makes that card actionable. |\n| `message_delta` | Stores `usage`, which is optional. |\n| `message_stop` | Ends the turn with `stop_reason`. Always send it, including after an error. A non-null `title` renames the chat everywhere. |\n| `error` | `error_type` comes from the shared code list. Shows an error card with the action the code calls for (section 1). |\n| `: ping` | A comment line, ignored. Send it after 15 s with no event so proxies and the client keep the stream open. |\n| `<product>.<event>` | Ignored by clients that don't know it. |\n\nEvery `tool_use` gets exactly one `tool_result` (with `tool_use_id`), including on error, and the client shows both as one card. A reply that ends without a tool's result shows that card as \"Interrupted\". `tool_result.http_trace` is null in production.\n\nTolerance: an unknown event type is ignored; a malformed event is skipped with a warning; a stream that ends without `message_stop` marks the answer interrupted with Try again; the data's `type` wins over the SSE `event:` name.\n\n## 5. Stop (endpoint 7)\n\n- **`cancel: \"server\"`**: the client posts `{ \"message_id\" }` from `message_start`. `true` means the run is stopping; the client waits up to 1.5 s for `message_stop` (`stop_reason: \"cancelled\"`) and then closes the stream. `false` (the turn already finished, or nothing can stop it) closes the stream at once. If Stop comes before `message_start`, the client waits up to 3 s for it, then closes the stream.\n- **`cancel: \"disconnect\"`**: the client closes the stream at once and never calls endpoint 7. The backend stops the run and saves the partial reply as `cancelled`. The endpoint, if it exists, always returns `{ \"status\": false }`.\n\n## 6. History and HITL\n\nOn reload, endpoint 3 has to let the UI rebuild each card. The client pairs each `tool_result` with its `tool_use` again, and for HITL ([schema gap #2](/chat/schema-gaps)) reads:\n\n- a checkpoint on the HITL block, as `checkpoint: { checkpoint_id, requires, status: \"pending\" | \"resolved\", decision }` or a bare `checkpoint_id`;\n- a user message with `type: \"hitl\"` and `content: { checkpoint_id, decision }`, applied to the matching card and not rendered as a bubble;\n- a last assistant message with `stop_reason: \"paused\"` and an unresolved checkpoint, which becomes live again.\n\n## 7. Connections (optional pattern)\n\nA product whose chat uses a third-party system can expose `/v1/connections/{source_id}`: `PUT` (the host app hands over a credential it holds), `GET` (`{ status, expires_at }`) and `DELETE`. The host app calls these, typically from `onConnectionRequired`; the chat never does. Nothing about the credential is returned.\n\n## 8. Conformance check\n\nA conformance check calls a backend the way the UI will and reports every gap against this page. [Checking a backend](/chat/conformance) covers what it checks and how to run it in CI."
+    },
+    {
+      "slug": "block-contracts",
+      "title": "Block contracts",
+      "summary": "The payload of every built-in block type with the aliases the parsers accept, and the rules for a product’s own blocks.",
+      "keywords": [
+        "block payload",
+        "json",
+        "payload",
+        "tool_use",
+        "tool_result",
+        "checkpoint",
+        "fallback_text",
+        "product blocks"
+      ],
+      "audience": "backend",
+      "body": "This page defines the payload of every block the chat renders out of the box, the standard types every product's backend can send. Every block carries `id`, `type` and `category`. The fields below are the rest.\n\nThe parsers accept the aliases and fallbacks listed, so a backend can adopt these shapes gradually. A block the client can't parse falls back to a development-only \"unsupported content\" notice and never crashes the thread.\n\n**The vocabulary is closed on purpose.** A turn composes these shapes and never invents a layout. A product's own cards use [`<product>.<name>` types](/chat/block-contracts#product-blocks), registered by that product's app with `defineBlock`.\n\n## text\n\n```json\n{ \"id\": \"b1\", \"type\": \"text\", \"category\": \"content\", \"text\": \"Four are waiting on you…\" }\n```\n\n- `text` is Markdown (GFM tables, lists, code). Raw HTML is not rendered. Aliases: `markdown`, `content`.\n- Stream it with `snapshot` set to the full text so far.\n\n## thinking\n\n```json\n{\n  \"id\": \"b2\",\n  \"type\": \"thinking\",\n  \"category\": \"reasoning\",\n  \"text\": \"The price difference is against the order…\",\n  \"duration_ms\": 4000\n}\n```\n\n- `text` (or `thinking`) is the model's reasoning. `duration_ms` is optional; the client measures it while streaming if it's missing.\n\n## tool_use and tool_result\n\nThe standard way to show a tool call: a `tool_use` block when the call starts, and exactly one `tool_result` when it returns, including on error. The client pairs them by `tool_use_id` and renders one card: the call's input, then what it returned.\n\n```json\n{ \"id\": \"toolu_01A9\", \"type\": \"tool_use\", \"category\": \"tool\", \"tool\": \"search_v2\", \"input\": { \"query\": \"Acme open invoices Q3\" } }\n```\n\n```json\n{\n  \"id\": \"f4a5b6c7\",\n  \"type\": \"tool_result\",\n  \"category\": \"tool\",\n  \"tool_use_id\": \"toolu_01A9\",\n  \"is_error\": false,\n  \"error_code\": null,\n  \"result_count\": 2,\n  \"results\": [{ \"title\": \"INV-1042\", \"snippet\": \"Acme Corp · $12,400 · open\", \"url\": null }],\n  \"http_trace\": null\n}\n```\n\n| Field | Notes |\n| --- | --- |\n| `tool_use.tool` | The tool id, shown as the title. Aliases: `name`, `tool_name`. |\n| `tool_use.title` | Optional friendlier title. |\n| `tool_use.input` | Shown as key/value rows. |\n| `tool_result.tool_use_id` | The `tool_use` block's `id`. A result with no matching call in the message gets a card of its own. |\n| `tool_result.is_error` | `true` shows the card as failed, with `error_code` (or `error`/`message`) as the reason. |\n| `tool_result.result_count` | Shown as \"N results\". Up to five `results` are listed under it, as `{ title, snippet, url }`; `url` becomes a link. |\n| `tool_result.http_trace` | Debug data. `null` in production, and never shown. |\n\nUntil its result arrives the card shows \"Running\". If the reply ends (`message_stop` other than `paused`, Stop, or a dropped stream) without the result, the card shows \"Interrupted\" instead of spinning.\n\n## tool_call\n\nThe older single-block form, still accepted: one block carries both the input and the result.\n\n```json\n{\n  \"id\": \"b3\",\n  \"type\": \"tool_call\",\n  \"category\": \"tool\",\n  \"name\": \"search_invoices\",\n  \"input\": { \"workspace\": \"Finance\", \"status\": \"held\", \"window\": \"30d\" },\n  \"status\": \"success\",\n  \"result_summary\": \"4 rows\",\n  \"duration_ms\": 800\n}\n```\n\n| Field | Notes |\n| --- | --- |\n| `name` | The tool id, shown as the title. Aliases: `tool_name`, `tool`. |\n| `title` | Optional friendlier title. |\n| `input` | Shown as key/value rows. Aliases: `arguments`, `args`, `parameters`. Streaming `partial_json` deltas also work. |\n| `status` | `running`, `success` or `error`. |\n| `result_summary` | One line shown as `returned`. Without it, `output` is shown compactly. |\n| `error` | Shown in red when `status` is `error`. |\n| `duration_ms` | Shown as meta (\"0.8s\"). |\n\nSend `content_block_start` with `status: \"running\"` and `content_block_stop` with the final status and result.\n\n## table\n\n```json\n{\n  \"id\": \"b4\",\n  \"type\": \"table\",\n  \"category\": \"ui\",\n  \"title\": \"Held invoices\",\n  \"columns\": [\n    { \"key\": \"vendor\", \"label\": \"Vendor\" },\n    { \"key\": \"reason\", \"label\": \"Reason\" },\n    { \"key\": \"amount\", \"label\": \"Amount\", \"format\": \"currency\", \"currency\": \"USD\" }\n  ],\n  \"rows\": [{ \"vendor\": \"Redwood Components\", \"reason\": \"Price vs order\", \"amount\": 3940.24 }],\n  \"total_rows\": 4\n}\n```\n\n- `columns` entries can be plain strings. `format` is one of `text`, `number`, `currency`, `percent` or `date`. Numeric formats right-align.\n- `rows` can be objects keyed by column, or arrays in column order.\n- `total_rows` is shown as \"N rows\" when the block carries a preview of a bigger result. The client renders up to 500 rows.\n\n## sources\n\n```json\n{\n  \"id\": \"b5\",\n  \"type\": \"sources\",\n  \"category\": \"citation\",\n  \"items\": [\n    { \"id\": \"s1\", \"label\": \"Invoice Processing · 30 days\", \"url\": \"https://…\", \"description\": \"…\" },\n    { \"id\": \"s2\", \"label\": \"Purchase orders · Redwood Components\", \"selected\": true }\n  ]\n}\n```\n\n- A `url` opens in a new tab. Every click also reaches the host app as `open_source`.\n- If any item has `selected`, the list shows checkboxes. Toggling one emits `source_toggle`.\n\n## approval\n\nA human-in-the-loop yes or no. Pair it with a `checkpoint` event.\n\n```json\n{\n  \"id\": \"b6\",\n  \"type\": \"approval\",\n  \"category\": \"hitl\",\n  \"title\": \"Post 4 invoices to NetSuite?\",\n  \"description\": \"They total 10,061.74 across three vendors. Posting cannot be undone from here.\",\n  \"approve_label\": \"Post all four\",\n  \"reject_label\": \"Not now\",\n  \"tone\": \"default\",\n  \"details\": { \"vendors\": 3, \"total\": \"10,061.74\" }\n}\n```\n\n- The decision sent back is `approve_value` / `reject_value`, which default to `\"approve\"` / `\"reject\"`.\n- `tone: \"danger\"` colors the approve button for destructive actions. `details` renders as key/value rows.\n- An unknown `type` in the `hitl` category also renders as an approval, unless it carries `options`.\n\n## choice\n\nA single- or multi-select question. Pair it with a `checkpoint` event.\n\n```json\n{\n  \"id\": \"b7\",\n  \"type\": \"choice\",\n  \"category\": \"hitl\",\n  \"title\": \"Which workflows should I review?\",\n  \"multiple\": true,\n  \"min\": 1,\n  \"max\": 2,\n  \"options\": [\n    { \"value\": \"ip\", \"label\": \"Invoice Processing\" },\n    { \"value\": \"col\", \"label\": \"Collections\" }\n  ],\n  \"submit_label\": \"Review\"\n}\n```\n\n- The decision is the chosen `value` (single) or an array of values (multiple).\n- `options`, `multiple`, `min` and `max` may come in `checkpoint.requires` instead.\n\n## error\n\n```json\n{\n  \"id\": \"b8\",\n  \"type\": \"error\",\n  \"category\": \"error\",\n  \"title\": \"NetSuite did not answer\",\n  \"message\": \"The connection timed out after 30 seconds. Nothing was posted.\",\n  \"retryable\": true,\n  \"retry_after\": 10\n}\n```\n\n- Use this for a failure inside a turn that otherwise completes. For a failure that ends the turn, use the `error` stream event.\n\n## artifact\n\n```json\n{\n  \"id\": \"b9\",\n  \"type\": \"artifact\",\n  \"category\": \"ui\",\n  \"filename\": \"reconciliation-august.md\",\n  \"format\": \"markdown\",\n  \"content\": \"# August reconciliation\\n…\",\n  \"url\": \"https://…\"\n}\n```\n\n- `format` is one of `markdown`, `text`, `json`, `csv` or `code`. It's inferred from the filename when missing.\n- Inline `content` shows a preview and a full view, and makes the file downloadable. `url` alone offers a download.\n\n## image\n\n```json\n{\n  \"id\": \"b10\",\n  \"type\": \"image\",\n  \"category\": \"ui\",\n  \"url\": \"https://…/scan.png\",\n  \"alt\": \"Scan of Statement-Aug.pdf, page 1\",\n  \"caption\": \"Scan of Statement-Aug.pdf, page 1\"\n}\n```\n\n- `url` must be `https:`, `blob:`, a relative path, or a `data:image/…` URI. Other schemes are dropped.\n\n## plan\n\n```json\n{\n  \"id\": \"b11\",\n  \"type\": \"plan\",\n  \"category\": \"plan\",\n  \"title\": \"Reconciling August\",\n  \"steps\": [\n    { \"id\": \"read\", \"title\": \"Read the last thirty days\", \"status\": \"done\" },\n    {\n      \"id\": \"match\",\n      \"title\": \"Match each against its order\",\n      \"status\": \"running\",\n      \"detail\": { \"compared\": \"128 invoices\", \"matched\": \"124\" }\n    },\n    { \"id\": \"receipts\", \"title\": \"Checking receipts\", \"status\": \"pending\" }\n  ]\n}\n```\n\n- `status` is one of `pending`, `running`, `done`, `failed` or `skipped`. Common synonyms such as `completed` and `in_progress` are accepted.\n- Stream progress with `content_block_delta` carrying `snapshot` set to the full `steps` array, or to `{ \"steps\": [...] }`.\n\n## chart\n\n```json\n{\n  \"id\": \"b12\",\n  \"type\": \"chart\",\n  \"category\": \"ui\",\n  \"chart_type\": \"bar\",\n  \"title\": \"Invoices posted\",\n  \"subtitle\": \"Last five weeks\",\n  \"x_key\": \"week\",\n  \"series\": [\n    { \"key\": \"posted\", \"label\": \"Posted\" },\n    { \"key\": \"held\", \"label\": \"Held\" }\n  ],\n  \"data\": [{ \"week\": \"W1\", \"posted\": 22, \"held\": 12 }],\n  \"value_format\": \"number\"\n}\n```\n\n| Field | Notes |\n| --- | --- |\n| `chart_type` | `bar`, `line`, `area` or `donut` (`pie` is accepted as donut). |\n| `x_key` | The category field, which is the slice name for donuts. |\n| `series` | Numeric fields to plot. Inferred from the first row when missing. A donut uses the first series. |\n| `total` | `{ \"value\": \"128\", \"label\": \"invoices\" }`, shown in the donut's center. |\n| `stacked` | Stack bars or areas. |\n| `value_format`, `currency` | Axis and tooltip formatting. |\n\nColors come from the Atoms palette. Don't send hex colors unless a series genuinely needs a fixed one (`series[].color`).\n\n## Product blocks\n\nA product's own card uses the type `<product>.<name>`, where `<product>` is the config's `product.id` (for example `askneo.invoice_card`). It must carry `fallback_text`:\n\n```json\n{\n  \"id\": \"b9\",\n  \"type\": \"askneo.invoice_card\",\n  \"category\": \"ui\",\n  \"fallback_text\": \"**INV-1042** · Redwood Components · 3,940.24 · held on a price difference\",\n  \"data\": { \"number\": \"INV-1042\", \"amount\": 3940.24 }\n}\n```\n\n- The product's app registers a renderer with `defineBlock({ type: 'askneo.invoice_card', … })`.\n- Any other app shows `fallback_text` as Markdown, so the answer still reads correctly. A `<product>.<name>` block is never given to a built-in renderer by its `category`.\n\n## checkpoint.requires\n\nProposed shape, describing what the decision must look like:\n\n```json\n{ \"kind\": \"approve_reject\", \"options\": [\"approve\", \"reject\"] }\n{ \"kind\": \"multi_select\", \"options\": [{ \"value\": \"ip\", \"label\": \"Invoice Processing\" }], \"min\": 1, \"max\": 2 }\n{ \"kind\": \"form\", \"schema\": { \"amount\": \"number\" } }\n```\n\nThe client passes `requires` to the card as-is. Built-in cards read `options`, `multiple`, `min` and `max` from it when the block itself doesn't carry them."
+    },
+    {
+      "slug": "conformance",
+      "title": "Checking a backend",
+      "summary": "A check that calls a backend the way the chat will and reports every gap against the standard. Run it in CI against dev or staging.",
+      "keywords": [
+        "conformance",
+        "conformance check",
+        "validate backend",
+        "test backend",
+        "ci"
+      ],
+      "audience": "backend",
+      "body": "The conformance check calls a backend the way the chat will and reports every gap against the [backend contract](/chat/backend-contract): missing endpoints, identity fields or credentials in bodies, `model` instead of `selected_model`, a stream that doesn't echo `client_message_id`, tools without exactly one result, error bodies outside the envelope, and more. Run it in CI against a dev or staging deployment.\n\nThe check is not part of Atoms. It ships in the `agentic-chat-ui` package as a standalone CLI, so a backend team can run it without installing the design system.\n\n## What a run does\n\nIt creates one conversation, sends one message (which calls the model) and deletes the conversation.\n\n- Failures break the contract. Warnings are worth fixing but don't fail the run.\n- Sending a message calls the model, so pass `--no-messages` (or `sendMessages: false` in code) for a run that mustn't. It skips endpoint 6.\n\n## From the command line\n\n```bash\nnpx --package=github:neofloai/agentic-chat-ui#semver:^0.3.0 agentic-chat-conformance \\\n  --base-url https://askneo.dev.example \\\n  --header \"Cookie: session=$SESSION\"\n```\n\n## From code\n\nThe programmatic form imports from `@neofloai/agentic-chat/conformance`, which is the CLI package's own path, not an Atoms one:\n\n```ts\nimport { formatReport, runConformance } from '@neofloai/agentic-chat/conformance';\n\nconst report = await runConformance({ baseUrl: process.env.CHAT_BASE_URL!, headers: { Cookie: process.env.SESSION! } });\nif (!report.ok) throw new Error(formatReport(report));\n```"
+    },
+    {
+      "slug": "schema-gaps",
+      "title": "Schema gaps",
+      "summary": "What revision 1.2 of the chat standard settled, what is still open, and what the chat does about each open point today.",
+      "keywords": [
+        "schema gaps",
+        "open questions",
+        "revision",
+        "protocol version",
+        "standard"
+      ],
+      "audience": "backend",
+      "body": "Schema v1 left nine points undefined. Revision 1.2 of the standard (the config endpoint, the error envelope, `selected_model`, `client_message_id` and the connection rules) settles most of them. This page tracks what's settled and what's still open. The client already handles every open point.\n\n## Settled in 1.2\n\n| # | Gap | How 1.2 settles it |\n| --- | --- | --- |\n| 1 | **Block vocabulary.** No `type`/`category` values or payloads. | The standard types in [block contracts](/chat/block-contracts), `tool_use` + `tool_result` pairing, and `<product>.<name>` blocks with `fallback_text`. |\n| 4 | **Archiving** wasn't in the PATCH body. | `archived` is a PATCH field, behind the `archive` capability. |\n| 5 | **Selected model** wasn't returned, and there was no per-turn model. | `selected_model` on endpoints 1–4, the catalog in the config's `models`, and `model` per message with `per_turn_model`. |\n| 6 | **Scope catalog.** Nothing listed workflows; `Source` had no label. | The config's `workflows` and labeled `sources`. |\n| 8 | **Error bodies** were unspecified. | One envelope, `{ error: { type, message, retry_after, request_id, details } }`, and one code list for HTTP and the stream. |\n\n## Still open\n\n| # | Gap | What the client does today | Proposal |\n| --- | --- | --- | --- |\n| 2 | **HITL state in history.** Endpoint 3 doesn't say how checkpoints and decisions come back. | Reads `checkpoint` on the block and `type: \"hitl\"` user messages (see [backend contract §6](/chat/backend-contract#6-history-and-hitl)). Keeps decisions made in the session if a reload lacks them. | Settle it when the first product turns `hitl` on. |\n| 3 | **Resume message id.** Does a resume continue the paused `message_id` or start a new one? | Handles both. The same id continues the message; a new id adds one. | Continue the same `message_id`, so one answer stays one message. |\n| 7 | **Uploads.** Endpoint 6 takes `attachments[]`, but no endpoint produces them. | The host app provides `attachments.upload(file)`. | Keep uploads with each product's file service, or add a shared presigned-upload endpoint. |\n| 9 | **Reconnect.** A dropped stream can't be resumed. | Marks the answer interrupted, offers Try again, and refetches on the next open. A retry that the server already received gets 409 `duplicate_message`, and the client reloads the conversation. | Optional endpoint 9, `GET /v1/runs/{run_id}/events`, behind `stream_resume`. |\n| 10 | **`stream: false` replies** are still unspecified. | Always streams. Converts a JSON reply if one arrives. | Drop `stream: false` from the standard, or specify it. |\n| 11 | **Stop and running tools.** It isn't confirmed whether closing the stream also stops a tool mid-call. | Shows the reply as stopped and any unanswered tool as \"Interrupted\". | Backends cancel in-flight tool calls when the run stops. |\n| 12 | **Version naming.** The standard is called \"SDK schema v1\" in one place and \"1.2\" in another. | Reads `protocol_version` from the config and doesn't gate on it. | Agree on one name and value, then have the client warn on an unknown major version. |"
+    }
+  ],
+  "exports": [
+    {
+      "name": "AddAttachmentsResult",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "AgenticChat",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "AgenticChatProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "applyPlanDelta",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "approvalBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ApprovalBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ApprovalData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "artifactBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ArtifactBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ArtifactData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "AssistantTurn",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "AtomsTheme",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Attachment",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "AttachmentCard",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "AttachmentOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Block",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BLOCK_ICON_PX",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BLOCK_TYPES",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockActions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockCrashNotice",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockDefinition",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockErrorBoundary",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockErrorBoundaryProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockRegistry",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockRenderProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockShell",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockShellProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "BlockTone",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "CancelResult",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Capabilities",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "CapabilityOverrides",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "CHART_SERIES",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "chartBlock",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "ChartBlock",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "ChartCard",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "ChartData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChartKind",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChartLegend",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "chartPalette",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "ChartPalette",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "ChartSeries",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChartTooltipContent",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "ChatAction",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatAdapter",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatApiError",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatCapabilities",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatComponents",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatComposer",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatComposerProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatConfig",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatConfigState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatContextValue",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatError",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatErrorInfo",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatHeader",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatHeaderProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatHistory",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatHistoryProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatLabels",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatLimits",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatMessage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatProtocolError",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatProvider",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatProviderProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatRuntime",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatRuntimeOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatStreamError",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatSuggestions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatThread",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatThreadProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChatTimeoutError",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "CheckpointEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "CheckpointState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "CheckpointStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "choiceBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChoiceBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChoiceData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ChoiceOption",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Composer",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerAttachment",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerAttachmentStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerInputProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerPicker",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerPickerGroup",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerPickerItem",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerPickerProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ComposerState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConfigModel",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConfigSource",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConfigStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConfigWorkflow",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConnectionRequiredInfo",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConnectionState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConnectionStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ContentBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ContentBlockDelta",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ContentBlockDeltaEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ContentBlockStartEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ContentBlockStopEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationBootstrap",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationDetail",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationGroup",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationGroupKey",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationItem",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationList",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationPatch",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationsState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ConversationSummary",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createBlockRegistry",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createChatRuntime",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createMemoryStorage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createMockAdapter",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "createPersister",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createRestAdapter",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createSafeStorage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createStore",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createThreadState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "createWebStorage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "DataTable",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "DEFAULT_REST_PATHS",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "DEFAULT_SCENARIOS",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "DEFAULT_SUGGESTIONS",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "defaultApplyDelta",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "defaultBlocks",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "defaultLabels",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "DefaultMessage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "defaultScopeToRequest",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "defineBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "DeltaHandler",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "emptyMeta",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ERROR_CODES",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorAction",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "errorBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorCode",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorCodeInput",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorEnvelope",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorEnvelopeFields",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "errorInfoFromCode",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ErrorNotice",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Ext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "FallbackData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "FileCard",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "FileCardProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "filterConversations",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "formatBytes",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "formatDuration",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "formatJsonish",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "FormatOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "formatValue",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "frameScheduler",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "groupConversations",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "groupKeyFor",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "GroupSelectionState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Hitl",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "HitlDecision",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "HitlMessage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "humanizeKey",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "imageBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ImageBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ImageData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "interruptRun",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "isAbortError",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "isContentBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ISODateString",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "KeyValueItem",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "KeyValueList",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "knownSources",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "LegendItem",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "linkToolResults",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Listener",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "LoadStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Markdown",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MarkdownProps",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MarkdownSize",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MaybePromise",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MemoryStorage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "mergeWorkflowContexts",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Message",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageBlocks",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageComponents",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageDeltaEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageRole",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageStartEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MessageStopEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "messageText",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "metaFromBootstrap",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "MockAdapter",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "MockAdapterOptions",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "MockScenario",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "MockStop",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "MockWriter",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "mode",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "monoFont",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "NEW_THREAD_KEY",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "normalizeConfig",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "normalizeConversationDetail",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "normalizeMessages",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseApproval",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseArtifact",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseChart",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseChoice",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseError",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseFallback",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseImage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parsePlan",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ParseResult",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseSources",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseStreamEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseTable",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseText",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseThinking",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "parseToolCall",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PauseOptions",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "PendingCheckpoint",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PendingTurn",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PersistenceOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Persister",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PersistOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "planBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PlanBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PlanData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PlanStep",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PlanStepStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PROTOCOL_VERSION",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ProtocolWarning",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "PulseDot",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "readErrorEnvelope",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "readSse",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ReduceContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "reduceStreamEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "resolveCapabilities",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ResolvedPersistence",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RestAdapterOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RestPaths",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RetryButton",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RetryOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RunState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RunStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RuntimeEvents",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "RuntimeWarning",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "safeUrl",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Scheduler",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Scheme",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "ScopeConfig",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ScopeGroup",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "scopeGroupsFromWorkflows",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ScopeItem",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ScopePicker",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ScopeSelection",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ScopeState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ScopeSummary",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ScrollController",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "selectAll",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "selectedModelOf",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SendMessageBody",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SendMessageOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SendOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SessionState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SetStateOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "shallowEqual",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Shimmer",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "sortConversations",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Source",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SourceItem",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "sourcesBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SourcesBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SourcesData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SseMessage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SseParser",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "STANDARD_REVISION",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "StatusEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "StopReason",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "StorageAdapter",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "StorageKind",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Store",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "StreamEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "StreamEventType",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "stripCredentials",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "SuggestedPrompt",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Suggestions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "summarizeScope",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "syncScheduler",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "tableBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "TableBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "TableColumn",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "TableData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "textBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "TextBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "TextData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "textFieldOf",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "thinkingBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThinkingBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThinkingData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Thread",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThreadComponents",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThreadContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThreadHandle",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThreadMeta",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThreadProvider",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ThreadState",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "toConversationItem",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "toErrorInfo",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "TOOL_CALL_TYPES",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ToolBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "toolCallBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ToolCallData",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ToolResultItem",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ToolResultPayload",
+      "entry": "@neofloai/atoms/chat/mock"
+    },
+    {
+      "name": "ToolStatus",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "TooltipRow",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "TurnErrorNotice",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "UnauthorizedInfo",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "unknownBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "UnknownBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "UpdatedConversation",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "UploadOptions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "Usage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useActiveConversationId",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useBlock",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useBlockActions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useCanRetry",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useCapabilities",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useChartPalette",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "useChatActions",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useChatConfig",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useChatContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useChatEvent",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useChatRuntime",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useComposer",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useComposerContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useConversations",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useHitl",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useHitlChoice",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useIsBusy",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useLabels",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useMessage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useMessages",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "usePreference",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useResolvedScheme",
+      "entry": "@neofloai/atoms/chat/charts"
+    },
+    {
+      "name": "UserTurn",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useRun",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useScope",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useSourceLabel",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useStoreSelector",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useThread",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useThreadHandle",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useThreadMeta",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "useThreadScroll",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "ValueFormat",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "WelcomeScreen",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "WireMessage",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "WorkflowContext",
+      "entry": "@neofloai/atoms/chat"
+    },
+    {
+      "name": "WorkflowName",
+      "entry": "@neofloai/atoms/chat"
+    }
+  ]
+}

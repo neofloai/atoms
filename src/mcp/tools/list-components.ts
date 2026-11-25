@@ -1,7 +1,7 @@
-import { loadComponents, loadPatterns, loadRelease } from '../data-loader';
+import { loadChat, loadComponents, loadPatterns, loadRelease } from '../data-loader';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ComponentData, PatternData, ReleaseManifest } from '../types';
+import type { ChatManifest, ComponentData, PatternData, ReleaseManifest } from '../types';
 
 /**
  * The published patterns, offered before the component list rather than
@@ -60,6 +60,25 @@ function formatShellLead(components: ComponentData[]): string {
   ].join('\n');
 }
 
+/**
+ * The chat, named beside the patterns because it is the same kind of
+ * thing: a whole feature already composed. Its parts are not in the
+ * catalogue below — they are not components a screen picks from — so
+ * without this an agent asked for an assistant panel finds nothing here
+ * and builds one from `Card` and `TextField`.
+ */
+function formatChatLead(chat: ChatManifest): string {
+  if (chat.topics.length === 0) {
+    return '';
+  }
+  return [
+    '## The chat: a whole feature, not a component',
+    '',
+    `\`<AgenticChat>\` from \`${chat.entries[0]}\` is a complete agentic chat — streaming answers, history, approval cards, tool activity, tables, charts and custom cards — against any backend on the Neoflo chat standard. If the user wants a chat, an assistant or a copilot, call \`get_chat\` instead of composing one; its parts are documented there, not under \`get_component\`.`,
+    '',
+  ].join('\n');
+}
+
 /** How many everyday names to show beside a component. */
 const MAX_ALIASES = 4;
 
@@ -90,7 +109,8 @@ function formatVersionStamp(release: ReleaseManifest): string {
 function formatComponentList(
   components: ComponentData[],
   patterns: PatternData[],
-  release: ReleaseManifest
+  release: ReleaseManifest,
+  chat: ChatManifest
 ): string {
   if (components.length === 0) {
     return 'No components published yet. The @neofloai/atoms component catalog is being built — check back soon.';
@@ -117,6 +137,7 @@ function formatComponentList(
     formatVersionStamp(release),
     '',
     formatPatternLead(patterns),
+    formatChatLead(chat),
     // Named before the catalogue, because the shell is the one thing built
     // first and the easiest to skip. `Drawer` is MUI's word for a sidebar
     // and nobody's first guess for one, so a reader scanning categories for
@@ -139,13 +160,14 @@ export function registerListComponents(server: McpServer): void {
     {
       title: 'List components',
       description:
-        'Lists all @neofloai/atoms components grouped by category with a one-line tagline each, led by the published page patterns. Returns markdown. Always call this first to discover what exists before reaching for raw MUI — and prefer a listed pattern over composing a screen yourself.',
+        'Lists all @neofloai/atoms components grouped by category with a one-line tagline each, led by the published page patterns and the agentic chat. Returns markdown. Always call this first to discover what exists before reaching for raw MUI — and prefer a listed pattern over composing a screen yourself.',
     },
     async () => {
-      const [manifest, patterns, release] = await Promise.all([
+      const [manifest, patterns, release, chat] = await Promise.all([
         loadComponents(),
         loadPatterns(),
         loadRelease(),
+        loadChat(),
       ]);
       return {
         content: [
@@ -154,7 +176,8 @@ export function registerListComponents(server: McpServer): void {
             text: formatComponentList(
               manifest.components,
               patterns.patterns,
-              release
+              release,
+              chat
             ),
           },
         ],
