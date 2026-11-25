@@ -19,6 +19,41 @@ import type { Release } from './types';
  */
 export const RELEASES: readonly Release[] = [
   {
+    version: '4.4.0',
+    tag: 'v4.4.0',
+    date: '2026-11-26',
+    headline:
+      'The backend conformance check moves into Atoms, as `@neofloai/atoms/chat/conformance` and the `atoms-chat-conformance` command, so a backend is checked against the same engine the chat runs on.',
+    summary:
+      'A minor release; nothing is removed or renamed, and an app bundles exactly what it did before. The check calls a backend the way `<AgenticChat>` will and reports every gap against the Neoflo chat standard. It shipped in `agentic-chat-ui`, which is being retired, and there it checked against a frozen copy of the chat engine. It now runs on Atoms\' own engine, needs nothing but Node, and a backend team runs it without adding Atoms to its dependencies: `npx --package=github:neofloai/atoms#semver:^4.4.0 atoms-chat-conformance --base-url <url>`. It imports no package, and neither the root entry nor `/chat` carries it, which the build proves.',
+    changes: [
+      {
+        kind: 'added',
+        summary:
+          '`@neofloai/atoms/chat/conformance`: `runConformance`, `formatReport` and `runConformanceCli`, to check a chat backend from code. No React and no dependencies, so it runs in a backend\'s CI or a Node test.',
+        scope: ['@neofloai/atoms/chat/conformance', 'runConformance', 'formatReport'],
+      },
+      {
+        kind: 'added',
+        summary:
+          'The `atoms-chat-conformance` command, the package\'s first: `--base-url`, `--header` (or `CHAT_BASE_URL` and `CHAT_HEADERS`), `--no-messages` for a run that must not call the model, and `--json`. It exits 1 when a check fails.',
+        scope: ['atoms-chat-conformance'],
+      },
+      {
+        kind: 'changed',
+        summary:
+          'Coming from `agentic-chat-ui`: replace `npx --package=github:neofloai/agentic-chat-ui#semver:^0.3.0 agentic-chat-conformance` with `npx --package=github:neofloai/atoms#semver:^4.4.0 atoms-chat-conformance`, and `@neofloai/agentic-chat/conformance` with `@neofloai/atoms/chat/conformance`. The options and the report are the same.',
+        scope: ['@neofloai/atoms/chat/conformance', 'atoms-chat-conformance'],
+      },
+      {
+        kind: 'changed',
+        summary:
+          'The docs\' "Checking a backend" page and `get_chat` topic `conformance` give the new command and import, and the chat overview lists the fifth subpath.',
+        scope: ['docs', 'get_chat'],
+      },
+    ],
+  },
+  {
     version: '4.3.0',
     tag: 'v4.3.0',
     date: '2026-11-25',

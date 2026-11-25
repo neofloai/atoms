@@ -38,7 +38,8 @@ This single repo produces three outputs:
 | `src/tokens/` | Raw design token values |
 | `src/theme/` | MUI theme built from tokens |
 | `src/patterns/` | Page layout recipes |
-| `src/chat/` | The agentic chat: engine, headless layer, styled UI, charts, mock backend, and its guide |
+| `src/chat/` | The agentic chat: engine, headless layer, styled UI, charts, mock backend, backend conformance check, and its guide |
+| `bin/` | `atoms-chat-conformance`, the package's one command (a shim over `dist/chat/conformance.mjs`) |
 | `test/chat/` | The chat's unit tests (`npm test`) |
 | `src/mcp/` | MCP server logic |
 | `app/` | Next.js docs website routes |

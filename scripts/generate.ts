@@ -83,6 +83,7 @@ const CHAT_ENTRIES = [
   { entry: '@neofloai/atoms/chat/core', file: 'core.ts' },
   { entry: '@neofloai/atoms/chat/charts', file: 'charts.ts' },
   { entry: '@neofloai/atoms/chat/mock', file: 'mock.ts' },
+  { entry: '@neofloai/atoms/chat/conformance', file: 'conformance.ts' },
 ] as const;
 
 /**

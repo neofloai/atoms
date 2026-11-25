@@ -201,7 +201,7 @@ export const installation: InstallationGuide = {
   shared: SHARED_STEPS,
   frameworks: [NEXTJS_SETUP, REACT_SETUP],
   notes: [
-    'Import only from @neofloai/atoms, @neofloai/atoms/icons, @neofloai/atoms/tokens, and @neofloai/atoms/theme -- and, for the agentic chat, @neofloai/atoms/chat, @neofloai/atoms/chat/core, @neofloai/atoms/chat/charts and @neofloai/atoms/chat/mock.',
+    'Import only from @neofloai/atoms, @neofloai/atoms/icons, @neofloai/atoms/tokens, and @neofloai/atoms/theme -- and, for the agentic chat, @neofloai/atoms/chat, @neofloai/atoms/chat/core, @neofloai/atoms/chat/charts and @neofloai/atoms/chat/mock, plus @neofloai/atoms/chat/conformance for checking a chat backend.',
     'Do not import from @mui/material directly -- it bypasses the design system.',
     'Never import from @neofloai/atoms/dist/* -- those are build internals, not a public API, and can change without notice.',
     '@mui/material ships as a dependency of this package, not a peer, so npm may hoist it into your app\'s own node_modules and it will resolve if you import it directly. That does not make it supported -- only the entry points above are.',

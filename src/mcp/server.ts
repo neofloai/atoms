@@ -38,7 +38,7 @@ Order of operations, and it matters:
 
 6. Before writing any colour, spacing, radius or type value, call \`get_tokens\`. Never hardcode a hex or a pixel value the tokens already carry.
 
-7. Import only from \`@neofloai/atoms\`, \`@neofloai/atoms/icons\`, \`@neofloai/atoms/tokens\` and \`@neofloai/atoms/theme\` — and, for the chat, \`@neofloai/atoms/chat\`, \`/chat/core\`, \`/chat/charts\` and \`/chat/mock\`. Importing from \`@mui/material\` resolves and silently bypasses the design system.
+7. Import only from \`@neofloai/atoms\`, \`@neofloai/atoms/icons\`, \`@neofloai/atoms/tokens\` and \`@neofloai/atoms/theme\` — and, for the chat, \`@neofloai/atoms/chat\`, \`/chat/core\`, \`/chat/charts\` and \`/chat/mock\`, plus \`/chat/conformance\` for checking a chat backend. Importing from \`@mui/material\` resolves and silently bypasses the design system.
 
 8. If the user wants a chat, an AI assistant, a copilot or an "Ask Neo" panel, call \`get_chat\`. Atoms ships one whole — \`<AgenticChat>\` — and a chat composed from \`Card\` and \`TextField\` is missing streaming, history, approvals and the backend contract it has to speak.
 

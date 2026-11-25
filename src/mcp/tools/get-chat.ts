@@ -177,7 +177,7 @@ export function registerGetChat(server: McpServer): void {
               `The chat is a module of Atoms rather than a component: import it from \`${chat.entries[0]}\` (the UI and the engine under it), with ${chat.entries
                 .slice(1)
                 .map((entry) => `\`${entry}\``)
-                .join(', ')} for the server-safe engine, the chart blocks and the mock backend. \`get_component\` does not cover its parts; this tool does.`,
+                .join(', ')} for the server-safe engine, the chart blocks, the mock backend and the backend conformance check. \`get_component\` does not cover its parts; this tool does.`,
             ]
           : [];
 

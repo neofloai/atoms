@@ -5,7 +5,7 @@ globs: ["src/chat/**", "app/(docs)/chat/**", "test/chat/**"]
 
 # The agentic chat
 
-`src/chat/` is the agentic chat — `<AgenticChat>` and everything under it — shipped from four subpaths of `@neofloai/atoms`. It came from the separate `@neofloai/agentic-chat` package in v4.3.0; the API is unchanged. It is a feature built *on* Atoms components, not a set of components, so the component rules (`30-components.mdc`) do not apply to it, and these do.
+`src/chat/` is the agentic chat — `<AgenticChat>` and everything under it — shipped from five subpaths of `@neofloai/atoms`. It came from the separate `@neofloai/agentic-chat` package in v4.3.0, and its backend conformance check followed in v4.4.0; the API is unchanged. It is a feature built *on* Atoms components, not a set of components, so the component rules (`30-components.mdc`) do not apply to it, and these do.
 
 ## Entry points and layers
 
@@ -15,11 +15,13 @@ globs: ["src/chat/**", "app/(docs)/chat/**", "test/chat/**"]
 | `@neofloai/atoms/chat/core` | `src/chat/core.ts` | `core/` only — no React |
 | `@neofloai/atoms/chat/charts` | `src/chat/charts.ts` | `charts/`, `ui/kit/`, the headless layer, Recharts |
 | `@neofloai/atoms/chat/mock` | `src/chat/mock.ts` | `mock/`, `core/` — no React |
+| `@neofloai/atoms/chat/conformance` | `src/chat/conformance.ts` | `conformance/`, `core/` — no React |
 
 | Folder | What it is | May import |
 |---|---|---|
 | `core/` | The engine: the chat standard's types, REST/SSE adapter, stores, persistence, runtime | nothing outside `core/` |
 | `mock/` | In-memory backend on the standard | `core/` |
+| `conformance/` | The backend conformance check and its CLI (`atoms-chat-conformance`, via `bin/`) | `core/` |
 | `react/`, `registry/`, `blocks/` | The headless layer: provider, hooks, primitives, block registry, parsers | `core/`, React, `@radix-ui/react-slot` |
 | `ui/` | The styled chat: shell, blocks, history, the kit | everything above, Atoms components, `react-markdown`, `remark-gfm` |
 | `charts/` | Chart blocks | the above, `recharts` |
@@ -45,7 +47,7 @@ globs: ["src/chat/**", "app/(docs)/chat/**", "test/chat/**"]
 - **Write a topic once, in Markdown.** No JSX page per topic: `app/(docs)/chat/[topic]/page.tsx` renders every one. A topic that needs live UI gets it through `GALLERIES` there, not a page of its own.
 - **No title in the file** — the page and the tool add it. Sections are `##`; their text becomes the anchor.
 - **Link topics as `/chat/<slug>` or `/chat/<slug>#anchor`.** The docs render site links; `get_chat` rewrites them into the topic to request.
-- **Code is pasted.** Every import must exist in the entry it names, from the four subpaths above or `@neofloai/atoms`, `/icons`, `/tokens`. Never `@mui/*`.
+- **Code is pasted.** Every import must exist in the entry it names, from the five subpaths above or `@neofloai/atoms`, `/icons`, `/tokens`. Never `@mui/*`.
 - Same reader-facing rules as every docs page (`50-docs.mdc`): no Figma provenance, no accessibility notes, no internal logs.
 - A new topic: add the file, add its entry to `CHAT_TOPICS`, run `npm run generate`. The sidebar, the route, `get_chat` and `search_docs` pick it up.
 
@@ -53,9 +55,9 @@ globs: ["src/chat/**", "app/(docs)/chat/**", "test/chat/**"]
 
 `get_chat` (`src/mcp/tools/get-chat.ts`) serves a topic per call and goes through the version gate. `CHAT_SINCE` is the first release with the chat: code is withheld from a project on anything older, because there every import fails, even where the shared gate would call the version "behind but fine". Backend topics are served whole — their blocks are wire formats, not Atoms code. `get_component` answers a chat export or a word in `CHAT_ALIASES` with a pointer to `get_chat`.
 
-## What stayed outside
+## The conformance check
 
-The backend conformance check (`runConformance`, the `agentic-chat-conformance` CLI) stays in the `agentic-chat-ui` repo as a standalone package, so a backend team checks its server without installing the design system. `guide/conformance.md` documents it; do not move it into `src/chat/`.
+`conformance/` checks a backend against the standard over real HTTP, using the engine's own paths, error codes, envelope reader and SSE reader, so the check and the chat cannot drift apart. It ships as `/chat/conformance` and as the `atoms-chat-conformance` command (`bin/atoms-chat-conformance.mjs`, a shim over `dist/chat/conformance.mjs`, listed in `package.json` `bin` and `files`). A backend team runs it with `npx --package=github:neofloai/atoms#semver:^<version> atoms-chat-conformance`, so it must stay free of React and of every dependency: it needs `fetch` and nothing else. `check:treeshake` fails if it imports anything, or if the root entry or `/chat` ever carries it. A new check is a test in `test/chat/core/conformance.test.ts` against the mock backend.
 
 ## Tests
 
