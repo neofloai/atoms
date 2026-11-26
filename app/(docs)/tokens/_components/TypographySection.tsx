@@ -106,6 +106,14 @@ export function TypographySection() {
           </Stack>
           <Stack spacing={0.5}>
             <Typography variant="caption" sx={{ fontFamily: MONO_FONT, color: 'text.secondary' }}>
+              product.display &mdash; Scope One (Regular only; a greeting set large)
+            </Typography>
+            <Typography sx={{ fontFamily: fontFamilies.product.display, fontSize: 24 }}>
+              Good morning, Priya!
+            </Typography>
+          </Stack>
+          <Stack spacing={0.5}>
+            <Typography variant="caption" sx={{ fontFamily: MONO_FONT, color: 'text.secondary' }}>
               product.mono &mdash; DM Mono (self-hosted; worn by table and
               grid headers)
             </Typography>
@@ -123,7 +131,7 @@ export function TypographySection() {
           </Stack>
         </Stack>
         <Typography variant="caption" color="text.secondary">
-          <code>marketing.serif</code> is the fifth declared family and
+          <code>marketing.serif</code> is the sixth declared family and
           resolves to the same Instrument Serif stack as{' '}
           <code>product.serif</code>, so it is not sampled separately.
         </Typography>

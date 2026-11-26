@@ -1,10 +1,11 @@
-`@neofloai/atoms/chat` is a React chat UI for agentic assistants. Point it at any backend that implements the **Neoflo chat standard** (schema v1, revision 1.2). You get streaming answers, chat history, human-in-the-loop decisions, tool activity, tables, charts and custom cards without building any of it yourself.
+`@neofloai/atoms/chat` is a React chat UI for agentic assistants. Point it at any backend that implements the **Neoflo chat standard** (schema v1, revision 1.3). You get streaming answers, chat history, human-in-the-loop decisions, tool activity, tables, charts and custom cards without building any of it yourself.
 
 It's part of Atoms and built from Atoms components and tokens, so it looks like the rest of your Neoflo product in light and dark.
 
 ## What you get
 
 - **A complete chat in one component.** `<AgenticChat>` renders the history panel, the thread and the composer.
+- **An empty chat that invites the first question.** The greeting, the composer and the backend's suggested prompts sit in one column, each prompt with its icon. A prompt the user removes stays removed on that device.
 - **Streaming that holds up in production.** It handles SSE over `fetch`, snapshot-based deltas, cancel, retry, idle timeouts and dropped connections.
 - **Human-in-the-loop.** Approval and choice cards pause the turn, lock the composer, and resume with your decision.
 - **12 built-in blocks.** Text, thinking, tool call, table, sources, approval, choice, error, artifact, image, plan and charts.

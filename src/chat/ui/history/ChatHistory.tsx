@@ -25,7 +25,7 @@ import { useId, useState } from 'react';
 import type { ConversationGroupKey, ConversationItem } from '../../core/store/types';
 import { useChatActions, useConversations, useLabels } from '../../react/hooks';
 import type { ChatLabels } from '../../react/labels';
-import { mode, type AtomsTheme } from '../kit/tokens';
+import { mode, visuallyHidden, type AtomsTheme } from '../kit/tokens';
 
 const GROUP_LABEL: Record<ConversationGroupKey, keyof ChatLabels> = {
   today: 'groupToday',
@@ -35,17 +35,6 @@ const GROUP_LABEL: Record<ConversationGroupKey, keyof ChatLabels> = {
   older: 'groupOlder',
 };
 
-const visuallyHidden = {
-  position: 'absolute',
-  width: 1,
-  height: 1,
-  p: 0,
-  m: -1,
-  overflow: 'hidden',
-  clip: 'rect(0 0 0 0)',
-  whiteSpace: 'nowrap',
-  border: 0,
-} as const;
 
 function RenameDialog({ item, onClose }: { item: ConversationItem; onClose: () => void }) {
   const labels = useLabels();
@@ -134,10 +123,12 @@ export interface ChatHistoryProps {
   onSelect?: (conversationId: string) => void;
   /** Show the New chat button at the top. @default true */
   showNewChat?: boolean;
+  /** Focus the search field when the panel opens, as the rail's search button does. */
+  autoFocusSearch?: boolean;
 }
 
 /** The conversation list: search, recency groups, rename/archive/delete, archived toggle. */
-export function ChatHistory({ onSelect, showNewChat = true }: ChatHistoryProps) {
+export function ChatHistory({ onSelect, showNewChat = true, autoFocusSearch }: ChatHistoryProps) {
   const labels = useLabels();
   const history = useConversations();
   const searchId = useId();
@@ -177,6 +168,7 @@ export function ChatHistory({ onSelect, showNewChat = true }: ChatHistoryProps) 
             fullWidth
             type="search"
             placeholder={labels.searchChats}
+            autoFocus={autoFocusSearch}
             value={history.query}
             onChange={(e) => history.setQuery(e.target.value)}
             startAdornment={<MagnifyingGlassIcon size={16} />}

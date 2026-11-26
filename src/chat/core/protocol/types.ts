@@ -1,5 +1,5 @@
 /**
- * Wire types for the Neoflo chat standard (schema v1, revision 1.2): endpoints 0–7 and the
+ * Wire types for the Neoflo chat standard (schema v1, revision 1.3): endpoints 0–7 and the
  * SSE stream. Every product backend implements these, and the library reads them.
  *
  * Field names stay snake_case here because these are the exact payloads on the wire.
@@ -13,7 +13,7 @@
 export const PROTOCOL_VERSION = 'v1' as const;
 
 /** The standard revision this library implements, as `GET /v1/chat/config` reports it. */
-export const STANDARD_REVISION = '1.2' as const;
+export const STANDARD_REVISION = '1.3' as const;
 
 /** ISO-8601 timestamp, e.g. `2026-09-21T09:12:00Z`. */
 export type ISODateString = string;
@@ -39,10 +39,39 @@ export interface ConnectionStatus {
 /** Product-only fields, keyed by `config.product.id`, e.g. `{ askneo: { … } }`. */
 export type Ext = Record<string, unknown>;
 
-/** A starter-prompt chip. `label` is the chip text; `prompt` is what gets sent. */
+/**
+ * The icons a suggested prompt can name (revision 1.3). A fixed list rather than any icon name,
+ * so the chat ships these glyphs and nothing else. A prompt without an icon, or with a name the
+ * chat doesn't know (one a newer revision added), shows `sparkle`.
+ */
+export const SUGGESTION_ICONS = [
+  'sparkle',
+  'inbox',
+  'warning',
+  'chart',
+  'trend',
+  'document',
+  'receipt',
+  'money',
+  'vendor',
+  'calendar',
+  'clock',
+  'check',
+  'search',
+] as const;
+
+export type SuggestionIcon = (typeof SUGGESTION_ICONS)[number];
+
+/** A starter prompt on the empty chat. `label` is what it shows; `prompt` is what gets sent. */
 export interface SuggestedPrompt {
   label: string;
   prompt: string;
+  /**
+   * The icon beside the label, one of `SUGGESTION_ICONS` (revision 1.3). Optional: without it the
+   * chat shows `sparkle`. Typed as a string because the wire may carry a name this version of the
+   * chat doesn't know yet, and that falls back to `sparkle` too.
+   */
+  icon?: SuggestionIcon | (string & {});
 }
 
 /** A file already uploaded by the host app. The schema has no upload endpoint. */

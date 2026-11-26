@@ -76,7 +76,7 @@ export function Chat({ conversationId }: { conversationId?: string }) {
 | `blocks` | built-ins | Extra or replacement block definitions. Later entries win. |
 | `scope` | none | Groups and items for the workflow picker. By default the selection becomes `workflow_context`. Change that with `scope.toRequest`. |
 | `workflowContext` | none | Page context added to every turn. It merges with the scope by `workflow_name`. |
-| `attachments` | off | `{ upload, accept, maxSize, maxFiles }`. This turns on the paperclip button, drag-and-drop and paste. |
+| `attachments` | off | `{ upload, accept, maxSize, maxFiles }`. This turns on the composer's + button, drag-and-drop and paste. |
 | `persistence` | session storage | See [local persistence](/chat/persistence#local-persistence). |
 | `conversationCreation` | `'eager'` | `'eager'` creates the chat when it opens, which is what fetches the greeting. `'lazy'` waits for the first message. |
 | `hitl.composerWhilePaused` | `'disabled'` | Whether people can type while a card waits for a decision. |
@@ -86,6 +86,9 @@ export function Chat({ conversationId }: { conversationId?: string }) {
 | `onConnectionRequired` | | Called with `{ sourceId, code }` when a send fails with `connection_required` or `connection_expired`. Reconnect (for example `PUT /v1/connections/{sourceId}`), return `true`, and the message is retried once. |
 | `onEvent` / `onError` / `onWarning` | | Telemetry hooks for every stream event, error and recoverable warning. |
 | `labels` | English | Override any UI string, for copy changes or translation. |
+| `navigation` | `'header'` | `'rail'` swaps the header bar for a rail on the right, with the history opening there. See [Header or rail](/chat/customizing#header-or-rail). |
+| `railFooter` | | Your own buttons at the rail's foot. |
+| `turnActions` | all on | The row under each answer: `onFeedback`, `feedbackIssueTypes`, `copy`, `retry`, `timestamp`, `extra`, `visibility`, or `false`. See [Under each answer](/chat/customizing#under-each-answer). |
 | `streamIdleTimeoutMs` | `60000` | How long a silent stream waits before it counts as dropped and becomes retryable. |
 | `refreshOnFocus` | `true` | Refresh history when the window regains focus. |
 

@@ -629,9 +629,9 @@ function useGalleryRuntime() {
         ...st.meta,
         greeting: 'Hey! What can I help you dig into today?',
         suggestedPrompts: [
-          { label: 'How many posted yesterday?', prompt: 'How many posted yesterday?' },
-          { label: 'What is waiting on me?', prompt: 'What is waiting on me?' },
-          { label: 'Which vendor is slowest?', prompt: 'Which vendor is slowest?' },
+          { label: 'What is waiting on me right now?', prompt: 'What is waiting on me right now?', icon: 'inbox' },
+          { label: 'Which invoices are stuck?', prompt: 'Which invoices are stuck?', icon: 'warning' },
+          { label: 'Show last week’s spend by vendor', prompt: 'Show last week’s spend by vendor', icon: 'chart' },
         ],
       },
     }));
@@ -709,15 +709,15 @@ export function ChatGallery({ section }: { section: GallerySection }) {
                 <RunStatus />
               </ThreadProvider>
             </Spec>
-            <Spec title="ChatSuggestions" note="opening prompts">
+            <Spec title="ChatSuggestions" note="opening prompts, each with its icon">
               <ThreadProvider conversationId="gallery-welcome">
-                <ChatSuggestions />
+                <ChatSuggestions removable={false} />
               </ThreadProvider>
             </Spec>
-            <Spec title="WelcomeScreen" note="empty chat">
+            <Spec title="WelcomeScreen" note="empty chat, with the composer under the greeting">
               <ThreadProvider conversationId="gallery-welcome">
                 <Card>
-                  <WelcomeScreen />
+                  <WelcomeScreen composer={<ChatComposer placement="welcome" />} />
                 </Card>
               </ThreadProvider>
             </Spec>

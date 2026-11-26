@@ -21,7 +21,7 @@ persistence: {
   persist: {
     activeConversation: true,  // reopen the same chat after a reload
     drafts: true,              // unsent text + uploaded attachments, per chat
-    preferences: true,         // history panel, model, scope selection, anything set with usePreference
+    preferences: true,         // history panel, model, scope selection, removed prompts, anything set with usePreference
     history: false,            // conversation list + recent message histories, for instant loads
   },
   maxCachedConversations: 20,  // LRU cap for cached histories

@@ -118,9 +118,12 @@ describe('<AgenticChat> on the v1.2 standard', () => {
   it("blocks a message longer than the backend's limit", async () => {
     renderChat({ adapter: mock({ config: { limits: { max_message_chars: 10 } } }) });
     const input = await screen.findByRole('textbox', { name: 'Message' });
+    // Send shows once there is something to send...
+    fireEvent.change(input, { target: { value: 'short' } });
     await waitFor(() => expect(screen.getByRole('button', { name: 'Send' })).toBeTruthy());
+    // ...and goes again when the draft can't be sent.
     fireEvent.change(input, { target: { value: 'this is far too long' } });
     expect(await screen.findByText('Messages can be up to 10 characters.')).toBeTruthy();
-    expect((screen.getByRole('button', { name: 'Send' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.queryByRole('button', { name: 'Send' })).toBeNull();
   });
 });

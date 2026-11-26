@@ -4,12 +4,13 @@ import { Skeleton } from '@/src/components/Skeleton';
 import { Stack } from '@/src/components/Stack';
 import { ArrowDownIcon } from '@/src/icons/glyphs';
 import { elevation } from '@/src/tokens';
-import { useEffect, useRef, type ComponentType } from 'react';
+import { useEffect, useRef, type ComponentType, type ReactNode } from 'react';
 import type { ChatMessage } from '../../core/store/types';
 import { useChatActions, useLabels, useThread } from '../../react/hooks';
 import { Thread, useThreadScroll } from '../../react/primitives';
 import { ErrorNotice } from '../kit/helpers';
-import { AssistantTurn, PendingTurn, UserTurn, WelcomeScreen } from './Turn';
+import { AssistantTurn, PendingTurn, UserTurn } from './Turn';
+import { WelcomeScreen } from './Welcome';
 
 export interface ThreadComponents {
   Welcome?: ComponentType;
@@ -59,30 +60,53 @@ function LoadError() {
   );
 }
 
+/**
+ * Whether the empty chat's welcome is up: no messages yet, and the chat either settled or still
+ * being created (so the welcome holds its place instead of flashing the thread's skeleton). A chat
+ * that is loading its history or failed to load is a thread, not a welcome.
+ */
+export function useWelcomeOpen(): boolean {
+  return useThread(
+    (s) => s.messages.length === 0 && (s.loadStatus === 'loading' ? s.conversationId === null : s.loadStatus !== 'error'),
+  );
+}
+
 export interface ChatThreadProps {
   components?: ThreadComponents;
   /** Width of the reading column. @default 760 */
   maxWidth?: number;
+  /**
+   * A composer to set inside the built-in welcome, between the greeting and the suggested
+   * prompts. `AgenticChat` passes it while the welcome is up. Ignored with your own `Welcome`.
+   */
+  welcomeComposer?: ReactNode;
 }
 
 /** The scrolling message list with the welcome screen, loading and error states. */
-export function ChatThread({ components, maxWidth = 760 }: ChatThreadProps) {
+export function ChatThread({ components, maxWidth = 760, welcomeComposer }: ChatThreadProps) {
   const labels = useLabels();
   const loadStatus = useThread((s) => s.loadStatus);
   const empty = useThread((s) => s.messages.length === 0);
+  const creating = useThread((s) => s.loadStatus === 'loading' && s.conversationId === null);
   const Welcome = components?.Welcome ?? WelcomeScreen;
+  // The built-in welcome with a composer in it holds the screen while the chat is being created.
+  const centered = welcomeComposer !== undefined && !components?.Welcome;
 
   return (
     <Thread.Root asChild>
       <Box sx={{ position: 'relative', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <FollowOnSend />
         <Thread.Viewport style={{ flex: 1, minHeight: 0 }}>
-          <Box sx={{ maxWidth, mx: 'auto', px: 2, pt: 3, pb: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {loadStatus === 'loading' && empty ? <ThreadSkeleton /> : null}
+          <Box sx={{ maxWidth, mx: 'auto', px: 2, pt: 3, pb: 2, display: 'flex', flexDirection: 'column', gap: 4.5 }}>
+            {loadStatus === 'loading' && empty && !(centered && creating) ? <ThreadSkeleton /> : null}
             {loadStatus === 'error' ? <LoadError /> : null}
-            <Thread.Empty>
-              <Welcome />
-            </Thread.Empty>
+            {centered ? (
+              <WelcomeScreen composer={welcomeComposer} />
+            ) : (
+              <Thread.Empty>
+                <Welcome />
+              </Thread.Empty>
+            )}
             <Thread.Messages
               components={{
                 UserMessage: components?.UserTurn ?? UserTurn,

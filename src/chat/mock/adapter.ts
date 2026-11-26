@@ -135,7 +135,7 @@ function failedStream(error: unknown): AsyncIterable<StreamEvent> {
 const CONNECTION_PROMPT = /reconnect|invoice processing/i;
 
 /**
- * An in-memory backend on the chat standard (schema v1, revision 1.2) with scripted demo turns
+ * An in-memory backend on the chat standard (schema v1, revision 1.3) with scripted demo turns
  * for every built-in block. Use it to build UI without a server, in tests, and in the public demo.
  */
 export function createMockAdapter(options: MockAdapterOptions = {}): MockAdapter {
@@ -155,7 +155,7 @@ export function createMockAdapter(options: MockAdapterOptions = {}): MockAdapter
   ];
 
   const config: ChatConfig = {
-    protocol_version: '1.2',
+    protocol_version: '1.3',
     product: { id: 'demo', name: 'Neoflo demo' },
     capabilities: {
       hitl: true,

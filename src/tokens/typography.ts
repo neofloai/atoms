@@ -22,6 +22,9 @@
  *   Font families (primitive collection)
  *     - Product:    DM Sans            (Regular, Medium, SemiBold)
  *                   Instrument Serif   (Regular, Italic)
+ *                   Scope One          (Regular) — the display serif,
+ *                                      added for the chat's greeting in
+ *                                      the Revamp UI file
  *     - Mono:       DM Mono            (Regular, Medium) — and this one
  *                   parts company with the primitive collection, which
  *                   still names Space Mono. Space Mono was never hosted,
@@ -47,8 +50,8 @@
  * declaration. The first family in each list is the brand font; the
  * rest are sensible system fallbacks.
  *
- * DM Sans, DM Mono and Instrument Serif are all available on Google
- * Fonts and are self-hosted via `@fontsource` (see
+ * DM Sans, DM Mono, Instrument Serif and Scope One are all available on
+ * Google Fonts and are self-hosted via `@fontsource` (see
  * `src/theme/fonts.ts`). Clash Grotesk is currently hosted on Fontshare
  * (not Google Fonts); it is intentionally not yet wired into
  * `next/font`, so its fallback chain now points at DM Sans (the
@@ -74,6 +77,13 @@ export const fontFamilies = {
      * call site wanting emphasis has 500 and nothing above it.
      */
     mono: 'var(--font-dm-mono, "DM Mono"), ui-monospace, "SF Mono", Menlo, monospace',
+    /**
+     * Scope One, the display serif: type set large to greet rather than to
+     * be read, like the chat's "Good morning" line at `h3` size. Ships
+     * Regular only, so pair it with `weight="regular"` — the headings'
+     * own Medium cut has no face here and the browser would fake one.
+     */
+    display: 'var(--font-scope-one, "Scope One"), Georgia, "Times New Roman", serif',
   },
   marketing: {
     sans: '"Clash Grotesk", var(--font-dm-sans, "DM Sans"), system-ui, sans-serif',
@@ -121,6 +131,13 @@ export const typography = {
     h6: { size: 16, leading: 24, letterSpacing: -0.01 },
   },
   body: {
+    /**
+     * One rung above `b1`, for text a person reads or writes at length in
+     * a conversation: the chat's composer, its suggested prompts and the
+     * user's own message. Comes from the Revamp UI chat frames, which set
+     * this text at 14/22 with -1% tracking, the same tracking as `b1`.
+     */
+    b0: { size: 14, leading: 22, letterSpacing: -0.01 },
     b1: { size: 13, leading: 20, letterSpacing: -0.01 },
     b2: { size: 12, leading: 16, letterSpacing: 0 },
     caption: { size: 10, leading: 12, letterSpacing: 0.002 },

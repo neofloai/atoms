@@ -1,28 +1,25 @@
 import { Box } from '@/src/components/Box';
-import { Button } from '@/src/components/Button';
 import { Fade } from '@/src/components/Fade';
-import { IconButton } from '@/src/components/IconButton';
-import { Skeleton } from '@/src/components/Skeleton';
 import { Stack } from '@/src/components/Stack';
 import { Tag } from '@/src/components/Tag';
-import { Tooltip } from '@/src/components/Tooltip';
 import { Typography } from '@/src/components/Typography';
-import { CheckIcon, CopyIcon, LightningIcon } from '@/src/icons/glyphs';
-import { border, radius, surface, text } from '@/src/tokens';
-import { useState } from 'react';
-import type { SuggestedPrompt } from '../../core/protocol/types';
-import type { ChatBlock, ChatMessage } from '../../core/store/types';
-import { useChatContext } from '../../react/context';
-import { useLabels, useThread, useThreadMeta } from '../../react/hooks';
-import { Message, MessageBlocks, Suggestions, messageText } from '../../react/primitives';
+import { radius, surface, text } from '@/src/tokens';
+import type { ChatMessage } from '../../core/store/types';
+import { useLabels, useThread } from '../../react/hooks';
+import { Message, MessageBlocks, messageText } from '../../react/primitives';
 import { ErrorNotice, TurnErrorNotice } from '../kit/helpers';
 import { PulseDot, Shimmer } from '../kit/Shimmer';
 import { mode, type AtomsTheme } from '../kit/tokens';
 import { AttachmentCard } from './Composer';
+import { TurnActions } from './TurnActions';
 
 const BUSY = new Set(['submitting', 'streaming', 'cancelling']);
 
-/** Figma Turn (question): the user's message, right-aligned in a bubble. */
+/**
+ * Figma Turn (question): the user's message, right-aligned in a tinted bubble. The bubble stops at
+ * 70% of the column (510px at the default width), so a long question wraps inside it and still
+ * reads as the user's side of the conversation.
+ */
 export function UserTurn({ message }: { message: ChatMessage }) {
   const body = messageText(message);
   return (
@@ -38,63 +35,25 @@ export function UserTurn({ message }: { message: ChatMessage }) {
         {body ? (
           <Box
             sx={(t: AtomsTheme) => ({
-              maxWidth: 'min(80%, 560px)',
-              px: 2,
-              py: 1.5,
-              borderRadius: `${radius.lg}px`,
-              border: '1px solid',
+              maxWidth: 'min(70%, 510px)',
+              px: 1.5,
+              py: 1,
+              borderRadius: `${radius.sm}px`,
               whiteSpace: 'pre-wrap',
               overflowWrap: 'anywhere',
               ...mode(t, {
-                backgroundColor: surface.layers.card2,
-                borderColor: border.layers.card1,
-                color: text.default.heading,
+                backgroundColor: surface.primary.subtleHover,
+                color: text.default.b1,
               }),
             })}
           >
-            <Typography variant="h6" weight="regular" component="div">
+            <Typography variant="body0" component="div">
               {body}
             </Typography>
           </Box>
         ) : null}
       </Box>
     </Message.Root>
-  );
-}
-
-function blockText(block: ChatBlock, registry: ReturnType<typeof useChatContext>['registry']): string | undefined {
-  const def = registry.resolve(block.data);
-  if (!def?.toText) return undefined;
-  try {
-    return def.toText(def.parse ? def.parse(block.data, block) : block.data, block);
-  } catch {
-    return undefined;
-  }
-}
-
-function CopyButton({ message }: { message: ChatMessage }) {
-  const labels = useLabels();
-  const { registry } = useChatContext();
-  const [copied, setCopied] = useState(false);
-  const value = messageText(message, (b) => blockText(b, registry));
-  if (!value || typeof navigator === 'undefined' || !navigator.clipboard) return null;
-  return (
-    <Tooltip title={copied ? labels.copied : labels.copy}>
-      <IconButton
-        size="sm"
-        variant="secondary"
-        appearance="text"
-        aria-label={labels.copy}
-        onClick={() => {
-          void navigator.clipboard.writeText(value).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-          });
-        }}
-      >
-        {copied ? <CheckIcon /> : <CopyIcon />}
-      </IconButton>
-    </Tooltip>
   );
 }
 
@@ -109,7 +68,7 @@ export function AssistantTurn({ message }: { message: ChatMessage }) {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          gap: 1.5,
+          gap: 2,
           minWidth: 0,
           '& .acu-turn-actions': { opacity: 0, transition: 'opacity 120ms ease' },
           '&:hover .acu-turn-actions, & .acu-turn-actions:focus-within': { opacity: 1 },
@@ -131,11 +90,7 @@ export function AssistantTurn({ message }: { message: ChatMessage }) {
             {labels.stopped}
           </Typography>
         ) : null}
-        {message.status !== 'streaming' ? (
-          <Stack direction="row" spacing={0.5} className="acu-turn-actions" sx={{ ml: -0.75 }}>
-            <CopyButton message={message} />
-          </Stack>
-        ) : null}
+        {message.status !== 'streaming' ? <TurnActions message={message} /> : null}
       </Box>
     </Message.Root>
   );
@@ -185,41 +140,5 @@ export function PendingTurn() {
       <RunStatus />
       {state.failedBeforeReply ? <TurnErrorNotice error={state.failedBeforeReply} /> : null}
     </>
-  );
-}
-
-/** Figma ChatSuggestions: opening prompts. Clicking sends the prompt text. */
-export function ChatSuggestions({ prompts }: { prompts?: SuggestedPrompt[] }) {
-  return (
-    <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, justifyContent: 'center' }}>
-      <Suggestions.Root prompts={prompts}>
-        {(p, i) => (
-          <Suggestions.Item key={`${p.label}:${i}`} prompt={p} asChild>
-            <Button size="sm" variant="secondary" appearance="outline" startIcon={<LightningIcon />}>
-              {p.label}
-            </Button>
-          </Suggestions.Item>
-        )}
-      </Suggestions.Root>
-    </Stack>
-  );
-}
-
-/** The default empty-chat screen: the server's greeting and suggested prompts. */
-export function WelcomeScreen() {
-  const labels = useLabels();
-  const meta = useThreadMeta();
-  const loading = useThread((s) => s.loadStatus === 'loading');
-  return (
-    <Stack spacing={3} sx={{ alignItems: 'center', textAlign: 'center', py: { xs: 6, sm: 10 } }}>
-      {loading ? (
-        <Skeleton variant="text" width={280} height={36} />
-      ) : (
-        <Typography variant="h4" component="h2" sx={(t: AtomsTheme) => mode(t, { color: text.default.heading })}>
-          {meta.greeting || labels.welcomeTitle}
-        </Typography>
-      )}
-      <ChatSuggestions />
-    </Stack>
   );
 }

@@ -46,12 +46,13 @@ const scanSvg = encodeURIComponent(
 );
 
 export const DEFAULT_SUGGESTIONS: SuggestedPrompt[] = [
-  { label: 'What is waiting on me?', prompt: 'Which invoices are still waiting on me?' },
-  { label: 'Post the held invoices', prompt: 'Post the four held invoices to NetSuite' },
-  { label: 'Which vendor is slowest?', prompt: 'Which vendor is slowest to pay? Show me charts.' },
-  { label: 'Reconcile August', prompt: 'Make a plan and reconcile August' },
+  { label: 'What is waiting on me?', prompt: 'Which invoices are still waiting on me?', icon: 'inbox' },
+  { label: 'Post the held invoices', prompt: 'Post the four held invoices to NetSuite', icon: 'receipt' },
+  { label: 'Which vendor is slowest?', prompt: 'Which vendor is slowest to pay? Show me charts.', icon: 'chart' },
+  { label: 'Reconcile August', prompt: 'Make a plan and reconcile August', icon: 'calendar' },
+  // No icon, so the demo shows the default.
   { label: 'Pick workflows', prompt: 'Help me choose which workflows to review' },
-  { label: 'Show the scan', prompt: 'Show me the scan of Statement-Aug.pdf' },
+  { label: 'Show the scan', prompt: 'Show me the scan of Statement-Aug.pdf', icon: 'document' },
 ];
 
 export const DEFAULT_SCENARIOS: MockScenario[] = [

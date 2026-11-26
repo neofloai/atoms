@@ -1,8 +1,12 @@
 import { NeofloThemeProvider } from '@/src/theme/ThemeProvider';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { AgenticChat, defineBlock, useHitl, type ChatAction } from '@/src/chat/index';
+import { AgenticChat, defaultLabels, defineBlock, suggestionGlyph, useHitl, type ChatAction } from '@/src/chat/index';
+import { SparkleIcon, TrayIcon } from '@/src/icons/glyphs';
 import { createMockAdapter } from '@/src/chat/mock';
+
+/** The composer's textarea. It moves from the welcome to the dock on the first send, so query it fresh. */
+const composerInput = () => screen.getByRole('textbox', { name: 'Message' }) as HTMLTextAreaElement;
 
 function renderChat(props: Partial<React.ComponentProps<typeof AgenticChat>> = {}) {
   const adapter = props.adapter ?? createMockAdapter({ latency: 0, speed: 0 });
@@ -36,8 +40,124 @@ describe('<AgenticChat>', () => {
     fireEvent.keyDown(input, { key: 'Enter', shiftKey: true });
     expect(input.value).toBe('first line');
     fireEvent.keyDown(input, { key: 'Enter' });
-    await waitFor(() => expect(input.value).toBe(''));
     expect(await screen.findByText('first line')).toBeTruthy();
+    // The welcome's composer gave way to the docked one, which is empty and has the focus.
+    await waitFor(() => expect(composerInput()).not.toBe(input));
+    expect(composerInput().value).toBe('');
+    expect(document.activeElement).toBe(composerInput());
+  });
+
+  it('opens on the welcome with the composer under the greeting, and docks it once a message goes out', async () => {
+    const { container } = renderChat();
+    await screen.findByText('Hey! What can I help you dig into today?');
+    expect(container.querySelector('[data-placement="welcome"]')).toBeTruthy();
+    expect(container.querySelector('[data-placement="docked"]')).toBeNull();
+    expect(composerInput().placeholder).toBe('How can I help you today?');
+    expect(composerInput().rows).toBe(3);
+    // At rest the card is the input and the +; send appears once there is text.
+    expect(screen.queryByRole('button', { name: 'Send' })).toBeNull();
+    fireEvent.change(composerInput(), { target: { value: 'hello there' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    await waitFor(() => expect(container.querySelector('[data-placement="docked"]')).toBeTruthy());
+    expect(container.querySelector('[data-placement="welcome"]')).toBeNull();
+    expect(composerInput().placeholder).toBe('Ask anything');
+    expect(composerInput().rows).toBe(1);
+  });
+
+  it('removes a suggested prompt with its ×, and keeps it removed in the next chat', async () => {
+    renderChat();
+    const list = await screen.findByRole('list', { name: 'Suggested prompts' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(6);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove “Post the held invoices”' }));
+    expect(screen.queryByRole('button', { name: 'Post the held invoices' })).toBeNull();
+    expect(within(list).getAllByRole('listitem')).toHaveLength(5);
+    // The × went with its row, so focus moves to the row that took its place.
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Which vendor is slowest?' })));
+
+    fireEvent.change(composerInput(), { target: { value: 'hello there' } });
+    fireEvent.keyDown(composerInput(), { key: 'Enter' });
+    await waitFor(() => expect(screen.queryByRole('list', { name: 'Suggested prompts' })).toBeNull());
+    fireEvent.click(screen.getByRole('button', { name: 'New chat' }));
+    const next = await screen.findByRole('list', { name: 'Suggested prompts' });
+    expect(within(next).getAllByRole('listitem')).toHaveLength(5);
+    expect(screen.queryByRole('button', { name: 'Post the held invoices' })).toBeNull();
+  });
+
+  it("draws a prompt's icon from the list, and sparkle for none or a name it doesn't know", () => {
+    expect(suggestionGlyph('inbox')).toBe(TrayIcon);
+    expect(suggestionGlyph(undefined)).toBe(SparkleIcon);
+    expect(suggestionGlyph('rocket')).toBe(SparkleIcon);
+    expect(suggestionGlyph('toString')).toBe(SparkleIcon);
+  });
+
+  it('puts ask-again and the time under the newest answer, and no feedback without onFeedback', async () => {
+    renderChat();
+    fireEvent.change(await screen.findByRole('textbox', { name: 'Message' }), { target: { value: 'hello there' } });
+    fireEvent.keyDown(composerInput(), { key: 'Enter' });
+    const again = await screen.findByRole('button', { name: 'Ask again' }, { timeout: 4000 });
+    expect(screen.getByText('just now')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Good response' })).toBeNull();
+    fireEvent.click(again);
+    // The question goes out again as a new turn.
+    await waitFor(() => expect(screen.getAllByText('hello there')).toHaveLength(2));
+  });
+
+  it('sends 👍 at once and 👎 through its dialog, then thanks the user', async () => {
+    const onFeedback = vi.fn();
+    renderChat({
+      turnActions: { onFeedback, feedbackIssueTypes: [{ id: 'wrong', label: 'Wrong numbers' }] },
+    });
+    fireEvent.change(await screen.findByRole('textbox', { name: 'Message' }), { target: { value: 'hello there' } });
+    fireEvent.keyDown(composerInput(), { key: 'Enter' });
+    const good = await screen.findByRole('button', { name: 'Good response' }, { timeout: 4000 });
+    fireEvent.click(good);
+    expect(onFeedback).toHaveBeenLastCalledWith(expect.objectContaining({ rating: 'good', messageId: expect.any(String) }));
+    expect(await screen.findByText('Thanks for the feedback!')).toBeTruthy();
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Good response' }).getAttribute('aria-pressed')).toBe('true'));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Bad response' }));
+    const dialog = await screen.findByRole('dialog', { name: /Give negative feedback/ });
+    fireEvent.change(within(dialog).getByRole('textbox', { name: /Please provide details/ }), { target: { value: ' Totals are off ' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Submit' }));
+    await waitFor(() =>
+      expect(onFeedback).toHaveBeenLastCalledWith(expect.objectContaining({ rating: 'bad', details: 'Totals are off' })),
+    );
+    expect(onFeedback.mock.lastCall?.[0]).not.toHaveProperty('issueType');
+  });
+
+  it('hides the row under answers with turnActions={false}', async () => {
+    renderChat({ turnActions: false });
+    fireEvent.change(await screen.findByRole('textbox', { name: 'Message' }), { target: { value: 'hello there' } });
+    fireEvent.keyDown(composerInput(), { key: 'Enter' });
+    await waitFor(() => expect(screen.getAllByText(/./).length).toBeGreaterThan(0));
+    await new Promise((r) => setTimeout(r, 300));
+    expect(screen.queryByRole('button', { name: 'Ask again' })).toBeNull();
+    expect(screen.queryByText('just now')).toBeNull();
+  });
+
+  it('says when an answer was given in words', () => {
+    const now = new Date('2026-11-26T12:00:00Z');
+    const ago = (ms: number) => defaultLabels.timeAgo(new Date(now.getTime() - ms), now);
+    expect(ago(20_000)).toBe('just now');
+    expect(ago(60_000)).toBe('1 min ago');
+    expect(ago(40 * 60_000)).toBe('40 mins ago');
+    expect(ago(3 * 3_600_000)).toBe('3 hrs ago');
+    expect(ago(30 * 3_600_000)).toBe('Yesterday');
+    expect(ago(4 * 86_400_000)).toBe('4 days ago');
+  });
+
+  it('puts New chat, History and Search on a rail with navigation="rail", and opens history in its place', async () => {
+    renderChat({ navigation: 'rail', railFooter: <button type="button">Help</button> });
+    await screen.findByRole('textbox', { name: 'Message' });
+    // No header bar: the app shows the title.
+    expect(screen.queryByRole('banner')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Help' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Search chats' }));
+    const search = await screen.findByRole('searchbox', { name: 'Search chats' });
+    await waitFor(() => expect(document.activeElement).toBe(search));
+    expect(screen.queryByRole('button', { name: 'Search chats' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Hide chat history' }));
+    expect(await screen.findByRole('button', { name: 'Search chats' })).toBeTruthy();
   });
 
   it('does not send while an IME composition is in progress', async () => {
@@ -54,13 +174,13 @@ describe('<AgenticChat>', () => {
     fireEvent.change(input, { target: { value: 'Post the held invoices to NetSuite' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     const approve = await screen.findByRole('button', { name: 'Post all four' }, { timeout: 4000 });
-    await waitFor(() => expect(input.disabled).toBe(true));
-    expect(input.placeholder).toBe('Respond to the card above to continue');
+    await waitFor(() => expect(composerInput().disabled).toBe(true));
+    expect(composerInput().placeholder).toBe('Respond to the card above to continue');
     await waitFor(() => expect((approve as HTMLButtonElement).disabled).toBe(false));
     fireEvent.click(approve);
     expect(await screen.findByText('Approved', undefined, { timeout: 4000 })).toBeTruthy();
     expect(await screen.findByText(/VB-2231/, undefined, { timeout: 4000 })).toBeTruthy();
-    await waitFor(() => expect(input.disabled).toBe(false));
+    await waitFor(() => expect(composerInput().disabled).toBe(false));
   });
 
   it('renders custom blocks and routes emit() to onAction', async () => {

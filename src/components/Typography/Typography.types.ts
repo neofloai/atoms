@@ -8,8 +8,9 @@ import type { fontWeights } from '@/src/tokens';
  * The type rungs this system actually defines.
  *
  * Narrower than MUI's on purpose, and the narrowing is the point of the
- * component. `src/theme/typography.ts` maps `h1`-`h6`, `body1`, `body2`
- * and `caption` onto the type scale; MUI's remaining four —
+ * component. `src/theme/typography.ts` maps `h1`-`h6`, `body0`, `body1`,
+ * `body2` and `caption` onto the type scale (`body0` is this system's
+ * own rung, 14/22, one above `body1`); MUI's remaining four —
  * `subtitle1`, `subtitle2`, `button`, `overline` — are left at
  * Material's own numbers, because the design library does not define
  * them.
@@ -34,6 +35,7 @@ export type TypographyVariant =
   | 'h4'
   | 'h5'
   | 'h6'
+  | 'body0'
   | 'body1'
   | 'body2'
   | 'caption'

@@ -1,4 +1,4 @@
-This page is for teams building a backend that the Atoms chat (`@neofloai/atoms/chat`) talks to. It restates the Neoflo chat standard (schema v1, revision 1.2) from the client's side: what the chat sends, what it expects back, and how it behaves when something goes wrong. Ask Neo is the first product on it; any other product implements the same endpoints and adds its own values through the config and `ext`.
+This page is for teams building a backend that the Atoms chat (`@neofloai/atoms/chat`) talks to. It restates the Neoflo chat standard (schema v1, revision 1.3) from the client's side: what the chat sends, what it expects back, and how it behaves when something goes wrong. Ask Neo is the first product on it; any other product implements the same endpoints and adds its own values through the config and `ext`.
 
 Block payloads (what goes inside `content_block_*`) live in [block contracts](/chat/block-contracts). What the standard still leaves open is in [schema gaps](/chat/schema-gaps). To check a backend against this page, run the [conformance check](/chat/conformance).
 
@@ -60,7 +60,7 @@ Every non-2xx response uses one envelope, and HTTP errors and stream `error` eve
 | # | Request | The client expects |
 | --- | --- | --- |
 | 0 | `GET /v1/chat/config` | What this backend supports (section 3). Called once per session. A 404 means "no config": the host's switches apply. |
-| 1 | `POST /v1/conversation`, optional body `{ title, model, sources }` | 201 with the conversation object plus `greeting` and `suggested_prompts` (`{ label, prompt }[]`, the chip shows `label` and sends `prompt`). |
+| 1 | `POST /v1/conversation`, optional body `{ title, model, sources }` | 201 with the conversation object plus `greeting` and `suggested_prompts` (`{ label, prompt, icon? }[]`: the row shows `label` and sends `prompt`, see [Suggested prompts](#suggested-prompts)). |
 | 2 | `GET /v1/conversations` | `{ "conversations": [...], "next_cursor": null }`. Items carry `conversation_id`, `title`, `selected_model`, `archived`, `message_count`, timestamps. No `sources`. |
 | 3 | `GET /v1/conversations/{id}` | The conversation object plus `messages[]`, oldest first. A 404 removes the chat from history. |
 | 4 | `PATCH /v1/conversations/{id}` with `title`, `model`, `sources`, `archived` | The conversation object. The client keeps the `sources` from this response, not the ones it sent. `archived` only with the `archive` capability. |
@@ -92,13 +92,32 @@ The conversation object (endpoints 1, 3, 4):
 }
 ```
 
+### Suggested prompts
+
+The prompts under the empty chat's composer come from endpoint 1:
+
+```json
+{
+  "greeting": "Good morning, Priya!",
+  "suggested_prompts": [
+    { "label": "What is waiting on me right now?", "prompt": "Which invoices are waiting on me?", "icon": "inbox" },
+    { "label": "Which invoices are stuck?", "prompt": "Which invoices are stuck, and why?", "icon": "warning" },
+    { "label": "Show last week's spend by vendor", "prompt": "Show last week's spend by vendor as a chart", "icon": "chart" }
+  ]
+}
+```
+
+- **`label`** is what the row shows, and **`prompt`** is what it sends.
+- **`icon`** is optional (revision 1.3). It names one of a fixed list, so the chat ships those glyphs and no others: `sparkle`, `inbox`, `warning`, `chart`, `trend`, `document`, `receipt`, `money`, `vendor`, `calendar`, `clock`, `check`, `search`. A prompt without one, or with a name this list doesn't have, shows `sparkle`, so a backend on revision 1.2 needs no change.
+- The user can remove a prompt with its ×. The chat remembers that on the device and stops showing that prompt in new chats, so send the ones worth keeping first.
+
 Messages (endpoint 3) carry `message_id`, `role`, `content` (a block array), `stop_reason`, `created_at`, and on assistant messages `run_id`, `model` and optional `usage`. User messages carry the `client_message_id` they were sent with, and the `sources`, `attachments` and `workflow_context` the turn used. `ext` is passed to the host app untouched.
 
 ## 3. The config (endpoint 0)
 
 ```json
 {
-  "protocol_version": "1.2",
+  "protocol_version": "1.3",
   "product": { "id": "askneo", "name": "Ask Neo" },
   "capabilities": {
     "hitl": false,
