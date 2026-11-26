@@ -18,9 +18,11 @@ export * from './headless';
 export {
   AgenticChat,
   ChatHeader,
+  ChatRail,
   type AgenticChatProps,
   type ChatComponents,
   type ChatHeaderProps,
+  type ChatRailProps,
 } from './ui/shell/AgenticChat';
 export { ChatThread, type ChatThreadProps, type ThreadComponents } from './ui/shell/ChatThread';
 export {
@@ -29,6 +31,7 @@ export {
   FileCard,
   AttachmentCard,
   type ChatComposerProps,
+  type ChatComposerPlacement,
   type FileCardProps,
 } from './ui/shell/Composer';
 export {
@@ -37,7 +40,30 @@ export {
   type ComposerPickerGroup,
   type ComposerPickerItem,
 } from './ui/shell/ComposerPicker';
-export { UserTurn, AssistantTurn, RunStatus, PendingTurn, ChatSuggestions, WelcomeScreen } from './ui/shell/Turn';
+export {
+  ComposerMenu,
+  type ComposerMenuConfig,
+  type ComposerMenuItem,
+  type ComposerMenuProps,
+  type ComposerSubmenu,
+  type ComposerSubmenuItem,
+  type ComposerSubmenuPicker,
+} from './ui/shell/ComposerMenu';
+export {
+  TurnActions,
+  TurnActionButton,
+  TurnActionsProvider,
+  type TurnActionsOptions,
+  type TurnFeedback,
+} from './ui/shell/TurnActions';
+export { UserTurn, AssistantTurn, RunStatus, PendingTurn } from './ui/shell/Turn';
+export {
+  ChatSuggestions,
+  WelcomeScreen,
+  suggestionGlyph,
+  type ChatSuggestionsProps,
+  type WelcomeScreenProps,
+} from './ui/shell/Welcome';
 export { ChatHistory, type ChatHistoryProps } from './ui/history/ChatHistory';
 
 export {

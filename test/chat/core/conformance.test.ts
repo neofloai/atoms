@@ -115,6 +115,8 @@ describe('runConformance', () => {
       'get.messages',
       'errors.not_found',
       'delete',
+      // The mock's prompts name icons from the list (revision 1.3).
+      'create.prompt-icons',
     ]) {
       expect(status(report, id), id).toBe('pass');
     }
@@ -129,6 +131,25 @@ describe('runConformance', () => {
     });
     expect(status(report, 'stream.unsupported.attachments')).toBe('pass');
     expect(status(report, 'stream.unsupported.workflow_context')).toBe('pass');
+  });
+
+  it('warns about a suggested-prompt icon the chat does not know, and fails one that is not a string', async () => {
+    const prompts = (icon: unknown) => ({
+      json: (method: string, path: string, body: unknown) =>
+        method === 'POST' && path === '/v1/conversation' && body && typeof body === 'object'
+          ? { ...body, suggested_prompts: [{ label: 'Stuck', prompt: 'Which invoices are stuck?', icon }] }
+          : body,
+    });
+    const unknown = await run({}, prompts('rocket'));
+    const icons = unknown.checks.find((c) => c.id === 'create.prompt-icons')!;
+    expect(icons.status).toBe('warn');
+    expect(icons.detail).toMatch(/unknown icon "rocket"; the chat shows "sparkle" instead/);
+    expect(status(unknown, 'create.shape')).toBe('pass');
+    expect(unknown.ok).toBe(true);
+
+    const wrongType = await run({}, prompts(7));
+    expect(status(wrongType, 'create.shape')).toBe('fail');
+    expect(wrongType.checks.find((c) => c.id === 'create.shape')!.detail).toMatch(/icon a string/);
   });
 
   it('fails a backend that leaks identity, credentials or old field names', async () => {

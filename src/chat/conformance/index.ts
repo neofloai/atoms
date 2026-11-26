@@ -1,10 +1,10 @@
-import { ERROR_CODES } from '../core/protocol/types';
+import { ERROR_CODES, SUGGESTION_ICONS } from '../core/protocol/types';
 import { readErrorEnvelope } from '../core/transport/errors';
 import { DEFAULT_REST_PATHS, type RestPaths } from '../core/transport/rest-adapter';
 import { readSse } from '../core/transport/sse';
 
 /**
- * Checks a backend against the chat standard (schema v1, revision 1.2) over real HTTP, the way
+ * Checks a backend against the chat standard (schema v1, revision 1.3) over real HTTP, the way
  * the library will call it. Run it in a product's CI against a dev or staging deployment:
  *
  * ```ts
@@ -309,10 +309,16 @@ export async function runConformance(options: ConformanceOptions): Promise<Confo
     }
     const p = conversationProblems(r.body, 'response');
     if (isObject(r.body) && isString(r.body.conversation_id)) conversationId = r.body.conversation_id;
+    let icons: string[] = [];
     if (isObject(r.body) && r.body.suggested_prompts !== undefined) {
       const sp = r.body.suggested_prompts;
-      if (!Array.isArray(sp) || sp.some((x) => !isObject(x) || !isString(x.label) || !isString(x.prompt))) {
-        p.push('suggested_prompts must be [{label, prompt}]');
+      if (
+        !Array.isArray(sp) ||
+        sp.some((x) => !isObject(x) || !isString(x.label) || !isString(x.prompt) || (x.icon !== undefined && !isString(x.icon)))
+      ) {
+        p.push('suggested_prompts must be [{label, prompt, icon?}] with icon a string');
+      } else {
+        icons = sp.map((x) => (x as { icon?: string }).icon).filter(isString);
       }
     }
     if (isObject(r.body) && r.body.ext !== undefined && productId && isObject(r.body.ext)) {
@@ -320,6 +326,19 @@ export async function runConformance(options: ConformanceOptions): Promise<Confo
       if (keys.length) p.push(`ext has keys other than "${productId}": ${keys.join(', ')}`);
     }
     expectAll(ep.create, 'create.shape', 'Creates a conversation', p);
+    // Only for a backend that sends icons: an unknown name is not an error (the chat shows the
+    // default), but it is almost always a typo the backend team wants to hear about.
+    if (icons.length) {
+      const known = new Set<string>(SUGGESTION_ICONS);
+      const unknown = [...new Set(icons.filter((name) => !known.has(name)))];
+      expectAll(
+        ep.create,
+        'create.prompt-icons',
+        'Names suggested-prompt icons from the list',
+        unknown.length ? [`unknown icon ${unknown.map((n) => `"${n}"`).join(', ')}; the chat shows "sparkle" instead`] : [],
+        'warn',
+      );
+    }
   });
 
   if (!conversationId) {

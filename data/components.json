@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T14:05:09.538Z",
+  "generatedAt": "2026-11-26T11:49:37.971Z",
   "components": [
     {
       "name": "Accordion",
@@ -3328,20 +3328,26 @@
           "name": "NavbarTitle children",
           "type": "ReactNode",
           "default": "—",
-          "description": "The page title, at the `h5` ramp in medium weight and heading ink. Rendered as a real `h1` inside the block, and truncated with an ellipsis rather than wrapped — the bar’s height is fixed, so a second line would be clipped instead."
+          "description": "The title: whatever the app passes — a page name like \"Home\", a record, the conversation on screen. It takes the style of the bar it sits in. In the `sm` app bar it is one line at `b0` in regular weight and body ink, after the sidebar toggle. In the `md` page header it is the page title at the `h5` ramp in medium weight and heading ink, rendered as a real `h1`. Either way it truncates with an ellipsis rather than wrapping — the bar’s height is fixed, so a second line would be clipped instead."
         },
         {
           "name": "NavbarTitle meta",
           "type": "{ icon?, label }[]",
           "default": "—",
-          "description": "The line under the title — a reference, a name, a date. Each item is an optional 16px glyph and a label at the `b2` ramp in muted ink, and the block draws a vertical rule between each pair. Omit it for a bar with nothing but a title."
+          "description": "The line under the title — a reference, a name, a date. Each item is an optional 16px glyph and a label at the `b2` ramp in muted ink, and the block draws a vertical rule between each pair. Omit it for a bar with nothing but a title. Only the `md` bar has room for it; in the `sm` bar it is left out."
+        },
+        {
+          "name": "NavbarTitle size",
+          "type": "'sm' | 'md'",
+          "default": "the bar’s size",
+          "description": "Which bar’s title style to take. Inside a `Navbar` it follows the bar, so leave it unset there; outside one it is `md`."
         }
       ],
       "examples": [
         {
-          "title": "An app bar: toggle, page name, account",
-          "description": "The app bar. The sidebar toggle leads, the page you are on follows in muted body type, and a flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is `AccountMenu`, and the top bar is where it lives on every screen of the shell: it renders the avatar button and the dropdown it opens, and takes the rows as children — call `get_component` for `AccountMenu`.",
-          "code": "import { AccountMenu, Box, IconButton, MenuItem, Navbar, Stack, Typography } from \"@neofloai/atoms\";\nimport { GearSixIcon, SidebarSimpleIcon, StarFourIcon } from \"@neofloai/atoms/icons\";\n\n<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    <Typography variant=\"body1\" color=\"text.secondary\" noWrap>\n      Invoice Processing\n    </Typography>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    {/* The avatar and the account dropdown it opens. */}\n    <AccountMenu user={user} onSignOut={signOut}>\n      <MenuItem onClick={openSettings}>\n        <GearSixIcon size={16} />\n        Settings\n      </MenuItem>\n    </AccountMenu>\n  </Stack>\n</Navbar>"
+          "title": "An app bar: toggle, title, account",
+          "description": "The app bar. The sidebar toggle leads and the title follows — a `NavbarTitle`, which in this bar is one line of body type. What it says is up to the app: the page you are on, a record, or the chat on screen. A flexible gap pushes Ask Neo and the account avatar to the trailing edge. Everything sits 16px apart — that is a `Stack` gap, because spacing between children is composition rather than something the bar imposes. The avatar is `AccountMenu`, and the top bar is where it lives on every screen of the shell: it renders the avatar button and the dropdown it opens, and takes the rows as children — call `get_component` for `AccountMenu`.",
+          "code": "import { AccountMenu, Box, IconButton, MenuItem, Navbar, NavbarTitle, Stack } from \"@neofloai/atoms\";\nimport { GearSixIcon, SidebarSimpleIcon, StarFourIcon } from \"@neofloai/atoms/icons\";\n\n<Navbar>\n  <Stack direction=\"row\" sx={{ flex: 1, minWidth: 0, alignItems: \"center\", gap: 2 }}>\n    <IconButton\n      variant=\"secondary\"\n      appearance=\"text\"\n      size=\"sm\"\n      aria-label={sidebarHidden ? \"Show sidebar\" : \"Hide sidebar\"}\n      onClick={toggleSidebar}\n    >\n      <SidebarSimpleIcon />\n    </IconButton>\n    {/* Whatever the app passes: \"Home\", a page, the chat on screen. */}\n    <NavbarTitle>{pageTitle}</NavbarTitle>\n    <Box sx={{ flex: 1 }} />\n    <IconButton variant=\"primary\" appearance=\"outline\" size=\"sm\" aria-label=\"Ask Neo\">\n      <StarFourIcon />\n    </IconButton>\n    {/* The avatar and the account dropdown it opens. */}\n    <AccountMenu user={user} onSignOut={signOut}>\n      <MenuItem onClick={openSettings}>\n        <GearSixIcon size={16} />\n        Settings\n      </MenuItem>\n    </AccountMenu>\n  </Stack>\n</Navbar>"
         },
         {
           "title": "The shell: a full-height rail, the bar beside it",
@@ -3371,7 +3377,9 @@
       ],
       "dos": [
         "Leave `position` at `static` for an app shell, and use `sticky` when the bar should follow the page",
-        "Use `size=\"md\"` with a `NavbarTitle` when the bar names a page or a record, and `size=\"sm\"` when it only carries controls",
+        "Use `NavbarTitle` for the title in either bar, and pass it whatever the screen is: \"Home\", a record, the chat on screen. It takes the bar’s style, so the title reads the same on every screen",
+        "Use `size=\"md\"` when the bar names a record and its context, and the `sm` app bar for one line of title and the app’s controls",
+        "Show the chat’s title in the app bar with `<AgenticChat onTitleChange>` — call `get_chat`",
         "Put the record’s facts in `meta` rather than in the title — a title that reads \"Matching #345 · Nike Sales\" cannot truncate gracefully",
         "Put one `Box sx={{ flex: 1 }}` between the leading group and the trailing one, so the bar has a single split point",
         "End the `sm` bar with `AccountMenu` — the signed-in user and the account dropdown, on every screen of the shell",
@@ -3385,6 +3393,7 @@
         "Don't add a shadow to a `static` bar — the bottom rule is the separation, and a shadow on a bar that cannot scroll under anything is decoration",
         "Don't stack rows inside a `sm` bar to fit a title and its context — that is what `size=\"md\"` and `NavbarTitle` are, and a third row belongs in a `Tabs` bar beneath the header",
         "Don't put a page's actions inside `NavbarTitle` — it owns the title and its context, and the roles of the buttons beside it are decisions about the page",
+        "Don't hand-set the app bar's title in a `Typography` — `NavbarTitle` carries its type and ink, and two screens styling it by hand drift apart",
         "Don't put more than one primary action in the bar — it is the screen's chrome, not its call to action",
         "Don't run the bar across the top of the whole window with the rail underneath it — at `sm` the rail owns the full height and the bar spans the content column only, so the brand mark is the app's top-left corner. `size=\"md\"` is the one place the bar spans the top, and that is a different screen rather than a second band on this one"
       ],
@@ -5639,11 +5648,11 @@
     {
       "name": "Typography",
       "category": "Data Display",
-      "tagline": "Text on the type scale. Ten rungs, two weight cuts each, and the element kept separate from the size — so a page title can be an h1 without being 80px tall.",
+      "tagline": "Text on the type scale. Eleven rungs, two weight cuts each, and the element kept separate from the size — so a page title can be an h1 without being 80px tall.",
       "props": [
         {
           "name": "variant",
-          "type": "'h1'–'h6' | 'body1' | 'body2' | 'caption' | 'inherit'",
+          "type": "'h1'–'h6' | 'body0' | 'body1' | 'body2' | 'caption' | 'inherit'",
           "default": "'body1'",
           "description": "Which rung of the type scale to set. Size, leading and letter-spacing all resolve from the typography tokens. Narrower than MUI’s list: `subtitle1`, `subtitle2`, `button` and `overline` are not offered, because the scale does not define them — see the migration example below for what to write instead."
         },
@@ -5687,8 +5696,8 @@
       "examples": [
         {
           "title": "The scale",
-          "description": "Ten rungs. The six headings run 80px down to 16px, the two body sizes are 13px and 12px, and the caption is 10px.",
-          "code": "<Typography variant=\"h3\">Query Log</Typography>\n<Typography variant=\"h5\">Sign in</Typography>\n<Typography variant=\"body1\">The default. Most copy sits here.</Typography>\n<Typography variant=\"body2\">One rung down, for supporting lines.</Typography>\n<Typography variant=\"caption\">Labels and metadata.</Typography>"
+          "description": "Eleven rungs. The six headings run 80px down to 16px, the three body sizes are 14px, 13px and 12px, and the caption is 10px. `body0` is for text read or written at length in a conversation, like a chat message.",
+          "code": "<Typography variant=\"h3\">Query Log</Typography>\n<Typography variant=\"h5\">Sign in</Typography>\n<Typography variant=\"body0\">A message in a conversation.</Typography>\n<Typography variant=\"body1\">The default. Most copy sits here.</Typography>\n<Typography variant=\"body2\">One rung down, for supporting lines.</Typography>\n<Typography variant=\"caption\">Labels and metadata.</Typography>"
         },
         {
           "title": "The size and the element are separate",

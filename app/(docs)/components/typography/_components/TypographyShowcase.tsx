@@ -37,6 +37,11 @@ const RUNGS: readonly Rung[] = [
   { variant: 'h5', ...tokens.headings.h5, specimen: 'Sign in' },
   { variant: 'h6', ...tokens.headings.h6, specimen: 'Recent activity' },
   {
+    variant: 'body0',
+    ...tokens.body.b0,
+    specimen: 'One rung up, for a message in a conversation.',
+  },
+  {
     variant: 'body1',
     ...tokens.body.b1,
     specimen: 'The default rung. Most copy on a screen sits here.',

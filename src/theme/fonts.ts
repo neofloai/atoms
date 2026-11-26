@@ -1,8 +1,9 @@
 /**
  * Self-hosted brand fonts.
  *
- * Atoms renders in DM Sans (body/UI), Instrument Serif (accent) and
- * DM Mono (the monospace, worn by table and grid headers).
+ * Atoms renders in DM Sans (body/UI), Instrument Serif (accent),
+ * Scope One (display, the chat's greeting) and DM Mono (the monospace,
+ * worn by table and grid headers).
  * Importing the `@fontsource` stylesheets here as side effects means
  * any host that renders `NeofloThemeProvider` gets the correct
  * `@font-face` rules automatically -- no manual `<link>` tags or
@@ -11,6 +12,7 @@
  * Only the weights the theme actually uses are loaded:
  *   - DM Sans:           400 (regular), 500 (medium), 600 (semibold)
  *   - Instrument Serif:  400 (regular + italic)
+ *   - Scope One:         400 (its only weight)
  *   - DM Mono:           400 (regular), 500 (medium)
  *
  * DM Mono is the first monospace this package actually ships. The
@@ -32,3 +34,4 @@ import '@fontsource/dm-mono/400.css';
 import '@fontsource/dm-mono/500.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/scope-one/400.css';

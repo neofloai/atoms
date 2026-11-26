@@ -11,7 +11,7 @@ export * from './blocks/index';
 
 export { ChatProvider, ThreadProvider, type ChatProviderProps } from './react/provider';
 export { ChatContext, ThreadContext, MessageContext, BlockContext, useChatContext, type ChatContextValue } from './react/context';
-export { defaultLabels, type ChatLabels } from './react/labels';
+export { defaultLabels, type ChatLabels, type FileKind } from './react/labels';
 export {
   useChatRuntime,
   useChatConfig,

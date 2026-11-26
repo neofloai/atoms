@@ -1,4 +1,16 @@
 /** Every string the UI shows. Override any of them through `labels` for copy or translation. */
+/** The kinds a file card tells apart, by extension or content type. */
+export type FileKind = 'spreadsheet' | 'pdf' | 'document' | 'image' | 'folder' | 'file';
+
+const FILE_KINDS: Record<FileKind, string> = {
+  spreadsheet: 'Spreadsheet',
+  pdf: 'PDF document',
+  document: 'Document',
+  image: 'Image',
+  folder: 'Folder',
+  file: 'File',
+};
+
 export interface ChatLabels {
   composerPlaceholder: string;
   composerAwaitingDecision: string;
@@ -92,6 +104,65 @@ export interface ChatLabels {
   unknownBlock: string;
   blockCrashed: string;
   welcomeTitle: string;
+  /** The composer's placeholder on the empty chat, where it sits under the greeting. */
+  welcomePlaceholder: string;
+  /** The suggested prompts' list. */
+  suggestionsLabel: string;
+  /** The × on a suggested prompt. */
+  dismissSuggestion: (label: string) => string;
+  /** The composer's + button, which opens the menu. */
+  composerMenu: string;
+  /** The + menu's attach item. */
+  menuAttach: string;
+  /** The + menu's workflows item. */
+  menuWorkflows: string;
+  /** The search field at the top of a submenu. */
+  menuSearch: string;
+  /** A submenu search that matches nothing. */
+  menuNoMatches: string;
+  /** A folder in a menu, loading what is inside it. */
+  menuLoading: string;
+  /** A folder whose contents failed to load; choosing the row tries again. */
+  menuLoadFailed: string;
+  /** Under an answer: 👍. */
+  feedbackGood: string;
+  /** Under an answer: 👎. */
+  feedbackBad: string;
+  /** Under the newest answer: ↻, which asks its question again. */
+  askAgain: string;
+  /** The toast after feedback is sent. */
+  feedbackThanksTitle: string;
+  feedbackThanksMessage: string;
+  /** The toast when `onFeedback` fails. */
+  feedbackFailedTitle: string;
+  feedbackFailedMessage: string;
+  /** 👎's dialog. */
+  feedbackDialogTitle: string;
+  feedbackIssueLabel: string;
+  feedbackDetailsLabel: string;
+  feedbackHint: string;
+  /** What a file card says a file is: "Spreadsheet", "PDF document", "Folder"… */
+  fileKind: (kind: FileKind) => string;
+  /** When an answer was given, under it: "just now", "40 mins ago", "Yesterday", "12 Nov". */
+  timeAgo: (date: Date, now: Date) => string;
+}
+
+/** "just now", "1 min ago", "40 mins ago", "3 hrs ago", "Yesterday", "4 days ago", then the date. */
+function timeAgo(date: Date, now: Date): string {
+  const mins = Math.floor((now.getTime() - date.getTime()) / 60_000);
+  if (!Number.isFinite(mins)) return '';
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins === 1 ? '1 min ago' : `${mins} mins ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs === 1 ? '1 hr ago' : `${hrs} hrs ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return date.toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+    ...(date.getFullYear() === now.getFullYear() ? {} : { year: 'numeric' }),
+  });
 }
 
 export const defaultLabels: ChatLabels = {
@@ -184,4 +255,27 @@ export const defaultLabels: ChatLabels = {
   unknownBlock: 'Unsupported content',
   blockCrashed: 'This part of the answer couldn’t be displayed.',
   welcomeTitle: 'What can I help you with?',
+  welcomePlaceholder: 'How can I help you today?',
+  suggestionsLabel: 'Suggested prompts',
+  dismissSuggestion: (label) => `Remove “${label}”`,
+  composerMenu: 'Add to your message',
+  menuAttach: 'Add files & photos',
+  menuWorkflows: 'Workflows',
+  menuSearch: 'Search…',
+  menuNoMatches: 'Nothing matches',
+  menuLoading: 'Loading…',
+  menuLoadFailed: 'Couldn’t load this. Try again',
+  feedbackGood: 'Good response',
+  feedbackBad: 'Bad response',
+  askAgain: 'Ask again',
+  feedbackThanksTitle: 'Thanks for the feedback!',
+  feedbackThanksMessage: 'Your response has been recorded',
+  feedbackFailedTitle: 'Couldn’t send your feedback',
+  feedbackFailedMessage: 'Please try again in a moment.',
+  feedbackDialogTitle: 'Give negative feedback',
+  feedbackIssueLabel: 'Select your issue type (optional)',
+  feedbackDetailsLabel: 'Please provide details (optional)',
+  feedbackHint: 'Your feedback helps us improve our responses.',
+  fileKind: (kind) => FILE_KINDS[kind],
+  timeAgo,
 };

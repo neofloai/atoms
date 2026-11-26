@@ -56,9 +56,13 @@ export default function NavbarDocsPage() {
             already the right height.
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            <code>NavbarTitle</code> is the one region that comes with it, for
-            the <code>md</code> bar: a page title with an optional line of
-            context under it. It exists because that block is geometry rather
+            <code>NavbarTitle</code> is the one region that comes with it: the
+            bar&apos;s title, which says whatever the app passes — a page name
+            like &ldquo;Home&rdquo;, a record, the chat on screen. It takes the
+            style of the bar it sits in. In the <code>sm</code> app bar it is
+            one line of body type after the sidebar toggle; in the{' '}
+            <code>md</code> page header it is a page title with an optional line
+            of context under it. It exists because that block is geometry rather
             than composition — the type ramps, the 4px between the lines, and a{' '}
             <code>meta</code> row of 16px glyphs and labels with a vertical rule
             between each pair. The actions beside it stay with the caller,

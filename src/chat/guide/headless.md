@@ -79,7 +79,7 @@ Every part renders a plain element, accepts normal HTML props, supports `asChild
 | `Message` | `Root`, `Blocks` (renders through the registry, with optional grouping), `If` |
 | `Block` | Renders one block through the registry inside its own error boundary |
 | `Composer` | `Root` (the form), `Input` (auto-growing, Enter sends, IME-safe, paste files), `Send`, `Cancel`, `AttachmentInput`, `Attachments` |
-| `Suggestions` | `Root`, `Item` (sends the prompt text) |
+| `Suggestions` | `Root`, `Item` (sends the prompt text). `suggestionGlyph(prompt.icon)` gives the icon a prompt names, or the default. |
 | `ConversationList` | `Root`, `Item`, `New` |
 | `Hitl` | `Root`, `Option`, `Submit`, for building choice cards |
 

@@ -9,6 +9,7 @@ import { border, spacing, surface, text } from '@/src/tokens';
 import { paired } from '../_shared/actionStyles';
 
 import type { NavbarProps, NavbarSize } from './Navbar.types';
+import { NavbarSizeContext } from './navbarContext';
 
 /**
  * Height of the bar, in pixels, per `size`.
@@ -142,13 +143,13 @@ const NavbarToolbar = styled(Toolbar, {
  * `sx={{ ml: 'auto' }}` between them, and a tight group of icon buttons
  * chooses its own gap rather than inheriting one meant for a brand.
  *
- * @example An app bar: sidebar toggle, page name, trailing actions
+ * @example An app bar: sidebar toggle, title, trailing actions
  * <Navbar>
- *   <Stack direction="row" sx={{ flex: 1, alignItems: 'center', gap: 2 }}>
+ *   <Stack direction="row" sx={{ flex: 1, minWidth: 0, alignItems: 'center', gap: 2 }}>
  *     <IconButton variant="secondary" appearance="text" size="sm" aria-label="Hide sidebar">
  *       <SidebarSimpleIcon />
  *     </IconButton>
- *     <Typography variant="body1" color="text.secondary">Invoice Processing</Typography>
+ *     <NavbarTitle>{pageTitle}</NavbarTitle>
  *     <Box sx={{ flex: 1 }} />
  *     <IconButton variant="primary" appearance="outline" size="sm" aria-label="Ask Neo">
  *       <StarFourIcon />
@@ -163,7 +164,7 @@ const NavbarToolbar = styled(Toolbar, {
  * @example A real nav landmark, flush to the page edge
  * <Navbar disableGutters slotProps={{ toolbar: { component: 'nav' } }}>…</Navbar>
  *
- * @see Related: Drawer, Tabs, IconButton, Avatar, Menu
+ * @see Related: NavbarTitle, Drawer, Tabs, IconButton, Avatar, Menu
  */
 export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
   (
@@ -194,7 +195,9 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         neofloSize={size}
         {...slotProps?.toolbar}
       >
-        {children}
+        <NavbarSizeContext.Provider value={size}>
+          {children}
+        </NavbarSizeContext.Provider>
       </NavbarToolbar>
     </NavbarRoot>
   )

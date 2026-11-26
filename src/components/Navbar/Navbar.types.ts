@@ -112,8 +112,8 @@ export interface NavbarMetaItem {
 }
 
 /**
- * Props for the Neoflo `NavbarTitle` — the page title and the line of
- * context under it.
+ * Props for the Neoflo `NavbarTitle` — the bar's title, and in the page
+ * header the line of context under it.
  *
  * A plain `div` underneath, so `sx`, `className` and the usual DOM props
  * all apply. `children` is the title, as it is on `DialogTitle`.
@@ -127,12 +127,23 @@ export interface NavbarTitleProps
    * navigation toggle before it.
    */
   sx?: SxProps<Theme>;
-  /** The page title. Rendered as an `h1` inside the block. */
+  /**
+   * The title: whatever the app passes — a page name, a record, the
+   * conversation on screen. In a `md` bar it is an `h1` at the `h5` ramp;
+   * in a `sm` app bar, one line at `b0`. Either way it truncates rather
+   * than wraps.
+   */
   children?: React.ReactNode;
   /**
    * The line under the title — references, names, dates. Rendered as a
    * row with a vertical rule between each pair; omit it for a bar with
-   * nothing but a title.
+   * nothing but a title. Only the `md` bar has room for it; a `sm` bar
+   * leaves it out.
    */
   meta?: readonly NavbarMetaItem[];
+  /**
+   * Which bar's style to take. Inside a `Navbar` it follows that bar's
+   * `size`, so leave it unset there; outside one it defaults to `md`.
+   */
+  size?: NavbarSize;
 }

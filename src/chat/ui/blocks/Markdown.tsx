@@ -19,7 +19,8 @@ function align(a: unknown): 'left' | 'center' | 'right' | undefined {
 }
 
 function buildComponents(size: MarkdownSize): Components {
-  const body = size === 'md' ? ({ variant: 'h6', weight: 'regular' } as const) : ({ variant: 'body1' } as const);
+  // An answer reads at `body0` (14/22), the size the user's own message is set in.
+  const body = size === 'md' ? ({ variant: 'body0' } as const) : ({ variant: 'body1' } as const);
   const spaced = { '&:not(:last-child)': { mb: size === 'md' ? 1.5 : 1 } };
   return {
     p: ({ children }) => (

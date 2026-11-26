@@ -1,11 +1,129 @@
 {
-  "generatedAt": "2026-11-25T19:00:26.846Z",
+  "generatedAt": "2026-11-26T11:49:37.972Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "4.4.0",
-  "currentTag": "v4.4.0",
+  "current": "4.5.0",
+  "currentTag": "v4.5.0",
   "minimumSupported": "3.0.0",
   "releases": [
+    {
+      "version": "4.5.0",
+      "tag": "v4.5.0",
+      "date": "2026-11-26",
+      "headline": "The chat is redrawn. The empty chat leads with the Neoflo mark, the greeting and the composer, with removable prompt rows under it; answers get a row of 👍 👎, copy, ask again and the time; the composer's + opens a two-level menu you configure; and an optional rail puts New chat, History and Search on the right. The type scale gains `body0` (14/22) and the Scope One display face.",
+      "summary": "A minor release; nothing is removed or renamed, and an app with a chat sees the new look on upgrade with no code change. Three defaults move, so check a chat you customised: the workflow picker is now a submenu of + rather than a pill in the row (`composerProps={{ menu: false }}` puts the pill back); Send appears only once there is something to send, so a test that looked for a disabled Send button should look for none; and the composer under the greeting is replaced by a docked one on the first send, so a test holding the textarea should query it again. The chat standard moves to revision 1.3, which adds one optional field: a suggested prompt may name its `icon` from a fixed list. A backend on 1.2 needs no change. Scope One adds `@fontsource/scope-one`, one weight, loaded by `NeofloThemeProvider` like the other brand fonts.",
+      "changes": [
+        {
+          "kind": "added",
+          "summary": "A type rung above `body1`: `variant=\"body0\"`, 14px on 22px, Regular, from `typography.body.b0`. It renders a `<p>`, like `body1`. The chat sets its composer, prompts, answers and the user's message in it.",
+          "scope": [
+            "Typography",
+            "body0",
+            "typography"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "Scope One, the display serif, as `fontFamilies.product.display`: self-hosted and loaded by `NeofloThemeProvider`. It ships Regular only, so set it with `weight=\"regular\"`. The chat's greeting uses it at `h3` size.",
+          "scope": [
+            "fontFamilies",
+            "NeofloThemeProvider"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "The empty chat: the Neoflo mark, the server's greeting in Scope One, the composer (three lines, growing to 18) and the suggested prompts share one 640px column. Prompts are rows with an icon instead of pills, and a prompt's × removes it in every new chat on that device. With your own `Welcome` slot the composer stays docked under it, as before.",
+          "scope": [
+            "AgenticChat",
+            "WelcomeScreen",
+            "ChatSuggestions"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "The composer: an 8px radius and a soft blue glow that widens while someone types, built from `surface.primary` tokens; an Enter-arrow Send that appears only when there is something to send; a slim scrollbar past the last row. Docked under a conversation it is one row — +, the input, your controls, Send — with its edges on the messages' column, and a string `footer` is set small and centered as a disclaimer.",
+          "scope": [
+            "ChatComposer"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "The + menu, `ChatComposer`'s `menu`: Add files & photos, then Workflows in a searchable panel, by default. A function receives those items and returns the menu, to add your own, reorder, disable or hide any of them, at every level. An item opens a panel of actions or a picker over your value, and inside it any row can hold `children` that open in place to any depth, given up front or loaded on first open: folders and files. A ticked folder stands for everything in it, a part-chosen one shows a dash, and search reaches into every folder it knows. `cards: true` shows a picker's choices as cards in the composer. `false` turns the menu off, so + attaches directly and the workflows are a pill again. `ComposerPickerItem` gains `children`, `hidden`, `trailing` (a count) and `searchText`; `ComposerPicker` gains `maxDepth`.",
+          "scope": [
+            "ChatComposer",
+            "ComposerMenu",
+            "ComposerMenuItem",
+            "ComposerPicker"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "Files in the composer are cards rather than tags: a tile for the type, the name, and what it is (Spreadsheet, PDF document, Image, Document, Folder), with × to take it out. `FileCard` takes `folder`, `kind` and `icon`, the same card shows a sent message's attachments, and `labels.fileKind` names the kinds.",
+          "scope": [
+            "FileCard",
+            "ChatComposer",
+            "ChatLabels"
+          ]
+        },
+        {
+          "kind": "changed",
+          "summary": "Answers are set in `body0`, with 36px between turns. The user's message is a borderless `surface.primary.subtleHover` bubble with an 8px radius, capped at 70% of the column (510px at the default width).",
+          "scope": [
+            "AssistantTurn",
+            "UserTurn"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`turnActions` on `<AgenticChat>`, the row under each answer: 👍 and 👎 when you pass `onFeedback` (👎 asks for an optional issue type and details first, and the chat thanks the user when it resolves), copy, ↻ to ask the question again, `extra` buttons of your own (`TurnActionButton`), and when it was given. Each part can be turned off, or the row with `false`.",
+          "scope": [
+            "AgenticChat",
+            "TurnActions",
+            "TurnActionButton",
+            "TurnFeedback"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "`navigation=\"rail\"` on `<AgenticChat>`: no header bar, and a rail on the right with New chat, History and Search; the history opens there, and Search opens it with its field focused. `railFooter` takes your own buttons. The header stays the default.",
+          "scope": [
+            "AgenticChat",
+            "ChatRail"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "The app bar's title. `NavbarTitle` now takes the style of the bar it sits in: in the 48px `sm` app bar it is one line at `body0` in body ink, after the sidebar toggle, and in the `md` page header it is the page title it was. It shows whatever you pass, a page name such as \"Home\" or the chat on screen. `onTitleChange` on `<AgenticChat>` reports the conversation's title and id as they change, so the bar can name the chat. A `NavbarTitle` already in a `sm` bar takes the smaller style; `size=\"md\"` keeps the old one.",
+          "scope": [
+            "NavbarTitle",
+            "Navbar",
+            "AgenticChat"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "Chat standard revision 1.3: `suggested_prompts[].icon`, optional, one of `SUGGESTION_ICONS` (`sparkle`, `inbox`, `warning`, `chart`, `trend`, `document`, `receipt`, `money`, `vendor`, `calendar`, `clock`, `check`, `search`). A missing or unknown name shows `sparkle`. The conformance check fails an icon that is not a string and warns about a name outside the list. The mock backend's prompts carry icons.",
+          "scope": [
+            "@neofloai/atoms/chat/core",
+            "SUGGESTION_ICONS",
+            "SuggestionIcon",
+            "runConformance"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "For your own layouts: `ChatComposer` takes `placement` and `minRows`; `WelcomeScreen` takes `composer`; `ChatSuggestions` takes `removable` and `sx`; `ChatHistory` takes `autoFocusSearch`; `suggestionGlyph(name)` gives a prompt's icon. New labels for the welcome, the + menu, feedback, ask again and `timeAgo` — a full translation typed as `ChatLabels` needs them.",
+          "scope": [
+            "ChatComposer",
+            "WelcomeScreen",
+            "ChatSuggestions",
+            "ChatHistory",
+            "suggestionGlyph",
+            "ChatLabels"
+          ]
+        }
+      ]
+    },
     {
       "version": "4.4.0",
       "tag": "v4.4.0",
@@ -827,8 +945,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^4.4.0",
-    "pin": "npm install github:neofloai/atoms#semver:^4.4.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^4.5.0",
+    "pin": "npm install github:neofloai/atoms#semver:^4.5.0"
   },
   "keywords": [
     "changelog",

@@ -66,7 +66,7 @@ flowchart LR
   mcp --> agents["AI editors"]
 ```
 
-**Stack:** Next.js 16 (App Router), React 19, TypeScript 5 in strict mode, MUI 9 with MUI X (DataGrid, date pickers, free tier), Emotion, Phosphor icons, Day.js, and self-hosted DM Sans, DM Mono and Instrument Serif. The library is built with tsup and the MCP server with the official MCP SDK. Node 22 or later.
+**Stack:** Next.js 16 (App Router), React 19, TypeScript 5 in strict mode, MUI 9 with MUI X (DataGrid, date pickers, free tier), Emotion, Phosphor icons, Day.js, and self-hosted DM Sans, DM Mono, Instrument Serif and Scope One. The library is built with tsup and the MCP server with the official MCP SDK. Node 22 or later.
 
 **Size today (v4.4.0):** 46 documented components (83 runtime exports once sub-parts like `CardHeader` and `MenuItem` are counted), 6 page patterns, the agentic chat with a 14-topic guide, and 11 MCP tools, across 15 releases since June 2026.
 

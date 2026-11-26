@@ -20,6 +20,9 @@ export default defineConfig({
     include: ['test/**/*.test.{ts,tsx}'],
     setupFiles: ['test/chat/setup.ts'],
     restoreMocks: true,
+    // The chat's UI tests stream whole answers through the mock backend in jsdom. Locally that is
+    // 1-4s a test; CI's runners are slower and pushed two past the 5s default.
+    testTimeout: 15_000,
     // The theme imports the self-hosted font CSS; let Vite handle it instead of Node.
     server: { deps: { inline: [/@fontsource/] } },
   },

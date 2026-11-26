@@ -9,11 +9,11 @@ export const data: ComponentExamplesData = {
   name: 'Typography',
   category: 'Data Display',
   tagline:
-    'Text on the type scale. Ten rungs, two weight cuts each, and the element kept separate from the size — so a page title can be an h1 without being 80px tall.',
+    'Text on the type scale. Eleven rungs, two weight cuts each, and the element kept separate from the size — so a page title can be an h1 without being 80px tall.',
   props: [
     {
       name: 'variant',
-      type: "'h1'–'h6' | 'body1' | 'body2' | 'caption' | 'inherit'",
+      type: "'h1'–'h6' | 'body0' | 'body1' | 'body2' | 'caption' | 'inherit'",
       default: "'body1'",
       description:
         'Which rung of the type scale to set. Size, leading and letter-spacing all resolve from the typography tokens. Narrower than MUI’s list: `subtitle1`, `subtitle2`, `button` and `overline` are not offered, because the scale does not define them — see the migration example below for what to write instead.',
@@ -64,10 +64,11 @@ export const data: ComponentExamplesData = {
     {
       title: 'The scale',
       description:
-        'Ten rungs. The six headings run 80px down to 16px, the two body sizes are 13px and 12px, and the caption is 10px.',
+        'Eleven rungs. The six headings run 80px down to 16px, the three body sizes are 14px, 13px and 12px, and the caption is 10px. `body0` is for text read or written at length in a conversation, like a chat message.',
       code: [
         '<Typography variant="h3">Query Log</Typography>',
         '<Typography variant="h5">Sign in</Typography>',
+        '<Typography variant="body0">A message in a conversation.</Typography>',
         '<Typography variant="body1">The default. Most copy sits here.</Typography>',
         '<Typography variant="body2">One rung down, for supporting lines.</Typography>',
         '<Typography variant="caption">Labels and metadata.</Typography>',

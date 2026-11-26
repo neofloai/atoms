@@ -68,6 +68,17 @@ export const neofloTheme = createTheme({
     },
   },
   typography: neofloTypography,
+  components: {
+    MuiTypography: {
+      defaultProps: {
+        // MUI maps the variants it knows to an element and anything else
+        // to a `span`. `body0` is body copy like `body1`, so it gets the
+        // same paragraph. MUI falls back to its own map for every other
+        // variant, so this one entry is the whole override.
+        variantMapping: { body0: 'p' },
+      },
+    },
+  },
   shadows,
   shape: {
     borderRadius: radius.sm,

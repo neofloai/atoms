@@ -165,14 +165,14 @@ export const branding: BrandGuide = {
         'type',
       ],
       summary:
-        'Product UI uses DM Sans (with Instrument Serif accents) and DM Mono for table and grid headers; marketing uses Clash Grotesk. Weights: 400 / 500 / 600.',
+        'Product UI uses DM Sans (with Instrument Serif accents and Scope One for display greetings) and DM Mono for table and grid headers; marketing uses Clash Grotesk. Weights: 400 / 500 / 600.',
       body: [
         'Neoflo runs a two-context type system:',
         '',
-        '- Product (the app UI): DM Sans is the primary sans for all interface text; Instrument Serif is an occasional accent for editorial/display moments; DM Mono is the monospace, worn by table and data grid column headers and available as fontFamilies.product.mono for figures that have to line up down a column.',
+        '- Product (the app UI): DM Sans is the primary sans for all interface text; Instrument Serif is an occasional accent for editorial/display moments; Scope One (fontFamilies.product.display, Regular only) is the display serif for a greeting set large, like the chat\'s welcome; DM Mono is the monospace, worn by table and data grid column headers and available as fontFamilies.product.mono for figures that have to line up down a column.',
         '- Marketing: Clash Grotesk is the display face for marketing surfaces, with Instrument Serif as the serif accent.',
         '',
-        'Weights are Regular (400), Medium (500), and SemiBold (600) — DM Sans has no Bold cut. DM Mono ships Regular (400) and Medium (500) only. DM Sans, DM Mono and Instrument Serif are self-hosted by the package (via @fontsource) and load automatically through NeofloThemeProvider — consumers do not wire fonts themselves. Clash Grotesk is not yet self-hosted, so marketing text falls back to DM Sans until it is hosted (see DESIGNER_QUESTIONS.md #7).',
+        'Weights are Regular (400), Medium (500), and SemiBold (600) — DM Sans has no Bold cut. DM Mono ships Regular (400) and Medium (500) only. Scope One ships Regular (400) only. DM Sans, DM Mono, Instrument Serif and Scope One are self-hosted by the package (via @fontsource) and load automatically through NeofloThemeProvider — consumers do not wire fonts themselves. Clash Grotesk is not yet self-hosted, so marketing text falls back to DM Sans until it is hosted (see DESIGNER_QUESTIONS.md #7).',
         '',
         'Use the typography scale from the theme rather than ad-hoc font sizes (call get_tokens for the typography category).',
       ].join('\n'),

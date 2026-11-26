@@ -5,7 +5,6 @@ import * as React from 'react';
 import { AgenticChat, type Attachment, type ScopeGroup } from '@/src/chat';
 import { chartBlock } from '@/src/chat/charts';
 import { createMockAdapter } from '@/src/chat/mock';
-import { Typography } from '@/src/components/Typography';
 
 /** The workflow picker's catalogue in the demo. Shared with the gallery. */
 export const SCOPE_GROUPS: ScopeGroup[] = [
@@ -63,13 +62,18 @@ export function ChatDemo() {
         mock.connect(sourceId);
         return true;
       }}
+      // The standard has no feedback endpoint: a real app sends this to its own API.
+      turnActions={{
+        onFeedback: () => new Promise((resolve) => setTimeout(resolve, 300)),
+        feedbackIssueTypes: [
+          { id: 'wrong', label: 'Wrong or made-up numbers' },
+          { id: 'missed', label: 'Didn’t answer the question' },
+          { id: 'slow', label: 'Too slow' },
+        ],
+      }}
       composerProps={{
-        footer: (
-          <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
-            Demo backend with sample data. Try the suggestions, or ask it to post, reconcile, chart, pick, fail, show a
-            scan or search invoice processing.
-          </Typography>
-        ),
+        footer:
+          'Demo backend with sample data. Try the suggestions, or ask it to post, reconcile, chart, pick, fail, show a scan or search invoice processing.',
       }}
     />
   );

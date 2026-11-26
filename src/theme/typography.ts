@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type { TypographyVariantsOptions } from '@mui/material/styles';
 import {
   fontFamilies,
@@ -17,6 +18,9 @@ import {
  * Mapping (MUI variant -> Figma slot):
  *   h1-h6          -> typography.headings.h1..h6 (all Medium — the
  *                     Figma type scale has no Bold/SemiBold heading cut)
+ *   body0          -> typography.body.b0 (a variant of this system's
+ *                     own; MUI has no rung above body1, so it is declared
+ *                     to MUI below)
  *   body1, body2   -> typography.body.b1/b2
  *   caption        -> typography.body.caption (Figma's `Sans/B3`)
  *   subtitle1/2,
@@ -68,6 +72,12 @@ export const neofloTypography: TypographyVariantsOptions = {
     letterSpacing: `${t.headings.h6.letterSpacing}em`,
     fontWeight: fontWeights.medium,
   },
+  body0: {
+    fontSize: t.body.b0.size,
+    lineHeight: `${t.body.b0.leading}px`,
+    letterSpacing: `${t.body.b0.letterSpacing}em`,
+    fontWeight: fontWeights.regular,
+  },
   body1: {
     fontSize: t.body.b1.size,
     lineHeight: `${t.body.b1.leading}px`,
@@ -87,3 +97,24 @@ export const neofloTypography: TypographyVariantsOptions = {
     fontWeight: fontWeights.regular,
   },
 };
+
+/**
+ * `body0` is a rung MUI does not have, so the theme and `Typography` have
+ * to be told about it: the theme carries its style, and MUI's own
+ * `Typography` accepts the name. Declared here, beside the style it
+ * describes, so the declaration ships wherever the theme does.
+ */
+declare module '@mui/material/styles' {
+  interface TypographyVariants {
+    body0: CSSProperties;
+  }
+  interface TypographyVariantsOptions {
+    body0?: CSSProperties;
+  }
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    body0: true;
+  }
+}

@@ -73,6 +73,7 @@ const shared: Options = {
     '@fontsource/dm-sans',
     '@fontsource/dm-mono',
     '@fontsource/instrument-serif',
+    '@fontsource/scope-one',
     // The chat's optional peers. An app installs them only when it imports
     // `@neofloai/atoms/chat` (or `/chat/charts` for Recharts), so they are
     // never bundled and never reached from the root entry.

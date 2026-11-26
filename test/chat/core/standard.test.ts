@@ -760,7 +760,7 @@ describe('mock backend on the standard (F11)', () => {
   it('serves a config, echoes client ids, rejects duplicates and simulates a lost connection', async () => {
     const mock = createMockAdapter({ latency: 0, speed: 0 });
     const config = await mock.getConfig();
-    expect(config).toMatchObject({ protocol_version: '1.2', capabilities: { cancel: 'server' } });
+    expect(config).toMatchObject({ protocol_version: '1.3', capabilities: { cancel: 'server' } });
 
     const boot = await mock.createConversation();
     expect(boot.selected_model).toBe('claude-sonnet-5');

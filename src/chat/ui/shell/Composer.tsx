@@ -1,148 +1,31 @@
 import { Box } from '@/src/components/Box';
-import { Card } from '@/src/components/Card';
 import { IconButton } from '@/src/components/IconButton';
-import { CircularProgress, LinearProgress } from '@/src/components/Progress';
 import { Stack } from '@/src/components/Stack';
-import { Tag } from '@/src/components/Tag';
-import { Tooltip } from '@/src/components/Tooltip';
 import { Typography } from '@/src/components/Typography';
-import { FileIcon, FileTextIcon, PaperclipIcon, PaperPlaneTiltIcon, StopIcon, XIcon } from '@/src/icons/glyphs';
-import { border, elevation, fontWeights, icon as iconTokens, radius, surface, text } from '@/src/tokens';
+import { ArrowElbowDownLeftIcon, PlusIcon, StopIcon } from '@/src/icons/glyphs';
+import { border, radius, surface, text } from '@/src/tokens';
 import { forwardRef, useEffect, useId, useState, type FormHTMLAttributes, type ReactNode } from 'react';
-import type { Attachment } from '../../core/protocol/types';
-import { formatBytes } from '../../core/runtime/runtime';
-import type { ComposerAttachment } from '../../core/store/types';
-import { useChatEvent, useComposer, useLabels, useScope } from '../../react/hooks';
+import { useChatEvent, useComposer, useLabels } from '../../react/hooks';
+import { ComposerChosen, ComposerMenu, useScopePicker, type ComposerMenuConfig } from './ComposerMenu';
+import { FileCard } from './FileCard';
 import { ComposerPicker } from './ComposerPicker';
 import { Composer, useComposerContext } from '../../react/primitives';
-import { mode, type AtomsTheme } from '../kit/tokens';
+import { composerGlow, mode, type AtomsTheme } from '../kit/tokens';
 
-function typeLabel(name: string, contentType?: string): string {
-  const ext = name.includes('.') ? name.split('.').pop()!.toUpperCase() : '';
-  if (ext && ext.length <= 5) return ext;
-  if (contentType?.includes('/')) return contentType.split('/')[1]!.toUpperCase();
-  return 'File';
-}
-
-export interface FileCardProps {
-  name: string;
-  size?: number;
-  contentType?: string;
-  status?: ComposerAttachment['status'];
-  progress?: number;
-  error?: string;
-  onRemove?: () => void;
-  href?: string;
-}
-
-/** Figma FileCard: an attachment with its type and size. */
-export function FileCard({ name, size, contentType, status = 'ready', progress, error, onRemove }: FileCardProps) {
-  const labels = useLabels();
-  const detail =
-    status === 'uploading'
-      ? labels.uploading
-      : status === 'error'
-        ? (error ?? labels.uploadFailed)
-        : [typeLabel(name, contentType), size !== undefined ? formatBytes(size) : ''].filter(Boolean).join(' · ');
-  return (
-    <Card component="article" aria-label={name} sx={{ width: 268, maxWidth: '100%' }}>
-      <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center', px: 1.5, py: 1.25 }}>
-        <Box aria-hidden sx={(t: AtomsTheme) => ({ display: 'inline-flex', ...mode(t, { color: iconTokens.default.b2 }) })}>
-          <FileIcon size={20} />
-        </Box>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="body1" weight="medium" noWrap component="div">
-            {name}
-          </Typography>
-          <Typography
-            variant="body2"
-            noWrap
-            component="div"
-            sx={(t: AtomsTheme) => mode(t, { color: status === 'error' ? text.error[3] : text.default.b3 })}
-          >
-            {detail}
-          </Typography>
-        </Box>
-        {onRemove ? (
-          <IconButton
-            size="sm"
-            variant="secondary"
-            appearance="text"
-            aria-label={labels.removeAttachment(name)}
-            onClick={onRemove}
-          >
-            <XIcon />
-          </IconButton>
-        ) : null}
-      </Stack>
-      {status === 'uploading' ? (
-        <LinearProgress variant={progress ? 'determinate' : 'indeterminate'} value={(progress ?? 0) * 100} />
-      ) : null}
-    </Card>
-  );
-}
-
-/** A sent attachment, shown with the user's message. */
-export function AttachmentCard({ attachment }: { attachment: Attachment }) {
-  return <FileCard name={attachment.filename} size={attachment.size} contentType={attachment.content_type} />;
-}
-
-function AttachmentChip({ attachment, onRemove }: { attachment: ComposerAttachment; onRemove: () => void }) {
-  const labels = useLabels();
-  const icon = attachment.status === 'uploading' ? <CircularProgress size={12} /> : <FileTextIcon />;
-  return (
-    <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center', minWidth: 0 }}>
-      <Tooltip
-        title={
-          attachment.status === 'error'
-            ? (attachment.error ?? labels.uploadFailed)
-            : `${attachment.name} · ${formatBytes(attachment.size)}`
-        }
-      >
-        <Tag
-          appearance="outline"
-          variant={attachment.status === 'error' ? 'error' : 'primary'}
-          icon={icon}
-          // Tag's label is a flex row, so the name needs its own box to truncate.
-          label={
-            <Box component="span" sx={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {attachment.name}
-            </Box>
-          }
-          aria-label={attachment.name}
-          sx={{ maxWidth: 240 }}
-        />
-      </Tooltip>
-      {/* A tag is a label, not a control: removal is its own button. */}
-      <IconButton
-        size="sm"
-        variant="secondary"
-        appearance="text"
-        aria-label={labels.removeAttachment(attachment.name)}
-        onClick={onRemove}
-      >
-        <XIcon />
-      </IconButton>
-    </Stack>
-  );
-}
-
-/** Joins a workspace and a workflow into one picker id. A unit separator never appears in either. */
-const SCOPE_SEP = '\u001f';
+export { AttachmentCard, FileCard, fileKindOf, type FileCardProps } from './FileCard';
 
 /**
- * Figma Composer-scope + SourcePicker: which workflows the question is about. A `ComposerPicker`
- * over the scope catalog; it hides itself when there is no catalog or the backend takes no
- * workflow context.
+ * Figma Composer-scope + SourcePicker: which workflows the question is about, as a pill. It is the
+ * composer's when its + menu is off (`menu={false}`); otherwise the workflows are a submenu of +.
+ * It hides itself when there is no catalog or the backend takes no workflow context.
  */
 export function ScopePicker() {
-  const scope = useScope();
   const labels = useLabels();
+  const { scope, groups, value, onChange } = useScopePicker();
   if (!scope.enabled) return null;
   const { selected, allSelected } = scope.summary;
   const summary =
     scope.status !== 'ready' || allSelected ? labels.scopeAll : selected === 0 ? labels.scopeNone : labels.scopeSome(selected);
-  const value = Object.entries(scope.selection).flatMap(([groupId, ids]) => ids.map((id) => groupId + SCOPE_SEP + id));
   return (
     <ComposerPicker
       name={labels.scopeLabel}
@@ -150,21 +33,9 @@ export function ScopePicker() {
       selectAllLabel={labels.scopeSelectAll}
       deselectAllLabel={labels.scopeDeselectAll}
       loading={scope.status === 'loading'}
-      groups={scope.groups.map((g) => ({
-        id: g.id,
-        label: g.label,
-        selectAll: true,
-        items: g.items.map((item) => ({ id: g.id + SCOPE_SEP + item.id, label: item.label })),
-      }))}
+      groups={groups}
       value={value}
-      onChange={(next) => {
-        const selection: Record<string, string[]> = Object.fromEntries(scope.groups.map((g) => [g.id, []]));
-        for (const key of next) {
-          const [groupId, id] = key.split(SCOPE_SEP) as [string, string];
-          (selection[groupId] ??= []).push(id);
-        }
-        scope.setSelection(selection);
-      }}
+      onChange={onChange}
     />
   );
 }
@@ -199,46 +70,142 @@ function RejectedNotice() {
   );
 }
 
-type ControlsProps = Pick<ChatComposerProps, 'leadingActions' | 'extraActions' | 'scopePicker'>;
+type BodyProps = Pick<ChatComposerProps, 'leadingActions' | 'extraActions' | 'scopePicker' | 'menu'> & {
+  placement: ChatComposerPlacement;
+  input: ReactNode;
+};
 
-function ComposerControls({ leadingActions, extraActions, scopePicker }: ControlsProps) {
+/** Send while there is something to send, Stop while a reply runs, nothing at rest. */
+function SendOrStop() {
   const c = useComposerContext();
   const labels = useLabels();
+  if (c.busy) {
+    return (
+      <Composer.Cancel asChild>
+        <IconButton size="sm" variant="secondary" aria-label={labels.stop}>
+          <StopIcon weight="fill" />
+        </IconButton>
+      </Composer.Cancel>
+    );
+  }
+  if (!c.canSend) return null;
   return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+    <Composer.Send asChild>
+      <IconButton size="sm" aria-label={labels.send}>
+        <ArrowElbowDownLeftIcon />
+      </IconButton>
+    </Composer.Send>
+  );
+}
+
+/**
+ * The card's inside. On the empty chat: the input, with a row under it (+, your controls, send).
+ * Docked: one row (+, the input, your controls, send), the buttons held to its last line as the
+ * input grows.
+ */
+function ComposerBody({ placement, input, menu, scopePicker, leadingActions, extraActions }: BodyProps) {
+  const labels = useLabels();
+  const docked = placement === 'docked';
+  // `scopePicker={false}` takes the workflows out of the menu as well as the row.
+  const config: Exclude<ComposerMenuConfig, false> | undefined =
+    menu === false
+      ? undefined
+      : scopePicker === false
+        ? (builtIns) => {
+            const withoutWorkflows = builtIns.filter((item) => item.id !== 'workflows');
+            return typeof menu === 'function' ? menu(withoutWorkflows) : (menu ?? withoutWorkflows);
+          }
+        : menu;
+  const plus =
+    menu === false ? (
       <Composer.AttachmentInput asChild>
-        <IconButton size="sm" variant="secondary" appearance="text" aria-label={labels.attach}>
-          <PaperclipIcon />
+        <IconButton size="sm" variant="secondary" appearance={docked ? 'contained' : 'text'} aria-label={labels.attach}>
+          <PlusIcon />
         </IconButton>
       </Composer.AttachmentInput>
-      {scopePicker === undefined ? <ScopePicker /> : scopePicker || null}
-      {leadingActions}
-      <Box sx={{ flex: 1 }} />
-      {extraActions}
-      {c.busy ? (
-        <Composer.Cancel asChild>
-          <IconButton size="sm" variant="secondary" aria-label={labels.stop}>
-            <StopIcon weight="fill" />
-          </IconButton>
-        </Composer.Cancel>
-      ) : (
-        <Composer.Send asChild>
-          <IconButton size="sm" aria-label={labels.send}>
-            <PaperPlaneTiltIcon />
-          </IconButton>
-        </Composer.Send>
-      )}
-    </Stack>
+    ) : (
+      <ComposerMenu menu={config} appearance={docked ? 'contained' : 'text'} />
+    );
+  // With the menu on, the workflows live in it; a node of your own still takes the row.
+  const pill = scopePicker === undefined ? (menu === false ? <ScopePicker /> : null) : scopePicker || null;
+  const field = (
+    <>
+      <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, '&:empty': { display: 'none' } }}>
+        <ComposerAttachmentRow menu={menu === false ? undefined : config} />
+      </Stack>
+      {input}
+    </>
+  );
+
+  if (docked) {
+    return (
+      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'flex-end', p: 1 }}>
+        {plus}
+        <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 1, '& textarea': { py: '5px' } }}>
+          {field}
+        </Box>
+        {pill || leadingActions || extraActions ? (
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', flexShrink: 0 }}>
+            {pill}
+            {leadingActions}
+            {extraActions}
+          </Stack>
+        ) : null}
+        <SendOrStop />
+      </Stack>
+    );
+  }
+  return (
+    <>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, px: 1.5, pt: 1, pb: 0.5 }}>{field}</Box>
+      <Box sx={{ px: 1, pb: 1 }}>
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minHeight: 32 }}>
+          {plus}
+          {pill}
+          {leadingActions}
+          <Box sx={{ flex: 1 }} />
+          {extraActions}
+          <SendOrStop />
+        </Stack>
+      </Box>
+    </>
   );
 }
 
-function ComposerAttachmentRow() {
+/** Files on their way into the message, then what the + menu's pickers hold, as cards. */
+function ComposerAttachmentRow({ menu }: { menu?: Exclude<ComposerMenuConfig, false> }) {
   return (
-    <Composer.Attachments>{(a, remove) => <AttachmentChip key={a.id} attachment={a} onRemove={remove} />}</Composer.Attachments>
+    <>
+      <Composer.Attachments>
+        {(a, remove) => (
+          <FileCard
+            key={a.id}
+            name={a.name}
+            size={a.size}
+            contentType={a.contentType}
+            status={a.status}
+            progress={a.progress}
+            error={a.error}
+            onRemove={remove}
+          />
+        )}
+      </Composer.Attachments>
+      <ComposerChosen menu={menu} />
+    </>
   );
 }
+
+/** Where the composer sits. `AgenticChat` sets it; a composer you place yourself is `docked`. */
+export type ChatComposerPlacement = 'docked' | 'welcome';
 
 export interface ChatComposerProps {
+  /**
+   * `welcome` is the empty chat's composer, under the greeting: it starts three lines tall and
+   * takes the welcome placeholder. `docked` is the one under a conversation.
+   * @default 'docked'
+   */
+  placement?: ChatComposerPlacement;
+  /** Defaults to the labels' `welcomePlaceholder` on the empty chat and `composerPlaceholder` under a conversation. */
   placeholder?: string;
   /**
    * Controls on the left, after the attach button and the workflow picker: a `ComposerPicker` for
@@ -248,27 +215,49 @@ export interface ChatComposerProps {
   /** Controls on the right, before the send button: a model picker, a mic… */
   extraActions?: ReactNode;
   /**
-   * The workflow picker's place. Omit it for the built-in `ScopePicker` (which hides itself when
-   * there is no workflow catalog), pass your own node to replace it, or `false` to leave it out.
+   * The + menu: attach files, then the workflows as a submenu, by default. A function receives
+   * those items and returns the menu, to add your own (two levels at most), reorder, disable or
+   * hide any of them; an array replaces them; `false` turns the menu off, so + attaches directly
+   * and the workflows are a pill in the row again.
+   */
+  menu?: ComposerMenuConfig;
+  /**
+   * The workflow picker. Omit it for the built-in one: a submenu of +, or a pill when the menu is
+   * off (either hides itself without a workflow catalog). Pass your own node to put it in the row,
+   * or `false` to leave the workflows out altogether.
    */
   scopePicker?: ReactNode | false;
-  /** Rendered under the composer (a disclaimer, a hint). */
+  /** Under the composer: a disclaimer such as "Neo can make mistakes…". A string is set small and centered. */
   footer?: ReactNode;
-  /** @default 8 */
+  /** Rows the input starts at. @default 3 on the empty chat, 1 under a conversation */
+  minRows?: number;
+  /** Rows the input grows to before it scrolls. @default 18 on the empty chat, 8 under a conversation */
   maxRows?: number;
   autoFocus?: boolean;
 }
 
-/** Figma Composer: the input, attachments, the workflow picker, your own controls, and send/stop. */
+const ROWS: Record<ChatComposerPlacement, { min: number; max: number }> = {
+  welcome: { min: 3, max: 18 },
+  docked: { min: 1, max: 8 },
+};
+
+/**
+ * Figma Composer: the input, attachments, the workflow picker, your own controls, and send/stop.
+ * The card glows while someone is typing in it; the border only turns blue to take a dropped file.
+ */
 export function ChatComposer({
+  placement = 'docked',
   placeholder,
+  menu,
   leadingActions,
   extraActions,
   scopePicker,
   footer,
-  maxRows = 8,
+  minRows = ROWS[placement].min,
+  maxRows = ROWS[placement].max,
   autoFocus,
 }: ChatComposerProps) {
+  const labels = useLabels();
   const [dragging, setDragging] = useState(false);
   const hintId = useId();
   return (
@@ -276,23 +265,23 @@ export function ChatComposer({
       <Composer.Root asChild>
         <DropZone onDragChange={setDragging}>
           <Box
+            data-placement={placement}
             sx={(t: AtomsTheme) => ({
               display: 'flex',
               flexDirection: 'column',
-              gap: 1.25,
-              px: 2,
-              pt: 1.75,
-              pb: 1.5,
-              borderRadius: `${radius.lg}px`,
+              gap: 0.25,
+              borderRadius: `${radius.sm}px`,
               border: '1px solid',
-              transition: 'border-color 120ms ease, box-shadow 120ms ease',
+              overflow: 'hidden',
+              transition: 'border-color 120ms ease, box-shadow 160ms ease',
               ...mode(t, {
                 backgroundColor: surface.layers.card1,
-                borderColor: dragging ? border.primary.focus : border.layers.card2,
+                borderColor: dragging ? border.primary.focus : border.layers.card3,
+                boxShadow: composerGlow.rest,
               }),
-              boxShadow: elevation.small,
-              '&:focus-within': mode(t, { borderColor: border.primary.focus }),
+              '&:focus-within': mode(t, { boxShadow: composerGlow.active }),
               '& textarea': {
+                display: 'block',
                 width: '100%',
                 border: 0,
                 outline: 0,
@@ -300,27 +289,53 @@ export function ChatComposer({
                 m: 0,
                 background: 'transparent',
                 fontFamily: 'inherit',
-                fontSize: t.typography.h6.fontSize,
-                lineHeight: t.typography.h6.lineHeight,
-                fontWeight: fontWeights.regular,
-                ...mode(t, { color: text.default.heading }),
+                ...t.typography.body0,
+                ...mode(t, { color: text.default.b1 }),
+                // Past `maxRows` the text scrolls inside the card, on a slim bar rather than the
+                // platform's full-width one.
+                scrollbarWidth: 'thin',
+                ...mode(t, { scrollbarColor: { light: `${border.default.default.light} transparent`, dark: `${border.default.default.dark} transparent` } }),
+                '&::-webkit-scrollbar': { width: 8 },
+                '&::-webkit-scrollbar-thumb': { borderRadius: 100, ...mode(t, { backgroundColor: border.default.default }) },
               },
-              '& textarea::placeholder': { opacity: 1, ...mode(t, { color: text.default.b3 }) },
+              '& textarea::placeholder': { opacity: 1, ...mode(t, { color: text.default['placeholder on-color'] }) },
               '& textarea:disabled': { cursor: 'not-allowed' },
             })}
           >
-            <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.75, '&:empty': { display: 'none' } }}>
-              <ComposerAttachmentRow />
-            </Stack>
-            <Composer.Input placeholder={placeholder} maxRows={maxRows} autoFocus={autoFocus} aria-describedby={hintId} />
-            <ComposerControls leadingActions={leadingActions} extraActions={extraActions} scopePicker={scopePicker} />
+            <ComposerBody
+              placement={placement}
+              menu={menu}
+              scopePicker={scopePicker}
+              leadingActions={leadingActions}
+              extraActions={extraActions}
+              input={
+                <>
+                  <Composer.Input
+                    placeholder={placeholder ?? (placement === 'welcome' ? labels.welcomePlaceholder : undefined)}
+                    minRows={minRows}
+                    maxRows={maxRows}
+                    autoFocus={autoFocus}
+                    aria-describedby={hintId}
+                  />
+                </>
+              }
+            />
           </Box>
         </DropZone>
       </Composer.Root>
-      <Box id={hintId} sx={{ mt: 0.75, display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'center' }}>
+      <Box
+        id={hintId}
+        sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'center', '&:empty': { display: 'none' } }}
+      >
         <RejectedNotice />
         <TooLongNotice />
-        {footer}
+        {typeof footer === 'string' ? (
+          <Typography variant="body2" component="p" sx={(t: AtomsTheme) => ({ m: 0, textAlign: 'center', ...mode(t, { color: text.default.b2 }) })}>
+            {footer}
+          </Typography>
+        ) : (
+          footer
+        )}
       </Box>
     </Box>
   );

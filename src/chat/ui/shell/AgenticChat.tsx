@@ -3,19 +3,27 @@ import { IconButton } from '@/src/components/IconButton';
 import { Stack } from '@/src/components/Stack';
 import { Tooltip } from '@/src/components/Tooltip';
 import { Typography } from '@/src/components/Typography';
-import { NotePencilIcon, SidebarSimpleIcon } from '@/src/icons/glyphs';
+import {
+  CaretDoubleRightIcon,
+  ClockCounterClockwiseIcon,
+  MagnifyingGlassIcon,
+  NotePencilIcon,
+  PlusIcon,
+  SidebarSimpleIcon,
+} from '@/src/icons/glyphs';
 import { border, elevation, surface, text } from '@/src/tokens';
-import { useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { useIsomorphicLayoutEffect } from '../../react/hooks/use-store';
 import type { ChatMessage } from '../../core/store/types';
-import { useChatActions, useLabels, usePreference, useThreadMeta } from '../../react/hooks';
+import { useChatActions, useLabels, usePreference, useThread, useThreadMeta } from '../../react/hooks';
 import { ChatProvider, type ChatProviderProps } from '../../react/provider';
 import { BlockCrashNotice, defaultBlocks, unknownBlock } from '../blocks';
 import { ChatHistory, type ChatHistoryProps } from '../history/ChatHistory';
 import { mode, type AtomsTheme } from '../kit/tokens';
 import { isDev } from '../../core/runtime/env';
 import { ChatComposer, type ChatComposerProps } from './Composer';
-import { ChatThread } from './ChatThread';
+import { ChatThread, useWelcomeOpen } from './ChatThread';
+import { TurnActionsProvider, type TurnActionsOptions } from './TurnActions';
 
 export interface ChatHeaderProps {
   title?: ReactNode;
@@ -90,9 +98,62 @@ export function ChatHeader({ title, actions, historyOpen, onToggleHistory }: Cha
   );
 }
 
+export interface ChatRailProps {
+  /** Opens the history panel. */
+  onOpenHistory: () => void;
+  /** Opens the history panel with its search field focused. */
+  onSearch: () => void;
+  /** Your own buttons at the rail's foot, such as Help. */
+  footer?: ReactNode;
+}
+
+/**
+ * The narrow rail on the chat's right (`navigation="rail"`): New chat, History and Search, with
+ * your own buttons at its foot. History opens in its place.
+ */
+export function ChatRail({ onOpenHistory, onSearch, footer }: ChatRailProps) {
+  const labels = useLabels();
+  const { newConversation } = useChatActions();
+  const button = (label: string, icon: ReactNode, onClick: () => void) => (
+    <Tooltip title={label} placement="left">
+      <IconButton size="sm" variant="secondary" appearance="text" aria-label={label} onClick={onClick}>
+        {icon}
+      </IconButton>
+    </Tooltip>
+  );
+  return (
+    <Box
+      component="nav"
+      aria-label={labels.history}
+      sx={(t: AtomsTheme) => ({
+        width: 48,
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        py: 1.5,
+        borderLeft: '1px solid',
+        ...mode(t, { borderColor: border.layers.card2, backgroundColor: surface.layers.page }),
+      })}
+    >
+      <Stack spacing={1} sx={{ alignItems: 'center' }}>
+        {button(labels.newChat, <PlusIcon />, () => void newConversation().catch(() => undefined))}
+        {button(labels.openHistory, <ClockCounterClockwiseIcon />, onOpenHistory)}
+        {button(labels.searchChats, <MagnifyingGlassIcon />, onSearch)}
+      </Stack>
+      {footer ? <Stack spacing={1} sx={{ alignItems: 'center' }}>{footer}</Stack> : null}
+    </Box>
+  );
+}
+
 /** Slots: replace any part of the default UI with your own component. */
 export interface ChatComponents {
-  /** The empty-chat screen. Use hooks (`useThreadMeta`, `useChatActions`) inside it. */
+  /**
+   * The empty-chat screen. Use hooks (`useThreadMeta`, `useChatActions`) inside it. The built-in one
+   * holds the composer between its greeting and its prompts; with your own, the composer stays
+   * docked under it.
+   */
   Welcome: ComponentType;
   UserTurn: ComponentType<{ message: ChatMessage }>;
   AssistantTurn: ComponentType<{ message: ChatMessage }>;
@@ -104,12 +165,36 @@ export interface ChatComponents {
 export interface AgenticChatProps extends ChatProviderProps {
   /** Show the conversation history panel. @default true */
   history?: boolean;
-  /** Initial state of the history panel on wide layouts (remembered afterwards). @default true */
+  /**
+   * How people reach the history and New chat. `header`: a bar over the thread with the history
+   * toggle, the title and New chat, and the history on the left. `rail`: no bar, a narrow rail on
+   * the right with New chat, History and Search, and the history opening on the right in its place
+   * (your app bar shows the title: see `onTitleChange`).
+   * @default 'header'
+   */
+  navigation?: 'header' | 'rail';
+  /** With `navigation="rail"`: your own buttons at the rail's foot, such as Help. */
+  railFooter?: ReactNode;
+  /**
+   * Initial state of the history panel on wide layouts (remembered afterwards).
+   * @default true with the header, false with the rail
+   */
   defaultHistoryOpen?: boolean;
-  /** Show the header bar. @default true */
+  /** Show the header bar. @default true with `navigation="header"`, false with the rail */
   header?: boolean;
+  /**
+   * The row under each answer: 👍 👎 (give it `onFeedback`), copy, ↻ (ask again), your own
+   * buttons, and when it was given. Each can be turned off; `false` hides the row.
+   */
+  turnActions?: TurnActionsOptions | false;
   /** Header title; defaults to the conversation title. */
   title?: ReactNode;
+  /**
+   * Called with the conversation's title whenever it changes, so your app bar can show it
+   * (`navigation="rail"` has no header of its own). `conversationId` is `null` for a new chat that
+   * hasn't been sent yet, when the title is still "New chat": show your own label then if you like.
+   */
+  onTitleChange?: (title: string, conversationId: string | null) => void;
   headerActions?: ReactNode;
   components?: Partial<ChatComponents>;
   composerProps?: ChatComposerProps;
@@ -147,11 +232,28 @@ function useContainerWidth<T extends HTMLElement>() {
   return [ref, width] as const;
 }
 
+/** Tells the app the conversation's title, each time it or the conversation changes. */
+function useReportTitle(onTitleChange: AgenticChatProps['onTitleChange']) {
+  const title = useThread((s) => s.meta.title);
+  const conversationId = useThread((s) => s.conversationId);
+  const report = useRef(onTitleChange);
+  useIsomorphicLayoutEffect(() => {
+    report.current = onTitleChange;
+  });
+  useEffect(() => {
+    report.current?.(title, conversationId);
+  }, [title, conversationId]);
+}
+
 function ChatLayout({
   history = true,
-  defaultHistoryOpen = true,
-  header = true,
+  navigation = 'header',
+  railFooter,
+  defaultHistoryOpen = navigation !== 'rail',
+  header = navigation !== 'rail',
+  turnActions,
   title,
+  onTitleChange,
   headerActions,
   components,
   composerProps,
@@ -160,16 +262,41 @@ function ChatLayout({
   className,
   sx,
 }: AgenticChatProps) {
+  const labels = useLabels();
+  useReportTitle(onTitleChange);
   const [rootRef, width] = useContainerWidth<HTMLDivElement>();
   const compact = width !== null && width < compactBelow;
   const [wideOpen, setWideOpen] = usePreference('historyOpen', defaultHistoryOpen);
   const [overlayOpen, setOverlayOpen] = useState(false);
   const historyOpen = history && (compact ? overlayOpen : wideOpen);
   const toggleHistory = () => (compact ? setOverlayOpen((o) => !o) : setWideOpen(!wideOpen));
+  const rail = navigation === 'rail';
+  // The rail's search button opens the history with its search field focused; its History button doesn't.
+  const [searching, setSearching] = useState(false);
+  const openHistory = (search: boolean) => {
+    setSearching(search);
+    if (compact) setOverlayOpen(true);
+    else setWideOpen(true);
+  };
 
   const Header = components?.Header ?? ChatHeader;
   const History = components?.History ?? ChatHistory;
   const ComposerSlot = components?.Composer ?? ChatComposer;
+
+  // While the chat is empty the built-in welcome holds the composer, under its greeting; once the
+  // first message goes out the composer docks under the thread.
+  const centered = useWelcomeOpen() && !components?.Welcome;
+  // Each move mounts the composer afresh in its new place, so that one takes focus and typing
+  // carries on. Not on the first render: whether the page opens focused is `autoFocus`'s call.
+  const [wasCentered, setWasCentered] = useState(centered);
+  const [moved, setMoved] = useState(false);
+  if (wasCentered !== centered) {
+    setWasCentered(centered);
+    setMoved(true);
+  }
+  const composer = (placement: 'welcome' | 'docked') => (
+    <ComposerSlot {...composerProps} placement={placement} autoFocus={composerProps?.autoFocus || moved} />
+  );
 
   return (
     <Box
@@ -191,7 +318,7 @@ function ChatLayout({
         ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
       ]}
     >
-      {historyOpen ? (
+      {historyOpen && !rail ? (
         <Box
           sx={(t: AtomsTheme) => ({
             width: compact ? 'min(320px, 85%)' : 280,
@@ -207,22 +334,59 @@ function ChatLayout({
       {compact && historyOpen ? (
         <Box aria-hidden onClick={() => setOverlayOpen(false)} sx={{ position: 'absolute', inset: 0, zIndex: 1 }} />
       ) : null}
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-        {header ? (
-          <Header
-            title={title}
-            actions={headerActions}
-            historyOpen={historyOpen}
-            onToggleHistory={history ? toggleHistory : undefined}
-          />
-        ) : null}
-        <ChatThread components={components} maxWidth={maxWidth} />
-        <Box sx={{ px: 2, pb: 2, pt: 0.5 }}>
-          <Box sx={{ maxWidth, mx: 'auto' }}>
-            <ComposerSlot {...composerProps} />
+      <TurnActionsProvider options={turnActions}>
+        <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          {header ? (
+            <Header
+              title={title}
+              actions={headerActions}
+              historyOpen={historyOpen}
+              onToggleHistory={history && !rail ? toggleHistory : undefined}
+            />
+          ) : null}
+          <ChatThread components={components} maxWidth={maxWidth} welcomeComposer={centered ? composer('welcome') : undefined} />
+          {centered ? null : (
+            // The same column as the thread, padding included, so the composer's edges line up with
+            // the messages above it.
+            <Box sx={{ pb: 2, pt: 0.5 }}>
+              <Box sx={{ maxWidth, mx: 'auto', px: 2 }}>{composer('docked')}</Box>
+            </Box>
+          )}
+        </Box>
+      </TurnActionsProvider>
+      {rail && history && historyOpen ? (
+        <Box
+          sx={(t: AtomsTheme) => ({
+            width: compact ? 'min(320px, 85%)' : 232,
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            borderLeft: '1px solid',
+            ...mode(t, { borderColor: border.layers.card2, backgroundColor: surface.layers.page }),
+            ...(compact ? { position: 'absolute', top: 0, bottom: 0, right: 0, zIndex: 2, boxShadow: elevation.large } : {}),
+          })}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', px: 1, pt: 1 }}>
+            <Tooltip title={labels.closeHistory}>
+              <IconButton
+                size="sm"
+                variant="secondary"
+                appearance="text"
+                aria-label={labels.closeHistory}
+                aria-expanded
+                onClick={() => (compact ? setOverlayOpen(false) : setWideOpen(false))}
+              >
+                <CaretDoubleRightIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Box sx={{ flex: 1, minHeight: 0 }}>
+            <History onSelect={compact ? () => setOverlayOpen(false) : undefined} autoFocusSearch={searching} />
           </Box>
         </Box>
-      </Box>
+      ) : rail && history ? (
+        <ChatRail onOpenHistory={() => openHistory(false)} onSearch={() => openHistory(true)} footer={railFooter} />
+      ) : null}
     </Box>
   );
 }
@@ -238,9 +402,13 @@ function ChatLayout({
 export function AgenticChat(props: AgenticChatProps) {
   const {
     history,
+    navigation,
+    railFooter,
+    turnActions,
     defaultHistoryOpen,
     header,
     title,
+    onTitleChange,
     headerActions,
     components,
     composerProps,
@@ -263,9 +431,13 @@ export function AgenticChat(props: AgenticChatProps) {
     >
       <ChatLayout
         history={history}
+        navigation={navigation}
+        railFooter={railFooter}
+        turnActions={turnActions}
         defaultHistoryOpen={defaultHistoryOpen}
         header={header}
         title={title}
+        onTitleChange={onTitleChange}
         headerActions={headerActions}
         components={components}
         composerProps={composerProps}
