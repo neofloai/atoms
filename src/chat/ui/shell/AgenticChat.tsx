@@ -12,10 +12,10 @@ import {
   SidebarSimpleIcon,
 } from '@/src/icons/glyphs';
 import { border, elevation, surface, text } from '@/src/tokens';
-import { useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { useIsomorphicLayoutEffect } from '../../react/hooks/use-store';
 import type { ChatMessage } from '../../core/store/types';
-import { useChatActions, useLabels, usePreference, useThreadMeta } from '../../react/hooks';
+import { useChatActions, useLabels, usePreference, useThread, useThreadMeta } from '../../react/hooks';
 import { ChatProvider, type ChatProviderProps } from '../../react/provider';
 import { BlockCrashNotice, defaultBlocks, unknownBlock } from '../blocks';
 import { ChatHistory, type ChatHistoryProps } from '../history/ChatHistory';
@@ -169,7 +169,7 @@ export interface AgenticChatProps extends ChatProviderProps {
    * How people reach the history and New chat. `header`: a bar over the thread with the history
    * toggle, the title and New chat, and the history on the left. `rail`: no bar, a narrow rail on
    * the right with New chat, History and Search, and the history opening on the right in its place
-   * (your app shows the title).
+   * (your app bar shows the title: see `onTitleChange`).
    * @default 'header'
    */
   navigation?: 'header' | 'rail';
@@ -189,6 +189,12 @@ export interface AgenticChatProps extends ChatProviderProps {
   turnActions?: TurnActionsOptions | false;
   /** Header title; defaults to the conversation title. */
   title?: ReactNode;
+  /**
+   * Called with the conversation's title whenever it changes, so your app bar can show it
+   * (`navigation="rail"` has no header of its own). `conversationId` is `null` for a new chat that
+   * hasn't been sent yet, when the title is still "New chat": show your own label then if you like.
+   */
+  onTitleChange?: (title: string, conversationId: string | null) => void;
   headerActions?: ReactNode;
   components?: Partial<ChatComponents>;
   composerProps?: ChatComposerProps;
@@ -226,6 +232,19 @@ function useContainerWidth<T extends HTMLElement>() {
   return [ref, width] as const;
 }
 
+/** Tells the app the conversation's title, each time it or the conversation changes. */
+function useReportTitle(onTitleChange: AgenticChatProps['onTitleChange']) {
+  const title = useThread((s) => s.meta.title);
+  const conversationId = useThread((s) => s.conversationId);
+  const report = useRef(onTitleChange);
+  useIsomorphicLayoutEffect(() => {
+    report.current = onTitleChange;
+  });
+  useEffect(() => {
+    report.current?.(title, conversationId);
+  }, [title, conversationId]);
+}
+
 function ChatLayout({
   history = true,
   navigation = 'header',
@@ -234,6 +253,7 @@ function ChatLayout({
   header = navigation !== 'rail',
   turnActions,
   title,
+  onTitleChange,
   headerActions,
   components,
   composerProps,
@@ -243,6 +263,7 @@ function ChatLayout({
   sx,
 }: AgenticChatProps) {
   const labels = useLabels();
+  useReportTitle(onTitleChange);
   const [rootRef, width] = useContainerWidth<HTMLDivElement>();
   const compact = width !== null && width < compactBelow;
   const [wideOpen, setWideOpen] = usePreference('historyOpen', defaultHistoryOpen);
@@ -387,6 +408,7 @@ export function AgenticChat(props: AgenticChatProps) {
     defaultHistoryOpen,
     header,
     title,
+    onTitleChange,
     headerActions,
     components,
     composerProps,
@@ -415,6 +437,7 @@ export function AgenticChat(props: AgenticChatProps) {
         defaultHistoryOpen={defaultHistoryOpen}
         header={header}
         title={title}
+        onTitleChange={onTitleChange}
         headerActions={headerActions}
         components={components}
         composerProps={composerProps}

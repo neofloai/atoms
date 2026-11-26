@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-26T11:28:59.249Z",
+  "generatedAt": "2026-11-26T11:49:37.972Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
   "current": "4.5.0",
@@ -89,6 +89,15 @@
           "scope": [
             "AgenticChat",
             "ChatRail"
+          ]
+        },
+        {
+          "kind": "added",
+          "summary": "The app bar's title. `NavbarTitle` now takes the style of the bar it sits in: in the 48px `sm` app bar it is one line at `body0` in body ink, after the sidebar toggle, and in the `md` page header it is the page title it was. It shows whatever you pass, a page name such as \"Home\" or the chat on screen. `onTitleChange` on `<AgenticChat>` reports the conversation's title and id as they change, so the bar can name the chat. A `NavbarTitle` already in a `sm` bar takes the smaller style; `size=\"md\"` keeps the old one.",
+          "scope": [
+            "NavbarTitle",
+            "Navbar",
+            "AgenticChat"
           ]
         },
         {

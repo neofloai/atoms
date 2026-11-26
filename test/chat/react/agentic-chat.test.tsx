@@ -160,6 +160,16 @@ describe('<AgenticChat>', () => {
     expect(await screen.findByRole('button', { name: 'Search chats' })).toBeTruthy();
   });
 
+  it("tells the app the conversation's title as it changes, for its app bar", async () => {
+    const onTitleChange = vi.fn();
+    renderChat({ navigation: 'rail', onTitleChange });
+    await waitFor(() => expect(onTitleChange).toHaveBeenCalledWith('New chat', null));
+    fireEvent.change(await screen.findByRole('textbox', { name: 'Message' }), { target: { value: 'hello there' } });
+    fireEvent.keyDown(composerInput(), { key: 'Enter' });
+    // The backend names the chat when the first answer ends.
+    await waitFor(() => expect(onTitleChange).toHaveBeenLastCalledWith('Hello there', expect.any(String)), { timeout: 4000 });
+  });
+
   it('does not send while an IME composition is in progress', async () => {
     renderChat();
     const input = (await screen.findByRole('textbox', { name: 'Message' })) as HTMLTextAreaElement;

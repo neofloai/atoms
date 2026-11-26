@@ -88,6 +88,8 @@ export function Chat({ conversationId }: { conversationId?: string }) {
 | `labels` | English | Override any UI string, for copy changes or translation. |
 | `navigation` | `'header'` | `'rail'` swaps the header bar for a rail on the right, with the history opening there. See [Header or rail](/chat/customizing#header-or-rail). |
 | `railFooter` | | Your own buttons at the rail's foot. |
+| `title` | the conversation's title | The title in the header bar. |
+| `onTitleChange` | | Called with the conversation's title and id whenever either changes, so your app bar can show it. The id is `null` for a new chat that hasn't been sent yet. See [The title in your app bar](/chat/customizing#the-title-in-your-app-bar). |
 | `turnActions` | all on | The row under each answer: `onFeedback`, `feedbackIssueTypes`, `copy`, `retry`, `timestamp`, `extra`, `visibility`, or `false`. See [Under each answer](/chat/customizing#under-each-answer). |
 | `streamIdleTimeoutMs` | `60000` | How long a silent stream waits before it counts as dropped and becomes retryable. |
 | `refreshOnFocus` | `true` | Refresh history when the window regains focus. |

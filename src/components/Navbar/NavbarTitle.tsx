@@ -8,6 +8,7 @@ import { border, fontWeights, spacing, text, typography } from '@/src/tokens';
 import { paired } from '../_shared/actionStyles';
 
 import type { NavbarTitleProps } from './Navbar.types';
+import { NavbarSizeContext } from './navbarContext';
 
 /**
  * Gap between the title and the line of context under it — `Scale/100`.
@@ -53,6 +54,27 @@ const TitleLine = styled('h1')(({ theme }) => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   ...paired(theme, { color: text.default.heading }),
+}));
+
+/**
+ * The app bar's title — one line of `b0` in regular weight and body ink,
+ * from the Revamp top bar (2929:86970). Body type rather than a heading's
+ * ramp: the bar is 48px and holds one row, and what it names is whatever
+ * the app passes — a page, a record, the chat on screen.
+ *
+ * A `div`, not an `h1`: a page under the app bar may carry its own title.
+ */
+const AppBarTitleLine = styled('div')(({ theme }) => ({
+  margin: 0,
+  fontFamily: theme.typography.fontFamily,
+  fontSize: typography.body.b0.size,
+  fontWeight: fontWeights.regular,
+  lineHeight: `${typography.body.b0.leading}px`,
+  letterSpacing: `${typography.body.b0.letterSpacing}em`,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  ...paired(theme, { color: text.default.b1 }),
 }));
 
 const MetaRow = styled('div')(({ theme }) => ({
@@ -101,8 +123,13 @@ const MetaSeparator = styled('span')(({ theme }) => ({
 }));
 
 /**
- * The title block for a `md` navbar — a page title with an optional line
- * of context under it.
+ * The bar's title. Its children are whatever the app passes — a page name,
+ * a record, the conversation on screen — and it takes the style of the bar
+ * it sits in:
+ *
+ *   - in a `sm` app bar, one line of body type after the sidebar toggle;
+ *   - in a `md` page header, a page title with an optional line of context
+ *     under it (`meta`).
  *
  * The one part of a page header that is geometry rather than composition,
  * which is why it is a component: the `h5` title, the 4px gap, and a meta
@@ -145,27 +172,50 @@ const MetaSeparator = styled('span')(({ theme }) => ({
  *   <NavbarTitle>Vendor details</NavbarTitle>
  * </Navbar>
  *
+ * @example The app bar's title: whatever the app is on
+ * <Navbar>
+ *   <Stack direction="row" sx={{ flex: 1, minWidth: 0, alignItems: 'center', gap: 2 }}>
+ *     <IconButton variant="secondary" appearance="text" size="sm" {...sidebar.toggleProps}>
+ *       <SidebarSimpleIcon />
+ *     </IconButton>
+ *     <NavbarTitle>{pageTitle}</NavbarTitle>
+ *     <Box sx={{ flex: 1 }} />
+ *     <AccountMenu user={user} onSignOut={signOut} />
+ *   </Stack>
+ * </Navbar>
+ *
  * @see Related: Navbar, Drawer, Button, IconButton
  */
 export const NavbarTitle = React.forwardRef<HTMLDivElement, NavbarTitleProps>(
-  ({ meta, children, ...rest }, ref) => (
-    <TitleRoot ref={ref} {...rest}>
-      <TitleLine>{children}</TitleLine>
-      {meta && meta.length > 0 && (
-        <MetaRow>
-          {meta.map((item, index) => (
-            <React.Fragment key={index}>
-              {index > 0 && <MetaSeparator aria-hidden />}
-              <MetaItem>
-                {item.icon}
-                {item.label}
-              </MetaItem>
-            </React.Fragment>
-          ))}
-        </MetaRow>
-      )}
-    </TitleRoot>
-  )
+  ({ meta, size, children, ...rest }, ref) => {
+    const barSize = React.useContext(NavbarSizeContext);
+    if ((size ?? barSize) === 'sm') {
+      // One row: the app bar has no room for `meta`, which needs the `md` bar.
+      return (
+        <TitleRoot ref={ref} {...rest}>
+          <AppBarTitleLine>{children}</AppBarTitleLine>
+        </TitleRoot>
+      );
+    }
+    return (
+      <TitleRoot ref={ref} {...rest}>
+        <TitleLine>{children}</TitleLine>
+        {meta && meta.length > 0 && (
+          <MetaRow>
+            {meta.map((item, index) => (
+              <React.Fragment key={index}>
+                {index > 0 && <MetaSeparator aria-hidden />}
+                <MetaItem>
+                  {item.icon}
+                  {item.label}
+                </MetaItem>
+              </React.Fragment>
+            ))}
+          </MetaRow>
+        )}
+      </TitleRoot>
+    );
+  }
 );
 
 NavbarTitle.displayName = 'NavbarTitle';

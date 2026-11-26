@@ -83,6 +83,35 @@ Each answer ends with a row: 👍 and 👎, copy, ↻ (ask again) on the newest 
 <AgenticChat adapter={adapter} navigation="rail" railFooter={<HelpButton />} />
 ```
 
+With the header, `title` replaces the conversation's title in the chat's own bar.
+
+### The title in your app bar
+
+With the rail, the chat's title goes in your app bar. `onTitleChange` gives you the conversation's title whenever it changes. Put it in a `NavbarTitle`, which shows whatever you pass, so your other pages can say "Home" or their own name in the same place. The id is `null` for a new chat that hasn't been sent yet, when the title is still "New chat"; show your own label then if you like.
+
+```tsx
+import { AccountMenu, Box, IconButton, Navbar, NavbarTitle, Stack } from '@neofloai/atoms';
+import { SidebarSimpleIcon } from '@neofloai/atoms/icons';
+
+const [title, setTitle] = useState('Ask Neo');
+
+<Navbar>
+  <Stack direction="row" sx={{ flex: 1, minWidth: 0, alignItems: 'center', gap: 2 }}>
+    <IconButton variant="secondary" appearance="text" size="sm" {...sidebar.toggleProps}>
+      <SidebarSimpleIcon />
+    </IconButton>
+    <NavbarTitle>{title}</NavbarTitle>
+    <Box sx={{ flex: 1 }} />
+    <AccountMenu user={user} onSignOut={signOut} />
+  </Stack>
+</Navbar>
+<AgenticChat
+  adapter={adapter}
+  navigation="rail"
+  onTitleChange={(chatTitle, conversationId) => setTitle(conversationId ? chatTitle : 'Ask Neo')}
+/>
+```
+
 ## Composer controls
 
 The composer has the + button, two optional slots, and Send, which appears once there is something to send. Under a conversation they share one row with the input; on the empty chat they sit under it. Pass the slots to `ChatComposer`, or through `composerProps` on `<AgenticChat>`:

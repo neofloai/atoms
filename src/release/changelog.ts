@@ -84,6 +84,12 @@ export const RELEASES: readonly Release[] = [
       {
         kind: 'added',
         summary:
+          'The app bar\'s title. `NavbarTitle` now takes the style of the bar it sits in: in the 48px `sm` app bar it is one line at `body0` in body ink, after the sidebar toggle, and in the `md` page header it is the page title it was. It shows whatever you pass, a page name such as "Home" or the chat on screen. `onTitleChange` on `<AgenticChat>` reports the conversation\'s title and id as they change, so the bar can name the chat. A `NavbarTitle` already in a `sm` bar takes the smaller style; `size="md"` keeps the old one.',
+        scope: ['NavbarTitle', 'Navbar', 'AgenticChat'],
+      },
+      {
+        kind: 'added',
+        summary:
           'Chat standard revision 1.3: `suggested_prompts[].icon`, optional, one of `SUGGESTION_ICONS` (`sparkle`, `inbox`, `warning`, `chart`, `trend`, `document`, `receipt`, `money`, `vendor`, `calendar`, `clock`, `check`, `search`). A missing or unknown name shows `sparkle`. The conformance check fails an icon that is not a string and warns about a name outside the list. The mock backend\'s prompts carry icons.',
         scope: ['@neofloai/atoms/chat/core', 'SUGGESTION_ICONS', 'SuggestionIcon', 'runConformance'],
       },

@@ -3,15 +3,13 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 
 import { AccountMenu } from '@/src/components/AccountMenu';
 import { Divider } from '@/src/components/Divider';
 import { IconButton } from '@/src/components/IconButton';
 import { MenuItem } from '@/src/components/MenuItem';
-import { Navbar } from '@/src/components/Navbar';
+import { Navbar, NavbarTitle } from '@/src/components/Navbar';
 import { Tooltip } from '@/src/components/Tooltip';
-import { text } from '@/src/tokens';
 import {
   BookOpenIcon,
   BugIcon,
@@ -23,8 +21,6 @@ import {
   StarFourIcon,
 } from '@/src/icons';
 
-import type { Theme } from '@mui/material/styles';
-import type { ModeToken } from '@/src/tokens';
 import type { SidebarToggleProps } from '@/src/components/Drawer';
 
 /**
@@ -54,14 +50,6 @@ const USER = {
   role: 'Tenant Owner',
 };
 
-/** Paint one property from a token, in both schemes. */
-function ink(property: string, token: ModeToken) {
-  return (theme: Theme) => ({
-    [property]: token.light,
-    ...theme.applyStyles('dark', { [property]: token.dark }),
-  });
-}
-
 export function AppTopBar({
   title,
   toggleProps,
@@ -86,18 +74,8 @@ export function AppTopBar({
           <SidebarSimpleIcon />
         </IconButton>
 
-        {/* `Sans/B1/Regular` in `text/default/b2` — a breadcrumb's weight,
-            not a title's: the page names itself below the bar. */}
-        <Typography
-          variant="body1"
-          noWrap
-          sx={(theme) => ({
-            minWidth: 0,
-            ...ink('color', text.default.b2)(theme),
-          })}
-        >
-          {title}
-        </Typography>
+        {/* The bar's title: whatever the app is on. */}
+        <NavbarTitle>{title}</NavbarTitle>
 
         <Box sx={{ flex: 1 }} />
 
