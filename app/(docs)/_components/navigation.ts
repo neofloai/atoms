@@ -111,12 +111,17 @@ export const navigation: readonly NavSection[] = [
   {
     // Read off the chat guide's own topic list, so a topic added to
     // `src/chat/guide/` gets its sidebar entry with its page. The overview
-    // is the section's index, `/chat`.
+    // is the section's index, `/chat`; the playground follows it, a page of
+    // its own outside the docs shell.
     title: 'Chat',
-    items: CHAT_TOPICS.map((topic, index) => ({
-      label: topic.title,
-      href: index === 0 ? '/chat' : `/chat/${topic.slug}`,
-    })),
+    items: CHAT_TOPICS.flatMap((topic, index) =>
+      index === 0
+        ? [
+            { label: topic.title, href: '/chat' },
+            { label: 'Playground', href: '/chat/playground' },
+          ]
+        : [{ label: topic.title, href: `/chat/${topic.slug}` }]
+    ),
   },
 ];
 

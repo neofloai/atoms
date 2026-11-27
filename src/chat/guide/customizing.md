@@ -47,13 +47,13 @@ The placeholder is `labels.welcomePlaceholder` on the empty chat and `labels.com
 
 ## Under each answer
 
-Each answer ends with a row: 👍 and 👎, copy, ↻ (ask again) on the newest answer, and when it was given ("40 mins ago"). `turnActions` sets each part:
+Each answer ends with a row: thumbs up and thumbs down, copy, ask again on the newest answer, and when it was given ("40 mins ago"). `turnActions` sets each part:
 
 ```tsx
 <AgenticChat
   adapter={adapter}
   turnActions={{
-    // The standard has no feedback endpoint, so 👍 and 👎 show only when you take the feedback.
+    // The standard has no feedback endpoint, so thumbs up and down show only when you take the feedback.
     onFeedback: (f) => api.post('/feedback', f), // { rating, messageId, conversationId, runId, issueType?, details? }
     feedbackIssueTypes: [
       { id: 'wrong', label: 'Wrong numbers' },
@@ -68,8 +68,8 @@ Each answer ends with a row: 👍 and 👎, copy, ↻ (ask again) on the newest 
 />
 ```
 
-- **👍** sends at once; **👎** opens a dialog for an optional issue type and details first. When `onFeedback` resolves the chat thanks the user, and it remembers the rating on the device.
-- **↻** asks the answer's question again, as a new turn: the standard has no way to replace an answer. Pass a function to do your own thing.
+- **Thumbs up** sends at once; **thumbs down** opens a dialog for an optional issue type and details first. When `onFeedback` resolves the chat thanks the user, and it remembers the rating on the device.
+- **Ask again** asks the answer's question again, as a new turn: the standard has no way to replace an answer. Pass a function to do your own thing.
 - **`turnActions={false}`** hides the row.
 
 ## Header or rail

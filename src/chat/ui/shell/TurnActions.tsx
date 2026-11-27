@@ -39,26 +39,27 @@ export interface TurnFeedback {
   conversationId: string | null;
   /** The run that wrote the answer, when the backend sent one. */
   runId?: string;
-  /** 👎 only: the issue type chosen in the dialog, by `id`. */
+  /** Thumbs down only: the issue type chosen in the dialog, by `id`. */
   issueType?: string;
-  /** 👎 only: what the user wrote in the dialog. */
+  /** Thumbs down only: what the user wrote in the dialog. */
   details?: string;
 }
 
 /** The row under each answer, and what each of its buttons does. */
 export interface TurnActionsOptions {
   /**
-   * 👍 and 👎, shown when this is set: the chat standard has no feedback endpoint, so the
-   * feedback goes wherever you send it. 👍 sends at once; 👎 first asks what went wrong. The
+   * Thumbs up and thumbs down, shown when this is set: the chat standard has no feedback
+   * endpoint, so the feedback goes wherever you send it. Thumbs up sends at once; thumbs down
+   * first asks what went wrong. The
    * chat thanks the user when the promise resolves, and remembers the rating on the device.
    */
   onFeedback?: (feedback: TurnFeedback) => void | Promise<void>;
-  /** The choices for "issue type" in 👎's dialog. Without any, it asks for details only. */
+  /** The choices for "issue type" in the thumbs-down dialog. Without any, it asks for details only. */
   feedbackIssueTypes?: { id: string; label: string }[];
   /** Copy the answer as text. @default true */
   copy?: boolean;
   /**
-   * ↻ under the newest answer. By default it asks the answer's question again, as a new turn
+   * Ask again, under the newest answer. By default it asks the answer's question again, as a new turn
    * (the standard has no way to replace an answer). A function does your own thing instead;
    * `false` hides it.
    * @default true
@@ -75,7 +76,7 @@ export interface TurnActionsOptions {
 interface TurnActionsContextValue {
   options: TurnActionsOptions | false;
   now: Date;
-  /** 👎's dialog for this answer. */
+  /** The thumbs-down dialog for this answer. */
   askWhy: (message: ChatMessage) => void;
   send: (feedback: TurnFeedback) => void;
 }
@@ -97,8 +98,8 @@ function useNow(): Date {
 }
 
 /**
- * Holds what the row under each answer does, and draws what the feedback buttons open: 👎's
- * dialog and the thank-you toast. `AgenticChat` mounts it with its `turnActions` prop.
+ * Holds what the row under each answer does, and draws what the feedback buttons open: the
+ * thumbs-down dialog and the thank-you toast. `AgenticChat` mounts it with its `turnActions` prop.
  */
 export function TurnActionsProvider({ options = {}, children }: { options?: TurnActionsOptions | false; children: ReactNode }) {
   const labels = useLabels();
@@ -293,7 +294,8 @@ function CopyAction({ message }: { message: ChatMessage }) {
 }
 
 /**
- * The row under an answer: 👍 👎 (with `onFeedback`), copy, ↻ on the newest answer, your own
+ * The row under an answer: thumbs up and down (with `onFeedback`), copy, ask again on the newest
+ * answer, your own
  * buttons, then when it was given. Each part is set by `AgenticChat`'s `turnActions`.
  */
 export function TurnActions({ message }: { message: ChatMessage }) {

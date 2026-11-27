@@ -124,11 +124,11 @@ export interface ChatLabels {
   menuLoading: string;
   /** A folder whose contents failed to load; choosing the row tries again. */
   menuLoadFailed: string;
-  /** Under an answer: 👍. */
+  /** Under an answer: the thumbs-up button. */
   feedbackGood: string;
-  /** Under an answer: 👎. */
+  /** Under an answer: the thumbs-down button. */
   feedbackBad: string;
-  /** Under the newest answer: ↻, which asks its question again. */
+  /** Under the newest answer: the button that asks its question again. */
   askAgain: string;
   /** The toast after feedback is sent. */
   feedbackThanksTitle: string;
@@ -136,7 +136,7 @@ export interface ChatLabels {
   /** The toast when `onFeedback` fails. */
   feedbackFailedTitle: string;
   feedbackFailedMessage: string;
-  /** 👎's dialog. */
+  /** The thumbs-down dialog. */
   feedbackDialogTitle: string;
   feedbackIssueLabel: string;
   feedbackDetailsLabel: string;

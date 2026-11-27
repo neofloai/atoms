@@ -23,7 +23,7 @@ export const RELEASES: readonly Release[] = [
     tag: 'v4.5.0',
     date: '2026-11-26',
     headline:
-      'The chat is redrawn. The empty chat leads with the Neoflo mark, the greeting and the composer, with removable prompt rows under it; answers get a row of 👍 👎, copy, ask again and the time; the composer\'s + opens a two-level menu you configure; and an optional rail puts New chat, History and Search on the right. The type scale gains `body0` (14/22) and the Scope One display face.',
+      'The chat is redrawn. The empty chat leads with the Neoflo mark, the greeting and the composer, with removable prompt rows under it; answers get a row of thumbs up and down, copy, ask again and the time; the composer\'s + opens a two-level menu you configure; and an optional rail puts New chat, History and Search on the right. The type scale gains `body0` (14/22) and the Scope One display face.',
     summary:
       'A minor release; nothing is removed or renamed, and an app with a chat sees the new look on upgrade with no code change. Three defaults move, so check a chat you customised: the workflow picker is now a submenu of + rather than a pill in the row (`composerProps={{ menu: false }}` puts the pill back); Send appears only once there is something to send, so a test that looked for a disabled Send button should look for none; and the composer under the greeting is replaced by a docked one on the first send, so a test holding the textarea should query it again. The chat standard moves to revision 1.3, which adds one optional field: a suggested prompt may name its `icon` from a fixed list. A backend on 1.2 needs no change. Scope One adds `@fontsource/scope-one`, one weight, loaded by `NeofloThemeProvider` like the other brand fonts.',
     changes: [
@@ -72,7 +72,7 @@ export const RELEASES: readonly Release[] = [
       {
         kind: 'added',
         summary:
-          '`turnActions` on `<AgenticChat>`, the row under each answer: 👍 and 👎 when you pass `onFeedback` (👎 asks for an optional issue type and details first, and the chat thanks the user when it resolves), copy, ↻ to ask the question again, `extra` buttons of your own (`TurnActionButton`), and when it was given. Each part can be turned off, or the row with `false`.',
+          '`turnActions` on `<AgenticChat>`, the row under each answer: thumbs up and thumbs down when you pass `onFeedback` (thumbs down asks for an optional issue type and details first, and the chat thanks the user when it resolves), copy, ask again, `extra` buttons of your own (`TurnActionButton`), and when it was given. Each part can be turned off, or the row with `false`.',
         scope: ['AgenticChat', 'TurnActions', 'TurnActionButton', 'TurnFeedback'],
       },
       {

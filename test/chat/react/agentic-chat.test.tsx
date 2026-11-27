@@ -102,7 +102,7 @@ describe('<AgenticChat>', () => {
     await waitFor(() => expect(screen.getAllByText('hello there')).toHaveLength(2));
   });
 
-  it('sends 👍 at once and 👎 through its dialog, then thanks the user', async () => {
+  it('sends thumbs up at once and thumbs down through its dialog, then thanks the user', async () => {
     const onFeedback = vi.fn();
     renderChat({
       turnActions: { onFeedback, feedbackIssueTypes: [{ id: 'wrong', label: 'Wrong numbers' }] },
