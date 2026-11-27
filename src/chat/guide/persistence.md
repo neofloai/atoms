@@ -19,7 +19,7 @@ persistence: {
   namespace: 'neoflo-chat',    // key prefix
   scope: user.idHash,          // partitions keys per user
   persist: {
-    activeConversation: true,  // reopen the same chat after a reload
+    activeConversation: true,  // reopen the same chat after a reload (not an empty one: see below)
     drafts: true,              // unsent text + uploaded attachments, per chat
     preferences: true,         // history panel, model, scope selection, removed prompts, anything set with usePreference
     history: false,            // conversation list + recent message histories, for instant loads
@@ -29,6 +29,8 @@ persistence: {
   debounceMs: 400,
 }
 ```
+
+An empty chat isn't reopened. A reload opens a new chat instead, with the server's greeting and suggested prompts, which a reopened one wouldn't have. It is reopened once it has a message, or a half-typed question with `drafts` on.
 
 `history` is off by default because chat content can be sensitive. Turn it on together with `scope`.
 

@@ -232,17 +232,22 @@ function useContainerWidth<T extends HTMLElement>() {
   return [ref, width] as const;
 }
 
-/** Tells the app the conversation's title, each time it or the conversation changes. */
+/**
+ * Tells the app the conversation's title, each time it or the conversation changes. The id is
+ * `null` while the chat is the empty welcome: with eager creation (the default) the server has
+ * made the conversation before anyone types, but to the person it is still a new chat.
+ */
 function useReportTitle(onTitleChange: AgenticChatProps['onTitleChange']) {
   const title = useThread((s) => s.meta.title);
   const conversationId = useThread((s) => s.conversationId);
+  const id = useWelcomeOpen() ? null : conversationId;
   const report = useRef(onTitleChange);
   useIsomorphicLayoutEffect(() => {
     report.current = onTitleChange;
   });
   useEffect(() => {
-    report.current?.(title, conversationId);
-  }, [title, conversationId]);
+    report.current?.(title, id);
+  }, [title, id]);
 }
 
 function ChatLayout({
