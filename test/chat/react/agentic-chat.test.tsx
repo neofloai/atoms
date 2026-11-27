@@ -164,10 +164,69 @@ describe('<AgenticChat>', () => {
     const onTitleChange = vi.fn();
     renderChat({ navigation: 'rail', onTitleChange });
     await waitFor(() => expect(onTitleChange).toHaveBeenCalledWith('New chat', null));
+    // The server makes the chat before anyone types; it is still a new chat, with no id to report.
+    await screen.findByText('Hey! What can I help you dig into today?');
+    expect(onTitleChange).not.toHaveBeenCalledWith('New chat', expect.any(String));
     fireEvent.change(await screen.findByRole('textbox', { name: 'Message' }), { target: { value: 'hello there' } });
     fireEvent.keyDown(composerInput(), { key: 'Enter' });
     // The backend names the chat when the first answer ends.
     await waitFor(() => expect(onTitleChange).toHaveBeenLastCalledWith('Hello there', expect.any(String)), { timeout: 4000 });
+  });
+
+  it('shows a footer given as a function only where it asks to: here, under a conversation', async () => {
+    renderChat({ composerProps: { footer: (placement) => (placement === 'docked' ? 'Check the numbers.' : null) } });
+    await screen.findByText('Hey! What can I help you dig into today?');
+    expect(screen.queryByText('Check the numbers.')).toBeNull();
+    fireEvent.change(composerInput(), { target: { value: 'hello there' } });
+    fireEvent.keyDown(composerInput(), { key: 'Enter' });
+    expect(await screen.findByText('Check the numbers.')).toBeTruthy();
+  });
+
+  it('takes "Jump to latest" away once the thread fits its view, and fills it', async () => {
+    // jsdom lays nothing out: the sizes and the resizes are stood in for.
+    const resized: ((entries: []) => void)[] = [];
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: (entries: []) => void) {
+          resized.push(callback);
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      },
+    );
+    try {
+      renderChat();
+      await screen.findByText('Hey! What can I help you dig into today?');
+      const thread = screen.getByRole('log');
+      const lay = (scrollHeight: number) =>
+        Object.defineProperties(thread, {
+          scrollHeight: { value: scrollHeight, configurable: true },
+          clientHeight: { value: 500, configurable: true },
+        });
+      const resize = () => act(() => resized.forEach((callback) => callback([])));
+      const jump = () => screen.queryByRole('button', { name: defaultLabels.jumpToLatest });
+
+      // Scrolled to the top of a long chat.
+      lay(2000);
+      fireEvent.scroll(thread);
+      const button = await screen.findByRole('button', { name: defaultLabels.jumpToLatest });
+      // Filled, so the thread doesn't show through it.
+      expect(getComputedStyle(button).backgroundColor).not.toMatch(/^(transparent|rgba\(0, 0, 0, 0\))$/);
+
+      // The thread grows with the reader still up it: the button stays.
+      lay(2400);
+      resize();
+      expect(jump()).toBeTruthy();
+
+      // A new or shorter chat: it fits the view, and nothing scrolled.
+      lay(500);
+      resize();
+      expect(jump()).toBeNull();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('does not send while an IME composition is in progress', async () => {

@@ -42,6 +42,8 @@ export function useThreadScroll(): ScrollController {
 
 const BOTTOM_THRESHOLD = 48;
 
+const isAtBottom = (el: HTMLElement) => el.scrollHeight - el.scrollTop - el.clientHeight < BOTTOM_THRESHOLD;
+
 function useScrollController(): ScrollController {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -51,7 +53,7 @@ function useScrollController(): ScrollController {
   const onScroll = useCallback(() => {
     const el = viewportRef.current;
     if (!el) return;
-    const next = el.scrollHeight - el.scrollTop - el.clientHeight < BOTTOM_THRESHOLD;
+    const next = isAtBottom(el);
     atBottomRef.current = next;
     setAtBottom(next);
   }, []);
@@ -65,15 +67,24 @@ function useScrollController(): ScrollController {
     else el.scrollTop = el.scrollHeight;
   }, []);
 
-  // Follow new content while the reader is at the bottom; stay put once they scroll up.
+  // Follow new content while the reader is at the bottom; stay put once they scroll up. A resize
+  // can also bring the end into view with nothing scrolling: the thread shrinks (a new chat, or a
+  // shorter one opened from the history) or the viewport grows. Read the position again then, or
+  // the jump button stays over a thread with nothing below it. Only ever towards the bottom: a
+  // thread that grows under a reader at the bottom is followed above, not let go.
   useIsomorphicLayoutEffect(() => {
     const content = contentRef.current;
     const el = viewportRef.current;
     if (!content || !el || typeof ResizeObserver === 'undefined') return;
     const ro = new ResizeObserver(() => {
       if (atBottomRef.current) el.scrollTop = el.scrollHeight;
+      else if (isAtBottom(el)) {
+        atBottomRef.current = true;
+        setAtBottom(true);
+      }
     });
     ro.observe(content);
+    ro.observe(el);
     return () => ro.disconnect();
   }, []);
 

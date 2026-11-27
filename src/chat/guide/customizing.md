@@ -122,7 +122,7 @@ The composer has the + button, two optional slots, and Send, which appears once 
 | `leadingActions` | After + on the empty chat; before Send under a conversation | A mode switch, a picker that should always show |
 | `extraActions` | Right, before Send | A model picker, a mic |
 | `scopePicker` | With `leadingActions` | Omit it for the built-in workflows (a submenu of +, or a pill with `menu: false`), pass your own node to put it in the row, or `false` to leave the workflows out |
-| `footer` | Under the composer | A disclaimer, such as "Neo can make mistakes. Check important numbers against the source." A string is set small and centered. |
+| `footer` | Under the composer | A disclaimer, such as "Neo can make mistakes. Check important numbers against the source." A string is set small and centered. A function gets where the composer is, `'welcome'` or `'docked'`, so `(placement) => placement === 'docked' ? disclaimer : null` shows it only under a conversation. |
 
 ## The plus menu
 

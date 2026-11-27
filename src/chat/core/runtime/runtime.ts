@@ -672,8 +672,28 @@ class Runtime implements ChatRuntime {
     this.thread(conversationId);
     if (this.session.getState().activeKey === key) return;
     this.session.setState((s) => ({ ...s, activeKey: key, activeId: conversationId }));
-    if (this.persister.config.persist.activeConversation) this.persister.write('active', conversationId);
+    this.rememberActive();
     this.emitter.emit('activeChange', conversationId);
+  }
+
+  /** Writes the open chat for the next visit to reopen, or none when it isn't worth reopening. */
+  private rememberActive(): void {
+    if (!this.persister.config.persist.activeConversation) return;
+    const { activeId } = this.session.getState();
+    this.persister.write('active', activeId !== null && this.worthReopening(activeId) ? activeId : null);
+  }
+
+  /**
+   * An empty chat made here, with nothing typed in it, is not worth reopening. Reopening it fetches
+   * it, shows a thread's skeleton while it loads, and then gives way to a new chat anyway, since a
+   * fetched conversation has no greeting or prompts (see `start`). The next visit makes that new
+   * chat directly. It is remembered once it has a message or a draft.
+   */
+  private worthReopening(conversationId: string): boolean {
+    const t = this.threads.get(conversationId);
+    if (!t?.fresh) return true;
+    const s = t.store.getState();
+    return s.messages.length > 0 || isBusy(s) || Boolean(this.drafts[conversationId]);
   }
 
   // ------------------------------------------------------------------------------------------
@@ -751,7 +771,7 @@ class Runtime implements ChatRuntime {
     this.threads.set(NEW_THREAD_KEY, this.createThread(NEW_THREAD_KEY, null));
     if (this.session.getState().activeKey === NEW_THREAD_KEY) {
       this.session.setState((s) => ({ ...s, activeKey: id, activeId: id }));
-      if (this.persister.config.persist.activeConversation) this.persister.write('active', id);
+      this.rememberActive();
       this.emitter.emit('activeChange', id);
     }
     // An empty chat stays out of history until the first message is sent.
@@ -1105,6 +1125,8 @@ class Runtime implements ChatRuntime {
       }
     }
     t.fresh = false;
+    // Sent in: worth reopening now, if it was the empty chat that wasn't.
+    if (this.session.getState().activeId === conversationId) this.rememberActive();
     this.touchConversation(conversationId);
 
     const model = options.model ?? (this.capabilities().perTurnModel ? this.modelFor(t) : undefined);
@@ -1767,6 +1789,8 @@ class Runtime implements ChatRuntime {
       this.drafts[t.key] = { text: c.text, attachments };
     }
     this.writeDrafts();
+    // A draft makes an empty chat worth reopening, and clearing it makes it not.
+    if (this.session.getState().activeKey === t.key) this.rememberActive();
   }
 
   private writeDrafts(): void {

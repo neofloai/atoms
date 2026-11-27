@@ -227,8 +227,12 @@ export interface ChatComposerProps {
    * or `false` to leave the workflows out altogether.
    */
   scopePicker?: ReactNode | false;
-  /** Under the composer: a disclaimer such as "Neo can make mistakes…". A string is set small and centered. */
-  footer?: ReactNode;
+  /**
+   * Under the composer: a disclaimer such as "Neo can make mistakes…". A string is set small and
+   * centered. A function is given where the composer sits, to show one only under a conversation:
+   * `(placement) => placement === 'docked' ? 'Neo can make mistakes…' : null`.
+   */
+  footer?: ReactNode | ((placement: ChatComposerPlacement) => ReactNode);
   /** Rows the input starts at. @default 3 on the empty chat, 1 under a conversation */
   minRows?: number;
   /** Rows the input grows to before it scrolls. @default 18 on the empty chat, 8 under a conversation */
@@ -260,6 +264,7 @@ export function ChatComposer({
   const labels = useLabels();
   const [dragging, setDragging] = useState(false);
   const hintId = useId();
+  const shown = typeof footer === 'function' ? footer(placement) : footer;
   return (
     <Box>
       <Composer.Root asChild>
@@ -329,12 +334,12 @@ export function ChatComposer({
       >
         <RejectedNotice />
         <TooLongNotice />
-        {typeof footer === 'string' ? (
+        {typeof shown === 'string' ? (
           <Typography variant="body2" component="p" sx={(t: AtomsTheme) => ({ m: 0, textAlign: 'center', ...mode(t, { color: text.default.b2 }) })}>
-            {footer}
+            {shown}
           </Typography>
         ) : (
-          footer
+          shown
         )}
       </Box>
     </Box>

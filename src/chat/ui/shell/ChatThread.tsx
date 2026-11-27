@@ -3,12 +3,13 @@ import { IconButton } from '@/src/components/IconButton';
 import { Skeleton } from '@/src/components/Skeleton';
 import { Stack } from '@/src/components/Stack';
 import { ArrowDownIcon } from '@/src/icons/glyphs';
-import { elevation } from '@/src/tokens';
+import { elevation, surface } from '@/src/tokens';
 import { useEffect, useRef, type ComponentType, type ReactNode } from 'react';
 import type { ChatMessage } from '../../core/store/types';
 import { useChatActions, useLabels, useThread } from '../../react/hooks';
 import { Thread, useThreadScroll } from '../../react/primitives';
 import { ErrorNotice } from '../kit/helpers';
+import { mode, type AtomsTheme } from '../kit/tokens';
 import { AssistantTurn, PendingTurn, UserTurn } from './Turn';
 import { WelcomeScreen } from './Welcome';
 
@@ -122,7 +123,15 @@ export function ChatThread({ components, maxWidth = 760, welcomeComposer }: Chat
             variant="secondary"
             appearance="outline"
             aria-label={labels.jumpToLatest}
-            sx={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)', boxShadow: elevation.medium }}
+            // Filled, not see-through: it floats over the thread, and the text under it would show.
+            sx={(t: AtomsTheme) => ({
+              position: 'absolute',
+              bottom: 12,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              boxShadow: elevation.medium,
+              ...mode(t, { backgroundColor: surface.layers.card1 }),
+            })}
           >
             <ArrowDownIcon />
           </IconButton>

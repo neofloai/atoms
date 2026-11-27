@@ -542,6 +542,37 @@ describe('runtime: new chat', () => {
     expect(second.adapter.created).toBe(0);
     expect(second.runtime.activeThread().composer.getState().text).toBe('half-typed question');
   });
+
+  it('does not remember an empty chat, so a reload makes a new one without fetching the old', async () => {
+    const storage = createMemoryStorage();
+    const opts = { persistence: { storage, debounceMs: 1 } } satisfies Partial<ChatRuntimeOptions>;
+    const first = setup(opts);
+    await first.runtime.start();
+    expect(first.runtime.session.getState().activeId).toBe('conv_1');
+    await first.runtime.persistence.flush();
+    first.runtime.dispose();
+
+    const getConversation = vi.fn(async (id: string) => detail(id));
+    const second = setup(opts, createFakeAdapter({ getConversation }));
+    expect(second.runtime.session.getState().activeId).toBeNull();
+    await second.runtime.start();
+    expect(getConversation).not.toHaveBeenCalled();
+    expect(second.adapter.created).toBe(1);
+  });
+
+  it('remembers the chat once a message goes out in it', async () => {
+    const storage = createMemoryStorage();
+    const opts = { persistence: { storage, debounceMs: 1 } } satisfies Partial<ChatRuntimeOptions>;
+    const first = setup(opts);
+    await first.runtime.start();
+    void first.runtime.send('Which invoices are blocked?').catch(() => undefined);
+    await until(() => expect(first.adapter.streams).toHaveLength(1));
+    await first.runtime.persistence.flush();
+    first.runtime.dispose();
+
+    const second = setup(opts);
+    expect(second.runtime.session.getState().activeId).toBe('conv_1');
+  });
 });
 
 describe('runtime: attachments', () => {
