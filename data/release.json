@@ -1,11 +1,58 @@
 {
-  "generatedAt": "2026-11-27T07:25:45.780Z",
+  "generatedAt": "2026-11-27T13:39:34.099Z",
   "packageName": "@neofloai/atoms",
   "repo": "neofloai/atoms",
-  "current": "4.5.0",
-  "currentTag": "v4.5.0",
+  "current": "4.6.0",
+  "currentTag": "v4.6.0",
   "minimumSupported": "3.0.0",
   "releases": [
+    {
+      "version": "4.6.0",
+      "tag": "v4.6.0",
+      "date": "2026-11-27",
+      "headline": "The chat opens without a jump. A reload no longer flashes a conversation's skeleton before the empty chat, `onTitleChange` reports no id until the first message, and \"Jump to latest\" leaves when there is nothing to jump to and no longer shows the thread through it. The composer's `footer` can depend on where the composer sits.",
+      "summary": "A minor release; nothing is removed or renamed. One addition, a `footer` that takes a function, and four fixes to the chat. Two of the fixes change what an app sees: an empty chat is no longer reopened after a reload, and `onTitleChange` now reports a `null` id for an empty chat the server has already made, as its documentation said it would.",
+      "changes": [
+        {
+          "kind": "added",
+          "summary": "`ChatComposer`'s `footer` takes a function of where the composer sits, `'welcome'` or `'docked'`, so a disclaimer can show only under a conversation: `footer: (placement) => placement === 'docked' ? disclaimer : null`. It is decided in the same render as the layout, so the prompts under the empty chat no longer drop when an app toggled the footer itself a frame late.",
+          "scope": [
+            "ChatComposer",
+            "AgenticChat"
+          ]
+        },
+        {
+          "kind": "fixed",
+          "summary": "An empty chat is no longer remembered as the open one. A reload used to fetch it, show a thread's skeleton with the composer at the foot, and then swap it for a new chat with the greeting, moving the composer down and back up within half a second. It now opens the new chat directly. A chat is remembered once it has a message, or a draft with `drafts` on.",
+          "scope": [
+            "AgenticChat",
+            "persistence"
+          ]
+        },
+        {
+          "kind": "fixed",
+          "summary": "`onTitleChange` reports a `null` id while the chat is empty, as documented. With eager creation, the default, the server makes the conversation before anyone types, so the id used to arrive while the chat was still new, and an app bar that showed its own label for a new chat switched to \"New chat\".",
+          "scope": [
+            "AgenticChat"
+          ]
+        },
+        {
+          "kind": "fixed",
+          "summary": "\"Jump to latest\" goes away once the end of the thread is in view, including when that happens without a scroll: a new chat or a shorter one opened, or a taller window. It used to stay until the next scroll, over a thread with nothing below. Under a reader at the bottom, a resize of the thread's view now keeps the end in sight.",
+          "scope": [
+            "ChatThread",
+            "Thread"
+          ]
+        },
+        {
+          "kind": "fixed",
+          "summary": "\"Jump to latest\" has a solid fill, the composer's surface, so the thread no longer shows through it.",
+          "scope": [
+            "ChatThread"
+          ]
+        }
+      ]
+    },
     {
       "version": "4.5.0",
       "tag": "v4.5.0",
@@ -945,8 +992,8 @@
   "commands": {
     "readInstalled": "npm ls @neofloai/atoms --depth=0",
     "readInstalledFallback": "node -p \"require('./node_modules/@neofloai/atoms/package.json').version\"",
-    "upgrade": "npm install github:neofloai/atoms#semver:^4.5.0",
-    "pin": "npm install github:neofloai/atoms#semver:^4.5.0"
+    "upgrade": "npm install github:neofloai/atoms#semver:^4.6.0",
+    "pin": "npm install github:neofloai/atoms#semver:^4.6.0"
   },
   "keywords": [
     "changelog",
