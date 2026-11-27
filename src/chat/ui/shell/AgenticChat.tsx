@@ -183,8 +183,8 @@ export interface AgenticChatProps extends ChatProviderProps {
   /** Show the header bar. @default true with `navigation="header"`, false with the rail */
   header?: boolean;
   /**
-   * The row under each answer: 👍 👎 (give it `onFeedback`), copy, ↻ (ask again), your own
-   * buttons, and when it was given. Each can be turned off; `false` hides the row.
+   * The row under each answer: thumbs up and down (give it `onFeedback`), copy, ask again, your
+   * own buttons, and when it was given. Each can be turned off; `false` hides the row.
    */
   turnActions?: TurnActionsOptions | false;
   /** Header title; defaults to the conversation title. */
